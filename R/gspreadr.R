@@ -6,7 +6,6 @@
 #URL <- "https://docs.google.com/spreadsheets/d/1nKnfjLX7L76eWlLJjthq_qf0FF1lprDv7rYs6Sm1iCw/pubhtml"
 
 
-
 #' Open spreadsheet by key 
 #'
 #' Use key found in browser URL and return an object of class spreadsheet.
