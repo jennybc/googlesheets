@@ -1,9 +1,54 @@
-# Example public spreadsheet ----
-#KEY <- "1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU" # Spreadsheet with 1 worksheet
-# Spreadsheet with 4 worksheets
-#spreadsheet_key <- "1nKnfjLX7L76eWlLJjthq_qf0FF1lprDv7rYs6Sm1iCw"
-# URL to public spreadsheet
-#URL <- "https://docs.google.com/spreadsheets/d/1nKnfjLX7L76eWlLJjthq_qf0FF1lprDv7rYs6Sm1iCw/pubhtml"
+#' Authorize client using ClientLogin
+#'
+#' Authorize using email and password. 
+#'
+#'@param email User's email.
+#'@param passwd Password for user's email.
+#'@return Object of class client which stores the token used to subsequent requests.
+#'
+#'This method is using API as described at: 
+#'https://developers.google.com/accounts/docs/AuthForInstalledApps
+#'
+#'Authorization token will be stored in http_session object which then gets
+#'stord in client object. 
+#'  
+login <- function(email, passwd) {
+  
+  service = "wise" 
+  account_type = "HOSTED_OR_GOOGLE"
+  url = "https://www.google.com/accounts/ClientLogin"
+  
+  r <- POST(url, body = list("accountType" = account_type, 
+                             "Email" = email, 
+                             "Passwd" = passwd, 
+                             "service" = service))
+  
+  # prompt error msg
+  if(status_code(r) == 403)
+    if(grepl("BadAuthentication", content(r))) {
+      stop("Incorrect username or password.") 
+    } else {
+      stop("Unable to authenticate")
+    }
+  
+  #SID, LSID not active, extract Auth (authorization token)
+  token <- unlist(strsplit(content(r), "\n"))[3]
+  
+  token <- gsub("Auth", "auth", token) #incorrect syntax if capital
+  auth_header <- paste0("GoogleLogin ", token)
+  
+  #make http_session object to store token
+  session <- http_session()
+  session$headers <- auth_header
+  
+  #instantiate client object to store credentials
+  new_client <- client()
+  new_client$auth <- c(email, passwd)
+  new_client$http_session <- session
+  
+  new_client
+  
+}
 
 
 #' Open spreadsheet by key 
@@ -16,7 +61,7 @@
 #' This function currently only works for public spreadsheets (visibility = TRUE and projection = FULL).
 #'  
 open_by_key <- function(key) {
-
+  
   spreadsheets_feed <- get_spreadsheets_feed(key) 
   
   # convert to list
@@ -67,9 +112,9 @@ open_by_url <- function(url) {
   
   # extract key from url 
   key <- unlist(strsplit(url, "/"))[6] # TODO: fix hardcoding
-
+  
   open_by_key(key)
- 
+  
 }
 
 # helper function
