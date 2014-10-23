@@ -26,11 +26,11 @@ spreadsheet <- function() {
 #' This function currently only works for public spreadsheets (visibility = TRUE and projection = FULL).
 #'  
 worksheet <- function() {
-  structure(list(ws_id = character(),
-                 ws_title = character(),
-                 ws_url = character(), 
-                 ws_listfeed = character(),
-                 ws_cellsfeed = character()), class = "worksheet")
+  structure(list(id = character(),
+                 title = character(),
+                 url = character(), 
+                 listfeed = character(),
+                 cellsfeed = character()), class = "worksheet")
 }
 
 # Functions ----
@@ -44,7 +44,7 @@ worksheet <- function() {
 #' 
 get_dim <- function(worksheet) {
   
-    xx<- GET(worksheet$ws_listfeed)
+    xx<- GET(worksheet$listfeed)
     
     xxx <- xmlInternalTreeParse(xx)
     
@@ -65,9 +65,9 @@ get_dim <- function(worksheet) {
 }
 
 row_count <- function(worksheet) {
-  get_dims(worksheet)[1]
+  get_dim(worksheet)[1]
 }
 
 col_count <- function(worksheet) {
-  get_dims(worksheet)[2]
+  get_dim(worksheet)[2]
 }  
