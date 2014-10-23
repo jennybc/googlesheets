@@ -10,3 +10,14 @@ test_that("Open spreadsheet by key returns spreadsheet object", {
   
 })
 
+test_that("Login with correct credentials", {
+  email <- "gspreadr@gmail.com"
+  passwd <- "gspreadrtester"
+  
+  expect_equal(class(login(email, passwd)), "client")
+  expect_error(login(email, "wrongpasswd"), "Incorrect username or password.")
+  expect_error(login("wrongemail", passwd), "Incorrect username or password.")
+  
+})
+
+
