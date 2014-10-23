@@ -2,18 +2,18 @@
 
 #' Spreadsheets 
 #'
-#' The function creates spreadsheet objects.
+#' This function creates spreadsheet objects.
 #'
 #'@return Object of class spreadsheet.
 #'
-#' This function currently only works for public spreadsheets (visibility = TRUE and projection = FULL).
+#' 
 #'  
 spreadsheet <- function() {
   structure(list(sheet_id = character(),
                  updated = character(),
                  sheet_title = character(),
                  nsheets = integer(),
-                 sheet_names = character(),
+                 ws_names = character(),
                  worksheets = list()), class = "spreadsheet")
 }
 
@@ -23,12 +23,10 @@ spreadsheet <- function() {
 #'
 #'@return Object of class worksheet.
 #'
-#' This function currently only works for public spreadsheets (visibility = TRUE and projection = FULL).
-#'  
 worksheet <- function() {
   structure(list(id = character(),
                  title = character(),
-                 url = character(), 
+                 #url = character(), 
                  listfeed = character(),
                  cellsfeed = character()), class = "worksheet")
 }

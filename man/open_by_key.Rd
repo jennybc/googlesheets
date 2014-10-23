@@ -3,7 +3,7 @@
 \alias{open_by_key}
 \title{Open spreadsheet by key}
 \usage{
-open_by_key(spreadsheet_key)
+open_by_key(key)
 }
 \arguments{
 \item{spreadsheet_key}{A key of a spreadsheet as it appears in browser URL.}
