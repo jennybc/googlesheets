@@ -16,7 +16,7 @@ test_that("Return number of spreadsheets", {
 
   client <- login(email, passwd)
   
-  expect_equal(length(list_sheets(client)), 2)
+  expect_equal(length(list_spreadsheets(client)), 2)
   
 })
 
@@ -33,15 +33,12 @@ test_that("Open spreadsheet by title", {
   expect_equal(ss1$sheet_title, "Gapminder")
   
   expect_equal(class(ss2), "spreadsheet")
-  expect_equal(ss1$nsheets, 5)
-  expect_equal(ss1$sheet_title, "Gapminder by Continent")
+  expect_equal(ss2$nsheets, 5)
+  expect_equal(ss2$sheet_title, "Gapminder by Continent")
   
   expect_error(class(open_sheet(client, "Gap")), "Spreadsheet not found.")
   
 })
-
-
-
 
 
 test_that("Open spreadsheet by key returns spreadsheet object", {

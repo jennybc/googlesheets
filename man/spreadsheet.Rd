@@ -7,10 +7,8 @@ spreadsheet()
 }
 \value{
 Object of class spreadsheet.
-
-This function currently only works for public spreadsheets (visibility = TRUE and projection = FULL).
 }
 \description{
-The function creates spreadsheet objects.
+This function creates spreadsheet objects.
 }
 

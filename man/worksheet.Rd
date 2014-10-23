@@ -7,8 +7,6 @@ worksheet()
 }
 \value{
 Object of class worksheet.
-
-This function currently only works for public spreadsheets (visibility = TRUE and projection = FULL).
 }
 \description{
 This function creates worksheet objects

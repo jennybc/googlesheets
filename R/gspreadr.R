@@ -59,7 +59,7 @@ login <- function(email, passwd) {
 #'
 #'Use auth token stored in http_session object of client object to make GET request. 
 #'  
-list_sheets <- function(client) {
+list_spreadsheets <- function(client) {
   
   titles <- sheets(client)$sheet_title
   
@@ -108,10 +108,29 @@ open_sheet <- function(client, title) {
   # returns list of worksheet objects
   ws_elements <- lapply(ws_nodes, fetch_ws) 
   
+  names(ws_elements) <- lapply(ws_elements, function(x) x$title)
+  
   ss$ws_names <- names(ws_elements)
   ss$worksheets <- ws_elements
   
   ss
+  
+}
+
+#' Get list of worksheets contained in spreadsheet.
+#'
+#' Retrieve list of worksheets contained in spreadsheet 
+#'
+#'@param x A spreadsheet object returned by open_sheet(client, title)
+#'@return The names of worksheets contained in spreadsheet. 
+#'
+#'This is a mini wrapper for x$ws_names.
+#'  
+list_worksheets <- function(x) {
+  
+  titles <- x$ws_names
+  
+  titles
   
 }
 
@@ -126,38 +145,35 @@ open_sheet <- function(client, title) {
 #'  
 open_by_key <- function(key) {
   
-  spreadsheets_feed <- get_spreadsheets_feed(key) 
+  ss_feed <- get_spreadsheets_feed(key) 
   
   # convert to list
-  spreadsheets_feed_list <- xmlToList(spreadsheets_feed)
+  ss_feed_list <- xmlToList(ss_feed)
   
   ss <- spreadsheet()
   
-  ss$sheet_id <- spreadsheets_feed_list$id
+  ss$sheet_id <- ss_feed_list$id
   
-  ss$updated <- spreadsheets_feed_list$updated
+  ss$updated <- ss_feed_list$updated
   
-  ss$sheet_title <- spreadsheets_feed_list$title[[1]]
+  ss$sheet_title <- ss_feed_list$title[[1]]
   
-  ss$nsheets <- as.numeric(spreadsheets_feed_list$totalResults)
+  ss$nsheets <- as.numeric(ss_feed_list$totalResults)
   
   # return list of entry nodes
-  sheets <- getNodeSet(spreadsheets_feed, "//ns:entry", "ns") 
+  sheets <- getNodeSet(ss_feed, "//ns:entry", "ns") 
   
   # get values for all worksheet elements stored in entry node
   # returns list of worksheet objects
   sheets_elements <- lapply(sheets, fetch_ws) 
   
-  # name list of worksheets by title of worksheet 
-  # names(sheets_elements) <- sapply(sheets_elements, sheets_elements[[2]])
-  
   # set worksheet objects
   ss$worksheets <- sheets_elements
   
   # set list of worksheet names in spreadsheet
-  ss$sheet_names <- names(sheets_elements)
+  ss$ws_names <- names(sheets_elements)
   
-  return(ss)
+  ss
   
 }
 
@@ -208,7 +224,9 @@ fetch_ws <- function(node) {
   ws$listfeed <- ws_listfeed
   ws$cellsfeed <- ws_cellsfeed
   
-  return(ws)
+  ws
+  
+  
 }
 
 
@@ -226,9 +244,9 @@ get_spreadsheets_feed <- function(key) {
   x <- GET(the_url)
   
   # parse response to get worksheets feed
-  spreadsheets_feed <- xmlInternalTreeParse(x) #return "XMLInternalDocument"
+  ss_feed <- xmlInternalTreeParse(x) #return "XMLInternalDocument"
   
-  spreadsheets_feed
+  ss_feed
 }
 
 # Get name of spreadsheets, last updated, and worksheets feed uri
@@ -262,6 +280,5 @@ sheets <- function(client) {
                             stringsAsFactors = FALSE)
   
   sheets_data
-  
 }
 
