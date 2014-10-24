@@ -6,7 +6,7 @@
 list_spreadsheets(client)
 }
 \arguments{
-\item{x}{Client object returned by login(email, passwd)}
+\item{client}{Object of class client returned by \code{\link{login}}}
 }
 \value{
 Dataframe of spreadsheet names.

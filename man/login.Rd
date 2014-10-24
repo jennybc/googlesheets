@@ -14,12 +14,12 @@ login(email, passwd)
 Object of class client which stores the token used to subsequent requests.
 
 This method is using API as described at:
-https://developers.google.com/accounts/docs/AuthForInstalledApps
+\url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
 
 Authorization token will be stored in http_session object which then gets
 stord in client object.
 }
 \description{
-Authorize using email and password.
+Authorize user using email and password.
 }
 

@@ -2,13 +2,14 @@ Package: gspreadr
 Title: Manage your Google spreadsheets in R
 Version: 0.1
 Authors@R: "Joanna Zhao <joanna.zhao@alumni.ubc.ca> [aut, cre]"
-Description: What the package does (one paragraph)
+Description: Google Spreadsheets R API patterned after gspread,
+    a Google Spreadsheets Python API
 Depends:
     R (>= 3.1.1)
 License: TBD
 LazyData: true
 Imports:
-    httr (>= 0.5),
-    XML (>= 3.98-1.1)
+    httr,
+    XML
 Suggests:
     testthat

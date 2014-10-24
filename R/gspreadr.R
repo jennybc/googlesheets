@@ -1,17 +1,17 @@
 #' Authorize client using ClientLogin
 #'
-#' Authorize using email and password. 
+#' Authorize user using email and password. 
 #'
 #'@param email User's email.
 #'@param passwd Password for user's email.
 #'@return Object of class client which stores the token used to subsequent requests.
 #'
 #'This method is using API as described at: 
-#'https://developers.google.com/accounts/docs/AuthForInstalledApps
+#'\url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
 #'
 #'Authorization token will be stored in http_session object which then gets
-#'stord in client object. 
-#'  
+#'stored in client object. 
+#'@export
 login <- function(email, passwd) {
   
   service = "wise" 
@@ -23,19 +23,19 @@ login <- function(email, passwd) {
                                  "Passwd" = passwd, 
                                  "service" = service))
   
-  # prompt error msg Google returns status 200 (success) or 403 (failure)
+  # Google returns status 200 (success) or 403 (failure), show error msg if 403
   if(status_code(r) == 403)
     if(grepl("BadAuthentication", content(r))) {
-      stop("Incorrect username or password.") 
+      stop("Incorrect username or password.")
     } else {
       stop("Unable to authenticate")
     }
   
-  #SID, LSID not active, extract Auth (authorization token)
-  token <- unlist(strsplit(content(r), "\n"))[3]
+  # SID, LSID not active, extract auth token
+  clean_content <- gsub("\n", "", content(r))
+  token <- sub(".*Auth=", "", clean_content)
   
-  token <- gsub("Auth", "auth", token) #incorrect syntax if capital
-  auth_header <- paste0("GoogleLogin ", token)
+  auth_header <- paste0("GoogleLogin auth=", token)
   
   #make http_session object to store token
   session <- http_session()
@@ -43,7 +43,7 @@ login <- function(email, passwd) {
   
   #instantiate client object to store credentials
   new_client <- client()
-  new_client$auth <- c(email, passwd)
+  new_client$auth <- c(email, passwd) 
   new_client$http_session <- session
   
   new_client
@@ -54,11 +54,11 @@ login <- function(email, passwd) {
 #'
 #' Retrive list of spreadsheets 
 #'
-#'@param x Client object returned by login(email, passwd)
+#'@param client Object of class client returned by \code{\link{login}}
 #'@return Dataframe of spreadsheet names. 
 #'
 #'Use auth token stored in http_session object of client object to make GET request. 
-#'  
+#'@export
 list_spreadsheets <- function(client) {
   
   titles <- sheets(client)$sheet_title
@@ -67,16 +67,15 @@ list_spreadsheets <- function(client) {
   
 }
 
-
 #' Open spreadsheet by title 
 #'
-#' Use key found in browser URL and return an object of class spreadsheet.
+#' Use title of spreadsheet to retrieve object of class spreadsheet.
 #'
-#'@param client Client object returned by login(email, passwd)
+#'@param client Client object returned by \code{\link{login}}
 #'@param title Name of spreadsheet
 #'@return Object of class spreadsheet.
-#'
-open_sheet <- function(client, title) {
+#'@export
+open_spreadsheet <- function(client, title) {
   
   ss_feed <- sheets(client) # returns dataframe of spreadsheet feed info
   
@@ -117,15 +116,15 @@ open_sheet <- function(client, title) {
   
 }
 
-#' Get list of worksheets contained in spreadsheet.
+#' Get the names of the worksheets contained in spreadsheet.
 #'
-#' Retrieve list of worksheets contained in spreadsheet 
+#' Retrieve list of worksheet names contained in spreadsheet 
 #'
-#'@param x A spreadsheet object returned by open_sheet(client, title)
+#'@param x A spreadsheet object returned by \code{\link{open_spreadsheet}}
 #'@return The names of worksheets contained in spreadsheet. 
 #'
 #'This is a mini wrapper for x$ws_names.
-#'  
+#'@export  
 list_worksheets <- function(x) {
   
   titles <- x$ws_names
@@ -133,6 +132,19 @@ list_worksheets <- function(x) {
   titles
   
 }
+
+get_worksheet <- function(spreadsheet, title) {
+  
+  lapply(sheet$worksheets, function(x) x$title)
+  list_worksheets(sheet)
+   
+}
+
+
+
+
+
+# Public worksheets only -----
 
 #' Open spreadsheet by key 
 #'
