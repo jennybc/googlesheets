@@ -17,7 +17,7 @@ This method is using API as described at:
 \url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
 
 Authorization token will be stored in http_session object which then gets
-stord in client object.
+stored in client object.
 }
 \description{
 Authorize user using email and password.
