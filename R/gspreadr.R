@@ -152,12 +152,12 @@ list_worksheets <- function(x) {
 get_worksheet <- function(spreadsheet, title) {
 
   # find index of specified worksheet
-  index <- match(title, names(sheet$worksheets))
+  index <- match(title, names(spreadsheet$worksheets))
   
   if(is.na(index))
     stop("Worksheet not found.")
   
-  ws <- sheet$worksheets[[index]]
+  ws <- spreadsheet$worksheets[[index]]
   
   ws
 }
