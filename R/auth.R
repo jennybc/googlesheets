@@ -32,14 +32,9 @@ login <- function(email, passwd) {
 
   auth_header <- paste0("GoogleLogin auth=", token)
 
-  # make http_session object to store token
-  session <- http_session()
-  session$headers <- auth_header
-
   # instantiate client object to store credentials
   new_client <- client()
-  new_client$auth <- c(email, passwd)
-  new_client$http_session <- session
+  new_client$auth <- auth_header
 
   new_client
 }
@@ -61,14 +56,14 @@ login <- function(email, passwd) {
 #'@importFrom httr oauth_endpoints
 #'@importFrom httr oauth2.0_token
 authorize <- function() {
-  SCOPE <- paste("https://spreadsheets.google.com/feeds","https://docs.google.com/feeds")
-  CLIENT_ID <- "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
-  CLIENT_SECRET <- "xsvcER2hCCALoN7A8ww6MaKG"
+  scope_list <- paste("https://spreadsheets.google.com/feeds","https://docs.google.com/feeds")
+  client_id <- "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
+  client_secret <- "tgC0_gX_hbdtJ64u8kcyh8fK"
 
-  gspreadr_app <- oauth_app("google", CLIENT_ID, CLIENT_SECRET)
+  gspreadr_app <- oauth_app("google", client_id, client_secret)
 
   google_token <-
-    oauth2.0_token(oauth_endpoints("google"), gspreadr_app, scope = SCOPE)
+    oauth2.0_token(oauth_endpoints("google"), gspreadr_app, scope = scope_list)
 
   new_client <- client()
   new_client$auth <- google_token

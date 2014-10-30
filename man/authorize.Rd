@@ -16,3 +16,4 @@ Authorization token will be stored in client as auth.
 \description{
 Authorize user using email and password.
 }
+

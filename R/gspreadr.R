@@ -40,7 +40,7 @@ open_spreadsheet <- function(client, title) {
   # uri for worksheets feed
   ws_url <- ss_feed[index, "worksheetsfeed_uri"]
   
-  req <- GET(ws_url, add_headers('Authorization' = client$http_session$headers))
+  req <- GET(ws_url, add_headers('Authorization' = client$auth))
   
   # parse response to get worksheets feed
   ws_feed <- google_parse(req)
@@ -126,7 +126,7 @@ get_worksheet <- function(spreadsheet, title) {
 get_dataframe <- function(client = NA, ws) {
   
   if(is.object(client)) {
-    req <- GET(ws$cellsfeed, add_headers('Authorization' = client$http_session$headers))
+    req <- GET(ws$cellsfeed, add_headers('Authorization' = client$auth))
   } else {
     req <- GET(ws$cellsfeed) # public worksheet
   }
@@ -144,7 +144,8 @@ get_dataframe <- function(client = NA, ws) {
   n_row <- as.numeric(dat[1])
   n_col <- as.numeric(dat[2])
   
-  my_data <- data.frame(matrix(vals, nrow = n_row, ncol = n_col, byrow = TRUE), row.names = NULL)
+  my_data <- data.frame(matrix(vals, nrow = n_row, ncol = n_col, byrow = TRUE), 
+                        row.names = NULL)
 
   names(my_data) <- vals[1:n_col]
   my_data <- my_data[-1, ]
@@ -290,7 +291,7 @@ sheets <- function(client) {
   
   # to get spreadsheets feed
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
-  req <- GET(the_url, add_headers('Authorization' = client$http_session$headers))
+  req <- GET(the_url, add_headers('Authorization' = client$auth))
 
   ss_feed <- google_parse(req)
   
