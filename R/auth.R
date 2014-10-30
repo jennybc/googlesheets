@@ -35,7 +35,6 @@ login <- function(email, passwd) {
   # instantiate client object to store credentials
   new_client <- client()
   new_client$auth <- auth_header
-
   new_client
 }
 
@@ -65,8 +64,16 @@ authorize <- function() {
   google_token <-
     oauth2.0_token(oauth_endpoints("google"), gspreadr_app, scope = scope_list)
 
+  check_token(google_token)
+  
   new_client <- client()
   new_client$auth <- google_token
   new_client
 }
 
+
+# check google token upon retrieval so error is found before making requests
+check_token <- function(token) {
+  if(token$credentials == "invalid_client")
+    message("Invalid Credentials.")
+}

@@ -8,10 +8,9 @@ default_ns = "http://www.w3.org/2005/Atom"
 #'@param client Object of class client returned by \code{\link{login}}
 #'@return Dataframe of spreadsheet names.
 #'
-#'Use auth token stored in http_session object of client object to make GET request. 
+#'Use auth token stored in http_session object of client object to make GET request.
 #'@export
 list_spreadsheets <- function(client) {
-  
   titles <- sheets(client)$sheet_title
   titles
 }
@@ -40,7 +39,9 @@ open_spreadsheet <- function(client, title) {
   # uri for worksheets feed
   ws_url <- ss_feed[index, "worksheetsfeed_uri"]
   
-  req <- GET(ws_url, add_headers('Authorization' = client$auth))
+  auth <- check_client(client)
+  
+  req <- GET(ws_url, auth)
   
   # parse response to get worksheets feed
   ws_feed <- google_parse(req)
@@ -49,12 +50,11 @@ open_spreadsheet <- function(client, title) {
   ss <- spreadsheet()
   
   ss$sheet_id <- ws_feed_list$id
-
+  
   ss_id <- ws_feed_list$id
   ss_one <- sub(".*worksheets/", "", ss_id)
   ss_two <- sub("/.*", "", ss_one)
-
-
+  
   ss$updated <- ws_feed_list$updated
   ss$sheet_title <- ws_feed_list$title[[1]]
   ss$nsheets <- as.numeric(ws_feed_list$totalResults)
@@ -65,14 +65,12 @@ open_spreadsheet <- function(client, title) {
   # get values for all worksheet elements stored in entry node
   # returns list of worksheet objects
   ws_elements <- lapply(ws_nodes, fetch_ws)
-  
   names(ws_elements) <- lapply(ws_elements, function(x) x$title)
   
   ss$ws_names <- names(ws_elements)
   ss$worksheets <- ws_elements
   
   ss
-  
 }
 
 #' Get the names of the worksheets contained in spreadsheet.
@@ -85,7 +83,6 @@ open_spreadsheet <- function(client, title) {
 #'This is a mini wrapper for x$ws_names.
 #'@export  
 list_worksheets <- function(x) {
-  
   titles <- x$ws_names
   titles
 }
@@ -126,27 +123,28 @@ get_worksheet <- function(spreadsheet, title) {
 get_dataframe <- function(client = NA, ws) {
   
   if(is.object(client)) {
-    req <- GET(ws$cellsfeed, add_headers('Authorization' = client$auth))
+    auth <- check_client(client)
+    req <- GET(ws$cellsfeed, auth)
   } else {
     req <- GET(ws$cellsfeed) # public worksheet
   }
-
+  
   cellsfeed <- google_parse(req)
-
+  
   cell_nodes <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"))
   
   vals <- xmlSApply(cell_nodes, xmlValue)
-
+  
   # calculate index for last node to get ncol and nrow
   last_node <- unlist(tail(cell_nodes, n=1))
   dat <- unlist(lapply(last_node, xmlAttrs))
-
+  
   n_row <- as.numeric(dat[1])
   n_col <- as.numeric(dat[2])
   
-  my_data <- data.frame(matrix(vals, nrow = n_row, ncol = n_col, byrow = TRUE), 
+  my_data <- data.frame(matrix(vals, nrow = n_row, ncol = n_col, byrow = TRUE),
                         row.names = NULL)
-
+  
   names(my_data) <- vals[1:n_col]
   my_data <- my_data[-1, ]
   
@@ -170,7 +168,7 @@ get_dataframe <- function(client = NA, ws) {
 #'@importFrom XML getNodeSet
 open_by_key <- function(key) {
   
-  ss_feed <- get_spreadsheets_feed(key) 
+  ss_feed <- get_spreadsheets_feed(key)
   
   # convert to list
   ss_feed_list <- xmlToList(ss_feed)
@@ -197,7 +195,7 @@ open_by_key <- function(key) {
   ss
 }
 
-#' Open spreadsheet by url 
+#' Open spreadsheet by url
 #'
 #' Use url of spreadsheet and return an object of class spreadsheet.
 #'
@@ -208,12 +206,10 @@ open_by_key <- function(key) {
 #' This function extracts the key from the url and calls on open_by_key().
 #'@export
 open_by_url <- function(url) {
-  
   # extract key from url 
   key <- unlist(strsplit(url, "/"))[6] # TODO: fix hardcoding
   
   open_by_key(key)
-  
 }
 
 
@@ -227,9 +223,8 @@ open_by_url <- function(url) {
 #'@importFrom XML xmlApply
 #'@importFrom XML xmlGetAttr
 fetch_ws <- function(node) {
-  
   # check if node is entry node (represents worksheet)
-  if(xmlName(node) != "entry") 
+  if(xmlName(node) != "entry")
     stop("Node is not 'entry'.")
   
   feed_list <- xmlToList(node)
@@ -237,7 +232,6 @@ fetch_ws <- function(node) {
   ws <- worksheet()
   
   ws$id <- unlist(strsplit(feed_list$id, "/"))[[9]]
-  
   ws$title <- (feed_list$title)$text
   
   listfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#listfeed']", "ns")
@@ -250,7 +244,6 @@ fetch_ws <- function(node) {
   ws$cellsfeed <- ws_cellsfeed
   
   ws
-  
 }
 
 
@@ -262,7 +255,7 @@ get_spreadsheets_feed <- function(key) {
   the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", key,
                     "/public/full")
   
-  if(!url_ok(the_url)) 
+  if(!url_ok(the_url))
     stop("The spreadsheet at this URL could not be found. Make sure that you have the right key.")
   
   # make request
@@ -270,7 +263,6 @@ get_spreadsheets_feed <- function(key) {
   
   # parse response to get worksheets feed
   ss_feed <- google_parse(x)
-  
   ss_feed
 }
 
@@ -288,11 +280,12 @@ get_spreadsheets_feed <- function(key) {
 #'@importFrom XML xmlValue
 #'@importFrom XML xmlGetAttr
 sheets <- function(client) {
+  auth <- check_client(client)
   
   # to get spreadsheets feed
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
-  req <- GET(the_url, add_headers('Authorization' = client$auth))
-
+  req <- GET(the_url, auth)
+  
   ss_feed <- google_parse(req)
   
   ss_titles <- getNodeSet(ss_feed, "//ns:entry//ns:title", c("ns" = default_ns))
@@ -303,8 +296,8 @@ sheets <- function(client) {
   ss_updated <- unlist(xmlApply(ss_updated, xmlValue))
   ss_ws_feed <- unlist(xmlApply(ss_ws_feed, function(x) xmlGetAttr(x, "href")))
   
-  sheets_data <- data.frame(sheet_title = ss_titles, 
-                            last_updated = ss_updated, 
+  sheets_data <- data.frame(sheet_title = ss_titles,
+                            last_updated = ss_updated,
                             worksheetsfeed_uri = ss_ws_feed,
                             stringsAsFactors = FALSE)
   
@@ -325,3 +318,12 @@ google_check <- function(req) {
 google_parse <- function(req) {
   xmlInternalTreeParse(req)
 }
+
+# check if client is using Google login or oauth2.0
+check_client <- function(client) {
+  if(class(client$auth) != "character")
+    auth <- config(token = client$auth)
+  else 
+    auth <- add_headers('Authorization' = client$auth)
+}
+
