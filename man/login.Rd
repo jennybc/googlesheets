@@ -11,7 +11,7 @@ login(email, passwd)
 \item{passwd}{Password for user's email.}
 }
 \value{
-Object of class client which stores the token used to subsequent requests.
+Object of class client which stores the auth token required for subsequent requests.
 
 This method is using API as described at:
 \url{https://developers.google.com/accounts/docs/AuthForInstalledApps}

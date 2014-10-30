@@ -3,7 +3,7 @@
 \alias{get_dataframe}
 \title{Get worksheet object as a dataframe}
 \usage{
-get_dataframe(client, ws)
+get_dataframe(client = NA, ws)
 }
 \arguments{
 \item{client}{Client object}

@@ -1,73 +1,19 @@
-#' Authorize client using ClientLogin
-#'
-#' Authorize user using email and password. 
-#'
-#'@param email User's email.
-#'@param passwd Password for user's email.
-#'@return Object of class client which stores the token used to subsequent requests.
-#'
-#'This method is using API as described at: 
-#'\url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
-#'
-#'Authorization token will be stored in http_session object which then gets
-#'stored in client object. 
-#'@export
-#'@importFrom httr POST
-#'@importFrom httr status_code
-#'@importFrom httr content
-login <- function(email, passwd) {
-  
-  service = "wise" 
-  account_type = "HOSTED_OR_GOOGLE"
-  the_url = "https://www.google.com/accounts/ClientLogin"
-  
-  r <- POST(the_url, body = list("accountType" = account_type, 
-                                 "Email" = email, 
-                                 "Passwd" = passwd, 
-                                 "service" = service))
-  
-  # Google returns status 200 (success) or 403 (failure), show error msg if 403
-  if(status_code(r) == 403)
-    if(grepl("BadAuthentication", content(r))) {
-      stop("Incorrect username or password.")
-    } else {
-      stop("Unable to authenticate")
-    }
-  
-  # SID, LSID not active, extract auth token
-  clean_content <- gsub("\n", "", content(r))
-  token <- sub(".*Auth=", "", clean_content)
-  
-  auth_header <- paste0("GoogleLogin auth=", token)
-  
-  # make http_session object to store token
-  session <- http_session()
-  session$headers <- auth_header
-  
-  # instantiate client object to store credentials
-  new_client <- client()
-  new_client$auth <- c(email, passwd) 
-  new_client$http_session <- session
-  
-  new_client
-  
-}
+# default namespace for querying xml feed returned by GET
+default_ns = "http://www.w3.org/2005/Atom"
 
 #' Get list of spreadsheets for authenticated user
 #'
-#' Retrive list of spreadsheets 
+#' Retrive list of spreadsheets
 #'
 #'@param client Object of class client returned by \code{\link{login}}
-#'@return Dataframe of spreadsheet names. 
+#'@return Dataframe of spreadsheet names.
 #'
 #'Use auth token stored in http_session object of client object to make GET request. 
 #'@export
 list_spreadsheets <- function(client) {
   
   titles <- sheets(client)$sheet_title
-  
   titles
-  
 }
 
 #' Open spreadsheet by title 
@@ -80,7 +26,6 @@ list_spreadsheets <- function(client) {
 #'@export
 #'@importFrom httr GET
 #'@importFrom httr add_headers
-#'@importFrom XML xmlInternalTreeParse
 #'@importFrom XML xmlToList
 #'@importFrom XML getNodeSet
 open_spreadsheet <- function(client, title) {
@@ -95,25 +40,31 @@ open_spreadsheet <- function(client, title) {
   # uri for worksheets feed
   ws_url <- ss_feed[index, "worksheetsfeed_uri"]
   
-  r <- GET(ws_url, add_headers('Authorization' = client$http_session$headers))
+  req <- GET(ws_url, add_headers('Authorization' = client$http_session$headers))
   
   # parse response to get worksheets feed
-  ws_feed <- xmlInternalTreeParse(r)
+  ws_feed <- google_parse(req)
   ws_feed_list <- xmlToList(ws_feed)
   
   ss <- spreadsheet()
   
   ss$sheet_id <- ws_feed_list$id
+
+  ss_id <- ws_feed_list$id
+  ss_one <- sub(".*worksheets/", "", ss_id)
+  ss_two <- sub("/.*", "", ss_one)
+
+
   ss$updated <- ws_feed_list$updated
   ss$sheet_title <- ws_feed_list$title[[1]]
   ss$nsheets <- as.numeric(ws_feed_list$totalResults)
   
   # return list of entry nodes
-  ws_nodes <- getNodeSet(ws_feed, "//ns:entry", "ns") 
+  ws_nodes <- getNodeSet(ws_feed, "//ns:entry", c(ns = default_ns))
   
   # get values for all worksheet elements stored in entry node
   # returns list of worksheet objects
-  ws_elements <- lapply(ws_nodes, fetch_ws) 
+  ws_elements <- lapply(ws_nodes, fetch_ws)
   
   names(ws_elements) <- lapply(ws_elements, function(x) x$title)
   
@@ -136,9 +87,7 @@ open_spreadsheet <- function(client, title) {
 list_worksheets <- function(x) {
   
   titles <- x$ws_names
-  
   titles
-  
 }
 
 #' Open worksheet given worksheet title
@@ -150,7 +99,6 @@ list_worksheets <- function(x) {
 #'@return An object of class worksheet. 
 #'@export
 get_worksheet <- function(spreadsheet, title) {
-
   # find index of specified worksheet
   index <- match(title, names(spreadsheet$worksheets))
   
@@ -158,7 +106,6 @@ get_worksheet <- function(spreadsheet, title) {
     stop("Worksheet not found.")
   
   ws <- spreadsheet$worksheets[[index]]
-  
   ws
 }
 
@@ -173,22 +120,21 @@ get_worksheet <- function(spreadsheet, title) {
 #'@export
 #'@importFrom httr GET
 #'@importFrom httr add_headers
-#'@importFrom XML xmlInternalTreeParse
 #'@importFrom XML getNodeSet
 #'@importFrom XML xmlSApply
 #'@importFrom XML xmlAttrs
-get_dataframe <- function(client, ws) {
+get_dataframe <- function(client = NA, ws) {
   
-#   if(is.null(client)) {
-#     r <- GET(ws$cellsfeed, add_headers('Authorization' = client$http_session$headers))
-#   } else {
-  r <- GET(ws$cellsfeed, add_headers('Authorization' = client$http_session$headers))
- # }
-  
-  cellsfeed <- xmlInternalTreeParse(r)
- 
-  cell_nodes <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", c("ns", "gs"))
+  if(is.object(client)) {
+    req <- GET(ws$cellsfeed, add_headers('Authorization' = client$http_session$headers))
+  } else {
+    req <- GET(ws$cellsfeed) # public worksheet
+  }
 
+  cellsfeed <- google_parse(req)
+
+  cell_nodes <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"))
+  
   vals <- xmlSApply(cell_nodes, xmlValue)
 
   # calculate index for last node to get ncol and nrow
@@ -207,40 +153,6 @@ get_dataframe <- function(client, ws) {
   
   my_data
 }
-
-# Functions ----
-
-
-# get_dim <- function(ws) {
-#   
-#   xx<- GET(ws$listfeed, add_headers('Authorization' = client$http_session$headers))
-#   
-#   xxx <- xmlInternalTreeParse(r)
-#   
-#   nodes_for_rows <- getNodeSet(xxx, "//x:content", "x")
-#   
-#   col_counts <- lapply((strsplit(xmlSApply(nodes_for_rows, xmlValue), ",")), length)
-#   
-#   col_count <- max(unlist(col_counts)) + 1 # to add back first col
-#   
-#   row_count <- length(col_counts) + 1 # to add back header row
-#   
-#   dims <- c(row_count, col_count)
-#   
-#   names(dims) <- c("row", "col")
-#   
-#   dims
-#   
-# }
-# 
-# row_count <- function(worksheet) {
-#   get_dim(worksheet)[1]
-# }
-# 
-# col_count <- function(worksheet) {
-#   get_dim(worksheet)[2]
-# }  
-
 
 # Public worksheets only -----
 
@@ -265,28 +177,23 @@ open_by_key <- function(key) {
   ss <- spreadsheet()
   
   ss$sheet_id <- ss_feed_list$id
-  
   ss$updated <- ss_feed_list$updated
-  
   ss$sheet_title <- ss_feed_list$title[[1]]
-  
   ss$nsheets <- as.numeric(ss_feed_list$totalResults)
   
   # return list of entry nodes
-  sheets <- getNodeSet(ss_feed, "//ns:entry", "ns") 
+  ws_nodes <- getNodeSet(ss_feed, "//ns:entry", c("ns" = default_ns))
   
   # get values for all worksheet elements stored in entry node
   # returns list of worksheet objects
-  sheets_elements <- lapply(sheets, fetch_ws) 
+  ws_elements <- lapply(ws_nodes, fetch_ws)
   
-  # set worksheet objects
-  ss$worksheets <- sheets_elements
+  names(ws_elements) <- lapply(ws_elements, function(x) x$title)
   
-  # set list of worksheet names in spreadsheet
-  ss$ws_names <- names(sheets_elements)
+  ss$ws_names <- names(ws_elements)
+  ss$worksheets <- ws_elements
   
   ss
-  
 }
 
 #' Open spreadsheet by url 
@@ -343,7 +250,6 @@ fetch_ws <- function(node) {
   
   ws
   
-  
 }
 
 
@@ -351,7 +257,6 @@ fetch_ws <- function(node) {
 #'@importFrom httr GET
 #'@importFrom httr url_ok
 get_spreadsheets_feed <- function(key) {
-  
   # Construct url for worksheets feed
   the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", key,
                     "/public/full")
@@ -363,7 +268,7 @@ get_spreadsheets_feed <- function(key) {
   x <- GET(the_url)
   
   # parse response to get worksheets feed
-  ss_feed <- xmlInternalTreeParse(x) #return "XMLInternalDocument"
+  ss_feed <- google_parse(x)
   
   ss_feed
 }
@@ -385,12 +290,13 @@ sheets <- function(client) {
   
   # to get spreadsheets feed
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
-  r <- GET(the_url, add_headers('Authorization' = client$http_session$headers))
-  ss_feed <- xmlInternalTreeParse(r)
+  req <- GET(the_url, add_headers('Authorization' = client$http_session$headers))
+
+  ss_feed <- google_parse(req)
   
-  ss_titles <- getNodeSet(ss_feed, "//ns:entry//ns:title", "ns")
-  ss_updated <- getNodeSet(ss_feed, "//ns:entry//ns:updated", "ns")
-  ss_ws_feed <- getNodeSet(ss_feed, "//ns:entry/ns:link[@rel='http://schemas.google.com/spreadsheets/2006#worksheetsfeed']", "ns")
+  ss_titles <- getNodeSet(ss_feed, "//ns:entry//ns:title", c("ns" = default_ns))
+  ss_updated <- getNodeSet(ss_feed, "//ns:entry//ns:updated", c("ns" = default_ns))
+  ss_ws_feed <- getNodeSet(ss_feed, "//ns:link[@rel='http://schemas.google.com/spreadsheets/2006#worksheetsfeed']", c("ns" = default_ns))
   
   ss_titles <- unlist(xmlApply(ss_titles, xmlValue))
   ss_updated <- unlist(xmlApply(ss_updated, xmlValue))
@@ -404,3 +310,17 @@ sheets <- function(client) {
   sheets_data
 }
 
+# Google returns status 200 (success) or 403 (failure), show error msg if 403
+google_check <- function(req) {
+  if(status_code(req) == 403) {
+    if(grepl("BadAuthentication", content(req)))
+      stop("Incorrect username or password.")
+    else
+      stop("Unable to authenticate")
+  }
+}
+
+#'@importFrom XML xmlInternalTreeParse
+google_parse <- function(req) {
+  xmlInternalTreeParse(req)
+}
