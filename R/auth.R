@@ -29,7 +29,6 @@ login <- function(email, passwd) {
 
   # SID, LSID not active, extract auth token
   token <- sub(".*Auth=", "", content(req))
-
   auth_header <- paste0("GoogleLogin auth=", token)
 
   # instantiate client object to store credentials
@@ -37,7 +36,6 @@ login <- function(email, passwd) {
   new_client$auth <- auth_header
   new_client
 }
-
 
 #' Authorize client using Oauth2.0 Credentials
 #'
@@ -74,6 +72,6 @@ authorize <- function() {
 
 # check google token upon retrieval so error is found before making requests
 check_token <- function(token) {
-  if(token$credentials == "invalid_client")
-    message("Invalid Credentials.")
+  if("invalid_client" %in% unlist(token$credentials))
+    message("Invalid Credentials. Please check client_secret.")
 }
