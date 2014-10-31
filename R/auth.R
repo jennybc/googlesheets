@@ -25,7 +25,7 @@ login <- function(email, passwd) {
                                    "Passwd" = passwd,
                                    "service" = service))
 
-  google_check(req)
+  gsheets_check(req)
 
   # SID, LSID not active, extract auth token
   token <- sub(".*Auth=", "", content(req))

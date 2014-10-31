@@ -10,8 +10,6 @@ list_spreadsheets(client)
 }
 \value{
 Dataframe of spreadsheet names.
-
-Use auth token stored in http_session object of client object to make GET request.
 }
 \description{
 Retrive list of spreadsheets

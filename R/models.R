@@ -24,9 +24,9 @@ spreadsheet <- function() {
 #'@return Object of class worksheet.
 #'
 worksheet <- function() {
-  structure(list(id = character(),
+  structure(list(sheet_id = character(),
+                 id = character(),
                  title = character(),
-                 #url = character(), 
                  listfeed = character(),
                  cellsfeed = character()), class = "worksheet")
 }
