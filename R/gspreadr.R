@@ -11,7 +11,7 @@ default_ns = "http://www.w3.org/2005/Atom"
 #'Use auth token stored in http_session object of client object to make GET request.
 #'@export
 list_spreadsheets <- function(client) {
-  titles <- sheets(client)$sheet_title
+  titles <- spreadsheets(client)$sheet_title
   titles
 }
 
@@ -29,37 +29,25 @@ list_spreadsheets <- function(client) {
 #'@importFrom XML getNodeSet
 open_spreadsheet <- function(client, title) {
   
-  ss_feed <- sheets(client) # returns dataframe of spreadsheet feed info
+  ss_feed <- spreadsheets(client) # returns dataframe of spreadsheet feed info
   
   index <- match(title, ss_feed$sheet_title)
   
-  if(is.na(index))
-    stop("Spreadsheet not found.")
+  if(is.na(index)) stop("Spreadsheet not found.")
   
-  # uri for worksheets feed
-  ws_url <- ss_feed[index, "worksheetsfeed_uri"]
+  sheet_key <- ss_feed[index, "sheet_key"]
   
-  auth <- check_client(client)
-  
-  req <- GET(ws_url, auth)
-  
-  # parse response to get worksheets feed
+  req <- spreadsheets_GET("worksheets", client, sheet_key)
+
   ws_feed <- google_parse(req)
   ws_feed_list <- xmlToList(ws_feed)
   
   ss <- spreadsheet()
-  
-  ss$sheet_id <- ws_feed_list$id
-  
-  ss_id <- ws_feed_list$id
-  ss_one <- sub(".*worksheets/", "", ss_id)
-  ss_two <- sub("/.*", "", ss_one)
-  
+  ss$sheet_id <- sheet_key
   ss$updated <- ws_feed_list$updated
   ss$sheet_title <- ws_feed_list$title[[1]]
   ss$nsheets <- as.numeric(ws_feed_list$totalResults)
   
-  # return list of entry nodes
   ws_nodes <- getNodeSet(ws_feed, "//ns:entry", c(ns = default_ns))
   
   # get values for all worksheet elements stored in entry node
@@ -123,8 +111,9 @@ get_worksheet <- function(spreadsheet, title) {
 get_dataframe <- function(client = NA, ws) {
   
   if(is.object(client)) {
-    auth <- check_client(client)
+    auth <- spreadsheets_auth(client)
     req <- GET(ws$cellsfeed, auth)
+    req <- spreadsheets_GET("worksheets", client)
   } else {
     req <- GET(ws$cellsfeed) # public worksheet
   }
@@ -168,7 +157,7 @@ get_dataframe <- function(client = NA, ws) {
 #'@importFrom XML getNodeSet
 open_by_key <- function(key) {
   
-  ss_feed <- get_spreadsheets_feed(key)
+  ss_feed <- get_worksheets_feed(key)
   
   # convert to list
   ss_feed_list <- xmlToList(ss_feed)
@@ -215,7 +204,7 @@ open_by_url <- function(url) {
 
 # INTERNAL HELPERS -----
 
-# Make worksheet object from spreadsheet feed 
+# Retrieve worksheet object from worksheets feed 
 # store info from <entry> ... </entry>
 #'@importFrom XML xmlName
 #'@importFrom XML xmlToList
@@ -229,40 +218,31 @@ fetch_ws <- function(node) {
   
   feed_list <- xmlToList(node)
   
-  ws <- worksheet()
-  
-  ws$id <- unlist(strsplit(feed_list$id, "/"))[[9]]
-  ws$title <- (feed_list$title)$text
-  
   listfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#listfeed']", "ns")
   cellsfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#cellsfeed']", "ns")
-  
   ws_listfeed <- unlist(xmlApply(listfeed, function(x) xmlGetAttr(x, "href")))
   ws_cellsfeed <- unlist(xmlApply(cellsfeed, function(x) xmlGetAttr(x, "href")))
   
+  ws <- worksheet()
+  ws$id <- unlist(strsplit(feed_list$id, "/"))[[9]]
+  ws$title <- (feed_list$title)$text
   ws$listfeed <- ws_listfeed
   ws$cellsfeed <- ws_cellsfeed
   
   ws
 }
 
-
-# Make api call to get spreadsheets feed
+# Make API call to get worksheets feed
 #'@importFrom httr GET
 #'@importFrom httr url_ok
-get_spreadsheets_feed <- function(key) {
-  # Construct url for worksheets feed
-  the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", key,
-                    "/public/full")
-  
-  if(!url_ok(the_url))
-    stop("The spreadsheet at this URL could not be found. Make sure that you have the right key.")
-  
-  # make request
-  x <- GET(the_url)
+get_worksheets_feed <- function(key) {
+  req <- 
+    spreadsheets_GET("worksheets", client = NULL, key, visibility = "public")
+
+  if(status_code(req) != 200) stop("The spreadsheet at this URL could not be found. Make sure that you have the right key.")
   
   # parse response to get worksheets feed
-  ss_feed <- google_parse(x)
+  ss_feed <- google_parse(req)
   ss_feed
 }
 
@@ -275,16 +255,14 @@ get_spreadsheets_feed <- function(key) {
 # 
 # Use auth token stored in http_session object of client object to make GET request. 
 #'@importFrom httr GET
-#'@importFrom httr add_headers
 #'@importFrom XML xmlApply
 #'@importFrom XML xmlValue
 #'@importFrom XML xmlGetAttr
-sheets <- function(client) {
-  auth <- check_client(client)
+spreadsheets <- function(client) {
   
-  # to get spreadsheets feed
-  the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
-  req <- GET(the_url, auth)
+  req <- spreadsheets_GET("spreadsheets", client)
+  
+  stop_for_status(req)
   
   ss_feed <- google_parse(req)
   
@@ -296,15 +274,19 @@ sheets <- function(client) {
   ss_updated <- unlist(xmlApply(ss_updated, xmlValue))
   ss_ws_feed <- unlist(xmlApply(ss_ws_feed, function(x) xmlGetAttr(x, "href")))
   
+  clean1 <- sub(".*worksheets/", "", ss_ws_feed)
+  ssheet_key <- sub("/.*", "", clean1)
+  
   sheets_data <- data.frame(sheet_title = ss_titles,
                             last_updated = ss_updated,
-                            worksheetsfeed_uri = ss_ws_feed,
+                            sheet_key = ssheet_key,
                             stringsAsFactors = FALSE)
-  
   sheets_data
 }
 
 # Google returns status 200 (success) or 403 (failure), show error msg if 403
+#'@importFrom httr status_code
+#'@importFrom httr content
 google_check <- function(req) {
   if(status_code(req) == 403) {
     if(grepl("BadAuthentication", content(req)))
@@ -320,7 +302,9 @@ google_parse <- function(req) {
 }
 
 # check if client is using Google login or oauth2.0
-check_client <- function(client) {
+#'@importFrom httr config
+#'@importFrom httr add_headers
+spreadsheets_auth <- function(client) {
   if(class(client$auth) != "character")
     auth <- config(token = client$auth)
   else 
