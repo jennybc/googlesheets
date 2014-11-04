@@ -8,7 +8,7 @@ get_worksheet(spreadsheet, title)
 \arguments{
 \item{spreadsheet}{Spreadsheet object housing the desired worksheet}
 
-\item{title}{Name of worksheet to retrieve}
+\item{title}{title of worksheet to retrieve}
 }
 \value{
 An object of class worksheet.

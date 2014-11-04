@@ -8,7 +8,7 @@ open_spreadsheet(client, title)
 \arguments{
 \item{client}{Client object returned by \code{\link{login}}}
 
-\item{title}{Name of spreadsheet}
+\item{title}{title of spreadsheet}
 }
 \value{
 Object of class spreadsheet.

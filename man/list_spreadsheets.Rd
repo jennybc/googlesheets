@@ -9,7 +9,7 @@ list_spreadsheets(client)
 \item{client}{Object of class client returned by \code{\link{login}}}
 }
 \value{
-Dataframe of spreadsheet names.
+Dataframe of spreadsheet titles.
 }
 \description{
 Retrive list of spreadsheets
