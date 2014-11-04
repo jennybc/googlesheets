@@ -19,18 +19,19 @@ login <- function(email, passwd) {
   service = "wise"
   account_type = "HOSTED_OR_GOOGLE"
   the_url = "https://www.google.com/accounts/ClientLogin"
-
+  
   req <- POST(the_url, body = list("accountType" = account_type,
                                    "Email" = email,
                                    "Passwd" = passwd,
                                    "service" = service))
-
+  
   gsheets_check(req)
-
+  
   # SID, LSID not active, extract auth token
   token <- sub(".*Auth=", "", content(req))
+  token <- sub("\n", "", token)
   auth_header <- paste0("GoogleLogin auth=", token)
-
+  
   # instantiate client object to store credentials
   new_client <- client()
   new_client$auth <- auth_header
@@ -53,15 +54,17 @@ login <- function(email, passwd) {
 #'@importFrom httr oauth_endpoints
 #'@importFrom httr oauth2.0_token
 authorize <- function() {
-  scope_list <- paste("https://spreadsheets.google.com/feeds","https://docs.google.com/feeds")
-  client_id <- "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
+  scope_list <- paste("https://spreadsheets.google.com/feeds", 
+                      "https://docs.google.com/feeds")
+  client_id <- 
+    "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
   client_secret <- "tgC0_gX_hbdtJ64u8kcyh8fK"
-
+  
   gspreadr_app <- oauth_app("google", client_id, client_secret)
-
+  
   google_token <-
     oauth2.0_token(oauth_endpoints("google"), gspreadr_app, scope = scope_list)
-
+  
   check_token(google_token)
   
   new_client <- client()

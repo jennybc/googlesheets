@@ -6,7 +6,7 @@ default_ns = "http://www.w3.org/2005/Atom"
 #' Retrive list of spreadsheets
 #'
 #' @param client Object of class client returned by \code{\link{login}}
-#' @return Dataframe of spreadsheet names.
+#' @return Dataframe of spreadsheet titles.
 #'
 #' @export
 list_spreadsheets <- function(client) {
@@ -19,7 +19,7 @@ list_spreadsheets <- function(client) {
 #' Use title of spreadsheet to retrieve object of class spreadsheet.
 #'
 #' @param client Client object returned by \code{\link{login}}
-#' @param title Name of spreadsheet
+#' @param title title of spreadsheet
 #' @return Object of class spreadsheet.
 #' @export
 #' @importFrom XML xmlToList
@@ -61,12 +61,12 @@ open_spreadsheet <- function(client, title) {
   ss
 }
 
-#' Get the names of the worksheets contained in spreadsheet.
+#' Get the titles of the worksheets contained in spreadsheet.
 #'
-#' Retrieve list of worksheet names contained in spreadsheet 
+#' Retrieve list of worksheet titles contained in spreadsheet 
 #'
 #' @param x A spreadsheet object returned by \code{\link{open_spreadsheet}}
-#' @return The names of worksheets contained in spreadsheet. 
+#' @return The titles of worksheets contained in spreadsheet. 
 #'
 #' This is a mini wrapper for x$ws_names.
 #' @export  
@@ -80,7 +80,7 @@ list_worksheets <- function(x) {
 #' Use title of worksheet to retrieve object of class spreadsheet.
 #'
 #' @param spreadsheet Spreadsheet object housing the desired worksheet
-#' @param title Name of worksheet to retrieve
+#' @param title title of worksheet to retrieve
 #' @return An object of class worksheet. 
 #' @export
 get_worksheet <- function(spreadsheet, title) {
@@ -107,6 +107,7 @@ get_worksheet <- function(spreadsheet, title) {
 #' @importFrom XML xmlSApply
 #' @importFrom XML xmlAttrs
 get_dataframe <- function(ws, client = NULL) {
+  #since making another API call, must pass in client 
   if(!is.null(client))
     req <- gsheets_GET("cells", client, ws$sheet_id, ws$id)
   else
@@ -136,6 +137,68 @@ get_dataframe <- function(ws, client = NULL) {
   my_data
 }
 
+#' Add new worksheet to spreadsheet
+#'
+#' Add a new worksheet to spreadsheet, specify name, number of rows and cols.
+#'
+#' @param sheet Spreadsheet object
+#' @param client Client object
+#' @param name character string for name of new worksheet 
+#' @param n_row Number of rows
+#' @param n_col Number of columns
+#' @export
+#' @importFrom XML xmlNode
+#' @importFrom httr POST
+#' @importFrom httr status_code
+add_worksheet<- function(client, sheet, name, n_row, n_col) {
+  
+  the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", 
+                    sheet$sheet_id, "/private/full")
+  
+  the_body <- xmlNode("entry", 
+                      namespaceDefinitions = c("http://www.w3.org/2005/Atom",
+                                               gs = "http://schemas.google.com/spreadsheets/2006"),
+                      xmlNode("title", name),
+                      xmlNode("gs:rowCount", n_row),
+                      xmlNode("gs:colCount", n_col))
+  
+  auth <- gsheets_auth(client)
+  
+  req <- 
+    POST(the_url, auth, add_headers("Content-Type" = "application/atom+xml"),
+         body = toString(the_body))
+  
+  if(status_code(req) == 201)
+    message(paste("Worksheet", name, "successfully created in Spreadsheet",
+                  sheet$sheet_title))
+  else
+    message("Bad Request, something wrong on client side.")
+}
+
+
+#' Delete worksheet from spreadsheet
+#'
+#' Delete worksheet, worksheet and all of its data will be removed from spreadsheet.
+#'
+#' @param client Client object
+#' @param ws Worksheet object
+#' @export
+del_worksheet<- function(client, ws) {
+  
+  the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", 
+                    ws$sheet_id, "/private/full/", ws$id, "/version")
+  
+  auth <- gsheets_auth(client)
+  
+  req <- DELETE(the_url, auth)
+  
+  if(status_code(req) == 200)
+    message(paste("Worksheet", ws$title, "successfully deleted."))
+  else 
+    message("Bad Request, something wrong on client side.")
+}
+
+
 # Public worksheets only -----
 
 #' Open spreadsheet by key 
@@ -153,21 +216,20 @@ open_by_key <- function(key) {
   req <- gsheets_GET("worksheets", key = key, visibility = "public")
   
   # parse response to get worksheets feed
-  ss_feed <- gsheets_parse(req)
-  ss_feed
+  ws_feed <- gsheets_parse(req)
   
   # convert to list
-  ss_feed_list <- xmlToList(ss_feed)
+  ws_feed_list <- xmlToList(ws_feed)
   
   ss <- spreadsheet()
   
   ss$sheet_id <- key
-  ss$updated <- ss_feed_list$updated
-  ss$sheet_title <- ss_feed_list$title[[1]]
-  ss$nsheets <- as.numeric(ss_feed_list$totalResults)
+  ss$updated <- ws_feed_list$updated
+  ss$sheet_title <- ws_feed_list$title[[1]]
+  ss$nsheets <- as.numeric(ws_feed_list$totalResults)
   
   # return list of entry nodes
-  ws_nodes <- getNodeSet(ss_feed, "//ns:entry", c("ns" = default_ns))
+  ws_nodes <- getNodeSet(ws_feed, "//ns:entry", c("ns" = default_ns))
   
   # get values for all worksheet elements stored in entry node
   # returns list of worksheet objects
@@ -231,13 +293,13 @@ fetch_ws <- function(node) {
   ws
 }
 
-#' Get list of spreadsheets: name, last updated, and key
+#' Get list of spreadsheets: title, last updated, and key
 #'
 #' Retrieve dataframe of spreadsheets information
 #'
 #' @param client Client object returned by \code{\link{login}} or 
 #' \code{\link{authorize}}
-#' @return A dataframe containing name of spreadsheets, last updated, and uris for worksheets feed.
+#' @return A dataframe containing title of spreadsheets, last updated, and uris for worksheets feed.
 #' @importFrom XML xmlApply
 #' @importFrom XML xmlValue
 #' @importFrom XML xmlGetAttr
