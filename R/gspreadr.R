@@ -106,7 +106,7 @@ get_worksheet <- function(spreadsheet, title) {
 #' @importFrom XML getNodeSet
 #' @importFrom XML xmlSApply
 #' @importFrom XML xmlAttrs
-get_dataframe <- function(ws, client = NULL) {
+get_dataframe <- function(client = NULL, ws) {
   #since making another API call, must pass in client 
   if(!is.null(client))
     req <- gsheets_GET("cells", client, ws$sheet_id, ws$id)
@@ -148,6 +148,7 @@ get_dataframe <- function(ws, client = NULL) {
 #' @param n_col Number of columns
 #' @export
 #' @importFrom XML xmlNode
+#' @importFrom XML toString.XMLNode
 #' @importFrom httr POST
 #' @importFrom httr status_code
 add_worksheet<- function(client, sheet, name, n_row, n_col) {
@@ -166,7 +167,7 @@ add_worksheet<- function(client, sheet, name, n_row, n_col) {
   
   req <- 
     POST(the_url, auth, add_headers("Content-Type" = "application/atom+xml"),
-         body = toString(the_body))
+         body = toString.XMLNode(the_body))
   
   if(status_code(req) == 201)
     message(paste("Worksheet", name, "successfully created in Spreadsheet",
@@ -182,6 +183,8 @@ add_worksheet<- function(client, sheet, name, n_row, n_col) {
 #'
 #' @param client Client object
 #' @param ws Worksheet object
+#' @importFrom httr DELETE
+#' @importFrom httr status_code
 #' @export
 del_worksheet<- function(client, ws) {
   
