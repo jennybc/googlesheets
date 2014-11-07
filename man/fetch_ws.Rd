@@ -4,7 +4,7 @@
 \title{Retrieve worksheet object from worksheets feed
 store info from <entry> ... </entry>}
 \usage{
-fetch_ws(node)
+fetch_ws(node, sheet_id)
 }
 \description{
 Retrieve worksheet object from worksheets feed

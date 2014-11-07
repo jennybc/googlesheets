@@ -86,7 +86,6 @@ get_worksheet <- function(client = NULL, ss, title) {
   worksheet_dim(client, ws)
 }
 
-
 #' Get worksheet object as a dataframe
 #'
 #' Use worksheet object and turn it into a dataframe.
@@ -330,4 +329,115 @@ worksheet_dim <- function(client = NULL, ws) {
   
   ws
 }
+
+#' Get all values from a row.
+#'
+#' @param client a client object returned by \code{\link{login}} 
+#' or \code{\link{authorize}}.
+#' @param ws worksheet object returned by \code{\link{get_worksheet}}
+#' @param row row
+#' @return Vector of all values in row.
+#' @importFrom XML getNodeSet
+#' @export
+get_row <- function(client, ws, row) {
+  req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                     min_row = row, max_row = row)
+  
+  row_feed <- gsheets_parse(req)
+  row_vals <- getNodeSet(row_feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  
+  unlist(row_vals)
+}
+
+#' Get rows of worksheet
+#'
+#' Specify range of rows to get from worksheet.
+#'
+#' @param client a client object returned by \code{\link{login}} 
+#' or \code{\link{authorize}}.
+#' @param ws worksheet object returned by \code{\link{get_worksheet}}
+#' @param from,to start and end row indexes
+#' @return Dataframe of requested rows. 
+#' @importFrom XML getNodeSet
+#' @export
+get_rows <- function(client, ws, from, to) {
+  req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                     min_row = from, max_row = to)
+  
+  feed <- gsheets_parse(req)
+  
+  input <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  
+  row_num <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
+                        function(x) as.numeric(xmlAttrs(x)["row"]))
+  
+  col_num <-  getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
+                         function(x) as.numeric(xmlAttrs(x)["col"]))
+  
+  lookup_tbl <- data.frame(unlist(row_num), unlist(col_num), unlist(input),
+                           stringsAsFactors = FALSE)
+  
+  rows <- to - from + 1
+  cols <- length(col_num)
+  mat <- matrix(unlist(input), nrow = rows, ncol = ws$cols, byrow = TRUE)
+  
+  data.frame(mat)
+}
+
+#' Get all values from a column.
+#'
+#' @param client a client object returned by \code{\link{login}} 
+#' or \code{\link{authorize}}.
+#' @param ws worksheet object returned by \code{\link{get_worksheet}}
+#' @param col column
+#' @return Vector of all values in column
+#' @importFrom XML getNodeSet
+#' @export
+get_col <- function(client, ws, col) {
+  req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                     min_col = col, max_col = col)
+  
+  feed <- gsheets_parse(req)
+  col_vals <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  
+  unlist(col_vals)
+  
+}
+
+#' Get columns of worksheet
+#'
+#' Specify range of columns to get from worksheet.
+#'
+#' @param client a client object returned by \code{\link{login}} 
+#' or \code{\link{authorize}}.
+#' @param ws worksheet object returned by \code{\link{get_worksheet}}
+#' @param from,to start and end col indexes
+#' @return Dataframe of requested columns. 
+#' @importFrom XML getNodeSet
+#' @export
+get_cols <- function(client = NULL, ws, from, to) {
+  
+  if(to > ws$cols) 
+    to <- ws$cols
+  
+  req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                     min_col = from, max_col = to)
+  
+  feed <- gsheets_parse(req)
+  
+  input <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  
+  row_num <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
+                        function(x) as.numeric(xmlAttrs(x)["row"]))
+  
+  col_num <-  getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
+                         function(x) as.numeric(xmlAttrs(x)["col"]))
+  
+  rows <- length(row_num)
+  cols <- to - from + 1
+  mat <- matrix(unlist(input), nrow = rows, ncol = cols, byrow = TRUE)
+  
+  data.frame(mat)
+}
+
 

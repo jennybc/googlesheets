@@ -40,19 +40,12 @@ gsheets_GET <- function(feed, client = NULL, key = NULL,
       base_url <- paste(base_url, "cells", key, ws_id, visibility, projection, sep = "/")
       
       if(is.null(min_col)) {
-        
-        if(is.null(max_row)) max_row <- min_row
         query <- paste0("?min-row=", min_row, "&max-row=", max_row)
-        
       } else {
-        
-        if(is.null(max_col)) max_col <- min_col
         query <- paste0("?min-col=", min_col, "&max-col=", max_col)
-        
       }
       
       the_url <- paste0(base_url, query)
-      
     }
   )
   
