@@ -58,7 +58,7 @@ authorize <- function() {
                       "https://docs.google.com/feeds")
   client_id <- 
     "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
-  client_secret <- "tgC0_gX_hbdtJ64u8kcyh8fK"
+  client_secret <- "iWPrYg0lFHNQblnRrDbypvJL"
   
   gspreadr_app <- oauth_app("google", client_id, client_secret)
   

@@ -3,18 +3,18 @@
 \alias{add_worksheet}
 \title{Add new worksheet to spreadsheet}
 \usage{
-add_worksheet(client, sheet, name, n_row, n_col)
+add_worksheet(client, ss, name, rows, cols)
 }
 \arguments{
 \item{client}{Client object}
 
-\item{sheet}{Spreadsheet object}
+\item{ss}{Spreadsheet object}
 
 \item{name}{character string for name of new worksheet}
 
-\item{n_row}{Number of rows}
+\item{rows}{Number of rows}
 
-\item{n_col}{Number of columns}
+\item{cols}{Number of columns}
 }
 \description{
 Add a new worksheet to spreadsheet, specify name, number of rows and cols.

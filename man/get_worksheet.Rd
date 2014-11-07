@@ -3,17 +3,19 @@
 \alias{get_worksheet}
 \title{Open worksheet given worksheet title}
 \usage{
-get_worksheet(spreadsheet, title)
+get_worksheet(client = NULL, ss, title)
 }
 \arguments{
-\item{spreadsheet}{Spreadsheet object housing the desired worksheet}
+\item{client}{Client object}
+
+\item{ss}{Spreadsheet object containing worksheet}
 
 \item{title}{title of worksheet to retrieve}
 }
 \value{
-An object of class worksheet.
+An object of class worksheet and number of rows and cols attribute.
 }
 \description{
-Use title of worksheet to retrieve object of class spreadsheet.
+Use title of worksheet to retrieve object of class worksheet.
 }
 

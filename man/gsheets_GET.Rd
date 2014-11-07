@@ -3,12 +3,11 @@
 \alias{gsheets_GET}
 \title{Create GET request}
 \usage{
-gsheets_GET(feed_type, client = NULL, key = NULL, ws_id = NULL,
-  visibility = "private", projection = "full")
+gsheets_GET(feed, client = NULL, key = NULL, ws_id = NULL,
+  visibility = "private", projection = "full", min_row = NULL,
+  max_row = NULL, min_col = NULL, max_col = NULL)
 }
 \arguments{
-\item{feed_type}{One of the following: spreadsheets, worksheets, list, cells}
-
 \item{client}{Client object or NULL if accessing public worksheets feed}
 
 \item{key}{Spreadsheet key}
@@ -16,6 +15,8 @@ gsheets_GET(feed_type, client = NULL, key = NULL, ws_id = NULL,
 \item{visibility}{Either private or public}
 
 \item{projection}{Either full or basic}
+
+\item{feed_type}{One of the following: spreadsheets, worksheets, list, cells}
 
 \item{worksheet_id}{id of worksheet contained in spreadsheet}
 }

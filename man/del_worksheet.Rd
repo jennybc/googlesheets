@@ -3,10 +3,12 @@
 \alias{del_worksheet}
 \title{Delete worksheet from spreadsheet}
 \usage{
-del_worksheet(client, ws)
+del_worksheet(client, ss, ws)
 }
 \arguments{
 \item{client}{Client object}
+
+\item{ss}{Spreadsheet object}
 
 \item{ws}{Worksheet object}
 }

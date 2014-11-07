@@ -6,12 +6,10 @@
 list_spreadsheets(client)
 }
 \arguments{
-\item{client}{Object of class client returned by \code{\link{login}}}
-}
-\value{
-Dataframe of spreadsheet titles.
+\item{client}{a client object returned by \code{\link{login}}
+or \code{\link{authorize}}}
 }
 \description{
-Retrive list of spreadsheets
+Retrieve the names of spreadsheets owned by user.
 }
 

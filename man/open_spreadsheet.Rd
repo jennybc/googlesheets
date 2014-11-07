@@ -6,14 +6,15 @@
 open_spreadsheet(client, title)
 }
 \arguments{
-\item{client}{Client object returned by \code{\link{login}}}
+\item{client}{a client object returned by \code{\link{login}}
+or \code{\link{authorize}}.}
 
-\item{title}{title of spreadsheet}
+\item{title}{the title of a spreadsheet.}
 }
 \value{
 Object of class spreadsheet.
 }
 \description{
-Use title of spreadsheet to retrieve object of class spreadsheet.
+Use title of spreadsheet to get object of class spreadsheet.
 }
 
