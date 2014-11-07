@@ -43,9 +43,8 @@ open_spreadsheet <- function(client, title) {
   ss$updated <- wsfeed_list$updated
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
   
-  ws_nodes <- getNodeSet(wsfeed, "//ns:entry", c(ns = default_ns))
-  ws_objs <- lapply(ws_nodes, fetch_ws)
-  ws_objs <- lapply(ws_objs, function(x) {x$sheet_id <- ss$sheet_id ; x})
+  ws_objs <- getNodeSet(wsfeed, "//ns:entry", c(ns = default_ns), 
+                        fun = function(x) {fetch_ws(x, ss$sheet_id)})
   
   names(ws_objs) <- lapply(ws_objs, function(x) x$title)
   ss$ws_names <- names(ws_objs)
@@ -101,29 +100,22 @@ get_worksheet <- function(client = NULL, ss, title) {
 #' @importFrom XML xmlAttrs
 get_dataframe <- function(client = NULL, ws) {
   #since making another API call, must pass in client 
-  if(is.null(client))
-    req <- gsheets_GET("cells", key = ws$sheet_id, ws_id = ws$id,
-                       visibility = "public") 
-  else
+  if(is.null(client)) {
+    req <- gsheets_GET("cells", key = ws$sheet_id, ws_id = ws$id, visibility = "public") 
+  } else {
     req <- req <- gsheets_GET("cells", client, ws$sheet_id, ws$id)
+  }
   
   cellsfeed <- gsheets_parse(req)
   cell_nodes <- getNodeSet(cellsfeed, "//ns:entry//gs:cell",
-                           c("ns" = default_ns, "gs"))
+                           c("ns" = default_ns, "gs"), fun = xmlValue)
   
-  vals <- xmlSApply(cell_nodes, xmlValue)
+  vals <- unlist(cell_nodes)
   
-  # calculate index for last node to get ncol and nrow
-  last_node <- unlist(tail(cell_nodes, n=1))
-  dat <- unlist(lapply(last_node, xmlAttrs))
-  
-  n_row <- as.numeric(dat[1])
-  n_col <- as.numeric(dat[2])
-  
-  my_data <- data.frame(matrix(vals, nrow = n_row, ncol = n_col, byrow = TRUE),
+  my_data <- data.frame(matrix(vals, nrow = ws$rows, ncol = ws$cols, byrow = TRUE),
                         row.names = NULL)
   
-  names(my_data) <- vals[1:n_col]
+  names(my_data) <- vals[1:ws$cols]
   my_data <- my_data[-1, ]
   
   row.names(my_data) <- NULL
@@ -218,14 +210,11 @@ open_by_key <- function(key) {
   ss$sheet_title <- wsfeed_list$title$text
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
   
-  # return list of entry nodes
-  ws_nodes <- getNodeSet(wsfeed, "//ns:entry", c("ns" = default_ns))
-  
-  ws_objs <- lapply(ws_nodes, fetch_ws)
-  ws_objs <- lapply(ws_objs, function(x) {x$sheet_id <- ss$sheet_id ; x})
+  # return list of worksheet objs
+  ws_objs<- getNodeSet(wsfeed, "//ns:entry", c("ns" = default_ns),
+                       fun = function(x) fetch_ws(x, ss$sheet_id))
   
   names(ws_objs) <- lapply(ws_objs, function(x) x$title)
-  
   ss$ws_names <- names(ws_objs)
   ss$worksheets <- ws_objs
   ss
@@ -256,19 +245,20 @@ open_by_url <- function(url) {
 #' @importFrom XML getNodeSet
 #' @importFrom XML xmlApply
 #' @importFrom XML xmlGetAttr
-fetch_ws <- function(node) {
+fetch_ws <- function(node, sheet_id) {
   nodes_list <- xmlToList(node)
   
-  listfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#listfeed']", "ns")
-  cellsfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#cellsfeed']", "ns")
-  ws_listfeed <- unlist(xmlApply(listfeed, function(x) xmlGetAttr(x, "href")))
-  ws_cellsfeed <- unlist(xmlApply(cellsfeed, function(x) xmlGetAttr(x, "href")))
+  listfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#listfeed']", "ns",
+                         function(x) xmlGetAttr(x, "href"))
+  cellsfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#cellsfeed']", "ns",
+                          function(x) xmlGetAttr(x, "href"))
   
   ws <- worksheet()
+  ws$sheet_id <- sheet_id
   ws$id <- unlist(strsplit(nodes_list$id, "/"))[[9]]
   ws$title <- (nodes_list$title)$text
-  ws$listfeed <- ws_listfeed
-  ws$cellsfeed <- ws_cellsfeed
+  ws$listfeed <- listfeed
+  ws$cellsfeed <- cellsfeed
   ws
 }
 
@@ -297,9 +287,9 @@ spreadsheets_info <- function(client) {
   ss_key <- sub("/.*", "", ss_key_pre)
   
   ssdata_df <- data.frame(sheet_title = ss_titles,
-                            last_updated = ss_updated,
-                            sheet_key = ss_key,
-                            stringsAsFactors = FALSE)
+                          last_updated = ss_updated,
+                          sheet_key = ss_key,
+                          stringsAsFactors = FALSE)
   ssdata_df
 }
 
@@ -311,20 +301,20 @@ spreadsheets_info <- function(client) {
 #'@importFrom XML xmlApply
 #'@importFrom XML xmlGetAttr
 worksheet_dim <- function(client = NULL, ws) {
-  if(is.null(client))
+  if(is.null(client)) {
     req <- gsheets_GET("cells", client, key = ws$sheet_id, ws_id = ws$id, 
                        visibility = "public")
-  else
+  } else {
     req <- gsheets_GET("cells", client, key = ws$sheet_id, ws_id = ws$id)
+  }
   
   feed <- gsheets_parse(req)
-  nodes <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"))
   
-  cell_row_num <- xmlSApply(nodes, 
-                            function(x) as.numeric(xmlGetAttr(x, "row")))
+  cell_row_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
+                             function(x) as.numeric(xmlGetAttr(x, "row")))
   
-  cell_col_num <- xmlSApply(nodes, 
-                            function(x) as.numeric(xmlGetAttr(x, "col")))
+  cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
+                             function(x) as.numeric(xmlGetAttr(x, "col")))
   
   # returns warning for -Inf because cellfeed is empty when retrieving from empty worksheet
   ws$rows <- max(unlist(cell_row_num))
