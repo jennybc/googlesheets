@@ -44,7 +44,7 @@ open_spreadsheet <- function(client, title) {
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
   
   ws_objs <- getNodeSet(wsfeed, "//ns:entry", c(ns = default_ns), 
-                        fun = function(x) {fetch_ws(x, ss$sheet_id)})
+                        function(x) fetch_ws(x, ss$sheet_id))
   
   names(ws_objs) <- lapply(ws_objs, function(x) x$title)
   ss$ws_names <- names(ws_objs)
@@ -100,7 +100,7 @@ get_worksheet <- function(client = NULL, ss, title) {
 #' @importFrom XML toString.XMLNode
 #' @importFrom httr POST
 #' @importFrom httr status_code
-add_worksheet<- function(client, ss, name, rows, cols) {
+add_worksheet<- function(client, ss, title, rows, cols) {
   the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", 
                     ss$sheet_id, "/private/full")
   
@@ -108,7 +108,7 @@ add_worksheet<- function(client, ss, name, rows, cols) {
     xmlNode("entry", 
             namespaceDefinitions = c("http://www.w3.org/2005/Atom",
                                      gs = "http://schemas.google.com/spreadsheets/2006"),
-            xmlNode("title", name),
+            xmlNode("title", title),
             xmlNode("gs:rowCount", rows),
             xmlNode("gs:colCount", cols))
   
@@ -119,7 +119,7 @@ add_worksheet<- function(client, ss, name, rows, cols) {
          body = toString.XMLNode(the_body))
   
   if(status_code(req) == 201)
-    message(paste("Worksheet", name, "successfully created in Spreadsheet",
+    message(paste("Worksheet", title, "successfully created in Spreadsheet",
                   ss$sheet_title))
   else
     message("Bad Request, something wrong on client side.")
@@ -199,101 +199,6 @@ open_by_url <- function(url) {
   open_by_key(key)
 }
 
-# HELPERS -----
-
-#' Retrieve worksheet object from worksheets feed 
-#' store info from <entry> ... </entry>
-#' @importFrom XML xmlName
-#' @importFrom XML xmlToList
-#' @importFrom XML getNodeSet
-#' @importFrom XML xmlApply
-#' @importFrom XML xmlGetAttr
-fetch_ws <- function(node, sheet_id) {
-  nodes_list <- xmlToList(node)
-  
-  listfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#listfeed']", "ns",
-                         function(x) xmlGetAttr(x, "href"))
-  cellsfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#cellsfeed']", "ns",
-                          function(x) xmlGetAttr(x, "href"))
-  
-  ws <- worksheet()
-  ws$sheet_id <- sheet_id
-  ws$id <- unlist(strsplit(nodes_list$id, "/"))[[9]]
-  ws$title <- (nodes_list$title)$text
-  ws$listfeed <- listfeed
-  ws$cellsfeed <- cellsfeed
-  ws
-}
-
-#' Get information from spreadsheets feed 
-#'
-#' Get spreadsheets titles, keys, and date/time of last update.
-#'
-#' @param client Client object returned by \code{\link{login}} or 
-#' \code{\link{authorize}}
-#' @importFrom XML xmlApply
-#' @importFrom XML xmlValue
-#' @importFrom XML xmlGetAttr
-spreadsheets_info <- function(client) {
-  req <- gsheets_GET("spreadsheets", client)
-  ssfeed <- gsheets_parse(req)
-  
-  ss_titles <- getNodeSet(ssfeed, "//ns:entry//ns:title", c("ns" = default_ns))
-  ss_updated <- getNodeSet(ssfeed, "//ns:entry//ns:updated", c("ns" = default_ns))
-  ss_wsfeed <- getNodeSet(ssfeed, "//ns:link[@rel='http://schemas.google.com/spreadsheets/2006#worksheetsfeed']", c("ns" = default_ns))
-  
-  ss_titles <- unlist(xmlApply(ss_titles, xmlValue))
-  ss_updated <- unlist(xmlApply(ss_updated, xmlValue))
-  ss_wsfeed <- unlist(xmlApply(ss_wsfeed, function(x) xmlGetAttr(x, "href")))
-  
-  ss_key_pre <- sub(".*worksheets/", "", ss_wsfeed)
-  ss_key <- sub("/.*", "", ss_key_pre)
-  
-  ssdata_df <- data.frame(sheet_title = ss_titles,
-                          last_updated = ss_updated,
-                          sheet_key = ss_key,
-                          stringsAsFactors = FALSE)
-  ssdata_df
-}
-
-#'Given client, worksheet object and spreadsheet id, find nrows and ncols of worksheet
-#'need client because making a request for cellfeed
-#'@param client Client object
-#'@param ws Worksheet object
-#'@importFrom XML getNodeSet
-#'@importFrom XML xmlApply
-#'@importFrom XML xmlGetAttr
-worksheet_dim <- function(client = NULL, ws) {
-  if(is.null(client)) {
-    req <- gsheets_GET("cells", client, key = ws$sheet_id, ws_id = ws$id, 
-                       visibility = "public")
-  } else {
-    req <- gsheets_GET("cells", client, key = ws$sheet_id, ws_id = ws$id)
-  }
-  
-  feed <- gsheets_parse(req)
-  
-  #check for any entry nodes
-  cell_nodes <- getNodeSet(feed, "//ns:feed//ns:entry", c("ns" = default_ns))
-  
-  if(length(cell_nodes) == 0) {
-    dims <- getNodeSet(feed, "//ns:feed//gs:*", c("ns" = default_ns, "gs"), xmlValue)
-    ws$rows <- as.numeric(dims[[1]])
-    ws$cols <- as.numeric(dims[[2]])
-  } else {
-    cell_row_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
-                               function(x) as.numeric(xmlGetAttr(x, "row")))
-    
-    cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
-                               function(x) as.numeric(xmlGetAttr(x, "col")))
-    
-    ws$rows <- max(unlist(cell_row_num))
-    ws$cols <- max(unlist(cell_col_num))
-  }
-  
-  ws
-}
-
 #' Get all values from a row.
 #'
 #' @param client a client object returned by \code{\link{login}} 
@@ -304,13 +209,25 @@ worksheet_dim <- function(client = NULL, ws) {
 #' @importFrom XML getNodeSet
 #' @export
 get_row <- function(client, ws, row) {
-  req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
-                     min_row = row, max_row = row)
   
-  row_feed <- gsheets_parse(req)
-  row_vals <- getNodeSet(row_feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  if(row > ws$rows)
+    stop("Specified row exceeds the number of rows contained in worksheet.")
   
-  unlist(row_vals)
+  if(is.null(client)) {
+    req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                       min_row = row, max_row = row, visibility = "public") 
+  } else {
+    req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                       min_row = row, max_row = row)
+  }
+  
+  feed <- gsheets_parse(req)
+  
+  tbl <- create_lookup_tbl(feed)
+  
+  rows <- dlply(tbl, "row", check_missing) # insert NAs for missing values
+  
+  rbind.fill(lapply(rows, function(x) {as.data.frame(t(x), stringsAsFactors=FALSE)}))
 }
 
 #' Get rows of worksheet
@@ -323,30 +240,31 @@ get_row <- function(client, ws, row) {
 #' @param from,to start and end row indexes
 #' @return Dataframe of requested rows. 
 #' @importFrom XML getNodeSet
+#' @importFrom plyr rbind.fill
+#' @importFrom plyr dlply
 #' @export
 get_rows <- function(client, ws, from, to) {
-  req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
-                     min_row = from, max_row = to)
+  
+  if(to > ws$rows)
+    to <- ws$rows
+  
+  if(is.null(client)) {
+    req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                       min_row = from, max_row = to, visibility = "public") 
+  } else {
+    req <- gsheets_GET("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
+                       min_row = from, max_row = to)
+  }
   
   feed <- gsheets_parse(req)
   
-  input <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  tbl <- create_lookup_tbl(feed)
   
-  row_num <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
-                        function(x) as.numeric(xmlAttrs(x)["row"]))
+  rows <- dlply(tbl, "row", check_missing)
   
-  col_num <-  getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
-                         function(x) as.numeric(xmlAttrs(x)["col"]))
-  
-  lookup_tbl <- data.frame(unlist(row_num), unlist(col_num), unlist(input),
-                           stringsAsFactors = FALSE)
-  
-  rows <- to - from + 1
-  cols <- length(col_num)
-  mat <- matrix(unlist(input), nrow = rows, ncol = ws$cols, byrow = TRUE)
-  
-  data.frame(mat)
+  rbind.fill(lapply(rows, function(x) {as.data.frame(t(x), stringsAsFactors=FALSE)}))
 }
+
 
 #' Get all values from a column.
 #'
@@ -362,10 +280,21 @@ get_col <- function(client, ws, col) {
                      min_col = col, max_col = col)
   
   feed <- gsheets_parse(req)
-  col_vals <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
   
-  unlist(col_vals)
+  tbl <- create_lookup_tbl(feed)
   
+  col_vals <- c()
+  for(i in 1:max(tbl$row)) {
+    
+    if(any(tbl$row ==  i)) {
+      ind <- which(tbl$row == i)
+      col_vals <- c(col_vals, tbl[ind, "val"])
+    } else {
+      col_vals <- c(col_vals, NA) 
+    }
+    
+  }
+  col_vals
 }
 
 #' Get columns of worksheet
@@ -374,10 +303,14 @@ get_col <- function(client, ws, col) {
 #'
 #' @param client a client object returned by \code{\link{login}} 
 #' or \code{\link{authorize}}.
-#' @param ws worksheet object returned by \code{\link{get_worksheet}}
-#' @param from,to start and end col indexes
-#' @return Dataframe of requested columns. 
+#' @param ws Worksheet object
+#' @param from,to start and end column indexes
+#' @return Dataframe of requested columns.
+#' @examples
+#' get_cols(ws, 1, 2)
+#' get_cols(ws, 30, 40) 
 #' @importFrom XML getNodeSet
+#' @importFrom plyr dlply
 #' @export
 get_cols <- function(client = NULL, ws, from, to) {
   
@@ -394,19 +327,12 @@ get_cols <- function(client = NULL, ws, from, to) {
   
   feed <- gsheets_parse(req)
   
-  input <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  tbl <- create_lookup_tbl(feed)
   
-  row_num <- getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
-                        function(x) as.numeric(xmlAttrs(x)["row"]))
+  rows <- dlply(tbl, "row", check_missing)
   
-  col_num <-  getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
-                         function(x) as.numeric(xmlAttrs(x)["col"]))
+  df <- rbind.fill(lapply(rows, function(x) {as.data.frame(t(x), stringsAsFactors=FALSE)}))
   
-  rows <- max(unlist(row_num))
-  cols <- to - from + 1
-  mat <- matrix(unlist(input), nrow = rows, ncol = cols, byrow = TRUE)
-  
-  data.frame(mat)
 }
 
 #' Get all values of worksheet as a dataframe
@@ -420,9 +346,7 @@ get_cols <- function(client = NULL, ws, from, to) {
 #' This function calls on \code{\link{get_cols}} with to set as number of 
 #' columns of the worksheet.
 #' @export
-#' @importFrom XML getNodeSet
-#' @importFrom XML xmlSApply
-#' @importFrom XML xmlAttrs
 get_dataframe <- function(client = NULL, ws) {
- get_cols(client, ws, 1, ws$cols)
+  get_cols(client, ws, 1, ws$cols)
 }
+
