@@ -15,10 +15,8 @@ test_that("Open spreadsheet by title", {
   expect_equal(class(ss1), "spreadsheet")
   expect_equal(ss1$nsheets, 1)
   expect_equal(ss1$sheet_title, "Gapminder")
-  
   expect_error(class(open_spreadsheet(client, "Gap")), "Spreadsheet not found.")
 })
-
 
 test_that("List all my worksheets in spreadsheet", {
   expect_equal(list_worksheets(ss1), "Sheet1")
@@ -26,18 +24,8 @@ test_that("List all my worksheets in spreadsheet", {
 
 test_that("Get worksheet object", {
   
-  expect_equal(class(get_worksheet(ss1, "Sheet1")), "worksheet")
-  expect_error(get_worksheet(ss1, "Sheet2"), "Worksheet not found.")  
-})
-
-test_that("Get correct dataframe", {
-  ws <- get_worksheet(ss1, "Sheet1")
-  
-  my_data <- get_dataframe(client, ws)
-  
-  expect_equal(class(my_data), "data.frame")
-  expect_equal(nrow(my_data), 1704)
-  expect_equal(ncol(my_data), 6)
+  expect_equal(class(get_worksheet(client, ss1, "Sheet1")), "worksheet")
+  expect_error(get_worksheet(client, ss1, "Sheet2"), "Worksheet not found.")  
 })
 
 test_that("Open spreadsheet by key", {
@@ -56,28 +44,58 @@ test_that("Open spreadsheet by url", {
   throws_error(open_by_key(bad_url))
 })
 
-test_that("Add worksheet", {
-
-  add_worksheet(client, ss1, "bar", 10, 10)
-
-  ss1 <- open_spreadsheet(client, "Gapminder")
+test_that("Get all values of 1 row", {
+  ws <- get_worksheet(client, ss1, "Sheet1")
   
+  expect_equal(length(get_row(client, ws, 2)), 6)
+  expect_error(get_row(client, ws, 10000), 
+               "Specified row exceeds the number of rows contained in worksheet.")
+})
+
+test_that("Get more than 1 row", {
+  ws <- get_worksheet(client, ss1, "Sheet1")
+  
+  expect_equal(nrow(get_rows(client, ws, 2, 3)), 2)
+  expect_equal(get_rows(client, ws, 15, 12), get_rows(client, ws, 12, 15))
+})
+
+test_that("Get all values of 1 col", {
+  ws <- get_worksheet(client, ss1, "Sheet1")
+  
+  expect_equal(length(get_col(client, ws, 1)), 1705)
+})
+
+test_that("Get more than 1 col", {
+  ws <- get_worksheet(client, ss1, "Sheet1")
+  
+  expect_equal(ncol(get_cols(client, ws, 1, 3)), 3)
+  expect_equal(nrow(get_cols(client, ws, 1, 2)), 1705)
+})
+
+test_that("Get correct dataframe", {
+  ws <- get_worksheet(client, ss1, "Sheet1")
+  my_data <- get_dataframe(client, ws)
+  
+  expect_equal(class(my_data), "data.frame")
+  expect_equal(nrow(my_data), 1705)
+  expect_equal(ncol(my_data), 6)
+})
+
+test_that("Add worksheet", {
+  add_worksheet(client, ss1, "bar", 10, 10)
+  ss1 <- open_spreadsheet(client, "Gapminder")
   name_match <- "bar" %in% ss1$ws_names
   
   expect_equal(ss1$nsheets, 2)
   expect_true(name_match)
-
+  
 })
 
 test_that("Delete worksheet", {
   ss1 <- open_spreadsheet(client, "Gapminder")
-  
-  ws <- get_worksheet(ss1, "bar")
-  
-  del_worksheet(client, ws)
-  
+  ws <- get_worksheet(client, ss1, "bar")
+  del_worksheet(client, ss1, ws)
   ss1 <- open_spreadsheet(client, "Gapminder")
-  
   name_match <- "bar" %in% ss1$ws_names
   
   expect_equal(ss1$nsheets, 1)

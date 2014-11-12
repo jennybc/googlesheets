@@ -11,12 +11,16 @@ or \code{\link{authorize}}.}
 
 \item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
 
-\item{from,to}{start and end col indexes}
+\item{from,to}{start and end column indexes}
 }
 \value{
 Dataframe of requested columns.
 }
 \description{
 Specify range of columns to get from worksheet.
+}
+\examples{
+get_cols(ws, 1, 2)
+get_cols(ws, 30, 40)
 }
 

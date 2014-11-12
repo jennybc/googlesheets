@@ -1,6 +1,6 @@
 Package: gspreadr
 Title: Manage your Google spreadsheets in R
-Version: 0.1
+Version: 0.1.1
 Authors@R: "Joanna Zhao <joanna.zhao@alumni.ubc.ca> [aut, cre]"
 Description: Google Spreadsheets R API patterned after gspread,
     a Google Spreadsheets Python API
