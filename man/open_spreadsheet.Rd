@@ -12,6 +12,7 @@ open_spreadsheet(title)
 Object of class spreadsheet.
 }
 \description{
-Use title of spreadsheet to get object of class spreadsheet.
+Use spreadsheet title (as it appears in Google Drive) to get spreadsheet
+object.
 }
 

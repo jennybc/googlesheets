@@ -16,7 +16,8 @@ list_spreadsheets <- function() {
 
 #' Open spreadsheet by title 
 #'
-#' Use title of spreadsheet to get object of class spreadsheet.
+#' Use spreadsheet title (as it appears in Google Drive) to get spreadsheet 
+#' object.
 #'
 #' @param title the title of a spreadsheet.
 #' @return Object of class spreadsheet. 
@@ -56,7 +57,8 @@ open_spreadsheet <- function(title) {
 
 #' The worksheets contained in Spreadsheet
 #'
-#' Get list of worksheet titles contained in spreadsheet. 
+#' Get list of worksheet titles (order as it appears in Google Docs) 
+#' contained in spreadsheet. 
 #'
 #' @param spreadsheet A spreadsheet object returned by \code{\link{open_spreadsheet}}
 #' @return The titles of worksheets contained in spreadsheet. 
@@ -69,26 +71,43 @@ list_worksheets <- function(ss) {
 }
 
 
-#' Open worksheet given worksheet title
+#' Open worksheet given worksheet title or index
 #'
-#' Use title of worksheet to retrieve object of class worksheet.
+#' Use title or index of worksheet to retrieve object of class worksheet.
 #'
 #' @param ss Spreadsheet object containing worksheet
-#' @param title title of worksheet to retrieve
+#' @param x chr string for title of worksheet or numeric for index of worksheet 
+#' in spreadsheet
 #' @return An object of class worksheet and number of rows and cols attribute.
 #'  
 #' @export
-get_worksheet <- function(ss, title, vis = "private") {
-  # find index of specified worksheet
-  index <- match(title, names(ss$worksheets))
-  
-  if(is.na(index))
-    stop("Worksheet not found.")
+get_worksheet <- function(ss, x, vis = "private") {
+  if(is.character(x)) {
+    index <- match(x, names(ss$worksheets))
+    
+    if(is.na(index))
+      stop("Worksheet not found.")
+    
+  } else {
+    index <- x
+  }
   
   ws <- ss$worksheets[[index]]
   worksheet_dim(ws, visibility = vis)
 }
 
+
+
+#' Open a worksheet from a spreadsheet at once
+#' 
+#' @param ss_name Spreadsheet title
+#' @param ws_name Worksheet name
+#'
+#' @export
+open_at_once <- function(ss_title, ws_name) {
+  sheet <- open_spreadsheet(ss_title)
+  get_worksheet(sheet, ws_name)
+}
 
 #' Add new worksheet to spreadsheet
 #'
@@ -161,24 +180,14 @@ del_worksheet<- function(ss, ws) {
 #' @return Vector of all values in row.
 #' @importFrom XML getNodeSet
 #' @export
-get_row <- function(ws, row) {
-  
+get_row <- function(ws, row, vis = "private") {
   if(row > ws$rows)
     stop("Specified row exceeds the number of rows contained in worksheet.")
   
-  #if(is.null(.state$token)) {
-  #the_url <- build_req_url("cells_query", client, key = ws$sheet_id, ws_id = ws$id, 
-  #                         min_row = row, max_row = row, visibility = "public") 
-  
-  # req <- gsheets_GET(the_url)
-  
-  #} else {
   the_url <- build_req_url("cells_query", key = ws$sheet_id, ws_id = ws$id, 
-                           min_row = row, max_row = row)
+                           min_row = row, max_row = row, visibility = vis)
   
   req <- gsheets_GET(the_url)
-  #}  
-  
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
@@ -208,14 +217,14 @@ get_rows <- function(ws, from, to, vis = "private") {
                            min_row = from, max_row = to, visibility = vis)
   
   req <- gsheets_GET(the_url)
-  
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
   
   rows <- dlply(tbl, "row", check_missing)
   
-  rbind.fill(lapply(rows, function(x) {as.data.frame(t(x), stringsAsFactors=FALSE)}))
+  rbind.fill(lapply(rows, function(x) 
+  {as.data.frame(t(x), stringsAsFactors=FALSE)}))
 }
 
 
@@ -278,7 +287,8 @@ get_cols <- function(ws, from, to, vis = "private") {
   
   rows <- dlply(tbl, "row", check_missing)
   
-  df <- rbind.fill(lapply(rows, function(x) {as.data.frame(t(x), stringsAsFactors=FALSE)}))
+  rbind.fill(lapply(rows, function(x) 
+  {as.data.frame(t(x), stringsAsFactors=FALSE)}))
   
 }
 

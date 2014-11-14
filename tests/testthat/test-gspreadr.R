@@ -4,10 +4,7 @@ authorize()
 ss1 <- open_spreadsheet("Gapminder")
 
 test_that("List all my spreadsheets", {
-  sheets <- list_spreadsheets()
-  
-  expect_equal(length(sheets), 2)
-  expect_equal(sheets, c("Gapminder", "Gapminder by Continent"))
+  expect_equal(length(list_spreadsheets()), 2)
 })
 
 test_that("Open spreadsheet by title", {
@@ -25,6 +22,7 @@ test_that("List all my worksheets in spreadsheet", {
 test_that("Get worksheet object", {
   
   expect_equal(class(get_worksheet(ss1, "Sheet1")), "worksheet")
+  expect_equal(get_worksheet(ss1, "Sheet1"), get_worksheet(ss1, 1))
   expect_error(get_worksheet(ss1, "Sheet2"), "Worksheet not found.")  
 })
 

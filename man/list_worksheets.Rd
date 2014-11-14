@@ -14,6 +14,7 @@ The titles of worksheets contained in spreadsheet.
 This is a mini wrapper for spreadsheet$ws_names.
 }
 \description{
-Get list of worksheet titles contained in spreadsheet.
+Get list of worksheet titles (order as it appears in Google Docs)
+contained in spreadsheet.
 }
 

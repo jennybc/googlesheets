@@ -3,7 +3,7 @@
 \alias{get_row}
 \title{Get all values from a row.}
 \usage{
-get_row(ws, row)
+get_row(ws, row, vis = "private")
 }
 \arguments{
 \item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
