@@ -1,4 +1,4 @@
-# Constructor functions for spreadsheet, worksheet, cell, client, http_session classes
+# Constructor functions for spreadsheet, worksheet, classes
 
 #' Spreadsheet 
 #'
@@ -27,22 +27,8 @@ worksheet <- function() {
                  id = character(),
                  title = character(),
                  rows = numeric(),
-                 cols = numeric(),
-                 listfeed = character(),
-                 cellsfeed = character()), class = "worksheet")
-}
-
-# Client class
-
-#' Client
-#'
-#' The function creates client object.
-#'
-#'@return Object of class client.
-#'
-#'
-#'
-client <- function() {
-  structure(list(auth = NULL), 
-            class = "client")
+                 cols = numeric()),
+                 #listfeed = character(),
+                 #cellsfeed = character()), 
+                 class = "worksheet")
 }

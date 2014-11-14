@@ -1,20 +1,20 @@
-#' Authorize client using ClientLogin
+# environment to store credentials
+.state <- new.env(parent = emptyenv())
+
+#' Authorize user using ClientLogin
 #'
 #' Authorize user using email and password.
 #'
-#'@param email User's email.
-#'@param passwd Password for user's email.
-#'@return Object of class client which stores the auth token required for subsequent requests.
+#' @param email User's email.
+#' @param passwd User's password.
 #'
-#'This method is using API as described at:
-#'\url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
+#' This method is using API as described at:
+#' \url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
 #'
-#'Authorization token will be stored in http_session object which then gets
-#'stored in client object.
-#'@export
-#'@importFrom httr POST
-#'@importFrom httr status_code
-#'@importFrom httr content
+#' @importFrom httr POST
+#' @importFrom httr status_code
+#' @importFrom httr content
+#' @export
 login <- function(email, passwd) {
   service = "wise"
   account_type = "HOSTED_OR_GOOGLE"
@@ -32,27 +32,22 @@ login <- function(email, passwd) {
   token <- sub("\n", "", token)
   auth_header <- paste0("GoogleLogin auth=", token)
   
-  # instantiate client object to store credentials
-  new_client <- client()
-  new_client$auth <- auth_header
-  new_client
+  .state$token <- auth_header
 }
 
-#' Authorize client using Oauth2.0 Credentials
+#' Authorize user using Oauth2.0 Credentials
 #'
-#' Authorize user using email and password.
+#' User will be directed to web browser and asked to sign into their Google
+#' account and grant gspreadr access permission to user data for Google 
+#' Spreadsheets and Google Drive.
 #'
-#'@return Object of class client which stores the Oauth2.0 token required for subsequent requests.
+#' This method follows the demo described at:
+#' \url{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}
 #'
-#'This method is following the demo described at:
-#'\url{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}
-#'
-#'Authorization token will be stored in client as auth.
-#'@export
-#'@importFrom httr POST
-#'@importFrom httr oauth_app
-#'@importFrom httr oauth_endpoints
-#'@importFrom httr oauth2.0_token
+#' @importFrom httr oauth_app
+#' @importFrom httr oauth_endpoints
+#' @importFrom httr oauth2.0_token
+#' @export
 authorize <- function() {
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds")
@@ -63,18 +58,49 @@ authorize <- function() {
   gspreadr_app <- oauth_app("google", client_id, client_secret)
   
   google_token <-
-    oauth2.0_token(oauth_endpoints("google"), gspreadr_app, scope = scope_list)
+    oauth2.0_token(oauth_endpoints("google"), gspreadr_app, scope = scope_list,
+                   cache = TRUE)
   
   check_token(google_token)
   
-  new_client <- client()
-  new_client$auth <- google_token
-  new_client
+  .state$token <- google_token
 }
 
 
-# check google token upon retrieval so error is found before making requests
+#' Check status of http response
+#' 
+#' Google returns status 200 (success) or 403 (failure), show error msg if 403.
+#' 
+#' @param req response from \code{\link{gsheets_GET}} request
+#' @importFrom httr status_code
+#' @importFrom httr content
+gsheets_check <- function(req) {
+  if(status_code(req) == 403) {
+    if(grepl("BadAuthentication", content(req)))
+      stop("Incorrect username or password.")
+    else
+      stop("Unable to authenticate")
+  }
+}
+
+
+#' Check Google token for validity
+#' 
+#' Make sure Google token is good to use upon retrieval so error is found 
+#' before making requests. 
+#' 
+#' @param token Google authorization token
 check_token <- function(token) {
   if("invalid_client" %in% unlist(token$credentials))
-    message("Invalid Credentials. Please check client_secret.")
+    message("Authorization error. Please check client_id and client_secret.")
+}
+
+#' Retrieve Google token from 
+#' 
+#' Get token if it's previously stored, else prompt user to get one.
+#'
+get_google_token <- function() {
+  if(is.null(.state$token))
+    authorize()
+  .state$token
 }
