@@ -3,11 +3,9 @@
 \alias{get_worksheet}
 \title{Open worksheet given worksheet title}
 \usage{
-get_worksheet(client = NULL, ss, title)
+get_worksheet(ss, title, vis = "private")
 }
 \arguments{
-\item{client}{Client object}
-
 \item{ss}{Spreadsheet object containing worksheet}
 
 \item{title}{title of worksheet to retrieve}

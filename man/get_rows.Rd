@@ -3,12 +3,9 @@
 \alias{get_rows}
 \title{Get rows of worksheet}
 \usage{
-get_rows(client, ws, from, to)
+get_rows(ws, from, to, vis = "private")
 }
 \arguments{
-\item{client}{a client object returned by \code{\link{login}}
-or \code{\link{authorize}}.}
-
 \item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
 
 \item{from,to}{start and end row indexes}

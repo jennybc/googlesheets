@@ -3,16 +3,16 @@
 \alias{add_worksheet}
 \title{Add new worksheet to spreadsheet}
 \usage{
-add_worksheet(client, ss, title, rows, cols)
+add_worksheet(ss, title, rows, cols, token = get_google_token())
 }
 \arguments{
-\item{client}{Client object}
-
 \item{ss}{Spreadsheet object}
 
 \item{rows}{Number of rows}
 
 \item{cols}{Number of columns}
+
+\item{token}{Google token}
 
 \item{name}{character string for name of new worksheet}
 }

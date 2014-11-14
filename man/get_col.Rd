@@ -3,12 +3,9 @@
 \alias{get_col}
 \title{Get all values from a column.}
 \usage{
-get_col(client, ws, col)
+get_col(ws, col, vis = "private")
 }
 \arguments{
-\item{client}{a client object returned by \code{\link{login}}
-or \code{\link{authorize}}.}
-
 \item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
 
 \item{col}{column}

@@ -3,11 +3,7 @@
 \alias{spreadsheets_info}
 \title{Get information from spreadsheets feed}
 \usage{
-spreadsheets_info(client)
-}
-\arguments{
-\item{client}{Client object returned by \code{\link{login}} or
-\code{\link{authorize}}}
+spreadsheets_info()
 }
 \description{
 Get spreadsheets titles, keys, and date/time of last update.

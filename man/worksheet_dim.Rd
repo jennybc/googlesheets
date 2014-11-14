@@ -3,15 +3,14 @@
 \alias{worksheet_dim}
 \title{Find number of rows and columns of worksheet}
 \usage{
-worksheet_dim(client = NULL, ws)
+worksheet_dim(ws, auth = get_google_token(), visibility = "private")
 }
 \arguments{
-\item{client}{Client object}
-
 \item{ws}{Worksheet object}
+
+\item{client}{Client object}
 }
 \description{
-Get the rows and columns of worksheet by making a request for cellfeed, hence
-client object is required if accessing private spreadsheet.
+Get the rows and columns of worksheet by making a request for cellfeed
 }
 

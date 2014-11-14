@@ -3,12 +3,9 @@
 \alias{get_row}
 \title{Get all values from a row.}
 \usage{
-get_row(client, ws, row)
+get_row(ws, row)
 }
 \arguments{
-\item{client}{a client object returned by \code{\link{login}}
-or \code{\link{authorize}}.}
-
 \item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
 
 \item{row}{row}

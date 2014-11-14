@@ -9,6 +9,6 @@ gsheets_parse(req)
 \item{req}{response from \code{\link{gsheets_GET}} request}
 }
 \description{
-Wrapper around xmlInternalTreeParse
+Simply for code neatness.
 }
 

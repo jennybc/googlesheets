@@ -1,0 +1,26 @@
+---
+title: "gspreadr Basic Usage"
+author: "Joanna Zhao"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette gspeadr Basic Usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+This vignette shows the basic functionality of `gspreadr`.
+
+## User Authentication
+
+In order to access your own spreadsheets (non-public), you must log in. There are 2 ways to do it in `gspreadr`. 
+
+1.  `login("email", "password")` (if you really want to...)
+2.  `authorize()` (preferred)
+
+For the first time, `authorize()` will authenticate the user interactively; the user will be directed to a web browser and asked to login to their Google account, and grant `gspreadr` permission to access Sheets and Google Drive. Credentials will be cached and authentication will not be needed for subsequent sessions. 
+
+## Spreadsheets
+
+Use `list_spreadsheets()` to remind yourself what sheets are in your Google drive. A spreadsheet can be opened by `open_spreadsheet("title")`, write it to an R object so you can get worksheet data from it. 
+

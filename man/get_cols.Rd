@@ -3,13 +3,10 @@
 \alias{get_cols}
 \title{Get columns of worksheet}
 \usage{
-get_cols(client = NULL, ws, from, to)
+get_cols(ws, from, to, vis = "private")
 }
 \arguments{
-\item{client}{a client object returned by \code{\link{login}}
-or \code{\link{authorize}}.}
-
-\item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
+\item{ws}{Worksheet object}
 
 \item{from,to}{start and end column indexes}
 }

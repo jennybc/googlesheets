@@ -3,11 +3,9 @@
 \alias{get_dataframe}
 \title{Get all values of worksheet as a dataframe}
 \usage{
-get_dataframe(client = NULL, ws)
+get_dataframe(ws, vis = "private")
 }
 \arguments{
-\item{client}{Client object}
-
 \item{ws}{Worksheet object}
 }
 \value{

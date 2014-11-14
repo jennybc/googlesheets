@@ -3,7 +3,7 @@
 \alias{gsheets_auth}
 \title{Check if client is using Google login or oauth2.0}
 \usage{
-gsheets_auth(client)
+gsheets_auth(token)
 }
 \arguments{
 \item{client}{Client object}

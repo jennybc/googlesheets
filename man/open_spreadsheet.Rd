@@ -3,12 +3,9 @@
 \alias{open_spreadsheet}
 \title{Open spreadsheet by title}
 \usage{
-open_spreadsheet(client, title)
+open_spreadsheet(title)
 }
 \arguments{
-\item{client}{a client object returned by \code{\link{login}}
-or \code{\link{authorize}}.}
-
 \item{title}{the title of a spreadsheet.}
 }
 \value{

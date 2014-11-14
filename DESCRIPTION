@@ -12,4 +12,6 @@ Imports:
     httr,
     XML
 Suggests:
-    testthat
+    testthat,
+    knitr
+VignetteBuilder: knitr

@@ -3,29 +3,15 @@
 \alias{gsheets_GET}
 \title{Create GET request}
 \usage{
-gsheets_GET(feed, client = NULL, key = NULL, ws_id = NULL,
-  visibility = "private", projection = "full", min_row = NULL,
-  max_row = NULL, min_col = NULL, max_col = NULL)
+gsheets_GET(url, token = get_google_token())
 }
 \arguments{
-\item{client}{Client object or NULL if accessing public worksheets feed}
+\item{url}{URL for GET request}
 
-\item{key}{Spreadsheet key}
-
-\item{visibility}{Either private or public}
-
-\item{projection}{Either full or basic}
-
-\item{feed_type}{One of the following: spreadsheets, worksheets, list, cells}
-
-\item{worksheet_id}{id of worksheet contained in spreadsheet}
+\item{auth}{Google auth token obtained from \code{\link{login}}
+or \code{\link{authorize}}}
 }
 \description{
-Construct GET requests to Google Sheets API. This function handles the
-construction of urls and making GET requests so urls arent lying around.
-}
-\examples{
-gsheets_GET("spreadsheets", NULL,
-"1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU", visibility = "public")
+Make GET request to Google Sheets API.
 }
 

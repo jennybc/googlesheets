@@ -3,16 +3,14 @@
 \alias{del_worksheet}
 \title{Delete worksheet from spreadsheet}
 \usage{
-del_worksheet(client, ss, ws)
+del_worksheet(ss, ws)
 }
 \arguments{
-\item{client}{Client object}
-
 \item{ss}{Spreadsheet object}
 
 \item{ws}{Worksheet object}
 }
 \description{
-Delete worksheet, worksheet and all of its data will be removed from spreadsheet.
+The worksheet and all of its data will be removed from spreadsheet.
 }
 
