@@ -20,6 +20,9 @@ In order to access your own spreadsheets (non-public), you must log in. There ar
 
 For the first time, `authorize()` will authenticate the user interactively; the user will be directed to a web browser and asked to login to their Google account, and grant `gspreadr` permission to access Sheets and Google Drive. Credentials will be cached and authentication will not be needed for subsequent sessions. 
 
+To authorize for a different account, delete the cache file and run `authorize()` to
+get a new token. 
+
 ## Spreadsheets
 
 Use `list_spreadsheets()` to remind yourself what sheets are in your Google drive. A spreadsheet can be opened by `open_spreadsheet("title")`, write it to an R object so you can get worksheet data from it. 

@@ -30,19 +30,37 @@ build_req_url <- function(feed_type, key = NULL, ws_id = NULL,
     },
     cells = {
       the_url <- paste(base_url, feed_type, key, ws_id, visibility, projection, sep = "/")
-    },
-    cells_query = {
-      base_url <- paste(base_url, "cells", key, ws_id, visibility, projection, sep = "/")
       
-      if(is.null(min_col)) {
-        query <- paste0("?min-row=", min_row, "&max-row=", max_row)
-      } else {
-        query <- paste0("?min-col=", min_col, "&max-col=", max_col)
-      }
-      the_url <- paste0(base_url, query)
+      if(sum(min_row, max_row, min_col, max_col) > 0) {
+        query <- build_query(min_row, max_row, min_col, max_col)
+        the_url <- paste0(the_url, query)
+      } 
     }
   )
+  print(the_url)
   the_url
+}
+
+
+#' Build query suffix for GET URL
+#'
+#' Create query to qppend to GET URL.
+#'
+#' @param min_row, max_row,min_col,max_col query parameters
+build_query <- function(min_row, max_row, min_col, max_col) {
+  if(!is.null(min_row) && !is.null(min_col)) {
+    query <- paste0("?min-row=", min_row, "&max-row=", max_row, 
+                    "&min-col=", min_col, "&max-col=", max_col)
+  } else {
+    
+    if(is.null(min_row)) {
+      query <- paste0("?&min-col=", min_col, "&max-col=", max_col)
+    } else {
+      query <- paste0("?&min-row=", min_row, "&max-row=", max_row)
+    }
+    
+  } 
+  query
 }
 
 
@@ -211,10 +229,22 @@ create_lookup_tbl <- function(cellsfeed) {
   col_num <-  getNodeSet(cellsfeed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
                          function(x) as.numeric(xmlAttrs(x)["col"]))
   
-  lookup_tbl <- data.frame(row = unlist(row_num), 
-                           col = unlist(col_num), 
+  rows <- unlist(row_num)
+  cols <- unlist(col_num)
+  
+  row_diff <- min(unlist(row_num)) - 1
+  col_diff <- min(unlist(col_num)) - 1
+  
+  row_adj <- rows - row_diff
+  col_adj <- cols - col_diff
+  
+  lookup_tbl <- data.frame(row = rows, 
+                           col = cols, 
+                           row_adj = row_adj,
+                           col_adj = col_adj,
                            val = unlist(val),
                            stringsAsFactors = FALSE)
+  
   lookup_tbl
 }
 
@@ -227,7 +257,7 @@ create_lookup_tbl <- function(cellsfeed) {
 #' @return A vector of values contained in row with NAs for missing values.
 check_missing <-function(x) {
   row_vals <- c()
-  xx <- x$col
+  xx <- x$col_adj
   
   for(i in 1:max(xx)) {
     

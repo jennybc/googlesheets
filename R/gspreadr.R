@@ -81,7 +81,7 @@ list_worksheets <- function(ss) {
 #' @return An object of class worksheet and number of rows and cols attribute.
 #'  
 #' @export
-get_worksheet <- function(ss, x, vis = "private") {
+open_worksheet <- function(ss, x, vis = "private") {
   if(is.character(x)) {
     index <- match(x, names(ss$worksheets))
     
@@ -97,7 +97,6 @@ get_worksheet <- function(ss, x, vis = "private") {
 }
 
 
-
 #' Open a worksheet from a spreadsheet at once
 #' 
 #' @param ss_name Spreadsheet title
@@ -106,8 +105,9 @@ get_worksheet <- function(ss, x, vis = "private") {
 #' @export
 open_at_once <- function(ss_title, ws_name) {
   sheet <- open_spreadsheet(ss_title)
-  get_worksheet(sheet, ws_name)
+  open_worksheet(sheet, ws_name)
 }
+
 
 #' Add new worksheet to spreadsheet
 #'
@@ -149,6 +149,7 @@ add_worksheet<- function(ss, title, rows, cols, token = get_google_token()) {
     message("Bad Request, something wrong on client side.")
 }
 
+
 #' Delete worksheet from spreadsheet
 #'
 #' The worksheet and all of its data will be removed from spreadsheet.
@@ -175,7 +176,7 @@ del_worksheet<- function(ss, ws) {
 
 #' Get all values from a row.
 #'
-#' @param ws worksheet object returned by \code{\link{get_worksheet}}
+#' @param ws worksheet object returned by \code{\link{open_worksheet}}
 #' @param row row
 #' @return Vector of all values in row.
 #' @importFrom XML getNodeSet
@@ -184,7 +185,7 @@ get_row <- function(ws, row, vis = "private") {
   if(row > ws$rows)
     stop("Specified row exceeds the number of rows contained in worksheet.")
   
-  the_url <- build_req_url("cells_query", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = row, max_row = row, visibility = vis)
   
   req <- gsheets_GET(the_url)
@@ -197,11 +198,12 @@ get_row <- function(ws, row, vis = "private") {
   rbind.fill(lapply(rows, function(x) {as.data.frame(t(x), stringsAsFactors=FALSE)}))
 }
 
+
 #' Get rows of worksheet
 #'
 #' Specify range of rows to get from worksheet.
 #'
-#' @param ws worksheet object returned by \code{\link{get_worksheet}}
+#' @param ws worksheet object returned by \code{\link{open_worksheet}}
 #' @param from,to start and end row indexes
 #' @return Dataframe of requested rows. 
 #' @importFrom XML getNodeSet
@@ -213,7 +215,7 @@ get_rows <- function(ws, from, to, vis = "private") {
   if(to > ws$rows)
     to <- ws$rows
   
-  the_url <- build_req_url("cells_query", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from, max_row = to, visibility = vis)
   
   req <- gsheets_GET(the_url)
@@ -230,14 +232,14 @@ get_rows <- function(ws, from, to, vis = "private") {
 
 #' Get all values from a column.
 #'
-#' @param ws worksheet object returned by \code{\link{get_worksheet}}
+#' @param ws worksheet object returned by \code{\link{open_worksheet}}
 #' @param col column
 #' @return Vector of all values in column
 #' @importFrom XML getNodeSet
 #' @export
 get_col <- function(ws, col, vis = "private") {
   
-  the_url <- build_req_url("cells_query", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = col, max_col = col, visibility = vis)
   
   req <- gsheets_GET(the_url)
@@ -260,6 +262,7 @@ get_col <- function(ws, col, vis = "private") {
   col_vals
 }
 
+
 #' Get columns of worksheet
 #'
 #' Specify range of columns to get from worksheet.
@@ -278,8 +281,9 @@ get_cols <- function(ws, from, to, vis = "private") {
   if(to > ws$cols) 
     to <- ws$cols
   
-  the_url <- build_req_url("cells_query", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = from, max_col = to, visibility = vis)
+  
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
@@ -306,6 +310,41 @@ get_cols <- function(ws, from, to, vis = "private") {
 get_dataframe <- function(ws, vis = "private") {
   get_cols(ws, 1, ws$cols, vis)
 }
+
+
+#' Get a region of a worksheet
+#'
+#' Extract cells of a worksheet according to specified range.
+#'
+#' @param ws Worksheet object
+#' @param from_row,to_row range of rows to extract
+#' @param from_col,to_col range of cols to extract
+#' @param vis Either \code{private} or \code{public}
+#' @return A dataframe.
+#' @export
+get_region <- function(ws, from_row, to_row, from_col, to_col, vis = "private") {
+  
+  if(to_row > ws$rows)
+    to_row <- ws$rows
+  
+  if(to_col > ws$cols)
+    to_col <- ws$cols
+  
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_row = from_row, max_row = to_row,
+                           min_col = from_col, max_col = to_col, visibility = vis)
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+
+  tbl <- create_lookup_tbl(feed)
+  
+  rows <- dlply(tbl, "row_adj", check_missing)
+  
+  rbind.fill(lapply(rows, function(x) 
+  {as.data.frame(t(x), stringsAsFactors=FALSE)}))
+}
+  
 
 
 # Public spreadsheets only -----
@@ -344,6 +383,7 @@ open_by_key <- function(key) {
   ss
 }
 
+
 #' Open spreadsheet by url
 #'
 #' Use url of spreadsheet and return an object of class spreadsheet.
@@ -358,6 +398,5 @@ open_by_url <- function(url) {
   key <- unlist(strsplit(url, "/"))[6] # TODO: fix hardcoding
   open_by_key(key)
 }
-
 
 

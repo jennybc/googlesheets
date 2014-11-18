@@ -6,7 +6,7 @@
 get_row(ws, row, vis = "private")
 }
 \arguments{
-\item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
+\item{ws}{worksheet object returned by \code{\link{open_worksheet}}}
 
 \item{row}{row}
 }

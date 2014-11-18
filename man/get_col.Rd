@@ -6,7 +6,7 @@
 get_col(ws, col, vis = "private")
 }
 \arguments{
-\item{ws}{worksheet object returned by \code{\link{get_worksheet}}}
+\item{ws}{worksheet object returned by \code{\link{open_worksheet}}}
 
 \item{col}{column}
 }
