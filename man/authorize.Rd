@@ -3,7 +3,11 @@
 \alias{authorize}
 \title{Authorize user using Oauth2.0 Credentials}
 \usage{
-authorize()
+authorize(new_user = FALSE)
+}
+\arguments{
+\item{new_user}{set to \code{TRUE} if you want to authenticate a different
+google account}
 }
 \description{
 User will be directed to web browser and asked to sign into their Google

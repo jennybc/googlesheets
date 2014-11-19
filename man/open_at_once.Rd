@@ -3,10 +3,10 @@
 \alias{open_at_once}
 \title{Open a worksheet from a spreadsheet at once}
 \usage{
-open_at_once(ss_title, ws_name)
+open_at_once(ss_title, ws_index)
 }
 \arguments{
-\item{ws_name}{Worksheet name}
+\item{ws_index}{worksheet name or numeric for worksheet index}
 
 \item{ss_name}{Spreadsheet title}
 }

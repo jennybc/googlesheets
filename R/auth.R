@@ -43,12 +43,17 @@ login <- function(email, passwd) {
 #'
 #' This method follows the demo described at:
 #' \url{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}
-#'
+#' @param new_user set to \code{TRUE} if you want to authenticate a different
+#' google account
 #' @importFrom httr oauth_app
 #' @importFrom httr oauth_endpoints
 #' @importFrom httr oauth2.0_token
 #' @export
-authorize <- function() {
+authorize <- function(new_user = FALSE) {
+  
+  if(new_user)
+    system("rm .httr-oauth")
+  
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds")
   client_id <- 
@@ -95,7 +100,7 @@ check_token <- function(token) {
     message("Authorization error. Please check client_id and client_secret.")
 }
 
-#' Retrieve Google token from 
+#' Retrieve Google token from environment
 #' 
 #' Get token if it's previously stored, else prompt user to get one.
 #'

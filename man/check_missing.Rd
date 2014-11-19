@@ -3,7 +3,7 @@
 \alias{check_missing}
 \title{Check for missing cells in row or column}
 \usage{
-check_missing(x)
+check_missing(x, by_col = TRUE)
 }
 \arguments{
 \item{x}{data frame returned from \code{\link{create_lookup_tbl}}}

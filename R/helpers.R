@@ -37,7 +37,6 @@ build_req_url <- function(feed_type, key = NULL, ws_id = NULL,
       } 
     }
   )
-  print(the_url)
   the_url
 }
 
@@ -126,14 +125,6 @@ fetch_ws <- function(node, sheet_id) {
   ws$id <- unlist(strsplit(attr_list$id, "/"))[[9]]
   ws$title <- (attr_list$title)$text
   ws
-  
-  # dont think its necessary
-  #listfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#listfeed']", "ns",
-  #                       function(x) xmlGetAttr(x, "href"))
-  #cellsfeed <- getNodeSet(node, "ns:link[@rel='http://schemas.google.com/spreadsheets/2006#cellsfeed']", "ns",
-  #                        function(x) xmlGetAttr(x, "href"))
-  #ws$listfeed <- listfeed
-  #ws$cellsfeed <- cellsfeed
 }
 
 
@@ -255,9 +246,13 @@ create_lookup_tbl <- function(cellsfeed) {
 #'
 #' @param x data frame returned from \code{\link{create_lookup_tbl}} 
 #' @return A vector of values contained in row with NAs for missing values.
-check_missing <-function(x) {
+check_missing <-function(x, by_col = TRUE) {
   row_vals <- c()
-  xx <- x$col_adj
+  
+  if(by_col) 
+    xx <- x$col_adj
+  else 
+    xx <- x$row
   
   for(i in 1:max(xx)) {
     
@@ -272,3 +267,10 @@ check_missing <-function(x) {
   row_vals
 }
 
+set_header <- function(x)
+{
+    names(x) <- x[1, ]
+    x <- x[2:nrow(x), ]
+    rownames(x) <- NULL
+    x
+}

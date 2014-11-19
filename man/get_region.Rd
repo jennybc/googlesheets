@@ -3,7 +3,8 @@
 \alias{get_region}
 \title{Get a region of a worksheet}
 \usage{
-get_region(ws, from_row, to_row, from_col, to_col, vis = "private")
+get_region(ws, from_row, to_row, from_col, to_col, header = TRUE,
+  vis = "private")
 }
 \arguments{
 \item{ws}{Worksheet object}
@@ -15,9 +16,14 @@ get_region(ws, from_row, to_row, from_col, to_col, vis = "private")
 \item{vis}{Either \code{private} or \code{public}}
 }
 \value{
-A dataframe.
+A data frame.
 }
 \description{
-Extract cells of a worksheet according to specified range.
+Extract cells of a worksheet according to specified range. If range is beyond
+the dimensions of the worksheet, the boundary will be used as range.
+}
+\seealso{
+\code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
+\code{\link{get_col}}, \code{\link{get_cols}}
 }
 

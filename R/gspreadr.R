@@ -8,7 +8,8 @@ default_ns = "http://www.w3.org/2005/Atom"
 #' or \code{\link{authorize}}
 #'
 #' @export
-list_spreadsheets <- function() {
+list_spreadsheets <- function() 
+{
   titles <- spreadsheets_info()$sheet_title
   titles
 }
@@ -26,7 +27,8 @@ list_spreadsheets <- function() {
 #' @importFrom XML getNodeSet
 #' 
 #' @export
-open_spreadsheet <- function(title) {
+open_spreadsheet <- function(title) 
+{
   ssfeed_df <- spreadsheets_info() # return spreadsheet feed as data frame
   
   index <- match(title, ssfeed_df$sheet_title)
@@ -65,7 +67,8 @@ open_spreadsheet <- function(title) {
 #'
 #' This is a mini wrapper for spreadsheet$ws_names.
 #' @export  
-list_worksheets <- function(ss) {
+list_worksheets <- function(ss) 
+{
   titles <- ss$ws_names
   titles
 }
@@ -81,7 +84,8 @@ list_worksheets <- function(ss) {
 #' @return An object of class worksheet and number of rows and cols attribute.
 #'  
 #' @export
-open_worksheet <- function(ss, x, vis = "private") {
+open_worksheet <- function(ss, x, vis = "private") 
+{
   if(is.character(x)) {
     index <- match(x, names(ss$worksheets))
     
@@ -100,12 +104,13 @@ open_worksheet <- function(ss, x, vis = "private") {
 #' Open a worksheet from a spreadsheet at once
 #' 
 #' @param ss_name Spreadsheet title
-#' @param ws_name Worksheet name
+#' @param ws_index worksheet name or numeric for worksheet index
 #'
 #' @export
-open_at_once <- function(ss_title, ws_name) {
+open_at_once <- function(ss_title, ws_index) 
+{
   sheet <- open_spreadsheet(ss_title)
-  open_worksheet(sheet, ws_name)
+  open_worksheet(sheet, ws_index)
 }
 
 
@@ -124,7 +129,8 @@ open_at_once <- function(ss_title, ws_name) {
 #' @importFrom httr POST
 #' @importFrom httr status_code
 #' @export
-add_worksheet<- function(ss, title, rows, cols, token = get_google_token()) {
+add_worksheet<- function(ss, title, rows, cols, token = get_google_token()) 
+{
   the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", 
                     ss$sheet_id, "/private/full")
   
@@ -159,7 +165,8 @@ add_worksheet<- function(ss, title, rows, cols, token = get_google_token()) {
 #' @importFrom httr DELETE
 #' @importFrom httr status_code
 #' @export
-del_worksheet<- function(ss, ws) {
+del_worksheet<- function(ss, ws) 
+{
   the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", 
                     ss$sheet_id, "/private/full/", ws$id, "/version")
   
@@ -174,16 +181,22 @@ del_worksheet<- function(ss, ws) {
 }
 
 
-#' Get all values from a row.
+#' Get all values in a row.
 #'
-#' @param ws worksheet object returned by \code{\link{open_worksheet}}
+#' Specify row of values to get from worksheet.
+#'
+#' @param ws worksheet object
 #' @param row row
-#' @return Vector of all values in row.
-#' @importFrom XML getNodeSet
+#' @param vis either "private" or "public"
+#' @return A data frame. 
+#' @seealso \code{\link{get_rows}}, \code{\link{get_col}}, 
+#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{get_region}}
+#' @importFrom plyr ddply
 #' @export
-get_row <- function(ws, row, vis = "private") {
+get_row <- function(ws, row, vis = "private") 
+{
   if(row > ws$rows)
-    stop("Specified row exceeds the number of rows contained in worksheet.")
+    stop("Specified row exceeds the number of rows contained in the worksheet.")
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = row, max_row = row, visibility = vis)
@@ -193,25 +206,25 @@ get_row <- function(ws, row, vis = "private") {
   
   tbl <- create_lookup_tbl(feed)
   
-  rows <- dlply(tbl, "row", check_missing) # insert NAs for missing values
-  
-  rbind.fill(lapply(rows, function(x) {as.data.frame(t(x), stringsAsFactors=FALSE)}))
+  ddply(tbl, "row", check_missing)[-1] # to remove grouping var
 }
 
 
-#' Get rows of worksheet
+#' Get all values in range of rows.
 #'
 #' Specify range of rows to get from worksheet.
 #'
-#' @param ws worksheet object returned by \code{\link{open_worksheet}}
+#' @param ws worksheet object
 #' @param from,to start and end row indexes
-#' @return Dataframe of requested rows. 
-#' @importFrom XML getNodeSet
-#' @importFrom plyr rbind.fill
+#' @return A data frame.
+#' @seealso \code{\link{get_row}}, \code{\link{get_col}}, \code{\link{get_cols}},
+#' \code{\link{get_all}}, \code{\link{get_region}}
 #' @importFrom plyr dlply
+#' @importFrom dplyr rbind_all
+#' @importFrom plyr rbind.fill
 #' @export
-get_rows <- function(ws, from, to, vis = "private") {
-  
+get_rows <- function(ws, from, to, header = TRUE, vis = "private")
+{
   if(to > ws$rows)
     to <- ws$rows
   
@@ -223,22 +236,37 @@ get_rows <- function(ws, from, to, vis = "private") {
   
   tbl <- create_lookup_tbl(feed)
   
-  rows <- dlply(tbl, "row", check_missing)
+  list_of_vec <- dlply(tbl, "row", check_missing)
   
-  rbind.fill(lapply(rows, function(x) 
-  {as.data.frame(t(x), stringsAsFactors=FALSE)}))
+  list_of_df <- 
+    lapply(list_of_vec, 
+           function(x) as.data.frame(t(x), stringsAsFactors = FALSE))
+
+  my_df <- rbind.fill(list_of_df)
+
+  if(header) {
+    set_header(my_df)
+  } else {
+    my_df
+  }
+  
+  # doesnt work if rows of different length
+ #ddply(tbl, "row", check_missing)[-1] # to remove grouping var
 }
 
 
-#' Get all values from a column.
+#' Get all values in a column.
 #'
-#' @param ws worksheet object returned by \code{\link{open_worksheet}}
+#' @param ws worksheet object
 #' @param col column
-#' @return Vector of all values in column
-#' @importFrom XML getNodeSet
+#' @param vis either "private" or "public"
+#' @return A data frame.
+#' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
+#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{get_region}}
+#' @importFrom plyr ddply
 #' @export
-get_col <- function(ws, col, vis = "private") {
-  
+get_col <- function(ws, col, vis = "private") 
+{
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = col, max_col = col, visibility = vis)
   
@@ -248,36 +276,26 @@ get_col <- function(ws, col, vis = "private") {
   
   tbl <- create_lookup_tbl(feed)
   
-  col_vals <- c()
-  for(i in 1:max(tbl$row)) {
-    
-    if(any(tbl$row ==  i)) {
-      ind <- which(tbl$row == i)
-      col_vals <- c(col_vals, tbl[ind, "val"])
-    } else {
-      col_vals <- c(col_vals, NA) 
-    }
-    
-  }
-  col_vals
+  check_missing(tbl)
 }
 
 
-#' Get columns of worksheet
+#' Get all values in range of columns.
 #'
 #' Specify range of columns to get from worksheet.
 #'
-#' @param ws Worksheet object
+#' @param ws worksheet object
 #' @param from,to start and end column indexes
-#' @return Dataframe of requested columns.
+#' @return A data frame.
 #' @examples
 #' get_cols(ws, 1, 2)
-#' get_cols(ws, 30, 40) 
-#' @importFrom XML getNodeSet
-#' @importFrom plyr dlply
+#' get_cols(ws, 30, 40)
+#' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
+#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{get_region}}
+#' @importFrom plyr ddply
 #' @export
-get_cols <- function(ws, from, to, vis = "private") {
-  
+get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
+{
   if(to > ws$cols) 
     to <- ws$cols
   
@@ -289,41 +307,63 @@ get_cols <- function(ws, from, to, vis = "private") {
   
   tbl <- create_lookup_tbl(feed)
   
-  rows <- dlply(tbl, "row", check_missing)
+  list_of_vec <- dlply(tbl, "row", check_missing)
   
-  rbind.fill(lapply(rows, function(x) 
-  {as.data.frame(t(x), stringsAsFactors=FALSE)}))
+  list_of_df <- 
+    lapply(list_of_vec, 
+           function(x) as.data.frame(t(x), stringsAsFactors = FALSE))
   
+  my_df <- rbind.fill(list_of_df)
+  
+  if(header) {
+    set_header(my_df)
+  } else {
+    my_df
+  }
+  
+  # doesnt work if cols of diff length
+  # ddply(tbl, "row", check_missing)[-1] # to remove grouping var
 }
 
 
-#' Get all values of worksheet as a dataframe
+#' Get all values in a worksheet.
 #'
-#' Use worksheet object and turn it into a dataframe.
+#' Extract the entire worksheet and turn it into a data frame. This function
+#' uses the rightmost cell with value as the max columns and bottom most cell as max row.
 #'
-#' @param ws Worksheet object 
+#' @param ws worksheet object 
+#' @param header logical for if first row should be taken as header
+#' @param vis either "private" or "public"
 #' @return A dataframe. 
 #' 
 #' This function calls on \code{\link{get_cols}} with to set as number of 
 #' columns of the worksheet.
+#' @seealso \code{\link{get_region}}, \code{\link{get_row}}, 
+#' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}
 #' @export
-get_dataframe <- function(ws, vis = "private") {
-  get_cols(ws, 1, ws$cols, vis)
+get_all <- function(ws, header = TRUE, vis = "private") 
+{
+  get_cols(ws, 1, ws$cols, header, vis = vis)
 }
 
 
 #' Get a region of a worksheet
 #'
-#' Extract cells of a worksheet according to specified range.
+#' Extract cells of a worksheet according to specified range. If range is beyond
+#' the dimensions of the worksheet, the boundary will be used as range.
 #'
 #' @param ws Worksheet object
 #' @param from_row,to_row range of rows to extract
 #' @param from_col,to_col range of cols to extract
 #' @param vis Either \code{private} or \code{public}
-#' @return A dataframe.
+#' @return A data frame.
+#' @seealso \code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
+#' \code{\link{get_col}}, \code{\link{get_cols}}
+#' @importFrom plyr ddply
 #' @export
-get_region <- function(ws, from_row, to_row, from_col, to_col, vis = "private") {
-  
+get_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE, 
+                       vis = "private")
+{
   if(to_row > ws$rows)
     to_row <- ws$rows
   
@@ -332,19 +372,22 @@ get_region <- function(ws, from_row, to_row, from_col, to_col, vis = "private") 
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from_row, max_row = to_row,
-                           min_col = from_col, max_col = to_col, visibility = vis)
+                           min_col = from_col, max_col = to_col, 
+                           visibility = vis)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-
+  
   tbl <- create_lookup_tbl(feed)
   
-  rows <- dlply(tbl, "row_adj", check_missing)
+  my_df <- ddply(tbl, "row_adj", check_missing)[-1] # to remove grouping var
   
-  rbind.fill(lapply(rows, function(x) 
-  {as.data.frame(t(x), stringsAsFactors=FALSE)}))
+  if(header) {
+    set_header(my_df)
+  } else {
+    my_df
+  }
 }
-  
 
 
 # Public spreadsheets only -----

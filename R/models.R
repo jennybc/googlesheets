@@ -28,7 +28,5 @@ worksheet <- function() {
                  title = character(),
                  rows = numeric(),
                  cols = numeric()),
-                 #listfeed = character(),
-                 #cellsfeed = character()), 
                  class = "worksheet")
 }
