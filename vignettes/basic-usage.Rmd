@@ -1,0 +1,123 @@
+---
+title: "gspreadr Basic Usage"
+author: "Joanna Zhao"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette gspeadr Basic Usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+```{r load package}
+library(gspreadr)
+```
+
+This vignette shows the basic functionality of `gspreadr`.
+
+## User Authentication
+
+In order to access your own spreadsheets (non-public), you must log in. There are 2 ways to do it in `gspreadr`. 
+
+1.  `login("email", "password")` (if you really want to...)
+2.  `authorize()` (preferred)
+
+For the first time, `authorize()` will authenticate the user interactively. The user will be directed to a web browser where they will be asked to login to their Google account, and give `gspreadr` permission to access Sheets and Google Drive. Credentials will be cached and authentication will not be needed for subsequent requests/sessions as `httr` handles the storing and refreshing of tokens.
+
+If you want to access a different account, run `authorize(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
+
+## Open a spreadsheet
+
+You can use `list_spreadsheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title.
+
+```{r spreadsheet ops}
+list_spreadsheets()
+
+ssheet <- open_spreadsheet("basic-usage")
+```
+This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 
+
+```{r}
+# spreadsheet attributes
+ssheet$sheet_id ; ssheet$sheet_title ; ssheet$updated ; ssheet$nsheets ; ssheet$ws_names
+```
+
+## Open a worksheet
+
+You can use `list_worksheets()` to see the worksheets living in the spreadsheet. This is a wrapper around `ssheet$ws_names`.
+```{r list ws}
+
+list_worksheets(ssheet)
+```
+
+To open a worksheet, you can pass in a spreadsheet object and then specify the worksheet using its title or index, or this can be done in one step using `open_at_once(ss_title, ws_index)`. This saves a bit of typing but the spreadsheet object will not be stored, so if you want to open another worksheet, `open_spreadsheet("title")` will be called again. So if you want to open multiple worksheets from a spreadsheet, save the spreadsheet as an R object and use it for `open_worksheet(ss, x)`  
+
+```{r open ws}
+
+# by title
+ws <- open_worksheet(ssheet, "Sheet1")
+```
+```{r, eval=FALSE}
+# or by index
+ws <- open_worksheet(ssheet, 1)
+
+# or in one shot
+ws <- open_at_once(ss_title = "basic-usage", ws_index = "Sheet1")
+ws <- open_at_once(ss_title = "basic-usage", ws_index = 1)
+```
+
+This returns a worksheet object. You can get the ids of the spreadsheet and worksheet, worksheet title, and the number of rows and columns.
+
+```{r}
+# worksheet attributes
+ws$sheet_id ; ws$id ; ws$rows ; ws$cols
+```
+
+## Operations on a worksheet
+
+You can get row(s), col(s), a region, or an entire worksheet. 
+
+### Get row(s)
+```{r get rows}
+get_row(ws, 1)
+
+get_rows(ws, from = 1, to = 3)
+```
+
+### Get col(s)
+```{r get cols}
+get_col(ws, 1)
+
+get_cols(ws, from = 1, to = 5)
+```
+
+### Get a region as a data frame
+
+You can get a region of a worksheet by specifying the boundary rows and columns. The first row will be taken as the `header` by default.
+
+```{r get region}
+get_region(ws, from_row = 1, to_row = 6, from_col = 1, to_col = 5)
+
+# set header to FALSE
+get_region(ws, from_row = 1, to_row = 6, from_col = 1, to_col = 5, header = FALSE)
+```
+### Get the entire worksheet as data frame
+
+You can get the entire worksheet. Empty cells will be filled with NAs. Boundaries are determined by the right-most and bottom-most cells that contain a value.  The first row will be taken as the `header` by default.
+
+
+```{r get all}
+get_all(ws)
+```
+
+### Add a worksheet
+```{r, eval = FALSE}
+add_worksheet(ssheet, title = "foo", rows = 10, cols = 10)
+```
+
+### Delete a worksheet
+```{r, eval = FALSE}
+del_worksheet(ssheet, ws)
+```
+
+
+
