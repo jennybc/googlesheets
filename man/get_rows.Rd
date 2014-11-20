@@ -3,7 +3,7 @@
 \alias{get_rows}
 \title{Get all values in range of rows.}
 \usage{
-get_rows(ws, from, to, header = TRUE, vis = "private")
+get_rows(ws, from, to, header = FALSE, vis = "private")
 }
 \arguments{
 \item{ws}{worksheet object}

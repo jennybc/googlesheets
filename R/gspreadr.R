@@ -195,7 +195,7 @@ del_worksheet<- function(ss, ws)
 #' @export
 get_row <- function(ws, row, vis = "private") 
 {
-  if(row > ws$rows)
+  if(row > ws$nrow)
     stop("Specified row exceeds the number of rows contained in the worksheet.")
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
@@ -223,10 +223,10 @@ get_row <- function(ws, row, vis = "private")
 #' @importFrom dplyr rbind_all
 #' @importFrom plyr rbind.fill
 #' @export
-get_rows <- function(ws, from, to, header = TRUE, vis = "private")
+get_rows <- function(ws, from, to, header = FALSE, vis = "private")
 {
-  if(to > ws$rows)
-    to <- ws$rows
+  if(to > ws$nrow)
+    to <- ws$nrow
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from, max_row = to, visibility = vis)
@@ -296,8 +296,8 @@ get_col <- function(ws, col, vis = "private")
 #' @export
 get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
 {
-  if(to > ws$cols) 
-    to <- ws$cols
+  if(to > ws$ncol) 
+    to <- ws$ncol
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = from, max_col = to, visibility = vis)
@@ -384,7 +384,7 @@ get_cell <- function(ws, cell)
 #' @export
 get_all <- function(ws, header = TRUE, vis = "private") 
 {
-  get_cols(ws, 1, ws$cols, header, vis = vis)
+  get_cols(ws, 1, ws$ncol, header, vis = vis)
 }
 
 
@@ -405,11 +405,11 @@ get_all <- function(ws, header = TRUE, vis = "private")
 read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE, 
                         vis = "private")
 {
-  if(to_row > ws$rows)
-    to_row <- ws$rows
+  if(to_row > ws$nrow)
+    to_row <- ws$nrow
   
-  if(to_col > ws$cols)
-    to_col <- ws$cols
+  if(to_col > ws$ncol)
+    to_col <- ws$ncol
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from_row, max_row = to_row,

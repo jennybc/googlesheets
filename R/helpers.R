@@ -184,8 +184,8 @@ worksheet_dim <- function(ws, auth = get_google_token(),
   
   if(length(cell_nodes) == 0) {
     dims <- getNodeSet(feed, "//ns:feed//gs:*", c("ns" = default_ns, "gs"), xmlValue)
-    ws$rows <- as.numeric(dims[[1]])
-    ws$cols <- as.numeric(dims[[2]])
+    ws$nrow <- as.numeric(dims[[1]])
+    ws$ncol <- as.numeric(dims[[2]])
   } else {
     cell_row_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
                                function(x) as.numeric(xmlGetAttr(x, "row")))
@@ -193,8 +193,8 @@ worksheet_dim <- function(ws, auth = get_google_token(),
     cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
                                function(x) as.numeric(xmlGetAttr(x, "col")))
     
-    ws$rows <- max(unlist(cell_row_num))
-    ws$cols <- max(unlist(cell_col_num))
+    ws$nrow <- max(unlist(cell_row_num))
+    ws$ncol <- max(unlist(cell_col_num))
   }
   ws
 }
