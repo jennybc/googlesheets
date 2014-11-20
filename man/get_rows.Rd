@@ -17,7 +17,7 @@ A data frame.
 Specify range of rows to get from worksheet.
 }
 \seealso{
-\code{\link{get_row}}, \code{\link{get_col}}, \code{\link{get_cols}},
-\code{\link{get_all}}, \code{\link{get_region}}
+\code{\link{get_row}}, \code{\link{get_col}},
+\code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
 }
 

@@ -246,7 +246,8 @@ create_lookup_tbl <- function(cellsfeed) {
 #'
 #' @param x data frame returned from \code{\link{create_lookup_tbl}} 
 #' @return A vector of values contained in row with NAs for missing values.
-check_missing <-function(x, by_col = TRUE) {
+check_missing <-function(x, by_col = TRUE)
+{
   row_vals <- c()
   
   if(by_col) 
@@ -267,10 +268,66 @@ check_missing <-function(x, by_col = TRUE) {
   row_vals
 }
 
+
+
+
+#' Set header for data frame 
+#'
+#' Take first row of data frame and make it the header. Rownames are also reset.
+#'
+#' @param x a data frame.
 set_header <- function(x)
 {
-    names(x) <- x[1, ]
-    x <- x[2:nrow(x), ]
-    rownames(x) <- NULL
-    x
+  names(x) <- x[1, ]
+  x <- x[2:nrow(x), ]
+  rownames(x) <- NULL
+  x
 }
+
+
+#' Convert column letter to number 
+#'
+#' Take first row of data frame and make it the header. Rownames are also reset.
+#'
+#' @param x column letter
+#' @examples
+#' letter_to_col("A")
+#' letter_to_col("AB")
+letter_to_col <- function(x)
+{
+  ascii_tbl <- data.frame(alpha = LETTERS, num = 65:90)
+  
+  x <- toupper(x)
+  
+  m <- c()
+  for(i in 1:nchar(x)) {
+    k <- unlist(strsplit(x, "")) # list of characters
+    ind <- grep(k[i], ascii_tbl$alpha)
+    y <- (ascii_tbl[ind, "num"] - 64) * (26 ^ (nchar(x) - i))
+    m <- c(m, y)
+  }
+  
+  sum(m)
+}
+
+
+#' Convert label (A1) notation to coordinate (R1C1) notation
+#'
+#' A1 and R1C1 are equivalent addresses for position of cells, but R1C1 
+#' notation is used in queries. 
+#'
+#' @param x label notation for position of cell
+#' @examples
+#' label_to_coord("A1")
+#' label_to_coord("AB23")
+label_to_coord <- function(x)
+{
+  letter <- unlist(strsplit(x, "[0-9]+"))
+  col_num <- letter_to_col(letter)
+  row_num <- gsub("[[:alpha:]]", "", x)
+  paste0("R", row_num, "C", col_num)
+}
+
+
+
+

@@ -20,6 +20,6 @@ Specify row of values to get from worksheet.
 }
 \seealso{
 \code{\link{get_rows}}, \code{\link{get_col}},
-\code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{get_region}}
+\code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
 }
 

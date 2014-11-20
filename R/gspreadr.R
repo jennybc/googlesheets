@@ -190,7 +190,7 @@ del_worksheet<- function(ss, ws)
 #' @param vis either "private" or "public"
 #' @return A data frame. 
 #' @seealso \code{\link{get_rows}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{get_region}}
+#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
 #' @importFrom plyr ddply
 #' @export
 get_row <- function(ws, row, vis = "private") 
@@ -217,8 +217,8 @@ get_row <- function(ws, row, vis = "private")
 #' @param ws worksheet object
 #' @param from,to start and end row indexes
 #' @return A data frame.
-#' @seealso \code{\link{get_row}}, \code{\link{get_col}}, \code{\link{get_cols}},
-#' \code{\link{get_all}}, \code{\link{get_region}}
+#' @seealso \code{\link{get_row}}, \code{\link{get_col}}, 
+#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
 #' @importFrom plyr dlply
 #' @importFrom dplyr rbind_all
 #' @importFrom plyr rbind.fill
@@ -241,9 +241,9 @@ get_rows <- function(ws, from, to, header = TRUE, vis = "private")
   list_of_df <- 
     lapply(list_of_vec, 
            function(x) as.data.frame(t(x), stringsAsFactors = FALSE))
-
+  
   my_df <- rbind.fill(list_of_df)
-
+  
   if(header) {
     set_header(my_df)
   } else {
@@ -251,7 +251,7 @@ get_rows <- function(ws, from, to, header = TRUE, vis = "private")
   }
   
   # doesnt work if rows of different length
- #ddply(tbl, "row", check_missing)[-1] # to remove grouping var
+  #ddply(tbl, "row", check_missing)[-1] # to remove grouping var
 }
 
 
@@ -262,7 +262,7 @@ get_rows <- function(ws, from, to, header = TRUE, vis = "private")
 #' @param vis either "private" or "public"
 #' @return A data frame.
 #' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{get_region}}
+#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}
 #' @importFrom plyr ddply
 #' @export
 get_col <- function(ws, col, vis = "private") 
@@ -291,7 +291,7 @@ get_col <- function(ws, col, vis = "private")
 #' get_cols(ws, 1, 2)
 #' get_cols(ws, 30, 40)
 #' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{get_region}}
+#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}
 #' @importFrom plyr ddply
 #' @export
 get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
@@ -326,10 +326,51 @@ get_cols <- function(ws, from, to, header = TRUE, vis = "private")
 }
 
 
+#' Get the value of a cell
+#'
+#' Get the value of a cell using label (A1) notation or coordinate (R1C1) 
+#' notation.
+#'
+#' @param ws worksheet object
+#' @param cell character string specifying cell position, 
+#' either in label or coordinate notation
+#' @return The value of the cell as a character string. 
+#' @examples
+#' get_cell(ws, "A1")
+#' get_cell(ws, "R1C1")
+#' get_cell(ws, "AB1")
+#' get_cell(ws, "R1C27")
+#' @export
+get_cell <- function(ws, cell)
+{
+  if(grepl("[R][[:digit:]]+[C][[:digit:]]+", cell)) {
+    cell
+  } else {
+    if(grepl("^[[:alpha:]]+[[:digit:]]+$", cell)) {
+      cell <- label_to_coord(cell)
+    } else {
+      stop("Please check cell notation.")
+    }
+  }
+  
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
+  new_url <- paste(the_url, cell, sep = "/")
+  
+  req <- gsheets_GET(new_url)
+  feed <- gsheets_parse(req)
+  
+  cell_val <- 
+    getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
+               xmlValue)
+  unlist(cell_val)
+}
+
+
 #' Get all values in a worksheet.
 #'
 #' Extract the entire worksheet and turn it into a data frame. This function
-#' uses the rightmost cell with value as the max columns and bottom most cell as max row.
+#' uses the rightmost cell with value as the max columns and bottom most 
+#' cell as max row.
 #'
 #' @param ws worksheet object 
 #' @param header logical for if first row should be taken as header
@@ -338,7 +379,7 @@ get_cols <- function(ws, from, to, header = TRUE, vis = "private")
 #' 
 #' This function calls on \code{\link{get_cols}} with to set as number of 
 #' columns of the worksheet.
-#' @seealso \code{\link{get_region}}, \code{\link{get_row}}, 
+#' @seealso \code{\link{read_region}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}
 #' @export
 get_all <- function(ws, header = TRUE, vis = "private") 
@@ -361,8 +402,8 @@ get_all <- function(ws, header = TRUE, vis = "private")
 #' \code{\link{get_col}}, \code{\link{get_cols}}
 #' @importFrom plyr ddply
 #' @export
-get_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE, 
-                       vis = "private")
+read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE, 
+                        vis = "private")
 {
   if(to_row > ws$rows)
     to_row <- ws$rows

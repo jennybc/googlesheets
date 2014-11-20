@@ -26,7 +26,7 @@ worksheet <- function() {
   structure(list(sheet_id = character(),
                  id = character(),
                  title = character(),
-                 rows = numeric(),
-                 cols = numeric()),
+                 nrow = numeric(),
+                 ncol = numeric()),
                  class = "worksheet")
 }

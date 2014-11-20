@@ -20,10 +20,11 @@ columns of the worksheet.
 }
 \description{
 Extract the entire worksheet and turn it into a data frame. This function
-uses the rightmost cell with value as the max columns and bottom most cell as max row.
+uses the rightmost cell with value as the max columns and bottom most
+cell as max row.
 }
 \seealso{
-\code{\link{get_region}}, \code{\link{get_row}},
+\code{\link{read_region}}, \code{\link{get_row}},
 \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}
 }
 
