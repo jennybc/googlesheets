@@ -5,31 +5,36 @@ default_ns = "http://www.w3.org/2005/Atom"
 #'
 #' Construct URL for talking to Google Sheets API. 
 #'
-#'@param feed_type One of the following: spreadsheets, worksheets, list, cells
-#'@param key Spreadsheet key
-#'@param ws_id id of worksheet contained in spreadsheet
-#'@param visibility Either private or public
-#'@param projection Either full or basic
-#'@return URL
+#' @param feed_type one of the following: spreadsheets, worksheets, list, cells
+#' @param key spreadsheet key
+#' @param ws_id id of worksheet contained in spreadsheet
+#' @param visibility Either private or public
+#' @param projection Either full or basic
+#' @return URL
 build_req_url <- function(feed_type, key = NULL, ws_id = NULL, 
                           visibility = "private", projection = "full", 
                           min_row = NULL, max_row = NULL, 
-                          min_col = NULL, max_col = NULL) {
+                          min_col = NULL, max_col = NULL) 
+{
   base_url <- "https://spreadsheets.google.com/feeds"
   
   switch(
     feed_type,
     spreadsheets = {
-      the_url <- paste(base_url, feed_type, visibility, projection, sep = "/")
+      the_url <- paste(base_url, feed_type, visibility, projection, 
+                       sep = "/")
     },
     worksheets = {
-      the_url <- paste(base_url, feed_type, key, visibility, projection, sep = "/")
+      the_url <- paste(base_url, feed_type, key, visibility, projection, 
+                       sep = "/")
     },
     list = {
-      the_url <- paste(base_url, feed_type, key, ws_id, visibility, projection , sep = "/")
+      the_url <- paste(base_url, feed_type, key, ws_id, visibility, 
+                       projection , sep = "/")
     },
     cells = {
-      the_url <- paste(base_url, feed_type, key, ws_id, visibility, projection, sep = "/")
+      the_url <- paste(base_url, feed_type, key, ws_id, visibility, 
+                       projection, sep = "/")
       
       if(sum(min_row, max_row, min_col, max_col) > 0) {
         query <- build_query(min_row, max_row, min_col, max_col)
@@ -46,19 +51,18 @@ build_req_url <- function(feed_type, key = NULL, ws_id = NULL,
 #' Create query to qppend to GET URL.
 #'
 #' @param min_row, max_row,min_col,max_col query parameters
-build_query <- function(min_row, max_row, min_col, max_col) {
+build_query <- function(min_row, max_row, min_col, max_col) 
+{
   if(!is.null(min_row) && !is.null(min_col)) {
     query <- paste0("?min-row=", min_row, "&max-row=", max_row, 
                     "&min-col=", min_col, "&max-col=", max_col)
   } else {
-    
     if(is.null(min_row)) {
       query <- paste0("?&min-col=", min_col, "&max-col=", max_col)
     } else {
       query <- paste0("?&min-row=", min_row, "&max-row=", max_row)
     }
-    
-  } 
+  }
   query
 }
 
@@ -72,8 +76,8 @@ build_query <- function(min_row, max_row, min_col, max_col) {
 #' or \code{\link{authorize}} 
 #' @importFrom httr GET
 #' @importFrom httr stop_for_status
-gsheets_GET <- function(url, token = get_google_token()) { 
-  
+gsheets_GET <- function(url, token = get_google_token()) 
+{ 
   if(is.null(token)) {
     req <- GET(url)
   } else {
@@ -84,12 +88,15 @@ gsheets_GET <- function(url, token = get_google_token()) {
 }
 
 
-#' Check if client is using Google login or oauth2.0
+#' Check if token is obtained from Google login or oauth2.0
 #' 
-#' @param client Client object
+#' Add token as a header or token in configuations in URL request.
+#' 
+#' @param token Google token
 #' @importFrom httr config
 #' @importFrom httr add_headers
-gsheets_auth <- function(token) {
+gsheets_auth <- function(token) 
+{
   if(class(token) != "character")
     auth <- config(token = .state$token)
   else 
@@ -103,21 +110,23 @@ gsheets_auth <- function(token) {
 #'
 #' @param req response from \code{\link{gsheets_GET}} request
 #' @importFrom XML xmlInternalTreeParse
-gsheets_parse <- function(req) {
+gsheets_parse <- function(req) 
+{
   xmlInternalTreeParse(req)
 }
 
 
 #' Create worksheet objects from worksheets feed
 #' 
-#' Store worksheet info (spreadsheet id, worksheet id, worksheet title) that is 
-#' embedded as entry nodes in worksheets feed.
+#' Extract worksheet info (spreadsheet id, worksheet id, worksheet title) 
+#' from entry nodes in worksheets feed as worksheet objects.
 #' 
-#' @param node Entry node for worksheet
-#' @param sheet_id Spreadsheet id housing worksheet
+#' @param node entry node for worksheet
+#' @param sheet_id spreadsheet id housing worksheet
 #' 
 #' @importFrom XML xmlToList
-fetch_ws <- function(node, sheet_id) {
+make_ws_obj <- function(node, sheet_id) 
+{
   attr_list <- xmlToList(node)
   
   ws <- worksheet()
@@ -135,24 +144,23 @@ fetch_ws <- function(node, sheet_id) {
 #' @importFrom XML xmlValue
 #' @importFrom XML xmlGetAttr
 #' @importFrom XML getNodeSet
-spreadsheets_info <- function() {
+ssfeed_to_df <- function() 
+{
   the_url <- build_req_url("spreadsheets")
   req <- gsheets_GET(the_url)
   ssfeed <- gsheets_parse(req)
   
   ss_titles <- getNodeSet(ssfeed, "//ns:entry//ns:title", c("ns" = default_ns),
                           xmlValue)
-  ss_updated <- getNodeSet(ssfeed, "//ns:entry//ns:updated", c("ns" = default_ns),
-                           xmlValue)
+  
+  ss_updated <- getNodeSet(ssfeed, "//ns:entry//ns:updated", 
+                           c("ns" = default_ns), xmlValue)
+  
   ss_wsfeed <- 
-    getNodeSet(ssfeed, 
-               "//ns:link[@rel='http://schemas.google.com/spreadsheets/2006#worksheetsfeed']", 
-               c("ns" = default_ns),
+    getNodeSet(ssfeed, '//ns:entry//ns:link[@rel="self"]', c("ns" = default_ns),
                function(x) xmlGetAttr(x, "href"))
   
-  
-  ss_key_pre <- sub(".*worksheets/", "", unlist(ss_wsfeed))
-  ss_key <- sub("/.*", "", ss_key_pre)
+  ss_key <- sub(".*full/", "", unlist(ss_wsfeed)) # extract spreadsheet key
   
   ssdata_df <- data.frame(sheet_title = unlist(ss_titles),
                           last_updated = unlist(ss_updated),
@@ -163,42 +171,77 @@ spreadsheets_info <- function() {
 
 
 #' Find number of rows and columns of worksheet
-#' 
+ 
 #' Get the rows and columns of worksheet by making a request for cellfeed
-#' 
-#'@param client Client object
-#'@param ws Worksheet object
-#'@importFrom XML getNodeSet
-#'@importFrom XML xmlApply
-#'@importFrom XML xmlGetAttr
-worksheet_dim <- function(ws, auth = get_google_token(), 
-                          visibility = "private") {
+ 
+#' @param ws Worksheet object
+#' @param auth Google token
+#' @param visibility set to \code{public} for public sheets
+#' @importFrom XML getNodeSet
+#' @importFrom XML xmlApply
+#' @importFrom XML xmlGetAttr
+#' @export
+worksheet_dim <- function(ws, auth = get_google_token(), visibility = "private")
+{
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            visibility = visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
-  #check for any entry nodes
-  cell_nodes <- getNodeSet(feed, "//ns:feed//ns:entry", c("ns" = default_ns))
+  tbl <- create_lookup_tbl(feed)
   
+  cell_nodes <- getNodeSet(feed, "//ns:feed//ns:entry", c("ns" = default_ns)) 
+        
   if(length(cell_nodes) == 0) {
     dims <- getNodeSet(feed, "//ns:feed//gs:*", c("ns" = default_ns, "gs"), xmlValue)
     ws$nrow <- as.numeric(dims[[1]])
     ws$ncol <- as.numeric(dims[[2]])
   } else {
-    cell_row_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
-                               function(x) as.numeric(xmlGetAttr(x, "row")))
-    
-    cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
-                               function(x) as.numeric(xmlGetAttr(x, "col")))
-    
-    ws$nrow <- max(unlist(cell_row_num))
-    ws$ncol <- max(unlist(cell_col_num))
+      cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
+                                 function(x) c(as.numeric(xmlGetAttr(x, "col")), 
+                                                   as.numeric(xmlGetAttr(x, "row"))))
+      
+      ws$nrow <- max(sapply(cell_col_num, "[[", 2))
+      ws$ncol <- max(sapply(cell_col_num, "[[", 1))
+      ws$specs <- paste("Data found in", length(unique(tbl$col)), "columns and", 
+                        length(unique(tbl$row)), "rows")
+
   }
   ws
 }
 
+# #' Find number of rows and columns of worksheet
+# #' 
+# #' Get the rows and columns of worksheet by making a request for cellfeed
+# #' 
+# #' dparam ws Worksheet object
+# #' param auth Google token
+# #' param visibility set to \code{public} for public sheets
+# #'  
+# #' The is faster but with a trade-off. For listfeeds, data will stop before an 
+# #' entire blank row. For example if row 2 is entirely blank, no data will be 
+# #' returned. Blank columns are also ignored. The number of columns will be the 
+# #' maximum number of cells in a row that contain a value, regardless
+# #' of spacing.
+# #' 
+# #' importFrom XML getNodeSet
+# #' importFrom XML xmlChildren
+# worksheet_dim <- function(ws, auth = get_google_token(), visibility = "private")
+# {
+#   the_url <- build_req_url("list", key = ws$sheet_id, ws_id = ws$id, 
+#                            visibility = visibility)
+#   
+#   req <- gsheets_GET(the_url)
+#   feed <- gsheets_parse(req)
+# 
+#   cell_nodes <- getNodeSet(feed, "//ns:feed//ns:entry", c("ns" = default_ns),
+#                            function(x) length(xmlChildren(x)) - 7)
+#   
+#   ws$ncol <- max(unlist(cell_nodes))
+#   ws$nrow <- length(cell_nodes) + 1 # to include header row
+#   ws
+# }
 
 #' Create lookup table for cell indices and its values 
 #'
@@ -212,12 +255,15 @@ worksheet_dim <- function(ws, auth = get_google_token(),
 #' @importFrom XML xmlAttrs
 #' @importFrom XML xmlValue
 create_lookup_tbl <- function(cellsfeed) {
-  val <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"), xmlValue)
+  val <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", 
+                    c("ns" = default_ns, "gs"), xmlValue)
   
-  row_num <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
+  row_num <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", 
+                        c("ns" = default_ns, "gs"),
                         function(x) as.numeric(xmlAttrs(x)["row"]))
   
-  col_num <-  getNodeSet(cellsfeed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
+  col_num <-  getNodeSet(cellsfeed, "//ns:entry//gs:cell", 
+                         c("ns" = default_ns, "gs"),
                          function(x) as.numeric(xmlAttrs(x)["col"]))
   
   rows <- unlist(row_num)
@@ -229,10 +275,8 @@ create_lookup_tbl <- function(cellsfeed) {
   row_adj <- rows - row_diff
   col_adj <- cols - col_diff
   
-  lookup_tbl <- data.frame(row = rows, 
-                           col = cols, 
-                           row_adj = row_adj,
-                           col_adj = col_adj,
+  lookup_tbl <- data.frame(row = rows, col = cols, 
+                           row_adj = row_adj, col_adj = col_adj,
                            val = unlist(val),
                            stringsAsFactors = FALSE)
   
@@ -245,6 +289,7 @@ create_lookup_tbl <- function(cellsfeed) {
 #' Loop through cell indices and substitute NA for missing cell values. 
 #'
 #' @param x data frame returned from \code{\link{create_lookup_tbl}} 
+#' @param by_col set to 
 #' @return A vector of values contained in row with NAs for missing values.
 check_missing <-function(x, by_col = TRUE)
 {
@@ -269,8 +314,6 @@ check_missing <-function(x, by_col = TRUE)
 }
 
 
-
-
 #' Set header for data frame 
 #'
 #' Take first row of data frame and make it the header. Rownames are also reset.
@@ -285,18 +328,17 @@ set_header <- function(x)
 }
 
 
-#' Convert column letter to number 
+#' Convert column letter to column number
 #'
-#' Take first row of data frame and make it the header. Rownames are also reset.
-#'
-#' @param x column letter
+#' @param x column letter (case insensitive)
 #' @examples
-#' letter_to_col("A")
-#' letter_to_col("AB")
-letter_to_col <- function(x)
+#' letter_to_num("A")
+#' letter_to_num("AB")
+#' letter_to_num("a")
+#' letter_to_num("ab")
+letter_to_num <- function(x)
 {
   ascii_tbl <- data.frame(alpha = LETTERS, num = 65:90)
-  
   x <- toupper(x)
   
   m <- c()
@@ -306,7 +348,6 @@ letter_to_col <- function(x)
     y <- (ascii_tbl[ind, "num"] - 64) * (26 ^ (nchar(x) - i))
     m <- c(m, y)
   }
-  
   sum(m)
 }
 
@@ -323,7 +364,7 @@ letter_to_col <- function(x)
 label_to_coord <- function(x)
 {
   letter <- unlist(strsplit(x, "[0-9]+"))
-  col_num <- letter_to_col(letter)
+  col_num <- letter_to_num(letter)
   row_num <- gsub("[[:alpha:]]", "", x)
   paste0("R", row_num, "C", col_num)
 }

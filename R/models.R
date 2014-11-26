@@ -27,6 +27,7 @@ worksheet <- function() {
                  id = character(),
                  title = character(),
                  nrow = numeric(),
-                 ncol = numeric()),
-                 class = "worksheet")
+                 ncol = numeric(),
+                 specs = character()),
+            class = "worksheet")
 }

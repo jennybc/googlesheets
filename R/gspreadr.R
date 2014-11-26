@@ -1,37 +1,35 @@
 # default namespace for querying xml feed returned by GET
 default_ns = "http://www.w3.org/2005/Atom"
 
-#' Get list of spreadsheets for authorized user
+#' Get list of spreadsheets
 #'
-#' Retrieve the names of spreadsheets owned by user.
-#'
-#' or \code{\link{authorize}}
+#' Retrieve the names of spreadsheets in Google drive.
 #'
 #' @export
 list_spreadsheets <- function() 
 {
-  titles <- spreadsheets_info()$sheet_title
-  titles
+  ssfeed_to_df()$sheet_title
 }
 
 
 #' Open spreadsheet by title 
 #'
-#' Use spreadsheet title (as it appears in Google Drive) to get spreadsheet 
-#' object.
+#' Use the spreadsheet title (as it appears in Google Drive) to get a 
+#' spreadsheet object, containing the spreadsheet id, title, time of last 
+#' update, the titles and number of worksheets contained, and a list of 
+#' worksheet objects.
 #'
 #' @param title the title of a spreadsheet.
-#' @return Object of class spreadsheet. 
 #' 
 #' @importFrom XML xmlToList
 #' @importFrom XML getNodeSet
-#' 
 #' @export
 open_spreadsheet <- function(title) 
 {
-  ssfeed_df <- spreadsheets_info() # return spreadsheet feed as data frame
+  ssfeed_df <- ssfeed_to_df()
   
   index <- match(title, ssfeed_df$sheet_title)
+  
   if(is.na(index)) stop("Spreadsheet not found.")
   sheet_key <- ssfeed_df[index, "sheet_key"]
   
@@ -41,59 +39,59 @@ open_spreadsheet <- function(title)
   
   wsfeed_list <- xmlToList(wsfeed)
   
+  ws_objs <- getNodeSet(wsfeed, "//ns:entry", c(ns = default_ns), 
+                        function(x) make_ws_obj(x, sheet_key))
+  
+  names(ws_objs) <- lapply(ws_objs, function(x) x$title)
+  
   ss <- spreadsheet()
   ss$sheet_id <- sheet_key
   ss$sheet_title <- wsfeed_list$title$text
   ss$updated <- wsfeed_list$updated
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
-  
-  ws_objs <- getNodeSet(wsfeed, "//ns:entry", c(ns = default_ns), 
-                        function(x) fetch_ws(x, ss$sheet_id))
-  
-  names(ws_objs) <- lapply(ws_objs, function(x) x$title)
   ss$ws_names <- names(ws_objs)
   ss$worksheets <- ws_objs
   ss
 }
 
 
-#' The worksheets contained in Spreadsheet
+#' Get list of worksheets contained in spreadsheet
 #'
-#' Get list of worksheet titles (order as it appears in Google Docs) 
+#' Retrieve list of worksheet titles (order as it appears in spreadsheet) 
 #' contained in spreadsheet. 
 #'
-#' @param spreadsheet A spreadsheet object returned by \code{\link{open_spreadsheet}}
-#' @return The titles of worksheets contained in spreadsheet. 
+#' @param ss spreadsheet object returned by \code{\link{open_spreadsheet}}
 #'
-#' This is a mini wrapper for spreadsheet$ws_names.
+#' This is a mini wrapper around spreadsheet$ws_names.
 #' @export  
 list_worksheets <- function(ss) 
 {
-  titles <- ss$ws_names
-  titles
+  ss$ws_names
 }
 
 
 #' Open worksheet given worksheet title or index
 #'
-#' Use title or index of worksheet to retrieve object of class worksheet.
+#' Use title or index of worksheet to retrieve worksheet object.
 #'
-#' @param ss Spreadsheet object containing worksheet
-#' @param x chr string for title of worksheet or numeric for index of worksheet 
-#' in spreadsheet
-#' @return An object of class worksheet and number of rows and cols attribute.
-#'  
+#' @param ss spreadsheet object containing worksheet
+#' @param value a character string for title of worksheet or numeric for 
+#' index of worksheet
+#' @return A worksheet object with number of rows and cols component.
+#' @examples
+#' ws <- open_worksheet(ss, "Sheet1")
+#' ws <- open_worksheet(ss, 1)
 #' @export
-open_worksheet <- function(ss, x, vis = "private") 
+open_worksheet <- function(ss, value, vis = "private") 
 {
-  if(is.character(x)) {
-    index <- match(x, names(ss$worksheets))
+  if(is.character(value)) {
+    index <- match(value, names(ss$worksheets))
     
     if(is.na(index))
       stop("Worksheet not found.")
     
   } else {
-    index <- x
+    index <- value
   }
   
   ws <- ss$worksheets[[index]]
@@ -101,48 +99,49 @@ open_worksheet <- function(ss, x, vis = "private")
 }
 
 
-#' Open a worksheet from a spreadsheet at once
+#' Open a worksheet from a spreadsheet in one go
 #' 
-#' @param ss_name Spreadsheet title
-#' @param ws_index worksheet name or numeric for worksheet index
+#' @param ss_title spreadsheet title
+#' @param ws_value title or numeric index of worksheet
 #'
 #' @export
-open_at_once <- function(ss_title, ws_index) 
+open_at_once <- function(ss_title, ws_value) 
 {
   sheet <- open_spreadsheet(ss_title)
-  open_worksheet(sheet, ws_index)
+  open_worksheet(sheet, ws_value)
 }
 
 
-#' Add new worksheet to spreadsheet
+#' Add a new worksheet to spreadsheet
 #'
-#' Add a new worksheet to spreadsheet, specify name, number of rows and cols.
+#' Add a new (empty) worksheet to spreadsheet, specify title, number of rows 
+#' and columns.
 #'
-#' @param ss Spreadsheet object
-#' @param name character string for name of new worksheet 
-#' @param rows Number of rows
-#' @param cols Number of columns
-#' @param token Google token
+#' @param ss spreadsheet object
+#' @param title character string for title of new worksheet 
+#' @param nrow Number of rows
+#' @param ncol Number of columns
+#' @param token Google token obtained from \code{\link{login}} or 
+#' \code{\link{authorize}}
 #' 
 #' @importFrom XML xmlNode
 #' @importFrom XML toString.XMLNode
 #' @importFrom httr POST
 #' @importFrom httr status_code
 #' @export
-add_worksheet<- function(ss, title, rows, cols, token = get_google_token()) 
-{
-  the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", 
-                    ss$sheet_id, "/private/full")
-  
+add_worksheet<- function(ss, title, nrow, ncol, token = get_google_token()) 
+{   
   the_body <- 
     xmlNode("entry", 
             namespaceDefinitions = c("http://www.w3.org/2005/Atom",
                                      gs = "http://schemas.google.com/spreadsheets/2006"),
             xmlNode("title", title),
-            xmlNode("gs:rowCount", rows),
-            xmlNode("gs:colCount", cols))
+            xmlNode("gs:rowCount", nrow),
+            xmlNode("gs:colCount", ncol))
   
   auth <- gsheets_auth(token)
+  
+  the_url <- build_req_url("worksheets", key = ss$sheet_id)
   
   req <- 
     POST(the_url, auth, add_headers("Content-Type" = "application/atom+xml"),
@@ -156,19 +155,18 @@ add_worksheet<- function(ss, title, rows, cols, token = get_google_token())
 }
 
 
-#' Delete worksheet from spreadsheet
+#' Delete a worksheet from spreadsheet
 #'
 #' The worksheet and all of its data will be removed from spreadsheet.
 #'
-#' @param ss Spreadsheet object
-#' @param ws Worksheet object
+#' @param ss spreadsheet object
+#' @param ws worksheet object
 #' @importFrom httr DELETE
 #' @importFrom httr status_code
 #' @export
 del_worksheet<- function(ss, ws) 
 {
-  the_url <- paste0("https://spreadsheets.google.com/feeds/worksheets/", 
-                    ss$sheet_id, "/private/full/", ws$id, "/version")
+  the_url <- build_req_url("worksheets", key = ss$sheet_id, ws_id = ws$id)
   
   auth <- gsheets_auth(get_google_token())
   req <- DELETE(the_url, auth)
@@ -181,13 +179,14 @@ del_worksheet<- function(ss, ws)
 }
 
 
-#' Get all values in a row.
+#' Get all values in a row
 #'
 #' Specify row of values to get from worksheet.
 #'
 #' @param ws worksheet object
 #' @param row row
-#' @param vis either "private" or "public"
+#' @param vis either "private" or "public", set to "public" for public for 
+#' worksheets
 #' @return A data frame. 
 #' @seealso \code{\link{get_rows}}, \code{\link{get_col}}, 
 #' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
@@ -210,7 +209,7 @@ get_row <- function(ws, row, vis = "private")
 }
 
 
-#' Get all values in range of rows.
+#' Get all values in range of rows
 #'
 #' Specify range of rows to get from worksheet.
 #'
@@ -235,13 +234,13 @@ get_rows <- function(ws, from, to, header = FALSE, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
-  
+
   list_of_vec <- dlply(tbl, "row", check_missing)
   
   list_of_df <- 
     lapply(list_of_vec, 
            function(x) as.data.frame(t(x), stringsAsFactors = FALSE))
-  
+
   my_df <- rbind.fill(list_of_df)
   
   if(header) {
@@ -258,7 +257,7 @@ get_rows <- function(ws, from, to, header = FALSE, vis = "private")
 #' Get all values in a column.
 #'
 #' @param ws worksheet object
-#' @param col column
+#' @param col column number or letter (case insensitive)
 #' @param vis either "private" or "public"
 #' @return A data frame.
 #' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
@@ -267,16 +266,21 @@ get_rows <- function(ws, from, to, header = FALSE, vis = "private")
 #' @export
 get_col <- function(ws, col, vis = "private") 
 {
+  if(!is.numeric(col)) 
+    col <- letter_to_num(col)
+  
+  if(col > ws$ncol)
+    stop("Column exceeds current worksheet size")
+  
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = col, max_col = col, visibility = vis)
   
   req <- gsheets_GET(the_url)
-  
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
   
-  check_missing(tbl)
+  check_missing(tbl, by_col = FALSE)
 }
 
 
@@ -285,17 +289,25 @@ get_col <- function(ws, col, vis = "private")
 #' Specify range of columns to get from worksheet.
 #'
 #' @param ws worksheet object
-#' @param from,to start and end column indexes
+#' @param from,to start and end column indexes either integer or letter
 #' @return A data frame.
 #' @examples
 #' get_cols(ws, 1, 2)
 #' get_cols(ws, 30, 40)
+#' 
+#' get_cols(ws, "A", "B")
+#' get_cols(ws, "c", "f")
 #' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}
 #' @importFrom plyr ddply
 #' @export
 get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
 {
+  if(!is.numeric(from) & !is.numeric(to)) {
+    from <- letter_to_num(from)
+    to <- letter_to_num(to)
+  }
+  
   if(to > ws$ncol) 
     to <- ws$ncol
   
@@ -356,7 +368,7 @@ get_cell <- function(ws, cell)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
   new_url <- paste(the_url, cell, sep = "/")
   
-  req <- gsheets_GET(new_url)
+  system.time(req <- gsheets_GET(new_url))
   feed <- gsheets_parse(req)
   
   cell_val <- 
@@ -388,7 +400,7 @@ get_all <- function(ws, header = TRUE, vis = "private")
 }
 
 
-#' Get a region of a worksheet
+#' Get a region of a worksheet by min/max rows and columns
 #'
 #' Extract cells of a worksheet according to specified range. If range is beyond
 #' the dimensions of the worksheet, the boundary will be used as range.
@@ -431,6 +443,61 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
 }
 
 
+#' Get a region of a worksheet by range
+#'
+#' 
+#' @param ws Worksheet object
+#' @param x character string for range separated by ":"
+#' @param header \code{logical} for whether or not first row should be taken as 
+#' header
+#' @param vis either "private" (default) or "public" for public spreadsheets
+#' @examples
+#' read_range("A1:B10")
+#' read_range("C10:D20")
+#' @importFrom plyr ddply
+#' @export
+read_range <- function(ws, x, header = TRUE, vis = "private") {
+  
+  if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", x)) 
+    stop("Please check cell notation.")
+  
+  bounds <- unlist(strsplit(x, split = ":"))
+  rows <- as.numeric(gsub("[^0-9]", "", bounds))  
+  cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
+  
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_row = rows[1], max_row = rows[2],
+                           min_col = cols[1], max_col = cols[2], 
+                           visibility = vis)
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  
+  tbl <- create_lookup_tbl(feed)
+  
+  my_df <- ddply(tbl, "row_adj", check_missing)[-1] # to remove grouping var
+  
+  if(header) 
+    set_header(my_df)
+  else
+    my_df
+  
+}
+
+
+#' Get a list of worksheet objects
+#'
+#' This list enables \code{plyr} functions to operate on mutiple worksheets at once.
+#' 
+#' @param ss spreadsheet object
+#' @importFrom plyr llply
+#' @export
+list_worksheet_objs <- function(ss) 
+{
+  llply(ss$worksheets, function(x) open_worksheet(ss, x$title))
+}
+
+
 # Public spreadsheets only -----
 
 #' Open spreadsheet by key 
@@ -459,7 +526,7 @@ open_by_key <- function(key) {
   
   # return list of worksheet objs
   ws_objs<- getNodeSet(wsfeed, "//ns:entry", c("ns" = default_ns),
-                       function(x) fetch_ws(x, ss$sheet_id))
+                       function(x) make_ws_obj(x, ss$sheet_id))
   
   names(ws_objs) <- lapply(ws_objs, function(x) x$title)
   ss$ws_names <- names(ws_objs)
@@ -482,5 +549,4 @@ open_by_url <- function(url) {
   key <- unlist(strsplit(url, "/"))[6] # TODO: fix hardcoding
   open_by_key(key)
 }
-
 
