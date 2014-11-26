@@ -7,6 +7,8 @@ check_missing(x, by_col = TRUE)
 }
 \arguments{
 \item{x}{data frame returned from \code{\link{create_lookup_tbl}}}
+
+\item{by_col}{set to}
 }
 \value{
 A vector of values contained in row with NAs for missing values.

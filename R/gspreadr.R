@@ -487,7 +487,8 @@ read_range <- function(ws, x, header = TRUE, vis = "private") {
 
 #' Get a list of worksheet objects
 #'
-#' This list enables \code{plyr} functions to operate on mutiple worksheets at once.
+#' The returned list of worksheet objects enables \code{plyr} functions to 
+#' operate on mutiple worksheets at once.
 #' 
 #' @param ss spreadsheet object
 #' @importFrom plyr llply

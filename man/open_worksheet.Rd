@@ -3,18 +3,22 @@
 \alias{open_worksheet}
 \title{Open worksheet given worksheet title or index}
 \usage{
-open_worksheet(ss, x, vis = "private")
+open_worksheet(ss, value, vis = "private")
 }
 \arguments{
-\item{ss}{Spreadsheet object containing worksheet}
+\item{ss}{spreadsheet object containing worksheet}
 
-\item{x}{chr string for title of worksheet or numeric for index of worksheet
-in spreadsheet}
+\item{value}{a character string for title of worksheet or numeric for
+index of worksheet}
 }
 \value{
-An object of class worksheet and number of rows and cols attribute.
+A worksheet object with number of rows and cols component.
 }
 \description{
-Use title or index of worksheet to retrieve object of class worksheet.
+Use title or index of worksheet to retrieve worksheet object.
+}
+\examples{
+ws <- open_worksheet(ss, "Sheet1")
+ws <- open_worksheet(ss, 1)
 }
 

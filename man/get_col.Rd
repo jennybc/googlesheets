@@ -8,7 +8,7 @@ get_col(ws, col, vis = "private")
 \arguments{
 \item{ws}{worksheet object}
 
-\item{col}{column}
+\item{col}{column number or letter (case insensitive)}
 
 \item{vis}{either "private" or "public"}
 }

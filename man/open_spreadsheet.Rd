@@ -8,11 +8,10 @@ open_spreadsheet(title)
 \arguments{
 \item{title}{the title of a spreadsheet.}
 }
-\value{
-Object of class spreadsheet.
-}
 \description{
-Use spreadsheet title (as it appears in Google Drive) to get spreadsheet
-object.
+Use the spreadsheet title (as it appears in Google Drive) to get a
+spreadsheet object, containing the spreadsheet id, title, time of last
+update, the titles and number of worksheets contained, and a list of
+worksheet objects.
 }
 

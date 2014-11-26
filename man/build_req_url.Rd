@@ -8,9 +8,9 @@ build_req_url(feed_type, key = NULL, ws_id = NULL, visibility = "private",
   max_col = NULL)
 }
 \arguments{
-\item{feed_type}{One of the following: spreadsheets, worksheets, list, cells}
+\item{feed_type}{one of the following: spreadsheets, worksheets, list, cells}
 
-\item{key}{Spreadsheet key}
+\item{key}{spreadsheet key}
 
 \item{ws_id}{id of worksheet contained in spreadsheet}
 
