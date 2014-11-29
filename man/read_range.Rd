@@ -22,4 +22,9 @@ Get a region of a worksheet by range
 read_range("A1:B10")
 read_range("C10:D20")
 }
+\seealso{
+\code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
+\code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{get_all}},
+\code{\link{read_region}},
+}
 

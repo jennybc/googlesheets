@@ -112,7 +112,7 @@ open_at_once <- function(ss_title, ws_value)
 }
 
 
-#' Add a new worksheet to spreadsheet
+#' Add a new (empty) worksheet to spreadsheet
 #'
 #' Add a new (empty) worksheet to spreadsheet, specify title, number of rows 
 #' and columns.
@@ -204,8 +204,9 @@ get_row <- function(ws, row, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
+  tbl_clean <- fill_missing_tbl(tbl)
   
-  ddply(tbl, "row", check_missing)[-1] # to remove grouping var
+  data.frame(t(tbl_clean$val))
 }
 
 
@@ -217,7 +218,8 @@ get_row <- function(ws, row, vis = "private")
 #' @param from,to start and end row indexes
 #' @return A data frame.
 #' @seealso \code{\link{get_row}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
+#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
+#' \code{\link{read_range}}
 #' @importFrom plyr dlply
 #' @importFrom dplyr rbind_all
 #' @importFrom plyr rbind.fill
@@ -234,23 +236,22 @@ get_rows <- function(ws, from, to, header = FALSE, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
-
-  list_of_vec <- dlply(tbl, "row", check_missing)
-  
-  list_of_df <- 
-    lapply(list_of_vec, 
-           function(x) as.data.frame(t(x), stringsAsFactors = FALSE))
-
-  my_df <- rbind.fill(list_of_df)
-  
-  if(header) {
-    set_header(my_df)
-  } else {
-    my_df
-  }
+  tbl_clean <- fill_missing_tbl(tbl)
   
   # doesnt work if rows of different length
   #ddply(tbl, "row", check_missing)[-1] # to remove grouping var
+  
+  list_of_df <- 
+    dlply(tbl_clean, "row", 
+          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
+  
+  list_of_df
+  my_df <- rbind.fill(list_of_df)
+  
+  if(header) 
+    set_header(my_df)
+  else 
+    my_df
 }
 
 
@@ -261,7 +262,8 @@ get_rows <- function(ws, from, to, header = FALSE, vis = "private")
 #' @param vis either "private" or "public"
 #' @return A data frame.
 #' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}
+#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}, 
+#' \code{\link{read_range}}
 #' @importFrom plyr ddply
 #' @export
 get_col <- function(ws, col, vis = "private") 
@@ -279,8 +281,9 @@ get_col <- function(ws, col, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
+  tbl_clean <- fill_missing_tbl(tbl, fill_by = "row")
   
-  check_missing(tbl, by_col = FALSE)
+  tbl_clean$val
 }
 
 
@@ -298,7 +301,8 @@ get_col <- function(ws, col, vis = "private")
 #' get_cols(ws, "A", "B")
 #' get_cols(ws, "c", "f")
 #' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}
+#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}},
+#' \code{\link{read_range}}
 #' @importFrom plyr ddply
 #' @export
 get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
@@ -318,23 +322,19 @@ get_cols <- function(ws, from, to, header = TRUE, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
-  
-  list_of_vec <- dlply(tbl, "row", check_missing)
+  tbl_clean <- fill_missing_tbl(tbl, fill_by = "row")
   
   list_of_df <- 
-    lapply(list_of_vec, 
-           function(x) as.data.frame(t(x), stringsAsFactors = FALSE))
+    dlply(tbl_clean, "row", 
+          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
   
-  my_df <- rbind.fill(list_of_df)
+  my_df <- rbind_all(list_of_df)
   
-  if(header) {
+  if(header) 
     set_header(my_df)
-  } else {
+  else 
     my_df
-  }
   
-  # doesnt work if cols of diff length
-  # ddply(tbl, "row", check_missing)[-1] # to remove grouping var
 }
 
 
@@ -392,7 +392,8 @@ get_cell <- function(ws, cell)
 #' This function calls on \code{\link{get_cols}} with to set as number of 
 #' columns of the worksheet.
 #' @seealso \code{\link{read_region}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}
+#' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}},
+#' \code{\link{read_range}}
 #' @export
 get_all <- function(ws, header = TRUE, vis = "private") 
 {
@@ -411,7 +412,7 @@ get_all <- function(ws, header = TRUE, vis = "private")
 #' @param vis Either \code{private} or \code{public}
 #' @return A data frame.
 #' @seealso \code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
-#' \code{\link{get_col}}, \code{\link{get_cols}}
+#' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
 #' @importFrom plyr ddply
 #' @export
 read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE, 
@@ -432,14 +433,18 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
+  tbl_clean <- fill_missing_tbl(tbl, "col")
   
-  my_df <- ddply(tbl, "row_adj", check_missing)[-1] # to remove grouping var
+  list_of_df <- 
+    dlply(tbl_clean, "row", 
+          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
   
-  if(header) {
+  my_df <- rbind.fill(list_of_df)
+  
+  if(header) 
     set_header(my_df)
-  } else {
+  else 
     my_df
-  }
 }
 
 
@@ -454,6 +459,9 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
 #' @examples
 #' read_range("A1:B10")
 #' read_range("C10:D20")
+#' @seealso \code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
+#' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{get_all}},
+#' \code{\link{read_region}},
 #' @importFrom plyr ddply
 #' @export
 read_range <- function(ws, x, header = TRUE, vis = "private") {
@@ -474,14 +482,18 @@ read_range <- function(ws, x, header = TRUE, vis = "private") {
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
+  tbl_clean <- fill_missing_tbl(tbl)
   
-  my_df <- ddply(tbl, "row_adj", check_missing)[-1] # to remove grouping var
+  list_of_df <- 
+    dlply(tbl_clean, "row", 
+          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
+  
+  my_df <- rbind.fill(list_of_df)
   
   if(header) 
     set_header(my_df)
-  else
+  else 
     my_df
-  
 }
 
 
@@ -550,4 +562,5 @@ open_by_url <- function(url) {
   key <- unlist(strsplit(url, "/"))[6] # TODO: fix hardcoding
   open_by_key(key)
 }
+
 

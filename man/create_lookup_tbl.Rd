@@ -22,7 +22,7 @@ Create lookup table for cell indices and its values}
 create_lookup_tbl(cellsfeed)
 }
 \arguments{
-\item{cellsfeed}{Cell based feed parsed with  \code{\link{gsheets_parse}}}
+\item{cellsfeed}{Cell based feed parsed with \code{\link{gsheets_parse}}}
 }
 \value{
 A data frame with cell row and col number and corresponding input value.

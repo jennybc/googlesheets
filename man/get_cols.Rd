@@ -25,6 +25,7 @@ get_cols(ws, "c", "f")
 }
 \seealso{
 \code{\link{get_col}}, \code{\link{get_row}},
-\code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}
+\code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}},
+\code{\link{read_range}}
 }
 

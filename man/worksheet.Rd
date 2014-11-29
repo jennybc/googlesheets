@@ -6,7 +6,7 @@
 worksheet()
 }
 \value{
-Object of class worksheet.
+worksheet object
 }
 \description{
 This function creates worksheet objects

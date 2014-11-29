@@ -9,6 +9,7 @@ list_worksheet_objs(ss)
 \item{ss}{spreadsheet object}
 }
 \description{
-This list enables \code{plyr} functions to operate on mutiple worksheets at once.
+The returned list of worksheet objects enables \code{plyr} functions to
+operate on mutiple worksheets at once.
 }
 

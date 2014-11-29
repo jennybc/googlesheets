@@ -24,6 +24,6 @@ the dimensions of the worksheet, the boundary will be used as range.
 }
 \seealso{
 \code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
-\code{\link{get_col}}, \code{\link{get_cols}}
+\code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
 }
 

@@ -6,7 +6,7 @@
 spreadsheet()
 }
 \value{
-Object of class spreadsheet.
+spreadsheet object
 }
 \description{
 This function creates spreadsheet objects.

@@ -1,12 +1,11 @@
-# Constructor functions for spreadsheet, worksheet, classes
+# Constructor functions for spreadsheet and worksheet classes
 
 #' Spreadsheet 
 #'
 #' This function creates spreadsheet objects.
 #'
-#'@return Object of class spreadsheet.
+#'@return spreadsheet object
 #'
-
 spreadsheet <- function() {
   structure(list(sheet_id = character(),
                  sheet_title = character(),
@@ -20,14 +19,13 @@ spreadsheet <- function() {
 #'
 #' This function creates worksheet objects
 #'
-#'@return Object of class worksheet.
+#'@return worksheet object
 #'
 worksheet <- function() {
   structure(list(sheet_id = character(),
                  id = character(),
                  title = character(),
                  ncol = numeric(),
-                 nrow = numeric(),
-                 specs = character()),
+                 nrow = numeric()),
             class = "worksheet")
 }

@@ -171,9 +171,9 @@ ssfeed_to_df <- function()
 
 
 #' Find number of rows and columns of worksheet
- 
+
 #' Get the rows and columns of worksheet by making a request for cellfeed
- 
+
 #' @param ws Worksheet object
 #' @param auth Google token
 #' @param visibility set to \code{public} for public sheets
@@ -192,21 +192,18 @@ worksheet_dim <- function(ws, auth = get_google_token(), visibility = "private")
   tbl <- create_lookup_tbl(feed)
   
   cell_nodes <- getNodeSet(feed, "//ns:feed//ns:entry", c("ns" = default_ns)) 
-        
+  
   if(length(cell_nodes) == 0) {
     dims <- getNodeSet(feed, "//ns:feed//gs:*", c("ns" = default_ns, "gs"), xmlValue)
     ws$nrow <- as.numeric(dims[[1]])
     ws$ncol <- as.numeric(dims[[2]])
   } else {
-      cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
-                                 function(x) c(as.numeric(xmlGetAttr(x, "col")), 
-                                                   as.numeric(xmlGetAttr(x, "row"))))
-      
-      ws$nrow <- max(sapply(cell_col_num, "[[", 2))
-      ws$ncol <- max(sapply(cell_col_num, "[[", 1))
-      ws$specs <- paste("Data found in", length(unique(tbl$col)), "columns and", 
-                        length(unique(tbl$row)), "rows")
-
+    cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
+                               function(x) c(as.numeric(xmlGetAttr(x, "col")), 
+                                             as.numeric(xmlGetAttr(x, "row"))))
+    
+    ws$nrow <- max(sapply(cell_col_num, "[[", 2))
+    ws$ncol <- max(sapply(cell_col_num, "[[", 1))
   }
   ws
 }
@@ -249,7 +246,7 @@ worksheet_dim <- function(ws, auth = get_google_token(), visibility = "private")
 #' input values into a single data frame and serve as a lookup table for 
 #' further processing.
 #'
-#' @param cellsfeed Cell based feed parsed with  \code{\link{gsheets_parse}} 
+#' @param cellsfeed Cell based feed parsed with \code{\link{gsheets_parse}} 
 #' @return A data frame with cell row and col number and corresponding input value.
 #' @importFrom XML getNodeSet
 #' @importFrom XML xmlAttrs
@@ -281,36 +278,6 @@ create_lookup_tbl <- function(cellsfeed) {
                            stringsAsFactors = FALSE)
   
   lookup_tbl
-}
-
-
-#' Check for missing cells in row or column 
-#'
-#' Loop through cell indices and substitute NA for missing cell values. 
-#'
-#' @param x data frame returned from \code{\link{create_lookup_tbl}} 
-#' @param by_col set to 
-#' @return A vector of values contained in row with NAs for missing values.
-check_missing <-function(x, by_col = TRUE)
-{
-  row_vals <- c()
-  
-  if(by_col) 
-    xx <- x$col_adj
-  else 
-    xx <- x$row
-  
-  for(i in 1:max(xx)) {
-    
-    if(any(xx ==  i)) {
-      ind <- which(xx == i)
-      row_vals <- c(row_vals, x[ind, "val"])
-    } else {
-      row_vals <- c(row_vals, NA) 
-    }
-    
-  }
-  row_vals
 }
 
 
@@ -352,6 +319,28 @@ letter_to_num <- function(x)
 }
 
 
+#' Convert column number to column letter
+#'
+#' @param x column number
+#' @examples
+#' num_to_letter(1)
+#' num_to_letter(26)
+num_to_letter <- function(x)
+{
+  ascii_tbl <- data.frame(alpha = LETTERS, num = 65:90)
+  letter <- ""
+  
+  while(x > 0)
+  {
+    temp <- (x - 1) %% 26
+    ind <-  grep(temp + 65, ascii_tbl$num)
+    letter <- paste0(ascii_tbl$alpha[ind], letter)
+    x <- (x - temp - 1) / 26
+  }
+  letter
+}
+
+
 #' Convert label (A1) notation to coordinate (R1C1) notation
 #'
 #' A1 and R1C1 are equivalent addresses for position of cells, but R1C1 
@@ -370,5 +359,67 @@ label_to_coord <- function(x)
 }
 
 
+#' Fill in missing columns in row
+#' 
+#' The lookup table returned by create_lookup_tbl may contain missing tuples 
+#' for empty cells. This function fills in the table so that there is a tuple 
+#' for every column up to the right-most column of the row.
+#' 
+#' @param x data frame returned by \code{\link{create_look_tbl}}
+#' 
+#' This function operates on the lookup table grouped by row.
+#'
+fill_missing_col <- function(x) 
+{
+  for(i in 1: max(x$col)) {
+    if(is.na(match(i, x$col))) {
+      new_tuple <- c(unique(x$row), i, unique(x$row), i, NA)
+      x <- rbind(x, new_tuple)
+    }
+  }
+  x
+} 
 
+
+#' Fill in missing rows in column
+#' 
+#' The lookup table returned by create_lookup_tbl may contain missing tuples 
+#' for empty cells. This function fills in the table so that there is a tuple 
+#' for every row down to the bottom-most row of the column.
+#' 
+#' @param x data frame returned by \code{\link{create_look_tbl}}
+#' 
+#' This function operates on the lookup table grouped by column.
+#'
+fill_missing_row <- function(x) {
+  for(i in 1: max(x$row)) {
+    if(is.na(match(i, x$row))) {
+      new_tuple <- c(i, unique(x$col), i, unique(x$col), NA)
+      x <- rbind(x, new_tuple)
+    }
+  }
+  x
+}
+
+
+#' Fill in missing tuples for lookup table
+#' 
+#' The lookup table returned by create_lookup_tbl may contain missing tuples 
+#' for empty cells. This function fills in the table so that there is a tuple 
+#' for every row down to the bottom-most row of every column or every column 
+#' up to the right-most column of every row. 
+#' 
+#' @param lookup_tbl data frame returned by \code{\link{create_look_tbl}}
+#' 
+#' @importFrom dplyr arrange
+#' @importFrom plyr ddply
+fill_missing_tbl <- function(lookup_tbl, fill_by = "col") {
+  
+  if(fill_by == "col")
+    lookup_tbl_clean <- ddply(lookup_tbl, "row", fill_missing_col)
+  else
+    lookup_tbl_clean <- ddply(lookup_tbl, "col", fill_missing_row)
+  
+  arrange(lookup_tbl_clean, row, col)
+}
 
