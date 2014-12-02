@@ -1,10 +1,10 @@
-context("Sheets operations")
+ context("Sheets operations")
 
 authorize()
 ss1 <- open_spreadsheet("Gapminder")
 
 test_that("List all my spreadsheets", {
-  expect_equal(length(list_spreadsheets()), 3)
+  expect_equal(length(list_spreadsheets()), 5)
 })
 
 test_that("Open spreadsheet by title", {

@@ -25,8 +25,12 @@ build_req_url <- function(feed_type, key = NULL, ws_id = NULL,
                        sep = "/")
     },
     worksheets = {
-      the_url <- paste(base_url, feed_type, key, visibility, projection, 
-                       sep = "/")
+      if(!is.null(ws_id))
+        the_url <- paste(base_url, feed_type, key, visibility, projection, ws_id,
+                         sep = "/")
+      else
+        the_url <- paste(base_url, feed_type, key, visibility, projection, 
+                         sep = "/")
     },
     list = {
       the_url <- paste(base_url, feed_type, key, ws_id, visibility, 
@@ -125,7 +129,7 @@ gsheets_parse <- function(req)
 #' @param sheet_id spreadsheet id housing worksheet
 #' 
 #' @importFrom XML xmlToList
-make_ws_obj <- function(node, sheet_id) 
+make_ws_obj <- function(node, sheet_id)
 {
   attr_list <- xmlToList(node)
   
@@ -266,15 +270,7 @@ create_lookup_tbl <- function(cellsfeed) {
   rows <- unlist(row_num)
   cols <- unlist(col_num)
   
-  row_diff <- min(unlist(row_num)) - 1
-  col_diff <- min(unlist(col_num)) - 1
-  
-  row_adj <- rows - row_diff
-  col_adj <- cols - col_diff
-  
-  lookup_tbl <- data.frame(row = rows, col = cols, 
-                           row_adj = row_adj, col_adj = col_adj,
-                           val = unlist(val),
+  lookup_tbl <- data.frame(row = rows, col = cols, val = unlist(val),
                            stringsAsFactors = FALSE)
   
   lookup_tbl
@@ -371,9 +367,11 @@ label_to_coord <- function(x)
 #'
 fill_missing_col <- function(x) 
 {
-  for(i in 1: max(x$col)) {
-    if(is.na(match(i, x$col))) {
-      new_tuple <- c(unique(x$row), i, unique(x$row), i, NA)
+  r <- x$col_adj
+  
+  for(i in 1: max(r)) {
+    if(is.na(match(i, r))) {
+      new_tuple <- c("-", "-", NA, unique(x$row_adj), i)
       x <- rbind(x, new_tuple)
     }
   }
@@ -391,10 +389,14 @@ fill_missing_col <- function(x)
 #' 
 #' This function operates on the lookup table grouped by column.
 #'
-fill_missing_row <- function(x) {
-  for(i in 1: max(x$row)) {
-    if(is.na(match(i, x$row))) {
-      new_tuple <- c(i, unique(x$col), i, unique(x$col), NA)
+fill_missing_row <- function(x) 
+{
+  
+  r <- x$row_adj
+  
+  for(i in 1: max(r)) {
+    if(is.na(match(i, r))) {
+      new_tuple <- c("-", "-", NA, i, unique(x$col_adj))
       x <- rbind(x, new_tuple)
     }
   }
@@ -412,14 +414,25 @@ fill_missing_row <- function(x) {
 #' @param lookup_tbl data frame returned by \code{\link{create_look_tbl}}
 #' 
 #' @importFrom dplyr arrange
+#' @importFrom dplyr mutate
 #' @importFrom plyr ddply
-fill_missing_tbl <- function(lookup_tbl, fill_by = "col") {
+fill_missing_tbl <- function(lookup_tbl) {
   
-  if(fill_by == "col")
-    lookup_tbl_clean <- ddply(lookup_tbl, "row", fill_missing_col)
-  else
-    lookup_tbl_clean <- ddply(lookup_tbl, "col", fill_missing_row)
+  # create adjusted row/col indices
+  row_diff <- min(lookup_tbl$row) - 1
+  col_diff <- min(lookup_tbl$col) - 1
   
-  arrange(lookup_tbl_clean, row, col)
+  lookup_tbl <- mutate(lookup_tbl, row_adj = row - row_diff, 
+                       col_adj = col - col_diff)
+  
+  lookup_tbl_clean <- ddply(lookup_tbl, "row_adj", fill_missing_col)
+  lookup_tbl_clean <- ddply(lookup_tbl_clean, "col_adj", fill_missing_row)
+  
+  lookup_tbl_clean$row_adj <- as.numeric(lookup_tbl_clean$row_adj)
+  lookup_tbl_clean$col_adj <- as.numeric(lookup_tbl_clean$col_adj)
+  
+  arrange(lookup_tbl_clean, row_adj, col_adj)
+  
 }
+
 

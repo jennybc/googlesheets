@@ -184,13 +184,13 @@ del_worksheet<- function(ss, ws)
 #' Specify row of values to get from worksheet.
 #'
 #' @param ws worksheet object
-#' @param row row
+#' @param row row number
 #' @param vis either "private" or "public", set to "public" for public for 
 #' worksheets
-#' @return A data frame. 
+#' @return A data frame.
 #' @seealso \code{\link{get_rows}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
-#' @importFrom plyr ddply
+#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
+#' \code{\link{read_range}}
 #' @export
 get_row <- function(ws, row, vis = "private") 
 {
@@ -221,7 +221,6 @@ get_row <- function(ws, row, vis = "private")
 #' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
 #' @importFrom plyr dlply
-#' @importFrom dplyr rbind_all
 #' @importFrom plyr rbind.fill
 #' @export
 get_rows <- function(ws, from, to, header = FALSE, vis = "private")
@@ -238,14 +237,10 @@ get_rows <- function(ws, from, to, header = FALSE, vis = "private")
   tbl <- create_lookup_tbl(feed)
   tbl_clean <- fill_missing_tbl(tbl)
   
-  # doesnt work if rows of different length
-  #ddply(tbl, "row", check_missing)[-1] # to remove grouping var
-  
   list_of_df <- 
-    dlply(tbl_clean, "row", 
+    dlply(tbl_clean, "row_adj", 
           function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
   
-  list_of_df
   my_df <- rbind.fill(list_of_df)
   
   if(header) 
@@ -259,12 +254,11 @@ get_rows <- function(ws, from, to, header = FALSE, vis = "private")
 #'
 #' @param ws worksheet object
 #' @param col column number or letter (case insensitive)
-#' @param vis either "private" or "public"
+#' @param vis either "private" or "public", "public" for public worksheet
 #' @return A data frame.
 #' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
-#' @importFrom plyr ddply
 #' @export
 get_col <- function(ws, col, vis = "private") 
 {
@@ -281,13 +275,13 @@ get_col <- function(ws, col, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl, fill_by = "row")
+  tbl_clean <- fill_missing_tbl(tbl)
   
   tbl_clean$val
 }
 
 
-#' Get all values in range of columns.
+#' Get all values in a range of columns.
 #'
 #' Specify range of columns to get from worksheet.
 #'
@@ -303,7 +297,8 @@ get_col <- function(ws, col, vis = "private")
 #' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}},
 #' \code{\link{read_range}}
-#' @importFrom plyr ddply
+#' @importFrom plyr dlply
+#' @importFrom plyr rbind.fill
 #' @export
 get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
 {
@@ -322,13 +317,13 @@ get_cols <- function(ws, from, to, header = TRUE, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl, fill_by = "row")
+  tbl_clean <- fill_missing_tbl(tbl)
   
   list_of_df <- 
-    dlply(tbl_clean, "row", 
+    dlply(tbl_clean, "row_adj", 
           function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
-  
-  my_df <- rbind_all(list_of_df)
+
+  my_df <- rbind.fill(list_of_df)
   
   if(header) 
     set_header(my_df)
@@ -381,19 +376,22 @@ get_cell <- function(ws, cell)
 #' Get all values in a worksheet.
 #'
 #' Extract the entire worksheet and turn it into a data frame. This function
-#' uses the rightmost cell with value as the max columns and bottom most 
-#' cell as max row.
+#' uses the rightmost cell with a value as the maximum number of columns and 
+#' bottom-most cell as the maximum row.
 #'
 #' @param ws worksheet object 
-#' @param header logical for if first row should be taken as header
-#' @param vis either "private" or "public"
+#' @param header logical value indicating whether the first line contains the 
+#' names of the variables
+#' @param vis either "private" or "public" indicating whether the worksheet is 
+#' private or public
 #' @return A dataframe. 
 #' 
-#' This function calls on \code{\link{get_cols}} with to set as number of 
-#' columns of the worksheet.
-#' @seealso \code{\link{read_region}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}},
-#' \code{\link{read_range}}
+#' This function calls on \code{\link{get_cols}} with \code{to} set as the 
+#' number of columns of the worksheet.
+#' @seealso \code{\link{read_region}}, \code{\link{read_range}}, 
+#' \code{\link{get_row}}, \code{\link{get_rows}}, \code{\link{get_col}}, 
+#' \code{\link{get_cols}}
+#' 
 #' @export
 get_all <- function(ws, header = TRUE, vis = "private") 
 {
@@ -401,15 +399,16 @@ get_all <- function(ws, header = TRUE, vis = "private")
 }
 
 
-#' Get a region of a worksheet by min/max rows and columns
+#' Get a region of a worksheet by min/max row and column
 #'
-#' Extract cells of a worksheet according to specified range. If range is beyond
-#' the dimensions of the worksheet, the boundary will be used as range.
+#' Extract cells of a worksheet by specifying the minimum and maximum rows and 
+#' columns. If the specified range is beyond the dimensions of the worksheet, 
+#' the boundaries of the worksheet will be used instead.
 #'
-#' @param ws Worksheet object
+#' @param ws worksheet object
 #' @param from_row,to_row range of rows to extract
 #' @param from_col,to_col range of cols to extract
-#' @param vis Either \code{private} or \code{public}
+#' @param vis either \code{private} or \code{public}
 #' @return A data frame.
 #' @seealso \code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
 #' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
@@ -433,14 +432,15 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
   feed <- gsheets_parse(req)
   
   tbl <- create_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl, "col")
+  tbl_clean <- fill_missing_tbl(tbl)
   
   list_of_df <- 
-    dlply(tbl_clean, "row", 
+    dlply(tbl_clean, "row_adj", 
           function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
   
   my_df <- rbind.fill(list_of_df)
   
+  my_df
   if(header) 
     set_header(my_df)
   else 
@@ -450,8 +450,11 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
 
 #' Get a region of a worksheet by range
 #'
-#' 
-#' @param ws Worksheet object
+#' Extract cells of a worksheet by specifying the minimum and maximum rows and 
+#' columns. If the specified range is beyond the dimensions of the worksheet, 
+#' the boundaries of the worksheet will be used instead.
+#'
+#' @param ws worksheet object
 #' @param x character string for range separated by ":"
 #' @param header \code{logical} for whether or not first row should be taken as 
 #' header
@@ -459,10 +462,10 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
 #' @examples
 #' read_range("A1:B10")
 #' read_range("C10:D20")
-#' @seealso \code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
-#' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{get_all}},
-#' \code{\link{read_region}},
-#' @importFrom plyr ddply
+#' @seealso \code{\link{read_region}}, \code{\link{get_row}}, 
+#' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}, 
+#' \code{\link{get_all}}
+#' 
 #' @export
 read_range <- function(ws, x, header = TRUE, vis = "private") {
   
@@ -473,27 +476,7 @@ read_range <- function(ws, x, header = TRUE, vis = "private") {
   rows <- as.numeric(gsub("[^0-9]", "", bounds))  
   cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_row = rows[1], max_row = rows[2],
-                           min_col = cols[1], max_col = cols[2], 
-                           visibility = vis)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  tbl <- create_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl)
-  
-  list_of_df <- 
-    dlply(tbl_clean, "row", 
-          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
-  
-  my_df <- rbind.fill(list_of_df)
-  
-  if(header) 
-    set_header(my_df)
-  else 
-    my_df
+  read_region(ws, rows[1], rows[2], cols[1], cols[2], header = TRUE, vis)
 }
 
 

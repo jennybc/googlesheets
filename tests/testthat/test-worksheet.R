@@ -1,19 +1,6 @@
 context("worksheet operations")
 
-ws <- open_at_once("basic-usage", "Sheet1")
-
-test_that("Get column back",{
-  
-  expect_equal(letter_to_col("A"), 1)
-  expect_equal(letter_to_col("AB"), 28)
-})
-
-
-test_that("Convert A1 to R1C1 notation", {
-  
-  expect_equal(label_to_coord("A1"), "R1C1")
-  expect_equal(label_to_coord("AB10"), "R10C28")
-})
+ws <- open_at_once("Testing", "Sheet1")
 
 test_that("Get value of cell", {
   
