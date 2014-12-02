@@ -8,7 +8,7 @@ get_row(ws, row, vis = "private")
 \arguments{
 \item{ws}{worksheet object}
 
-\item{row}{row}
+\item{row}{row number}
 
 \item{vis}{either "private" or "public", set to "public" for public for
 worksheets}
@@ -21,6 +21,7 @@ Specify row of values to get from worksheet.
 }
 \seealso{
 \code{\link{get_rows}}, \code{\link{get_col}},
-\code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}
+\code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}},
+\code{\link{read_range}}
 }
 

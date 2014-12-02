@@ -3,7 +3,7 @@
 \alias{fill_missing_tbl}
 \title{Fill in missing tuples for lookup table}
 \usage{
-fill_missing_tbl(lookup_tbl, fill_by = "col")
+fill_missing_tbl(lookup_tbl)
 }
 \arguments{
 \item{lookup_tbl}{data frame returned by \code{\link{create_look_tbl}}}

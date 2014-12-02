@@ -10,7 +10,7 @@ get_col(ws, col, vis = "private")
 
 \item{col}{column number or letter (case insensitive)}
 
-\item{vis}{either "private" or "public"}
+\item{vis}{either "private" or "public", "public" for public worksheet}
 }
 \value{
 A data frame.

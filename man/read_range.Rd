@@ -6,7 +6,7 @@
 read_range(ws, x, header = TRUE, vis = "private")
 }
 \arguments{
-\item{ws}{Worksheet object}
+\item{ws}{worksheet object}
 
 \item{x}{character string for range separated by ":"}
 
@@ -16,15 +16,17 @@ header}
 \item{vis}{either "private" (default) or "public" for public spreadsheets}
 }
 \description{
-Get a region of a worksheet by range
+Extract cells of a worksheet by specifying the minimum and maximum rows and
+columns. If the specified range is beyond the dimensions of the worksheet,
+the boundaries of the worksheet will be used instead.
 }
 \examples{
 read_range("A1:B10")
 read_range("C10:D20")
 }
 \seealso{
-\code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
-\code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{get_all}},
-\code{\link{read_region}},
+\code{\link{read_region}}, \code{\link{get_row}},
+\code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}},
+\code{\link{get_all}}
 }
 

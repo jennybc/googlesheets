@@ -8,24 +8,26 @@ get_all(ws, header = TRUE, vis = "private")
 \arguments{
 \item{ws}{worksheet object}
 
-\item{header}{logical for if first row should be taken as header}
+\item{header}{logical value indicating whether the first line contains the
+names of the variables}
 
-\item{vis}{either "private" or "public"}
+\item{vis}{either "private" or "public" indicating whether the worksheet is
+private or public}
 }
 \value{
 A dataframe.
 
-This function calls on \code{\link{get_cols}} with to set as number of
-columns of the worksheet.
+This function calls on \code{\link{get_cols}} with \code{to} set as the
+number of columns of the worksheet.
 }
 \description{
 Extract the entire worksheet and turn it into a data frame. This function
-uses the rightmost cell with value as the max columns and bottom most
-cell as max row.
+uses the rightmost cell with a value as the maximum number of columns and
+bottom-most cell as the maximum row.
 }
 \seealso{
-\code{\link{read_region}}, \code{\link{get_row}},
-\code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}},
-\code{\link{read_range}}
+\code{\link{read_region}}, \code{\link{read_range}},
+\code{\link{get_row}}, \code{\link{get_rows}}, \code{\link{get_col}},
+\code{\link{get_cols}}
 }
 
