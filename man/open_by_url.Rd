@@ -12,7 +12,8 @@ open_by_url(url)
 Object of class spreadsheet.
 
 This function currently only works for public spreadsheets.
-This function extracts the key from the url and calls on open_by_key().
+This function extracts the key from the url and calls on
+\code{\link{open_by_key}}.
 }
 \description{
 Use url of spreadsheet and return an object of class spreadsheet.

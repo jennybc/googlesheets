@@ -19,7 +19,7 @@ This vignette shows the basic functionality of `gspreadr`.
 In order to access your own spreadsheets (non-public), you must log in. There are 2 ways to do it in `gspreadr`. 
 
 1.  `login("email", "password")` (if you really want to...)
-2.  `authorize()` (preferred)
+2.  `authorize()` (recommended)
 
 For the first time, `authorize()` will authenticate the user interactively. The user will be directed to a web browser where they will be asked to login to their Google account, and give `gspreadr` permission to access Sheets and Google Drive. Credentials will be cached and authentication will not be needed for subsequent requests/sessions as `httr` handles the storing and refreshing of tokens.
 
@@ -27,17 +27,33 @@ If you want to access a different account, run `authorize(new_user = TRUE)`, as 
 
 ## Open a spreadsheet
 
-You can use `list_spreadsheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title.
+### For public spreadsheets
+
+To access public spreadsheets, you will either need the key of the spreadsheet (as found in the URL) or the entire URL. 
+
+```{r open public sheets}
+
+
+pub_sheet <- open_by_key("1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU")
+
+pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU/pubhtml")
+
+```
+
+### For private spreadsheets
+
+Once you have authenticated, you can use `list_spreadsheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title.
 
 ```{r spreadsheet ops}
 list_spreadsheets()
 
 ssheet <- open_spreadsheet("basic-usage")
 ```
+
 This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 
 
 ```{r}
-# spreadsheet attributes
+# spreadsheet components
 ssheet$sheet_id ; ssheet$sheet_title ; ssheet$updated ; ssheet$nsheets ; ssheet$ws_names
 ```
 
@@ -68,11 +84,38 @@ ws <- open_at_once(ss_title = "basic-usage", ws_index = 1)
 This returns a worksheet object. You can get the ids of the spreadsheet and worksheet, worksheet title, and the number of rows and columns.
 
 ```{r}
-# worksheet attributes
-ws$sheet_id ; ws$id ; ws$rows ; ws$cols
+# worksheet components
+ws$sheet_id ; ws$id ; ws$title ; ws$ncol ; ws$specs
 ```
 
-## Operations on a worksheet
+## Open multiple worksheets
+
+You can open all the worksheets from a spreadsheet using `list_worksheet_objs()` passing the spreadsheet object as the argument. This will return a list of worksheet objects which you can then use `plyr` functions to perform worksheet operations such as `get_cell()`, `get_row()`, `read_region()`, etc.   
+
+```{r open multiple worksheets}
+
+ssheet2 <- open_spreadsheet("Gapminder by Continent")
+
+ws_objs <- list_worksheet_objs(ssheet2)
+
+plyr::llply(ws_objs, function(x) get_cell(x, "A2"))
+
+```
+
+## Worksheet Operations
+
+
+
+### View worksheet
+
+You can take a look at your worksheets to get an idea of what it looks like. Use `view()` to look at one worksheet and `view_all()` to look at all worksheets contained in a spreadsheet. `view_all()` returns a list of 2 ggplot objects. The first is a gallery of all the worksheets and the second is an overlay of all the worksheets to identify the density of the cells occupied by worksheets.
+
+```{r, fig.width=7, fig.height=7}
+
+view(ws)
+
+view_all(ssheet2)
+```
 
 You can get row(s), col(s), a region, or an entire worksheet. 
 
@@ -84,22 +127,44 @@ get_rows(ws, from = 1, to = 3)
 ```
 
 ### Get col(s)
+
+You can get columns either by integer or letter. 
+
 ```{r get cols}
 get_col(ws, 1)
 
+get_col(ws, "A")
+
 get_cols(ws, from = 1, to = 5)
+
+get_cols(ws, from = "A", to = "E")
+
 ```
 
 ### Get a region as a data frame
 
+##### Specify by min/max rows and columns
+
 You can get a region of a worksheet by specifying the boundary rows and columns. The first row will be taken as the `header` by default.
 
 ```{r get region}
-get_region(ws, from_row = 1, to_row = 6, from_col = 1, to_col = 5)
+read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5)
 
 # set header to FALSE
-get_region(ws, from_row = 1, to_row = 6, from_col = 1, to_col = 5, header = FALSE)
+read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5, header = FALSE)
 ```
+
+##### Specify by range
+
+You can also get a region of a worksheet by specifying the cell ranges as a character string. The first row will be taken as the `header` by default.
+
+```{r get range}
+
+read_range(ws, "A1:E5")
+
+```
+
+
 ### Get the entire worksheet as data frame
 
 You can get the entire worksheet. Empty cells will be filled with NAs. Boundaries are determined by the right-most and bottom-most cells that contain a value.  The first row will be taken as the `header` by default.
@@ -109,7 +174,22 @@ You can get the entire worksheet. Empty cells will be filled with NAs. Boundarie
 get_all(ws)
 ```
 
+### Get a cell
+
+You can get the value of a specific cell. There are two notations you can use: `A1` and `R1C1`. For `A1` notation, columns are indicated by a letter followed by the row as an integer. For `R1C1` notation, integers represent the rows and columns, and are preceded by `R` or `C`. Note that `A1` and `R1C1` are equivalent.
+
+```{r}
+
+get_cell(ws, "A1")
+
+get_cell(ws, "R1C1")
+
+```
+
 ### Add a worksheet
+
+To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns.
+
 ```{r, eval = FALSE}
 add_worksheet(ssheet, title = "foo", rows = 10, cols = 10)
 ```
@@ -118,6 +198,5 @@ add_worksheet(ssheet, title = "foo", rows = 10, cols = 10)
 ```{r, eval = FALSE}
 del_worksheet(ssheet, ws)
 ```
-
 
 

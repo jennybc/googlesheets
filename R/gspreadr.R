@@ -133,8 +133,9 @@ add_worksheet<- function(ss, title, nrow, ncol, token = get_google_token())
 {   
   the_body <- 
     xmlNode("entry", 
-            namespaceDefinitions = c("http://www.w3.org/2005/Atom",
-                                     gs = "http://schemas.google.com/spreadsheets/2006"),
+            namespaceDefinitions = 
+              c(default_ns,
+                gs = "http://schemas.google.com/spreadsheets/2006"),
             xmlNode("title", title),
             xmlNode("gs:rowCount", nrow),
             xmlNode("gs:colCount", ncol))
@@ -322,7 +323,7 @@ get_cols <- function(ws, from, to, header = TRUE, vis = "private")
   list_of_df <- 
     dlply(tbl_clean, "row_adj", 
           function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
-
+  
   my_df <- rbind.fill(list_of_df)
   
   if(header) 
@@ -539,11 +540,108 @@ open_by_key <- function(key) {
 #' @return Object of class spreadsheet.
 #'
 #' This function currently only works for public spreadsheets.
-#' This function extracts the key from the url and calls on open_by_key().
+#' This function extracts the key from the url and calls on 
+#' \code{\link{open_by_key}}.
 #' @export
 open_by_url <- function(url) {
-  key <- unlist(strsplit(url, "/"))[6] # TODO: fix hardcoding
+  key <- unlist(strsplit(url, "/"))[6] 
   open_by_key(key)
 }
 
 
+#' View worksheet
+#'
+#' Get an idea of what your worksheet looks like.
+#'
+#' @param ws worksheet object
+#' @return ggplot
+#'
+#' @import ggplot2
+#' @export 
+view <- function(ws, vis = "private")
+{
+  tbl <- get_lookup_tbl(ws)
+  
+  make_plot(tbl)
+}
+
+#' View all your worksheets
+#'
+#' Get a view of all the worksheets contained in the spreadsheet. This function
+#' returns a list of two ggplot objects, first is a gallery of all the 
+#' worksheets and the second is an overlay of all the worksheets.
+#' 
+#' @param ss spreadsheet object
+#'
+#' @return a list of 2 ggplot objects
+#'
+#' @importFrom plyr ldply
+#' @export
+view_all <- function(ss)
+{
+  ws_objs <- list_worksheet_objs(ss)
+  tbl <- ldply(ws_objs, get_lookup_tbl)
+  
+  p1 <- make_plot(tbl)
+  
+  p2 <- ggplot(tbl, aes(x = col, y = row, group = Sheet)) +
+    geom_tile(fill = "steelblue2", aes(x = col, y = row), alpha = 0.4) +
+    scale_x_continuous(breaks = seq(1, max(tbl$col), 1), expand = c(0, 0)) +
+    annotate("text", x = seq(1, max(tbl$col) ,1), y = (-0.05) * max(tbl$row), 
+             label = LETTERS[1:max(tbl$col)], colour = "steelblue4",
+             fontface = "bold") +
+    scale_y_reverse() +
+    ylab("Row") +
+    ggtitle(paste(length(ws_objs), "worksheets")) +
+    theme(panel.grid.major.x = element_blank(),
+          plot.title = element_text(face = "bold"),
+          axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
+          axis.ticks.x = element_blank())
+  
+  # grid.arrange(p1, p2) # gives error: cannot find function "ggplotGrob"
+  list(p1, p2)
+}
+
+
+#' Get lookup table for entire worksheet
+#'
+#' Create lookup table for all the values in the worksheet.
+#' 
+#' @param ws worksheet object
+#'
+get_lookup_tbl <- function(ws)
+{
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_col = 1, max_col = ws$ncol, visibility = "private")
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  
+  dat <- create_lookup_tbl(feed)
+  dat$Sheet <- ws$title
+  dat
+}
+
+
+#' Plot worksheet
+#'
+#' @param tbl data frame returned by \code{\link{get_lookup_tbl}}
+#'
+make_plot <- function(tbl)
+{
+  ggplot(tbl, aes(x = col, y = row)) +
+    geom_tile(fill = "steelblue2", aes(x = col, y = row), alpha = 0.4) +
+    facet_wrap(~ Sheet) +
+    scale_x_continuous(breaks = seq(1, max(tbl$col), 1), expand = c(0, 0)) +
+    annotate("text", x = seq(1, max(tbl$col) ,1), y = (-0.05) * max(tbl$row), 
+             label = LETTERS[1:max(tbl$col)], colour = "blue",
+             fontface = "bold") +
+    scale_y_reverse() +
+    ylab("Row") +
+    theme(panel.grid.major.x = element_blank(),
+          plot.title = element_text(face = "bold"),
+          axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
+          axis.ticks.x = element_blank())
+}

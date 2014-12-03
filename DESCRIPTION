@@ -10,7 +10,8 @@ License: TBD
 LazyData: true
 Imports:
     httr,
-    XML
+    XML,
+    ggplot2
 Suggests:
     testthat,
     knitr
