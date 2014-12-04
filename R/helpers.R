@@ -337,6 +337,9 @@ num_to_letter <- function(x)
 }
 
 
+
+vnum_to_letter <- Vectorize(num_to_letter)
+
 #' Convert label (A1) notation to coordinate (R1C1) notation
 #'
 #' A1 and R1C1 are equivalent addresses for position of cells, but R1C1 
@@ -435,4 +438,44 @@ fill_missing_tbl <- function(lookup_tbl) {
   
 }
 
+#' Get lookup table for entire worksheet
+#'
+#' Create lookup table for all the values in the worksheet.
+#' 
+#' @param ws worksheet object
+#'
+get_lookup_tbl <- function(ws)
+{
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_col = 1, max_col = ws$ncol, visibility = "private")
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  
+  dat <- create_lookup_tbl(feed)
+  dat$Sheet <- ws$title
+  dat
+}
 
+
+#' Plot worksheet
+#'
+#' @param tbl data frame returned by \code{\link{get_lookup_tbl}}
+#'
+make_plot <- function(tbl)
+{
+  ggplot(tbl, aes(x = col, y = row)) +
+    geom_tile(fill = "steelblue2", aes(x = col, y = row), alpha = 0.4) +
+    facet_wrap(~ Sheet) +
+    scale_x_continuous(breaks = seq(1, max(tbl$col), 1), expand = c(0, 0)) +
+    annotate("text", x = seq(1, max(tbl$col) ,1), y = (-0.05) * max(tbl$row), 
+             label = LETTERS[1:max(tbl$col)], colour = "blue",
+             fontface = "bold") +
+    scale_y_reverse() +
+    ylab("Row") +
+    theme(panel.grid.major.x = element_blank(),
+          plot.title = element_text(face = "bold"),
+          axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
+          axis.ticks.x = element_blank())
+}

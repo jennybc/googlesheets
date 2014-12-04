@@ -468,8 +468,8 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
 #' \code{\link{get_all}}
 #' 
 #' @export
-read_range <- function(ws, x, header = TRUE, vis = "private") {
-  
+read_range <- function(ws, x, header = TRUE, vis = "private") 
+{
   if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", x)) 
     stop("Please check cell notation.")
   
@@ -495,6 +495,56 @@ list_worksheet_objs <- function(ss)
 }
 
 
+#' Find a cell with string value
+#' 
+#' Get the cell location of the first occurence of a cell value.
+#' 
+#' @param ws worksheet object
+#' @param x a character string
+#' 
+#' @export
+find_cell <- function(ws, x)
+{
+  tbl <- get_lookup_tbl(ws)
+  ind <- match(x, tbl$val)
+  
+  if(is.na(ind)) {
+    message("Cell not found")
+  } else {
+    letter <- num_to_letter(tbl[ind, "col"])
+    paste0("Cell R", tbl[ind, "row"], "C", tbl[ind, "col"], 
+           ", ", letter, tbl[ind, "row"])
+  }
+}
+
+
+#' Find all cells with string value
+#' 
+#' Get all the cell locations for a string value
+#' 
+#' @param ws worksheet object
+#' @param x a character string
+#' 
+#' @return a data frame listing the cell locations in label and coordinate 
+#' format
+#' @importFrom dplyr filter mutate select
+#' 
+#' @export
+find_all <- function(ws, x)
+{
+  tbl <- get_lookup_tbl(ws)
+  vals <- filter(tbl, val == x)
+
+  if(nrow(vals) == 0) {
+    message("Cell not found")
+  } else {
+    dat <- mutate(vals, Coord = paste0("R", row, "C", col),
+                  Label = paste0(vconvert(col), row),
+                  Val = val)
+    select(dat, Label, Coord, Val)
+  }
+}
+
 # Public spreadsheets only -----
 
 #' Open spreadsheet by key 
@@ -508,7 +558,8 @@ list_worksheet_objs <- function(ss)
 #' @export
 #' @importFrom XML xmlToList
 #' @importFrom XML getNodeSet
-open_by_key <- function(key) {
+open_by_key <- function(key) 
+{
   the_url <- build_req_url("worksheets", key = key, visibility = "public")
   
   req <- gsheets_GET(the_url)
@@ -543,7 +594,8 @@ open_by_key <- function(key) {
 #' This function extracts the key from the url and calls on 
 #' \code{\link{open_by_key}}.
 #' @export
-open_by_url <- function(url) {
+open_by_url <- function(url) 
+{
   key <- unlist(strsplit(url, "/"))[6] 
   open_by_key(key)
 }
@@ -604,44 +656,3 @@ view_all <- function(ss)
 }
 
 
-#' Get lookup table for entire worksheet
-#'
-#' Create lookup table for all the values in the worksheet.
-#' 
-#' @param ws worksheet object
-#'
-get_lookup_tbl <- function(ws)
-{
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = 1, max_col = ws$ncol, visibility = "private")
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  dat <- create_lookup_tbl(feed)
-  dat$Sheet <- ws$title
-  dat
-}
-
-
-#' Plot worksheet
-#'
-#' @param tbl data frame returned by \code{\link{get_lookup_tbl}}
-#'
-make_plot <- function(tbl)
-{
-  ggplot(tbl, aes(x = col, y = row)) +
-    geom_tile(fill = "steelblue2", aes(x = col, y = row), alpha = 0.4) +
-    facet_wrap(~ Sheet) +
-    scale_x_continuous(breaks = seq(1, max(tbl$col), 1), expand = c(0, 0)) +
-    annotate("text", x = seq(1, max(tbl$col) ,1), y = (-0.05) * max(tbl$row), 
-             label = LETTERS[1:max(tbl$col)], colour = "blue",
-             fontface = "bold") +
-    scale_y_reverse() +
-    ylab("Row") +
-    theme(panel.grid.major.x = element_blank(),
-          plot.title = element_text(face = "bold"),
-          axis.text.x = element_blank(),
-          axis.title.x = element_blank(),
-          axis.ticks.x = element_blank())
-}
