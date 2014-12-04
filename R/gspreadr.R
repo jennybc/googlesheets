@@ -534,7 +534,7 @@ find_all <- function(ws, x)
 {
   tbl <- get_lookup_tbl(ws)
   vals <- filter(tbl, val == x)
-
+  
   if(nrow(vals) == 0) {
     message("Cell not found")
   } else {
@@ -545,59 +545,58 @@ find_all <- function(ws, x)
   }
 }
 
-# Public spreadsheets only -----
 
-#' Open spreadsheet by key 
+#' Update a cell's value
+#' 
+#' @param ws worksheet object
+#' @param pos cell position in label (ex. "A1") or coordinate (ex. "R1C1") 
+#' format
+#' @param value character string for new value
 #'
-#' Use key found in browser URL and return an object of class spreadsheet.
-#'
-#' @param spreadsheet_key A key of a spreadsheet as it appears in browser URL.
-#' @return Object of class spreadsheet.
-#'
-#' This function currently only works for keys of public spreadsheets.
+#' @importFrom httr PUT stop_for_status
+#' @importFrom XML getNodeSet xmlNode
 #' @export
-#' @importFrom XML xmlToList
-#' @importFrom XML getNodeSet
-open_by_key <- function(key) 
+update_cell <- function(ws, pos, value)
 {
-  the_url <- build_req_url("worksheets", key = key, visibility = "public")
+  if(grepl("^[[:alpha:]]+[0-9]+$", pos)) {
+    pos <- label_to_coord(pos)
+  }
+  
+  row_num <- sub("R([0-9]+)C([0-9]+)", "\\1", pos)
+  col_num <- sub("R([0-9]+)C([0-9]+)", "\\2", pos)
+  
+  # get cell feed to get cell version (needed in put request)
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
   
   req <- gsheets_GET(the_url)
-  wsfeed <- gsheets_parse(req)
-  wsfeed_list <- xmlToList(wsfeed)
+  feed <- gsheets_parse(req)
   
-  ss <- spreadsheet()
-  ss$sheet_id <- key
-  ss$updated <- wsfeed_list$updated
-  ss$sheet_title <- wsfeed_list$title$text
-  ss$nsheets <- as.numeric(wsfeed_list$totalResults)
+  nodes <- getNodeSet(feed, '//ns:link[@rel="edit"]', c("ns" = default_ns),
+                      function(x) xmlGetAttr(x, "href"))
   
-  # return list of worksheet objs
-  ws_objs<- getNodeSet(wsfeed, "//ns:entry", c("ns" = default_ns),
-                       function(x) make_ws_obj(x, ss$sheet_id))
-  
-  names(ws_objs) <- lapply(ws_objs, function(x) x$title)
-  ss$ws_names <- names(ws_objs)
-  ss$worksheets <- ws_objs
-  ss
-}
+  nodes <- unlist(nodes)
+  ind <- grep(pos, nodes)
+  req_url <- nodes[ind]
 
+  # create entry element 
+  the_body <- 
+    xmlNode("entry", 
+            namespaceDefinitions = 
+              c(default_ns, gs = "http://schemas.google.com/spreadsheets/2006"),
+            xmlNode("id", req_url),
+            xmlNode("link", attrs = c("rel" = "edit", 
+                                      "type" = "application/atom+xml", 
+                                      "href" = req_url)),
+            xmlNode("gs:cell", attrs = c("row" = row_num, "col" = col_num, 
+                                         "inputValue" = value)))
 
-#' Open spreadsheet by url
-#'
-#' Use url of spreadsheet and return an object of class spreadsheet.
-#'
-#' @param url URL of spreadsheet as it appears in browser
-#' @return Object of class spreadsheet.
-#'
-#' This function currently only works for public spreadsheets.
-#' This function extracts the key from the url and calls on 
-#' \code{\link{open_by_key}}.
-#' @export
-open_by_url <- function(url) 
-{
-  key <- unlist(strsplit(url, "/"))[6] 
-  open_by_key(key)
+  auth <- gsheets_auth(get_google_token())
+  
+  req <- 
+    PUT(req_url, auth, add_headers("Content-Type" = "application/atom+xml"),
+        body = toString.XMLNode(the_body))
+  
+  stop_for_status(req)
 }
 
 
@@ -655,4 +654,58 @@ view_all <- function(ss)
   list(p1, p2)
 }
 
+# Public spreadsheets only -----
+
+#' Open spreadsheet by key 
+#'
+#' Use key found in browser URL and return an object of class spreadsheet.
+#'
+#' @param spreadsheet_key A key of a spreadsheet as it appears in browser URL.
+#' @return Object of class spreadsheet.
+#'
+#' This function currently only works for keys of public spreadsheets.
+#' @export
+#' @importFrom XML xmlToList
+#' @importFrom XML getNodeSet
+open_by_key <- function(key) 
+{
+  the_url <- build_req_url("worksheets", key = key, visibility = "public")
+  
+  req <- gsheets_GET(the_url)
+  wsfeed <- gsheets_parse(req)
+  wsfeed_list <- xmlToList(wsfeed)
+  
+  ss <- spreadsheet()
+  ss$sheet_id <- key
+  ss$updated <- wsfeed_list$updated
+  ss$sheet_title <- wsfeed_list$title$text
+  ss$nsheets <- as.numeric(wsfeed_list$totalResults)
+  
+  # return list of worksheet objs
+  ws_objs<- getNodeSet(wsfeed, "//ns:entry", c("ns" = default_ns),
+                       function(x) make_ws_obj(x, ss$sheet_id))
+  
+  names(ws_objs) <- lapply(ws_objs, function(x) x$title)
+  ss$ws_names <- names(ws_objs)
+  ss$worksheets <- ws_objs
+  ss
+}
+
+
+#' Open spreadsheet by url
+#'
+#' Use url of spreadsheet and return an object of class spreadsheet.
+#'
+#' @param url URL of spreadsheet as it appears in browser
+#' @return Object of class spreadsheet.
+#'
+#' This function currently only works for public spreadsheets.
+#' This function extracts the key from the url and calls on 
+#' \code{\link{open_by_key}}.
+#' @export
+open_by_url <- function(url) 
+{
+  key <- unlist(strsplit(url, "/"))[6] 
+  open_by_key(key)
+}
 

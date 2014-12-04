@@ -336,8 +336,6 @@ num_to_letter <- function(x)
   letter
 }
 
-
-
 vnum_to_letter <- Vectorize(num_to_letter)
 
 #' Convert label (A1) notation to coordinate (R1C1) notation
