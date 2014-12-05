@@ -368,7 +368,7 @@ label_to_coord <- function(x)
 #'
 fill_missing_col <- function(x) 
 {
-  r <- x$col_adj
+  r <- as.numeric(x$col_adj)
   
   for(i in 1: max(r)) {
     if(is.na(match(i, r))) {
@@ -392,8 +392,7 @@ fill_missing_col <- function(x)
 #'
 fill_missing_row <- function(x) 
 {
-  
-  r <- x$row_adj
+  r <- as.numeric(x$row_adj)
   
   for(i in 1: max(r)) {
     if(is.na(match(i, r))) {
@@ -417,7 +416,8 @@ fill_missing_row <- function(x)
 #' @importFrom dplyr arrange
 #' @importFrom dplyr mutate
 #' @importFrom plyr ddply
-fill_missing_tbl <- function(lookup_tbl) {
+fill_missing_tbl <- function(lookup_tbl) 
+{
   
   # create adjusted row/col indices
   row_diff <- min(lookup_tbl$row) - 1
@@ -426,13 +426,13 @@ fill_missing_tbl <- function(lookup_tbl) {
   lookup_tbl <- mutate(lookup_tbl, row_adj = row - row_diff, 
                        col_adj = col - col_diff)
   
-  lookup_tbl_clean <- ddply(lookup_tbl, "row_adj", fill_missing_col)
-  lookup_tbl_clean <- ddply(lookup_tbl_clean, "col_adj", fill_missing_row)
+  lookup_tbl_clean1 <- ddply(lookup_tbl, "row_adj", fill_missing_col)
+  lookup_tbl_clean2 <- ddply(lookup_tbl_clean1, "col_adj", fill_missing_row)
   
-  lookup_tbl_clean$row_adj <- as.numeric(lookup_tbl_clean$row_adj)
-  lookup_tbl_clean$col_adj <- as.numeric(lookup_tbl_clean$col_adj)
+  lookup_tbl_clean2$row_adj <- as.numeric(lookup_tbl_clean2$row_adj)
+  lookup_tbl_clean2$col_adj <- as.numeric(lookup_tbl_clean2$col_adj)
   
-  arrange(lookup_tbl_clean, row_adj, col_adj)
+  arrange(lookup_tbl_clean2, row_adj, col_adj)
   
 }
 
@@ -477,3 +477,6 @@ make_plot <- function(tbl)
           axis.title.x = element_blank(),
           axis.ticks.x = element_blank())
 }
+
+
+

@@ -11,7 +11,7 @@ open_by_key(key)
 \value{
 Object of class spreadsheet.
 
-This function currently only works for keys of public spreadsheets.
+This function only works for keys of public spreadsheets.
 }
 \description{
 Use key found in browser URL and return an object of class spreadsheet.

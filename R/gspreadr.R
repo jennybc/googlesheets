@@ -21,8 +21,7 @@ list_spreadsheets <- function()
 #'
 #' @param title the title of a spreadsheet.
 #' 
-#' @importFrom XML xmlToList
-#' @importFrom XML getNodeSet
+#' @importFrom XML xmlToList getNodeSet
 #' @export
 open_spreadsheet <- function(title) 
 {
@@ -126,8 +125,7 @@ open_at_once <- function(ss_title, ws_value)
 #' 
 #' @importFrom XML xmlNode
 #' @importFrom XML toString.XMLNode
-#' @importFrom httr POST
-#' @importFrom httr status_code
+#' @importFrom httr POST status_code
 #' @export
 add_worksheet<- function(ss, title, nrow, ncol, token = get_google_token()) 
 {   
@@ -160,21 +158,19 @@ add_worksheet<- function(ss, title, nrow, ncol, token = get_google_token())
 #'
 #' The worksheet and all of its data will be removed from spreadsheet.
 #'
-#' @param ss spreadsheet object
 #' @param ws worksheet object
-#' @importFrom httr DELETE
-#' @importFrom httr status_code
+#' @importFrom httr DELETE status_code
 #' @export
-del_worksheet<- function(ss, ws) 
+del_worksheet<- function(ws) 
 {
-  the_url <- build_req_url("worksheets", key = ss$sheet_id, ws_id = ws$id)
+  the_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
   
   auth <- gsheets_auth(get_google_token())
   req <- DELETE(the_url, auth)
   
   if(status_code(req) == 200)
     message(
-      paste("Worksheet", ws$title, "successfully deleted from", ss$sheet_title))
+      paste("Worksheet", ws$title, "successfully deleted."))
   else 
     message("Bad Request, something wrong on client side.")
 }
@@ -221,8 +217,7 @@ get_row <- function(ws, row, vis = "private")
 #' @seealso \code{\link{get_row}}, \code{\link{get_col}}, 
 #' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
-#' @importFrom plyr dlply
-#' @importFrom plyr rbind.fill
+#' @importFrom plyr dlply rbind.fill
 #' @export
 get_rows <- function(ws, from, to, header = FALSE, vis = "private")
 {
@@ -298,8 +293,7 @@ get_col <- function(ws, col, vis = "private")
 #' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}},
 #' \code{\link{read_range}}
-#' @importFrom plyr dlply
-#' @importFrom plyr rbind.fill
+#' @importFrom plyr dlply rbind.fill
 #' @export
 get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
 {
@@ -539,7 +533,7 @@ find_all <- function(ws, x)
     message("Cell not found")
   } else {
     dat <- mutate(vals, Coord = paste0("R", row, "C", col),
-                  Label = paste0(vconvert(col), row),
+                  Label = paste0(vnum_to_letter(col), row),
                   Val = val)
     select(dat, Label, Coord, Val)
   }
@@ -577,7 +571,7 @@ update_cell <- function(ws, pos, value)
   nodes <- unlist(nodes)
   ind <- grep(pos, nodes)
   req_url <- nodes[ind]
-
+  
   # create entry element 
   the_body <- 
     xmlNode("entry", 
@@ -589,7 +583,7 @@ update_cell <- function(ws, pos, value)
                                       "href" = req_url)),
             xmlNode("gs:cell", attrs = c("row" = row_num, "col" = col_num, 
                                          "inputValue" = value)))
-
+  
   auth <- gsheets_auth(get_google_token())
   
   req <- 
@@ -654,6 +648,100 @@ view_all <- function(ss)
   list(p1, p2)
 }
 
+
+
+
+
+#' Get report for a spreadsheet or worksheet
+#' 
+#' Generate a report for a spreadsheet or worksheet.
+#' 
+#' @param x spreadsheet or worksheet object
+#' 
+#' @return A list.
+#' 
+#' @export
+report <- function(x)
+{
+  if(class(x) == "spreadsheet")
+    report_ss(x)
+  else
+    report_ws(x)
+}
+
+#' Get report for a worksheet
+#' 
+#' Generate a report for a worksheet.
+#' 
+#' @param ws worksheet object
+#' 
+#' @return A list of 2.
+#' 
+#' @importFrom dplyr summarise group_by select
+#' @importFrom plyr ddply join rename
+#' 
+#' @export
+report_ws <- function(ws)
+{
+  item1 <- paste(ws$title, ":", ws$nrow, "rows and", ws$ncol, "columns")
+  
+  tbl <- get_lookup_tbl(ws)
+  tbl <- select(tbl, row, col, val)
+  tbl_clean <- fill_missing_tbl(tbl)
+  
+  tbl_bycol <- group_by(tbl_clean, col_adj)
+  
+  a1 <- summarise(tbl_bycol, 
+                  Label = num_to_letter(col_adj[1]),
+                  nrow = max(row_adj),
+                  Empty.Cells = length(which(is.na(val))),
+                  Missing = round(Empty.Cells/nrow, 2))
+  
+  # Find the cell pattern for each column
+  runs <- function(x) 
+  {
+    a <- rle(is.na(x))
+    dat <- data.frame(length = a$lengths, value = a$values)
+    dat$string <- ifelse(a$values, "NA", "V")
+    dat$summary <- paste0(dat$length, dat$string)
+    paste(dat$summary, collapse = ", ")
+  }
+  
+  a2 <- ddply(tbl_clean, "col_adj", function(x) runs(x$val))
+  
+  a3 <- join(a1, a2, by = "col_adj")
+  
+  item2 <- rename(a3, c("V1" = "Runs", "col_adj" = "Column"))
+  
+  list(item1, item2)
+}
+
+
+#' Get report for a spreadsheet
+#' 
+#' Generate a report for a spreadsheet.
+#' 
+#' @param ss spreadsheet object
+#' 
+#' @return A list containing the name of the spreadsheet and the number of 
+#' worksheets it contains and worksheet dimensions.
+#' 
+#' @importFrom dplyr summarise group_by select
+#' @importFrom plyr llply
+#' 
+#' @export
+report_ss <- function(ss)
+{
+  item1 <- paste(ss$sheet_title, ":", ss$nsheets, "worksheets")
+  
+  list_ws <- list_worksheet_objs(ss)
+  
+  item2 <- llply(list_ws, function(x) paste(x$title, ":", x$nrow, 
+                                            "rows and", x$ncol, "columns"))
+  
+  list(item1, item2)
+}
+
 # Public spreadsheets only -----
 
 #' Open spreadsheet by key 
@@ -663,10 +751,9 @@ view_all <- function(ss)
 #' @param spreadsheet_key A key of a spreadsheet as it appears in browser URL.
 #' @return Object of class spreadsheet.
 #'
-#' This function currently only works for keys of public spreadsheets.
+#' This function only works for keys of public spreadsheets.
+#' @importFrom XML xmlToList getNodeSet
 #' @export
-#' @importFrom XML xmlToList
-#' @importFrom XML getNodeSet
 open_by_key <- function(key) 
 {
   the_url <- build_req_url("worksheets", key = key, visibility = "public")
