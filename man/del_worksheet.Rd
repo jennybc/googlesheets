@@ -3,11 +3,9 @@
 \alias{del_worksheet}
 \title{Delete a worksheet from spreadsheet}
 \usage{
-del_worksheet(ss, ws)
+del_worksheet(ws)
 }
 \arguments{
-\item{ss}{spreadsheet object}
-
 \item{ws}{worksheet object}
 }
 \description{

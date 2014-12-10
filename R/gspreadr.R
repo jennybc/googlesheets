@@ -649,9 +649,6 @@ view_all <- function(ss)
 }
 
 
-
-
-
 #' Get report for a spreadsheet or worksheet
 #' 
 #' Generate a report for a spreadsheet or worksheet.
@@ -681,7 +678,7 @@ report <- function(x)
 #' @importFrom plyr ddply join rename
 #' 
 #' @export
-report_ws <- function(ws)
+str.worksheet <- function(ws)
 {
   item1 <- paste(ws$title, ":", ws$nrow, "rows and", ws$ncol, "columns")
   
@@ -730,7 +727,7 @@ report_ws <- function(ws)
 #' @importFrom plyr llply
 #' 
 #' @export
-report_ss <- function(ss)
+str.spreadsheet <- function(ss)
 {
   item1 <- paste(ss$sheet_title, ":", ss$nsheets, "worksheets")
   
