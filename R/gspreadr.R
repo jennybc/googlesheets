@@ -593,6 +593,54 @@ update_cell <- function(ws, pos, value)
   stop_for_status(req)
 }
 
+#' Update multiple cells' values
+#' 
+#' Update a range of cells by specifiying the range and values to update with. 
+#' 
+#' @param ws worksheet object
+#' @param range character string for range of cells (ie. "A1:A2", "A1:B6") 
+#' @param new_values vector of new values to update cells
+#' @param vis either "private or "public"
+#' @param value character string for new value
+#'
+#' @importFrom httr POST stop_for_status
+#' @export 
+update_cells <- function(ws, range, new_values)
+{
+  
+  if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", range)) 
+    stop("Please check cell notation.")
+  
+  bounds <- unlist(strsplit(range, split = ":"))
+  rows <- as.numeric(gsub("[^0-9]", "", bounds))  
+  cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
+  
+  if(max(rows) * max(cols) != length(new_values))
+    stop("Length of new values do not match number of cells to update")
+  
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_row = rows[1], max_row = rows[2],
+                           min_col = cols[1], max_col = cols[2], 
+                           visibility = "private")
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  
+  the_body <- create_update_feed(feed, new_values)
+  
+  auth <- gsheets_auth(get_google_token())
+  
+  req_url <- paste("https://spreadsheets.google.com/feeds/cells",
+                   ws$sheet_id, ws$id, "private/full/batch", sep = "/")
+  
+  req <- 
+    POST(req_url, auth, add_headers("Content-Type" = "application/atom+xml"),
+        body = the_body)
+  
+  stop_for_status(req)
+  
+}
+
 
 #' View worksheet
 #'
@@ -648,23 +696,6 @@ view_all <- function(ss)
   list(p1, p2)
 }
 
-
-#' Get report for a spreadsheet or worksheet
-#' 
-#' Generate a report for a spreadsheet or worksheet.
-#' 
-#' @param x spreadsheet or worksheet object
-#' 
-#' @return A list.
-#' 
-#' @export
-report <- function(x)
-{
-  if(class(x) == "spreadsheet")
-    report_ss(x)
-  else
-    report_ws(x)
-}
 
 #' Get report for a worksheet
 #' 

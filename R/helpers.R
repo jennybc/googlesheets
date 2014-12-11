@@ -478,5 +478,49 @@ make_plot <- function(tbl)
           axis.ticks.x = element_blank())
 }
 
+create_update_feed <- function(feed, new_values)
+{
+  tbl <- create_lookup_tbl(feed)
+  
+  self_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="self"]', c("ns" = default_ns),
+                          function(x) xmlGetAttr(x, "href"))  
+  
+  edit_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="edit"]', c("ns" = default_ns),
+                          function(x) xmlGetAttr(x, "href"))
+  
+  dat_tbl <- dplyr::mutate(tbl, self_link = unlist(self_link), edit_link = unlist(edit_link), 
+                           new_vals = new_values, row_id = 1:nrow(tbl))
+  
+  req_url <- unlist(getNodeSet(feed, '//ns:id', c("ns" = default_ns), xmlValue))[1]
+  
+  listt <- plyr::dlply(dat_tbl, "row_id", make_entry_node)
+  new_list <- unlist(listt, use.names = FALSE)
+  nodes <- paste(new_list, collapse = "\n" )
+  
+  # create entry element 
+  the_body <- 
+    xmlNode("feed", 
+            namespaceDefinitions = 
+              c(default_ns, 
+                batch = "http://schemas.google.com/gdata/batch",
+                gs = "http://schemas.google.com/spreadsheets/2006"),
+            xmlNode("id", req_url)
+    )
+  
+  new_body <- gsub("</feed>", paste(nodes, "</feed>", sep = "\n"), toString.XMLNode(the_body))
+  new_body
+}
 
+make_entry_node <- function(x)
+{
+  node <- xmlNode("entry",
+                  xmlNode("batch:id", paste0("R", x$row, "C", x$col)),
+                  xmlNode("batch:operation", attrs = c(type = "update")),
+                  xmlNode("id", x$self_link),
+                  xmlNode("link", 
+                          attrs = c("rel" = "edit", "type" = "application/atom+xml",
+                                    "href" = x$edit_link)),
+                  xmlNode("gs:cell", attrs = c("row" = x$row, "col" = x$col, "inputValue" = x$new_vals)))
+  toString.XMLNode(node)
+}  
 
