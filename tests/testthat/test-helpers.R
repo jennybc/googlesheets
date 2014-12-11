@@ -44,5 +44,5 @@ test_that("Convert A1 to R1C1 notation", {
   expect_equal(label_to_coord("AB10"), "R10C28")
 })
 
-test_that()
+
 

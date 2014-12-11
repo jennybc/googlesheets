@@ -12,6 +12,7 @@ spreadsheet <- function() {
                  updated = character(),
                  nsheets = integer(),
                  ws_names = character(),
+                 visibility = character(),
                  worksheets = list()), class = "spreadsheet")
 }
 
@@ -26,6 +27,7 @@ worksheet <- function() {
                  id = character(),
                  title = character(),
                  ncol = numeric(),
-                 nrow = numeric()),
+                 nrow = numeric(),
+                 visibility = character()),
             class = "worksheet")
 }

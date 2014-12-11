@@ -50,6 +50,7 @@ open_spreadsheet <- function(title)
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
   ss$ws_names <- names(ws_objs)
   ss$worksheets <- ws_objs
+  ss$visibility <- "private"
   ss
 }
 
@@ -62,7 +63,7 @@ open_spreadsheet <- function(title)
 #' @param ss spreadsheet object returned by \code{\link{open_spreadsheet}}
 #'
 #' This is a mini wrapper around spreadsheet$ws_names.
-#' @export  
+#' @export
 list_worksheets <- function(ss) 
 {
   ss$ws_names
@@ -81,7 +82,7 @@ list_worksheets <- function(ss)
 #' ws <- open_worksheet(ss, "Sheet1")
 #' ws <- open_worksheet(ss, 1)
 #' @export
-open_worksheet <- function(ss, value, vis = "private") 
+open_worksheet <- function(ss, value) 
 {
   if(is.character(value)) {
     index <- match(value, names(ss$worksheets))
@@ -94,7 +95,8 @@ open_worksheet <- function(ss, value, vis = "private")
   }
   
   ws <- ss$worksheets[[index]]
-  worksheet_dim(ws, visibility = vis)
+  ws$visibility <- ss$visibility
+  worksheet_dim(ws, visibility = ss$visibility)
 }
 
 
@@ -123,11 +125,9 @@ open_at_once <- function(ss_title, ws_value)
 #' @param token Google token obtained from \code{\link{login}} or 
 #' \code{\link{authorize}}
 #' 
-#' @importFrom XML xmlNode
-#' @importFrom XML toString.XMLNode
-#' @importFrom httr POST status_code
+#' @importFrom XML xmlNode toString.XMLNode
 #' @export
-add_worksheet<- function(ss, title, nrow, ncol, token = get_google_token()) 
+add_worksheet <- function(ss, title, nrow, ncol, token = get_google_token()) 
 {   
   the_body <- 
     xmlNode("entry", 
@@ -138,19 +138,11 @@ add_worksheet<- function(ss, title, nrow, ncol, token = get_google_token())
             xmlNode("gs:rowCount", nrow),
             xmlNode("gs:colCount", ncol))
   
-  auth <- gsheets_auth(token)
+  the_body <- toString.XMLNode(the_body)
   
   the_url <- build_req_url("worksheets", key = ss$sheet_id)
   
-  req <- 
-    POST(the_url, auth, add_headers("Content-Type" = "application/atom+xml"),
-         body = toString.XMLNode(the_body))
-  
-  if(status_code(req) == 201)
-    message(paste("Worksheet", title, "successfully created in Spreadsheet",
-                  ss$sheet_title))
-  else
-    message("Bad Request, something wrong on client side.")
+  gsheets_POST(the_url, the_body)
 }
 
 
@@ -159,20 +151,11 @@ add_worksheet<- function(ss, title, nrow, ncol, token = get_google_token())
 #' The worksheet and all of its data will be removed from spreadsheet.
 #'
 #' @param ws worksheet object
-#' @importFrom httr DELETE status_code
 #' @export
 del_worksheet<- function(ws) 
 {
   the_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
-  
-  auth <- gsheets_auth(get_google_token())
-  req <- DELETE(the_url, auth)
-  
-  if(status_code(req) == 200)
-    message(
-      paste("Worksheet", ws$title, "successfully deleted."))
-  else 
-    message("Bad Request, something wrong on client side.")
+  gsheets_DELETE(the_url) 
 }
 
 
@@ -182,20 +165,19 @@ del_worksheet<- function(ws)
 #'
 #' @param ws worksheet object
 #' @param row row number
-#' @param vis either "private" or "public", set to "public" for public for 
-#' worksheets
 #' @return A data frame.
 #' @seealso \code{\link{get_rows}}, \code{\link{get_col}}, 
 #' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
 #' @export
-get_row <- function(ws, row, vis = "private") 
+get_row <- function(ws, row) 
 {
   if(row > ws$nrow)
     stop("Specified row exceeds the number of rows contained in the worksheet.")
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_row = row, max_row = row, visibility = vis)
+                           min_row = row, max_row = row, 
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -213,19 +195,21 @@ get_row <- function(ws, row, vis = "private")
 #'
 #' @param ws worksheet object
 #' @param from,to start and end row indexes
+#' @param header logical indicating whether first row should be taken as header
 #' @return A data frame.
 #' @seealso \code{\link{get_row}}, \code{\link{get_col}}, 
 #' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
 #' @importFrom plyr dlply rbind.fill
 #' @export
-get_rows <- function(ws, from, to, header = FALSE, vis = "private")
+get_rows <- function(ws, from, to, header = FALSE)
 {
   if(to > ws$nrow)
     to <- ws$nrow
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_row = from, max_row = to, visibility = vis)
+                           min_row = from, max_row = to, 
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -265,7 +249,8 @@ get_col <- function(ws, col, vis = "private")
     stop("Column exceeds current worksheet size")
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = col, max_col = col, visibility = vis)
+                           min_col = col, max_col = col, 
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -295,7 +280,7 @@ get_col <- function(ws, col, vis = "private")
 #' \code{\link{read_range}}
 #' @importFrom plyr dlply rbind.fill
 #' @export
-get_cols <- function(ws, from, to, header = TRUE, vis = "private") 
+get_cols <- function(ws, from, to, header = TRUE) 
 {
   if(!is.numeric(from) & !is.numeric(to)) {
     from <- letter_to_num(from)
@@ -306,7 +291,8 @@ get_cols <- function(ws, from, to, header = TRUE, vis = "private")
     to <- ws$ncol
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = from, max_col = to, visibility = vis)
+                           min_col = from, max_col = to, 
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -324,7 +310,6 @@ get_cols <- function(ws, from, to, header = TRUE, vis = "private")
     set_header(my_df)
   else 
     my_df
-  
 }
 
 
@@ -358,7 +343,7 @@ get_cell <- function(ws, cell)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
   new_url <- paste(the_url, cell, sep = "/")
   
-  system.time(req <- gsheets_GET(new_url))
+  req <- gsheets_GET(new_url)
   feed <- gsheets_parse(req)
   
   cell_val <- 
@@ -388,9 +373,9 @@ get_cell <- function(ws, cell)
 #' \code{\link{get_cols}}
 #' 
 #' @export
-get_all <- function(ws, header = TRUE, vis = "private") 
+get_all <- function(ws, header = TRUE) 
 {
-  get_cols(ws, 1, ws$ncol, header, vis = vis)
+  get_cols(ws, 1, ws$ncol, header)
 }
 
 
@@ -409,8 +394,7 @@ get_all <- function(ws, header = TRUE, vis = "private")
 #' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
 #' @importFrom plyr ddply
 #' @export
-read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE, 
-                        vis = "private")
+read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
 {
   if(to_row > ws$nrow)
     to_row <- ws$nrow
@@ -421,7 +405,7 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from_row, max_row = to_row,
                            min_col = from_col, max_col = to_col, 
-                           visibility = vis)
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -462,7 +446,7 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE,
 #' \code{\link{get_all}}
 #' 
 #' @export
-read_range <- function(ws, x, header = TRUE, vis = "private") 
+read_range <- function(ws, x, header = TRUE) 
 {
   if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", x)) 
     stop("Please check cell notation.")
@@ -471,7 +455,8 @@ read_range <- function(ws, x, header = TRUE, vis = "private")
   rows <- as.numeric(gsub("[^0-9]", "", bounds))  
   cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
   
-  read_region(ws, rows[1], rows[2], cols[1], cols[2], header = TRUE, vis)
+  read_region(ws, rows[1], rows[2], cols[1], cols[2], header, 
+              vis = ws$visibility)
 }
 
 
@@ -547,7 +532,6 @@ find_all <- function(ws, x)
 #' format
 #' @param value character string for new value
 #'
-#' @importFrom httr PUT stop_for_status
 #' @importFrom XML getNodeSet xmlNode
 #' @export
 update_cell <- function(ws, pos, value)
@@ -584,13 +568,7 @@ update_cell <- function(ws, pos, value)
             xmlNode("gs:cell", attrs = c("row" = row_num, "col" = col_num, 
                                          "inputValue" = value)))
   
-  auth <- gsheets_auth(get_google_token())
-  
-  req <- 
-    PUT(req_url, auth, add_headers("Content-Type" = "application/atom+xml"),
-        body = toString.XMLNode(the_body))
-  
-  stop_for_status(req)
+  gsheets_PUT(req_url, the_body)
 }
 
 #' Update multiple cells' values
@@ -603,11 +581,9 @@ update_cell <- function(ws, pos, value)
 #' @param vis either "private or "public"
 #' @param value character string for new value
 #'
-#' @importFrom httr POST stop_for_status
 #' @export 
 update_cells <- function(ws, range, new_values)
 {
-  
   if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", range)) 
     stop("Please check cell notation.")
   
@@ -625,20 +601,12 @@ update_cells <- function(ws, range, new_values)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-  
   the_body <- create_update_feed(feed, new_values)
-  
-  auth <- gsheets_auth(get_google_token())
   
   req_url <- paste("https://spreadsheets.google.com/feeds/cells",
                    ws$sheet_id, ws$id, "private/full/batch", sep = "/")
   
-  req <- 
-    POST(req_url, auth, add_headers("Content-Type" = "application/atom+xml"),
-        body = the_body)
-  
-  stop_for_status(req)
-  
+  gsheets_POST(req_url, the_body)
 }
 
 
@@ -651,10 +619,9 @@ update_cells <- function(ws, range, new_values)
 #'
 #' @import ggplot2
 #' @export 
-view <- function(ws, vis = "private")
+view <- function(ws)
 {
   tbl <- get_lookup_tbl(ws)
-  
   make_plot(tbl)
 }
 

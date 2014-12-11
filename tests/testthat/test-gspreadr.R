@@ -55,7 +55,7 @@ test_that("Add worksheet", {
 test_that("Delete worksheet", {
   ss1 <- open_spreadsheet("Gapminder")
   ws <- open_worksheet(ss1, "bar")
-  del_worksheet(ss1, ws)
+  del_worksheet(ws)
   ss1 <- open_spreadsheet("Gapminder")
   name_match <- "bar" %in% ss1$ws_names
   
