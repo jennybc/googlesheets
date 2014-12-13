@@ -2,8 +2,10 @@
 
 S3method(str,spreadsheet)
 S3method(str,worksheet)
+export(add_spreadsheet)
 export(add_worksheet)
 export(authorize)
+export(del_spreadsheet)
 export(del_worksheet)
 export(find_all)
 export(find_cell)

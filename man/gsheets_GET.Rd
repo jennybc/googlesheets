@@ -8,7 +8,7 @@ gsheets_GET(url, token = get_google_token())
 \arguments{
 \item{url}{URL for GET request}
 
-\item{auth}{Google auth token obtained from \code{\link{login}}
+\item{token}{Google auth token obtained from \code{\link{login}}
 or \code{\link{authorize}}}
 }
 \description{

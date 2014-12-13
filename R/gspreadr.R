@@ -12,6 +12,45 @@ list_spreadsheets <- function()
 }
 
 
+#' Create a new spreadsheet
+#' 
+#' A new (empty) spreadsheet with 1 worksheet titled "Sheet1" (default) will be 
+#' created in your Google Drive.
+#' 
+#' @param title a character string for the title of new spreadsheet
+#' 
+#' @export
+add_spreadsheet <- function(title)
+{
+  the_body <- paste0('{ "title" : "', title ,'", 
+                    "mimeType" : "application/vnd.google-apps.spreadsheet"}')
+  
+  gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body, 
+               content_type = "json")
+  
+  message(paste0('Spreadsheet "', title, '" created in Google Drive.'))
+}
+
+
+#' Move spreadsheet to trash
+#' 
+#' Move a spreadsheet to trash in Google Drive.
+#' 
+#' @param title a character string for the title of spreadsheet
+#' 
+#' @export
+del_spreadsheet <- function(title)
+{
+  ss <-open_spreadsheet(title)
+  
+  the_url <- paste("https://www.googleapis.com/drive/v2/files", ss$sheet_id,
+                   "trash", sep = "/")
+  
+  gsheets_POST(the_url, the_body = NULL)
+  
+  message(paste0('Spreadsheet "', title, '" moved to trash in Google Drive.'))
+}
+
 #' Open spreadsheet by title 
 #'
 #' Use the spreadsheet title (as it appears in Google Drive) to get a 
@@ -455,8 +494,7 @@ read_range <- function(ws, x, header = TRUE)
   rows <- as.numeric(gsub("[^0-9]", "", bounds))  
   cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
   
-  read_region(ws, rows[1], rows[2], cols[1], cols[2], header, 
-              vis = ws$visibility)
+  read_region(ws, rows[1], rows[2], cols[1], cols[2], header)
 }
 
 

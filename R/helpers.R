@@ -371,22 +371,26 @@ make_plot <- function(tbl)
 
 
 #' @importFrom XML xmlNode getNodeSet
-#' @importFrom dpyr mutate
+#' @importFrom dplyr mutate
 #' @importFrom plyr dlply
 create_update_feed <- function(feed, new_values)
 {
   tbl <- create_lookup_tbl(feed)
   
-  self_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="self"]', c("ns" = default_ns),
+  self_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="self"]', 
+                          c("ns" = default_ns),
                           function(x) xmlGetAttr(x, "href"))  
   
-  edit_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="edit"]', c("ns" = default_ns),
+  edit_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="edit"]', 
+                          c("ns" = default_ns),
                           function(x) xmlGetAttr(x, "href"))
   
-  dat_tbl <- mutate(tbl, self_link = unlist(self_link), edit_link = unlist(edit_link), 
-                           new_vals = new_values, row_id = 1:nrow(tbl))
+  dat_tbl <- mutate(tbl, self_link = unlist(self_link), 
+                    edit_link = unlist(edit_link), 
+                    new_vals = new_values, row_id = 1:nrow(tbl))
   
-  req_url <- unlist(getNodeSet(feed, '//ns:id', c("ns" = default_ns), xmlValue))[1]
+  req_url <- unlist(getNodeSet(feed, '//ns:id', 
+                               c("ns" = default_ns), xmlValue))[1]
   
   listt <- dlply(dat_tbl, "row_id", make_entry_node)
   new_list <- unlist(listt, use.names = FALSE)

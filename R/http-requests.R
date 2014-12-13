@@ -119,13 +119,14 @@ gsheets_PUT <- function(url, the_body, token = get_google_token())
 #' @param token Google auth token obtained from \code{\link{login}} 
 #' or \code{\link{authorize}} 
 #' @importFrom httr POST stop_for_status
-gsheets_POST <- function(url, the_body, token = get_google_token())
+gsheets_POST <- function(url, the_body, content_type = "atom+xml", 
+                         token = get_google_token())
 {
   if(is.null(token)) {
     stop("Must be authorized in order to perform request")
   } else {
     req <- POST(url, gsheets_auth(token), 
-                add_headers("Content-Type" = "application/atom+xml"),
+                add_headers("Content-Type" = paste0("application/", content_type)),
                 body = the_body)
     stop_for_status(req)
   }
