@@ -3,7 +3,7 @@
 \alias{open_worksheet}
 \title{Open worksheet given worksheet title or index}
 \usage{
-open_worksheet(ss, value, vis = "private")
+open_worksheet(ss, value)
 }
 \arguments{
 \item{ss}{spreadsheet object containing worksheet}

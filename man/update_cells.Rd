@@ -8,7 +8,7 @@ update_cells(ws, range, new_values)
 \arguments{
 \item{ws}{worksheet object}
 
-\item{range}{character string for range of cells (ie. "A1:A5", "A1:B6")}
+\item{range}{character string for range of cells (ie. "A1:A2", "A1:B6")}
 
 \item{new_values}{vector of new values to update cells}
 
@@ -17,6 +17,6 @@ update_cells(ws, range, new_values)
 \item{value}{character string for new value}
 }
 \description{
-Update multiple cells' values
+Update a range of cells by specifiying the range and values to update with.
 }
 

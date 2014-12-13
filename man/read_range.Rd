@@ -3,7 +3,7 @@
 \alias{read_range}
 \title{Get a region of a worksheet by range}
 \usage{
-read_range(ws, x, header = TRUE, vis = "private")
+read_range(ws, x, header = TRUE)
 }
 \arguments{
 \item{ws}{worksheet object}

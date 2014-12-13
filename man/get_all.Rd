@@ -3,7 +3,7 @@
 \alias{get_all}
 \title{Get all values in a worksheet.}
 \usage{
-get_all(ws, header = TRUE, vis = "private")
+get_all(ws, header = TRUE)
 }
 \arguments{
 \item{ws}{worksheet object}

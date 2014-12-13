@@ -3,7 +3,7 @@
 \alias{get_cols}
 \title{Get all values in a range of columns.}
 \usage{
-get_cols(ws, from, to, header = TRUE, vis = "private")
+get_cols(ws, from, to, header = TRUE)
 }
 \arguments{
 \item{ws}{worksheet object}

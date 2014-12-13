@@ -3,8 +3,7 @@
 \alias{read_region}
 \title{Get a region of a worksheet by min/max row and column}
 \usage{
-read_region(ws, from_row, to_row, from_col, to_col, header = TRUE,
-  vis = "private")
+read_region(ws, from_row, to_row, from_col, to_col, header = TRUE)
 }
 \arguments{
 \item{ws}{worksheet object}

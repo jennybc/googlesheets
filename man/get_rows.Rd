@@ -3,12 +3,14 @@
 \alias{get_rows}
 \title{Get all values in range of rows}
 \usage{
-get_rows(ws, from, to, header = FALSE, vis = "private")
+get_rows(ws, from, to, header = FALSE)
 }
 \arguments{
 \item{ws}{worksheet object}
 
 \item{from,to}{start and end row indexes}
+
+\item{header}{logical indicating whether first row should be taken as header}
 }
 \value{
 A data frame.

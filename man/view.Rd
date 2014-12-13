@@ -3,7 +3,7 @@
 \alias{view}
 \title{View worksheet}
 \usage{
-view(ws, vis = "private")
+view(ws)
 }
 \arguments{
 \item{ws}{worksheet object}

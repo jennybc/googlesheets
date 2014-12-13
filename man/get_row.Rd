@@ -3,15 +3,12 @@
 \alias{get_row}
 \title{Get all values in a row}
 \usage{
-get_row(ws, row, vis = "private")
+get_row(ws, row)
 }
 \arguments{
 \item{ws}{worksheet object}
 
 \item{row}{row number}
-
-\item{vis}{either "private" or "public", set to "public" for public for
-worksheets}
 }
 \value{
 A data frame.
