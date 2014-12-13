@@ -206,7 +206,7 @@ del_worksheet<- function(ws)
 #' @param row row number
 #' @return A data frame.
 #' @seealso \code{\link{get_rows}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
+#' \code{\link{get_cols}}, \code{\link{read_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
 #' @export
 get_row <- function(ws, row) 
@@ -237,7 +237,7 @@ get_row <- function(ws, row)
 #' @param header logical indicating whether first row should be taken as header
 #' @return A data frame.
 #' @seealso \code{\link{get_row}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}, \code{\link{get_all}}, \code{\link{read_region}}, 
+#' \code{\link{get_cols}}, \code{\link{read_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
 #' @importFrom plyr dlply rbind.fill
 #' @export
@@ -276,7 +276,7 @@ get_rows <- function(ws, from, to, header = FALSE)
 #' @param vis either "private" or "public", "public" for public worksheet
 #' @return A data frame.
 #' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}}, 
+#' \code{\link{get_rows}}, \code{\link{read_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
 #' @export
 get_col <- function(ws, col, vis = "private") 
@@ -315,7 +315,7 @@ get_col <- function(ws, col, vis = "private")
 #' get_cols(ws, "A", "B")
 #' get_cols(ws, "c", "f")
 #' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}},
+#' \code{\link{get_rows}}, \code{\link{read_all}}, \code{\link{read_region}},
 #' \code{\link{read_range}}
 #' @importFrom plyr dlply rbind.fill
 #' @export
@@ -412,7 +412,7 @@ get_cell <- function(ws, cell)
 #' \code{\link{get_cols}}
 #' 
 #' @export
-get_all <- function(ws, header = TRUE) 
+read_all <- function(ws, header = TRUE) 
 {
   get_cols(ws, 1, ws$ncol, header)
 }
@@ -429,7 +429,7 @@ get_all <- function(ws, header = TRUE)
 #' @param from_col,to_col range of cols to extract
 #' @param vis either \code{private} or \code{public}
 #' @return A data frame.
-#' @seealso \code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
+#' @seealso \code{\link{read_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
 #' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
 #' @importFrom plyr ddply
 #' @export
@@ -482,7 +482,7 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
 #' read_range("C10:D20")
 #' @seealso \code{\link{read_region}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}, 
-#' \code{\link{get_all}}
+#' \code{\link{read_all}}
 #' 
 #' @export
 read_range <- function(ws, x, header = TRUE) 
@@ -787,9 +787,12 @@ str.spreadsheet <- function(ss)
 #' This function only works for keys of public spreadsheets.
 #' @importFrom XML xmlToList getNodeSet
 #' @export
-open_by_key <- function(key) 
+open_by_key <- function(key, visibility = "public") 
 {
-  the_url <- build_req_url("worksheets", key = key, visibility = "public")
+  if(visibility == "public") 
+    the_url <- build_req_url("worksheets", key = key, visibility)
+  else
+    the_url <- build_req_url("worksheets", key = key, visibility = "private")
   
   req <- gsheets_GET(the_url)
   wsfeed <- gsheets_parse(req)
@@ -823,9 +826,9 @@ open_by_key <- function(key)
 #' This function extracts the key from the url and calls on 
 #' \code{\link{open_by_key}}.
 #' @export
-open_by_url <- function(url) 
+open_by_url <- function(url, visibility = "public") 
 {
   key <- unlist(strsplit(url, "/"))[6] 
-  open_by_key(key)
+  open_by_key(key, visibility)
 }
 

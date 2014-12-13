@@ -3,7 +3,7 @@
 \alias{open_by_url}
 \title{Open spreadsheet by url}
 \usage{
-open_by_url(url)
+open_by_url(url, visibility = "public")
 }
 \arguments{
 \item{url}{URL of spreadsheet as it appears in browser}

@@ -20,7 +20,7 @@ Get all values in a column.
 }
 \seealso{
 \code{\link{get_cols}}, \code{\link{get_row}},
-\code{\link{get_rows}}, \code{\link{get_all}}, \code{\link{read_region}},
+\code{\link{get_rows}}, \code{\link{read_all}}, \code{\link{read_region}},
 \code{\link{read_range}}
 }
 

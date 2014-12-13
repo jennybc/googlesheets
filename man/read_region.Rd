@@ -23,7 +23,7 @@ columns. If the specified range is beyond the dimensions of the worksheet,
 the boundaries of the worksheet will be used instead.
 }
 \seealso{
-\code{\link{get_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
+\code{\link{read_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
 \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
 }
 
