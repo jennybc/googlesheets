@@ -6,7 +6,7 @@
 del_spreadsheet(title)
 }
 \arguments{
-\item{title}{a character string for the title of spreadsheet}
+\item{title}{the title of the spreadsheet}
 }
 \description{
 Move a spreadsheet to trash in Google Drive.

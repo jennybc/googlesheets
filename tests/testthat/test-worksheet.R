@@ -36,7 +36,7 @@ test_that("Get more than 1 col", {
 
 test_that("Get the entire worksheet", {
   
-  my_data <- get_all(ws)
+  my_data <- read_all(ws)
   
   expect_equal(class(my_data), "data.frame")
   expect_equal(nrow(my_data), 12)

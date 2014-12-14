@@ -183,7 +183,7 @@ You can get the entire worksheet. Empty cells will be filled with NAs. Boundarie
 
 
 ```{r get all}
-get_all(ws)
+read_all(ws)
 ```
 
 ## Get a cell

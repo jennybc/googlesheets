@@ -17,7 +17,8 @@ list_spreadsheets <- function()
 #' A new (empty) spreadsheet with 1 worksheet titled "Sheet1" (default) will be 
 #' created in your Google Drive.
 #' 
-#' @param title a character string for the title of new spreadsheet
+#' 
+#' @param title the title for the new spreadsheet
 #' 
 #' @export
 add_spreadsheet <- function(title)
@@ -36,7 +37,7 @@ add_spreadsheet <- function(title)
 #' 
 #' Move a spreadsheet to trash in Google Drive.
 #' 
-#' @param title a character string for the title of spreadsheet
+#' @param title the title of the spreadsheet
 #' 
 #' @export
 del_spreadsheet <- function(title)
@@ -55,10 +56,20 @@ del_spreadsheet <- function(title)
 #'
 #' Use the spreadsheet title (as it appears in Google Drive) to get a 
 #' spreadsheet object, containing the spreadsheet id, title, time of last 
-#' update, the titles and number of worksheets contained, and a list of 
-#' worksheet objects.
+#' update, the titles of the worksheets contained, the number of worksheets 
+#' contained, and a list of worksheet objects for every worksheet contained.
 #'
-#' @param title the title of a spreadsheet.
+#' @param title the title of a spreadsheet
+#' 
+#' @return a list of worksheet objects but without the nrows and ncols component
+#' because requires iteration through a cell feed to determine
+#' 
+#' @note For the list of worksheet objects, the ncol, nrow and visibility 
+#' components are empty until \code{\link{open_worksheet}} or 
+#' \code{\link{open_at_once}} is used to open a worksheet. This is because to 
+#' determine the number of rows and columns, information is needed from the 
+#' cellsfeed which takes time to retrieve and such detailed informa 
+#' (slow if there are lots of worksheets)
 #' 
 #' @importFrom XML xmlToList getNodeSet
 #' @export
@@ -67,7 +78,6 @@ open_spreadsheet <- function(title)
   ssfeed_df <- ssfeed_to_df()
   
   index <- match(title, ssfeed_df$sheet_title)
-  
   if(is.na(index)) stop("Spreadsheet not found.")
   sheet_key <- ssfeed_df[index, "sheet_key"]
   
@@ -87,19 +97,19 @@ open_spreadsheet <- function(title)
   ss$sheet_title <- wsfeed_list$title$text
   ss$updated <- wsfeed_list$updated
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
+  ss$visibility <- "private"
   ss$ws_names <- names(ws_objs)
   ss$worksheets <- ws_objs
-  ss$visibility <- "private"
+  
   ss
 }
 
 
 #' Get list of worksheets contained in spreadsheet
 #'
-#' Retrieve list of worksheet titles (order as it appears in spreadsheet) 
-#' contained in spreadsheet. 
+#' Retrieve list of worksheet titles (order as they appear in spreadsheet). 
 #'
-#' @param ss spreadsheet object returned by \code{\link{open_spreadsheet}}
+#' @param ss a spreadsheet object returned by \code{\link{open_spreadsheet}}
 #'
 #' This is a mini wrapper around spreadsheet$ws_names.
 #' @export
@@ -109,11 +119,11 @@ list_worksheets <- function(ss)
 }
 
 
-#' Open worksheet given worksheet title or index
+#' Open worksheet by title or index
 #'
-#' Use title or index of worksheet to retrieve worksheet object.
+#' Use the title or index of a worksheet to retrieve the worksheet object.
 #'
-#' @param ss spreadsheet object containing worksheet
+#' @param ss a spreadsheet object containing the worksheet
 #' @param value a character string for title of worksheet or numeric for 
 #' index of worksheet
 #' @return A worksheet object with number of rows and cols component.
@@ -217,11 +227,11 @@ get_row <- function(ws, row)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = row, max_row = row, 
                            visibility = ws$visibility)
-  
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
-  tbl <- create_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed)
+  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   data.frame(t(tbl_clean$val))
@@ -249,11 +259,12 @@ get_rows <- function(ws, from, to, header = FALSE)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from, max_row = to, 
                            visibility = ws$visibility)
-  
+
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
-  tbl <- create_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed)
+  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   list_of_df <- 
@@ -294,7 +305,8 @@ get_col <- function(ws, col, vis = "private")
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
-  tbl <- create_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed)
+  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   tbl_clean$val
@@ -332,11 +344,12 @@ get_cols <- function(ws, from, to, header = TRUE)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = from, max_col = to, 
                            visibility = ws$visibility)
-  
+
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
-  tbl <- create_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed)
+  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   list_of_df <- 
@@ -449,7 +462,9 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
-  tbl <- create_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed)
+  tbl <- select(tbl, c(row, col, val))
+  
   tbl_clean <- fill_missing_tbl(tbl)
   
   list_of_df <- 
@@ -522,7 +537,13 @@ list_worksheet_objs <- function(ss)
 #' @export
 find_cell <- function(ws, x)
 {
-  tbl <- get_lookup_tbl(ws)
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_col = 1, max_col = ws$ncol, visibility = "private")
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  
+  tbl <- get_lookup_tbl(feed)
   ind <- match(x, tbl$val)
   
   if(is.na(ind)) {
@@ -549,7 +570,12 @@ find_cell <- function(ws, x)
 #' @export
 find_all <- function(ws, x)
 {
-  tbl <- get_lookup_tbl(ws)
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_col = 1, max_col = ws$ncol, visibility = "private")
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  tbl <- get_lookup_tbl(feed)
   vals <- filter(tbl, val == x)
   
   if(nrow(vals) == 0) {
@@ -639,7 +665,7 @@ update_cells <- function(ws, range, new_values)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-  the_body <- create_update_feed(feed, new_values)
+  the_body <- create_update_feed(the_url, feed, new_values)
   
   req_url <- paste("https://spreadsheets.google.com/feeds/cells",
                    ws$sheet_id, ws$id, "private/full/batch", sep = "/")
@@ -659,7 +685,12 @@ update_cells <- function(ws, range, new_values)
 #' @export 
 view <- function(ws)
 {
-  tbl <- get_lookup_tbl(ws)
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_col = 1, max_col = ws$ncol, visibility = "private")
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  tbl <- get_lookup_tbl(feed)
   make_plot(tbl)
 }
 
@@ -718,15 +749,21 @@ str.worksheet <- function(ws)
 {
   item1 <- paste(ws$title, ":", ws$nrow, "rows and", ws$ncol, "columns")
   
-  tbl <- get_lookup_tbl(ws)
-  tbl <- select(tbl, row, col, val)
-  tbl_clean <- fill_missing_tbl(tbl)
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           min_col = 1, max_col = ws$ncol, visibility = "private")
   
-  tbl_bycol <- group_by(tbl_clean, col_adj)
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  tbl <- get_lookup_tbl(feed)
+  tbl <- select(tbl, row, col, val)
+  
+  tbl_clean <- fill_missing_tbl_row_only(tbl)
+  
+  tbl_bycol <- group_by(tbl_clean, col)
   
   a1 <- summarise(tbl_bycol, 
-                  Label = num_to_letter(col_adj[1]),
-                  nrow = max(row_adj),
+                  Label = num_to_letter(col[1]),
+                  nrow = max(row),
                   Empty.Cells = length(which(is.na(val))),
                   Missing = round(Empty.Cells/nrow, 2))
   
@@ -740,13 +777,17 @@ str.worksheet <- function(ws)
     paste(dat$summary, collapse = ", ")
   }
   
-  a2 <- ddply(tbl_clean, "col_adj", function(x) runs(x$val))
+  a2 <- ddply(tbl_clean, "col", function(x) runs(x$val))
   
-  a3 <- join(a1, a2, by = "col_adj")
+  a3 <- join(a1, a2, by = "col")
   
-  item2 <- rename(a3, c("V1" = "Runs", "col_adj" = "Column"))
+  row.names(a3) <- NULL
   
-  list(item1, item2)
+  item2 <- plyr::rename(a3, c("V1" = "Runs", "nrow" = "Rows", "col_adj" = "Column"))
+  
+  item2
+  cat("Worksheet", item1, sep = "\n")
+  print(item2)
 }
 
 
@@ -765,14 +806,15 @@ str.worksheet <- function(ws)
 #' @export
 str.spreadsheet <- function(ss)
 {
-  item1 <- paste(ss$sheet_title, ":", ss$nsheets, "worksheets")
+  item1 <- paste0(ss$sheet_title, ": ", ss$nsheets, " worksheets")
   
   list_ws <- list_worksheet_objs(ss)
   
   item2 <- llply(list_ws, function(x) paste(x$title, ":", x$nrow, 
                                             "rows and", x$ncol, "columns"))
   
-  list(item1, item2)
+  cat("Spreadsheet:", item1, "\nWorksheets:", paste(item2, sep = "\n"), 
+      sep = "\n")
 }
 
 # Public spreadsheets only -----
@@ -789,10 +831,11 @@ str.spreadsheet <- function(ss)
 #' @export
 open_by_key <- function(key, visibility = "public") 
 {
-  if(visibility == "public") 
-    the_url <- build_req_url("worksheets", key = key, visibility)
-  else
+  if(visibility == "public") {
+    the_url <- build_req_url("worksheets", key = key, visibility = "public")
+  } else {
     the_url <- build_req_url("worksheets", key = key, visibility = "private")
+  }
   
   req <- gsheets_GET(the_url)
   wsfeed <- gsheets_parse(req)

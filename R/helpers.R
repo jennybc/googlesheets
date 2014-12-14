@@ -35,11 +35,9 @@ make_ws_obj <- function(node, sheet_id)
 
 #' Get information from spreadsheets feed 
 #'
-#' Get spreadsheets titles, keys, and date/time of last update.
+#' Get spreadsheets' titles, keys, and date/time of last update.
 #'
-#' @importFrom XML xmlValue
-#' @importFrom XML xmlGetAttr
-#' @importFrom XML getNodeSet
+#' @importFrom XML xmlValue xmlGetAttr getNodeSet
 ssfeed_to_df <- function() 
 {
   the_url <- build_req_url("spreadsheets")
@@ -66,18 +64,16 @@ ssfeed_to_df <- function()
 }
 
 
-#' Find number of rows and columns of worksheet
+#' Find the dimensions of a worksheet
 
-#' Get the rows and columns of worksheet by making a request for cellfeed
+#' Get the rows and columns of a worksheet by making a request for cellsfeed.
 
-#' @param ws Worksheet object
-#' @param auth Google token
+#' @param ws a worksheet object
 #' @param visibility set to \code{public} for public sheets
-#' @importFrom XML getNodeSet
-#' @importFrom XML xmlApply
-#' @importFrom XML xmlGetAttr
+#' @param auth Google token
+#' 
 #' @export
-worksheet_dim <- function(ws, auth = get_google_token(), visibility = "private")
+worksheet_dim <- function(ws, visibility = "private", auth = get_google_token())
 {
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            visibility = visibility)
@@ -85,85 +81,48 @@ worksheet_dim <- function(ws, auth = get_google_token(), visibility = "private")
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
-  tbl <- create_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed)
   
-  cell_nodes <- getNodeSet(feed, "//ns:feed//ns:entry", c("ns" = default_ns)) 
-  
-  if(length(cell_nodes) == 0) {
-    dims <- getNodeSet(feed, "//ns:feed//gs:*", c("ns" = default_ns, "gs"), xmlValue)
-    ws$nrow <- as.numeric(dims[[1]])
-    ws$ncol <- as.numeric(dims[[2]])
+  if(nrow(tbl) == 0) {
+    ws$nrow <- 0
+    ws$ncol <- 0
   } else {
-    cell_col_num <- getNodeSet(feed, "//ns:entry//gs:*", c("ns" = default_ns, "gs"),
-                               function(x) c(as.numeric(xmlGetAttr(x, "col")), 
-                                             as.numeric(xmlGetAttr(x, "row"))))
-    
-    ws$nrow <- max(sapply(cell_col_num, "[[", 2))
-    ws$ncol <- max(sapply(cell_col_num, "[[", 1))
+    ws$nrow <- max(tbl$row)
+    ws$ncol <- max(tbl$col)
   }
   ws
 }
 
-# #' Find number of rows and columns of worksheet
-# #' 
-# #' Get the rows and columns of worksheet by making a request for cellfeed
-# #' 
-# #' dparam ws Worksheet object
-# #' param auth Google token
-# #' param visibility set to \code{public} for public sheets
-# #'  
-# #' The is faster but with a trade-off. For listfeeds, data will stop before an 
-# #' entire blank row. For example if row 2 is entirely blank, no data will be 
-# #' returned. Blank columns are also ignored. The number of columns will be the 
-# #' maximum number of cells in a row that contain a value, regardless
-# #' of spacing.
-# #' 
-# #' importFrom XML getNodeSet
-# #' importFrom XML xmlChildren
-# worksheet_dim <- function(ws, auth = get_google_token(), visibility = "private")
-# {
-#   the_url <- build_req_url("list", key = ws$sheet_id, ws_id = ws$id, 
-#                            visibility = visibility)
-#   
-#   req <- gsheets_GET(the_url)
-#   feed <- gsheets_parse(req)
-# 
-#   cell_nodes <- getNodeSet(feed, "//ns:feed//ns:entry", c("ns" = default_ns),
-#                            function(x) length(xmlChildren(x)) - 7)
-#   
-#   ws$ncol <- max(unlist(cell_nodes))
-#   ws$nrow <- length(cell_nodes) + 1 # to include header row
-#   ws
-# }
 
-#' Create lookup table for cell indices and its values 
+#' Get lookup table 
 #'
-#' Convert cell row and col attributes stored in entry nodes, along with 
-#' input values into a single data frame and serve as a lookup table for 
-#' further processing.
+#' Create lookup table from cellfeed.
+#' 
+#' @param feed cellfeed from GET request
 #'
-#' @param cellsfeed Cell based feed parsed with \code{\link{gsheets_parse}} 
-#' @return A data frame with cell row and col number and corresponding input value.
-#' @importFrom XML getNodeSet
-#' @importFrom XML xmlAttrs
-#' @importFrom XML xmlValue
-create_lookup_tbl <- function(cellsfeed) {
-  val <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", 
+get_lookup_tbl <- function(feed)
+{
+  val <- getNodeSet(feed, "//ns:entry//gs:cell", 
                     c("ns" = default_ns, "gs"), xmlValue)
   
-  row_num <- getNodeSet(cellsfeed, "//ns:entry//gs:cell", 
+  row_num <- getNodeSet(feed, "//ns:entry//gs:cell", 
                         c("ns" = default_ns, "gs"),
                         function(x) as.numeric(xmlAttrs(x)["row"]))
   
-  col_num <-  getNodeSet(cellsfeed, "//ns:entry//gs:cell", 
+  col_num <-  getNodeSet(feed, "//ns:entry//gs:cell", 
                          c("ns" = default_ns, "gs"),
                          function(x) as.numeric(xmlAttrs(x)["col"]))
+  
+  title <- getNodeSet(feed, "//ns:title", c("ns" = default_ns), xmlValue)[1]
   
   rows <- unlist(row_num)
   cols <- unlist(col_num)
   
   lookup_tbl <- data.frame(row = rows, col = cols, val = unlist(val),
                            stringsAsFactors = FALSE)
+  
+  if(nrow(lookup_tbl) != 0)
+    lookup_tbl$Sheet <- unlist(title)
   
   lookup_tbl
 }
@@ -295,7 +254,6 @@ fill_missing_row <- function(x)
   x
 }
 
-
 #' Fill in missing tuples for lookup table
 #' 
 #' The lookup table returned by create_lookup_tbl may contain missing tuples 
@@ -310,7 +268,6 @@ fill_missing_row <- function(x)
 #' @importFrom plyr ddply
 fill_missing_tbl <- function(lookup_tbl) 
 {
-  
   # create adjusted row/col indices
   row_diff <- min(lookup_tbl$row) - 1
   col_diff <- min(lookup_tbl$col) - 1
@@ -324,28 +281,52 @@ fill_missing_tbl <- function(lookup_tbl)
   lookup_tbl_clean2$row_adj <- as.numeric(lookup_tbl_clean2$row_adj)
   lookup_tbl_clean2$col_adj <- as.numeric(lookup_tbl_clean2$col_adj)
   
-  arrange(lookup_tbl_clean2, row_adj, col_adj)
+  arrange(lookup_tbl_clean2, row_adj, col_adj) 
+}
+
+
+fill_missing_tbl_row_only <- function(lookup_tbl) 
+{
+  
+  # create adjusted row/col indices
+  row_diff <- min(lookup_tbl$row) - 1
+  col_diff <- min(lookup_tbl$col) - 1
+  
+  lookup_tbl <- mutate(lookup_tbl, row_adj = row - row_diff, 
+                       col_adj = col - col_diff)
+  
+  #lookup_tbl_clean1 <- ddply(lookup_tbl, "row_adj", fill_missing_col)
+  lookup_tbl_clean <- ddply(lookup_tbl, "col", fill_missing_row2)
+  
+  #lookup_tbl_clean2$row_adj <- as.numeric(lookup_tbl_clean2$row_adj)
+  lookup_tbl_clean$col_adj <- as.numeric(lookup_tbl_clean$col_adj)
+  
+  arrange(lookup_tbl_clean, row_adj, col_adj)
   
 }
 
-#' Get lookup table for entire worksheet
-#'
-#' Create lookup table for all the values in the worksheet.
-#' 
-#' @param ws worksheet object
-#'
-get_lookup_tbl <- function(ws)
+fill_missing_row2 <- function(x) 
 {
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = 1, max_col = ws$ncol, visibility = "private")
+  r <- as.numeric(x$row)
   
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  dat <- create_lookup_tbl(feed)
-  dat$Sheet <- ws$title
-  dat
+  for(i in 1: max(r)) {
+    if(is.na(match(i, r))) {
+      new_tuple <- c(i, unique(x$col), NA, i, unique(x$col))
+      x <- rbind(x, new_tuple)
+    }
+  }
+  x
 }
+
+
+
+
+
+
+
+
+
+
 
 
 #' Plot worksheet
@@ -375,7 +356,7 @@ make_plot <- function(tbl)
 #' @importFrom plyr dlply
 create_update_feed <- function(feed, new_values)
 {
-  tbl <- create_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed)
   
   self_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="self"]', 
                           c("ns" = default_ns),

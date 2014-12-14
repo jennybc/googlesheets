@@ -6,12 +6,21 @@
 open_spreadsheet(title)
 }
 \arguments{
-\item{title}{the title of a spreadsheet.}
+\item{title}{the title of a spreadsheet}
+}
+\value{
+a list of worksheet objects but without the nrows and ncols component
+because requires iteration through a cell feed to determine
 }
 \description{
 Use the spreadsheet title (as it appears in Google Drive) to get a
 spreadsheet object, containing the spreadsheet id, title, time of last
-update, the titles and number of worksheets contained, and a list of
-worksheet objects.
+update, the titles of the worksheets contained, the number of worksheets
+contained, and a list of worksheet objects for every worksheet contained.
+}
+\note{
+For the list of worksheet objects, the ncol, nrow and visibility
+components are empty until \code{\link{open_worksheet}} or \code{\link{open_at_once}}
+is used to open a worksheet
 }
 

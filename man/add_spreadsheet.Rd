@@ -6,7 +6,7 @@
 add_spreadsheet(title)
 }
 \arguments{
-\item{title}{a character string for the title of new spreadsheet}
+\item{title}{the title for the new spreadsheet}
 }
 \description{
 A new (empty) spreadsheet with 1 worksheet titled "Sheet1" (default) will be

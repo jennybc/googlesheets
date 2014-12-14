@@ -6,12 +6,11 @@
 list_worksheets(ss)
 }
 \arguments{
-\item{ss}{spreadsheet object returned by \code{\link{open_spreadsheet}}
+\item{ss}{a spreadsheet object returned by \code{\link{open_spreadsheet}}
 
 This is a mini wrapper around spreadsheet$ws_names.}
 }
 \description{
-Retrieve list of worksheet titles (order as it appears in spreadsheet)
-contained in spreadsheet.
+Retrieve list of worksheet titles (order as they appear in spreadsheet).
 }
 
