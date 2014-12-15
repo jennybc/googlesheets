@@ -187,6 +187,10 @@ num_to_letter <- function(x)
   letter
 }
 
+
+#' Vectorize num_to_letter function
+#' 
+#' @param num_to_letter function
 vnum_to_letter <- Vectorize(num_to_letter)
 
 #' Convert label (A1) notation to coordinate (R1C1) notation
@@ -287,7 +291,6 @@ fill_missing_tbl <- function(lookup_tbl)
 
 fill_missing_tbl_row_only <- function(lookup_tbl) 
 {
-  
   # create adjusted row/col indices
   row_diff <- min(lookup_tbl$row) - 1
   col_diff <- min(lookup_tbl$col) - 1
@@ -317,16 +320,6 @@ fill_missing_row2 <- function(x)
   }
   x
 }
-
-
-
-
-
-
-
-
-
-
 
 
 #' Plot worksheet

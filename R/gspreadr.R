@@ -741,7 +741,7 @@ view_all <- function(ss)
 #' 
 #' @return A list of 2.
 #' 
-#' @importFrom dplyr summarise group_by select
+#' @importFrom dplyr summarise group_by select arrange
 #' @importFrom plyr ddply join rename
 #' 
 #' @export
@@ -758,7 +758,6 @@ str.worksheet <- function(ws)
   tbl <- select(tbl, row, col, val)
   
   tbl_clean <- fill_missing_tbl_row_only(tbl)
-  
   tbl_bycol <- group_by(tbl_clean, col)
   
   a1 <- summarise(tbl_bycol, 
@@ -770,20 +769,19 @@ str.worksheet <- function(ws)
   # Find the cell pattern for each column
   runs <- function(x) 
   {
-    a <- rle(is.na(x))
+    x_ordered <- arrange(x, row)
+    a <- rle(is.na(x_ordered$val))
     dat <- data.frame(length = a$lengths, value = a$values)
     dat$string <- ifelse(a$values, "NA", "V")
     dat$summary <- paste0(dat$length, dat$string)
     paste(dat$summary, collapse = ", ")
   }
   
-  a2 <- ddply(tbl_clean, "col", function(x) runs(x$val))
+  a2 <- ddply(tbl_clean, "col", runs)
   
   a3 <- join(a1, a2, by = "col")
   
-  row.names(a3) <- NULL
-  
-  item2 <- plyr::rename(a3, c("V1" = "Runs", "nrow" = "Rows", "col_adj" = "Column"))
+  item2 <- rename(a3, c("V1" = "Runs", "nrow" = "Rows", "col" = "Column"))
   
   item2
   cat("Worksheet", item1, sep = "\n")
