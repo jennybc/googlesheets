@@ -6,6 +6,6 @@
 ssfeed_to_df()
 }
 \description{
-Get spreadsheets titles, keys, and date/time of last update.
+Get spreadsheets' titles, keys, and date/time of last update.
 }
 
