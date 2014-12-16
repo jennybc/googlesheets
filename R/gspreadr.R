@@ -259,7 +259,7 @@ get_rows <- function(ws, from, to, header = FALSE)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from, max_row = to, 
                            visibility = ws$visibility)
-
+  
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
@@ -344,7 +344,7 @@ get_cols <- function(ws, from, to, header = TRUE)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = from, max_col = to, 
                            visibility = ws$visibility)
-
+  
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   
@@ -665,7 +665,7 @@ update_cells <- function(ws, range, new_values)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-  the_body <- create_update_feed(the_url, feed, new_values)
+  the_body <- create_update_feed(feed, new_values)
   
   req_url <- paste("https://spreadsheets.google.com/feeds/cells",
                    ws$sheet_id, ws$id, "private/full/batch", sep = "/")
@@ -709,7 +709,16 @@ view <- function(ws)
 view_all <- function(ss)
 {
   ws_objs <- list_worksheet_objs(ss)
-  tbl <- ldply(ws_objs, get_lookup_tbl)
+  
+  tbl <- 
+    ldply(ws_objs, 
+          function(ws)  {
+            the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                                     min_col = 1, max_col = ws$ncol, visibility = "private")
+            req <- gsheets_GET(the_url)
+            feed <- gsheets_parse(req)
+            get_lookup_tbl(feed)
+          })
   
   p1 <- make_plot(tbl)
   

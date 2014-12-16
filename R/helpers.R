@@ -211,6 +211,19 @@ label_to_coord <- function(x)
 }
 
 
+coord_to_label <- function(x)
+{
+  row_num <- sub("R([0-9]+)C([0-9]+)", "\\1", x)
+  col_num <- sub("R([0-9]+)C([0-9]+)", "\\2", x)
+  
+  letter <- num_to_letter(as.numeric(col_num))
+  
+  paste0(letter, row_num)
+  
+}
+
+
+
 #' Fill in missing columns in row
 #' 
 #' The lookup table returned by create_lookup_tbl may contain missing tuples 
@@ -257,6 +270,21 @@ fill_missing_row <- function(x)
   }
   x
 }
+
+fill_missing_row2 <- function(x) 
+{
+  r <- as.numeric(x$row)
+  
+  for(i in 1: max(r)) {
+    if(is.na(match(i, r))) {
+      new_tuple <- c(i, unique(x$col), NA, i, unique(x$col))
+      x <- rbind(x, new_tuple)
+    }
+  }
+  x
+}
+
+
 
 #' Fill in missing tuples for lookup table
 #' 
@@ -380,7 +408,8 @@ create_update_feed <- function(feed, new_values)
             xmlNode("id", req_url)
     )
   
-  new_body <- gsub("</feed>", paste(nodes, "</feed>", sep = "\n"), toString.XMLNode(the_body))
+  new_body <- gsub("</feed>", paste(nodes, "</feed>", sep = "\n"), 
+                   toString.XMLNode(the_body))
   new_body
 }
 
