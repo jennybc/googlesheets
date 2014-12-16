@@ -1,6 +1,4 @@
----
-title: "Google Spreadsheets R API"
-output: html_document
+Google Spreadsheets R API
 ---
 
 Manage your spreadsheets with *gspreadr* in R. 
@@ -27,7 +25,7 @@ list_spreadsheets()
 # Open a worksheet from spreadsheet with one shot
 ws <- open_at_once("Temperature", "Sheet1")
 
-update_cell(ws, "B2", "")
+update_cell(ws, "B2", "January")
 
 # Fetch a cell range
 df <- read_range(ws, "A1:B7")
@@ -134,7 +132,7 @@ many_cols <- get_cols(ws, from_col = 1, to_col = 3)
 ```
 
 ### Getting a region of a worksheet
-```{r ret region}
+```{r get region}
 
 # By boundary rows and cols
 read_region(ws, from_row = 2, to_row = 5, from_col = 2, to_col = 13)

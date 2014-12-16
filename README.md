@@ -1,6 +1,4 @@
----
-title: "Google Spreadsheets R API"
-output: html_document
+Google Spreadsheets R API
 ---
 
 Manage your spreadsheets with *gspreadr* in R. 
@@ -29,7 +27,7 @@ list_spreadsheets()
 # Open a worksheet from spreadsheet with one shot
 ws <- open_at_once("Temperature", "Sheet1")
 
-update_cell(ws, "B2", "")
+update_cell(ws, "B2", "January")
 
 # Fetch a cell range
 df <- read_range(ws, "A1:B7")
@@ -151,6 +149,10 @@ view_all(ss)
 ```
 
 ```
+## Auto-refreshing stale OAuth token.
+```
+
+```
 ## Error in gsheets_GET(the_url): server error: (502) Bad Gateway
 ```
 
@@ -253,7 +255,7 @@ get_cell(ws, "R2C2")
 ```
 
 ```
-## [1] "Jan"
+## Error in gsheets_GET(new_url): server error: (502) Bad Gateway
 ```
 
 ### Finding cells
