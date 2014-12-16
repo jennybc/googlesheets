@@ -705,6 +705,7 @@ view <- function(ws)
 #' @return a list of 2 ggplot objects
 #'
 #' @importFrom plyr ldply
+#' @importFrom gridExtra arrangeGrob
 #' @export
 view_all <- function(ss)
 {
@@ -738,7 +739,8 @@ view_all <- function(ss)
           axis.ticks.x = element_blank())
   
   # grid.arrange(p1, p2) # gives error: cannot find function "ggplotGrob"
-  list(p1, p2)
+  p3 <- arrangeGrob(p1, p2)
+  p3
 }
 
 

@@ -11,7 +11,7 @@ Features:
 -   Open a spreadsheet by its **title** or **url**.
 -   Extract range, entire row or column values.
 
-![gspreadr](gspreadr.png)
+![gspreadr](figure/gspreadr.png)
 
 Basic Usage
 ---
@@ -140,7 +140,7 @@ str(ws)
 view(ws)
 ```
 
-![plot of chunk view worksheet](figure/view worksheet-1.png) 
+![plot of chunk view worksheet](figure/one-worksheet.png) 
 
 ```r
 # Take a peek at all the worksheets in the spreadsheet
@@ -148,13 +148,7 @@ ss <- open_spreadsheet("Gapminder by Continent")
 view_all(ss)
 ```
 
-```
-## Auto-refreshing stale OAuth token.
-```
-
-```
-## Error in gsheets_GET(the_url): server error: (502) Bad Gateway
-```
+![plot of chunk view all worksheets](figure/all-worksheets.png) 
 
 ### Creating and Deleting a worksheet
 
@@ -255,7 +249,7 @@ get_cell(ws, "R2C2")
 ```
 
 ```
-## Error in gsheets_GET(new_url): server error: (502) Bad Gateway
+## [1] "Jan"
 ```
 
 ### Finding cells
