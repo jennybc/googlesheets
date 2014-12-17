@@ -9,8 +9,7 @@ label_to_coord(x)
 \item{x}{label notation for position of cell}
 }
 \description{
-A1 and R1C1 are equivalent addresses for position of cells, but R1C1
-notation is used in queries.
+A1 and R1C1 are equivalent addresses for position of cells.
 }
 \examples{
 label_to_coord("A1")

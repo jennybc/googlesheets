@@ -3,7 +3,7 @@
 \alias{add_worksheet}
 \title{Add a new (empty) worksheet to spreadsheet}
 \usage{
-add_worksheet(ss, title, nrow, ncol, token = get_google_token())
+add_worksheet(ss, title, nrow, ncol)
 }
 \arguments{
 \item{ss}{spreadsheet object}

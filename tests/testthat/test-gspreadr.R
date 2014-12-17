@@ -4,7 +4,7 @@ authorize()
 ss1 <- open_spreadsheet("Gapminder")
 
 test_that("List all my spreadsheets", {
-  expect_equal(length(list_spreadsheets()), 5)
+  expect_equal(length(list_spreadsheets()), 6)
 })
 
 test_that("Open spreadsheet by title", {

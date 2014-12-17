@@ -8,7 +8,7 @@ open_worksheet(ss, value)
 \arguments{
 \item{ss}{a spreadsheet object containing the worksheet}
 
-\item{value}{a character string for title of worksheet or numeric for
+\item{value}{a character string for the title of worksheet or numeric for
 index of worksheet}
 }
 \value{

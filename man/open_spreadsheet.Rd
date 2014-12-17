@@ -6,24 +6,24 @@
 open_spreadsheet(title)
 }
 \arguments{
-\item{title}{the title of a spreadsheet}
-}
-\value{
-a list of worksheet objects but without the nrows and ncols component
-because requires iteration through a cell feed to determine
+\item{title}{the title of the spreadsheet}
 }
 \description{
 Use the spreadsheet title (as it appears in Google Drive) to get a
 spreadsheet object, containing the spreadsheet id, title, time of last
 update, the titles of the worksheets contained, the number of worksheets
-contained, and a list of worksheet objects for every worksheet contained.
+contained, and a list of worksheet objects for every worksheet.
 }
 \note{
-For the list of worksheet objects, the ncol, nrow and visibility
-components are empty until \code{\link{open_worksheet}} or
-\code{\link{open_at_once}} is used to open a worksheet. This is because to
-determine the number of rows and columns, information is needed from the
-cellsfeed which takes time to retrieve and such detailed informa
-(slow if there are lots of worksheets)
+The list of worksheet objects returned is missing the ncol, nrow and
+visibility components. Those are determined when \code{\link{open_worksheet}}
+or \code{\link{open_at_once}} is used to open a worksheet. It is time
+consuming to make a cellfeed request for every worksheet in the spreadsheet
+to determine the number of rows and columns. Use
+\code{\link{list_worksheet_objs}} to open all worksheets contained in the
+spreadsheet.
+}
+\seealso{
+\code{\link{list_worksheet_objs}}
 }
 

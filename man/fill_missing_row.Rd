@@ -6,13 +6,14 @@
 fill_missing_row(x)
 }
 \arguments{
-\item{x}{data frame returned by \code{\link{create_look_tbl}}
-
-This function operates on the lookup table grouped by column.}
+\item{x}{data frame returned by \code{\link{get_lookup_tbl}}}
 }
 \description{
-The lookup table returned by create_lookup_tbl may contain missing tuples
+The lookup table returned by \code{\link{get_lookup_tbl}} may contain missing tuples
 for empty cells. This function fills in the table so that there is a tuple
 for every row down to the bottom-most row of the column.
+}
+\note{
+This function operates on the lookup table grouped by column.
 }
 

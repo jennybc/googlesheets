@@ -11,12 +11,10 @@ update_cells(ws, range, new_values)
 \item{range}{character string for range of cells (ie. "A1:A2", "A1:B6")}
 
 \item{new_values}{vector of new values to update cells}
-
-\item{vis}{either "private or "public"}
-
-\item{value}{character string for new value}
 }
 \description{
-Update a range of cells by specifiying the range and values to update with.
+Modify a range of cells by specifiying the range and values to update with.
+The range should not include empty cells because those cells will not be
+captured in the response of the request.
 }
 

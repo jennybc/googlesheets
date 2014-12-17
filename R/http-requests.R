@@ -5,8 +5,8 @@
 #' @param feed_type one of the following: spreadsheets, worksheets, list, cells
 #' @param key spreadsheet key
 #' @param ws_id id of worksheet contained in spreadsheet
-#' @param visibility Either private or public
-#' @param projection Either full or basic
+#' @param visibility either private or public
+#' @param projection either full or basic
 #' @return URL
 build_req_url <- function(feed_type, key = NULL, ws_id = NULL, 
                           visibility = "private", projection = "full", 
@@ -49,9 +49,9 @@ build_req_url <- function(feed_type, key = NULL, ws_id = NULL,
 
 #' Build query string for GET URL
 #'
-#' Create query parameters to qppend to GET URL.
+#' Form the query string to append to GET URL.
 #'
-#' @param min_row, max_row,min_col,max_col query parameters
+#' @param min_row,max_row,min_col,max_col query parameters
 build_query <- function(min_row, max_row, min_col, max_col) 
 {
   if(!is.null(min_row) && !is.null(min_col)) {
@@ -148,19 +148,4 @@ gsheets_DELETE <- function(url, token = get_google_token())
 }
 
 
-#' Format token for making request
-#' 
-#' Check if token is obtained from Google login or oauth2.0 and format it for 
-#' making request. Format token as a header (login) or in configuations 
-#' (oauth2.0).
-#' 
-#' @param token Google token
-#' @importFrom httr config
-#' @importFrom httr add_headers
-gsheets_auth <- function(token) 
-{
-  if(class(token) != "character")
-    auth <- config(token = .state$token)
-  else 
-    auth <- add_headers('Authorization' = .state$token)
-}
+

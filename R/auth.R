@@ -88,6 +88,23 @@ gsheets_check <- function(req) {
   }
 }
 
+#' Format token for making request
+#' 
+#' Check if token is obtained from Google login or oauth2.0 and format it for 
+#' making request. Format token as a header (login) or in configuations 
+#' (oauth2.0).
+#' 
+#' @param token Google token
+#' @importFrom httr config
+#' @importFrom httr add_headers
+gsheets_auth <- function(token) 
+{
+  if(class(token) != "character")
+    auth <- config(token = .state$token)
+  else 
+    auth <- add_headers('Authorization' = .state$token)
+}
+
 
 #' Check Google token for validity
 #' 

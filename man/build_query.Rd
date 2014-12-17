@@ -6,9 +6,9 @@
 build_query(min_row, max_row, min_col, max_col)
 }
 \arguments{
-\item{min_row,}{max_row,min_col,max_col query parameters}
+\item{min_row,max_row,min_col,max_col}{query parameters}
 }
 \description{
-Create query parameters to qppend to GET URL.
+Form the query string to append to GET URL.
 }
 

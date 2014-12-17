@@ -6,7 +6,7 @@
 list_worksheet_objs(ss)
 }
 \arguments{
-\item{ss}{spreadsheet object}
+\item{ss}{a spreadsheet object returned by \code{\link{open_spreadsheet}}}
 }
 \description{
 The returned list of worksheet objects enables \code{plyr} functions to

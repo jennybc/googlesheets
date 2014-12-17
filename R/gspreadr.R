@@ -1,9 +1,6 @@
-# default namespace for querying xml feed returned by GET
-default_ns = "http://www.w3.org/2005/Atom"
-
 #' Get list of spreadsheets
 #'
-#' Retrieve the names of spreadsheets in Google drive.
+#' Retrieve the names of the user's spreadsheets in Google drive.
 #'
 #' @export
 list_spreadsheets <- function() 
@@ -12,11 +9,10 @@ list_spreadsheets <- function()
 }
 
 
-#' Create a new spreadsheet
+#' Add a new spreadsheet
 #' 
-#' A new (empty) spreadsheet with 1 worksheet titled "Sheet1" (default) will be 
-#' created in your Google Drive.
-#' 
+#' Create a new (empty) spreadsheet with 1 worksheet titled "Sheet1" (default)
+#' in your Google Drive.
 #' 
 #' @param title the title for the new spreadsheet
 #' 
@@ -57,19 +53,19 @@ del_spreadsheet <- function(title)
 #' Use the spreadsheet title (as it appears in Google Drive) to get a 
 #' spreadsheet object, containing the spreadsheet id, title, time of last 
 #' update, the titles of the worksheets contained, the number of worksheets 
-#' contained, and a list of worksheet objects for every worksheet contained.
+#' contained, and a list of worksheet objects for every worksheet.
 #'
-#' @param title the title of a spreadsheet
+#' @param title the title of the spreadsheet
 #' 
-#' @return a list of worksheet objects but without the nrows and ncols component
-#' because requires iteration through a cell feed to determine
+#' @note The list of worksheet objects returned is missing the ncol, nrow and 
+#' visibility components. Those are determined when \code{\link{open_worksheet}} 
+#' or \code{\link{open_at_once}} is used to open a worksheet. It is time 
+#' consuming to make a cellfeed request for every worksheet in the spreadsheet 
+#' to determine the number of rows and columns. Use 
+#' \code{\link{list_worksheet_objs}} to open all worksheets contained in the 
+#' spreadsheet. 
 #' 
-#' @note For the list of worksheet objects, the ncol, nrow and visibility 
-#' components are empty until \code{\link{open_worksheet}} or 
-#' \code{\link{open_at_once}} is used to open a worksheet. This is because to 
-#' determine the number of rows and columns, information is needed from the 
-#' cellsfeed which takes time to retrieve and such detailed informa 
-#' (slow if there are lots of worksheets)
+#' @seealso \code{\link{list_worksheet_objs}}
 #' 
 #' @importFrom XML xmlToList getNodeSet
 #' @export
@@ -118,15 +114,30 @@ list_worksheets <- function(ss)
   ss$ws_names
 }
 
+#' Get a list of worksheet objects
+#'
+#' The returned list of worksheet objects enables \code{plyr} functions to 
+#' operate on mutiple worksheets at once.
+#' 
+#' @param ss a spreadsheet object returned by \code{\link{open_spreadsheet}}
+#' 
+#' @importFrom plyr llply
+#' @export
+list_worksheet_objs <- function(ss) 
+{
+  llply(ss$worksheets, function(x) open_worksheet(ss, x$title))
+}
 
 #' Open worksheet by title or index
 #'
 #' Use the title or index of a worksheet to retrieve the worksheet object.
 #'
 #' @param ss a spreadsheet object containing the worksheet
-#' @param value a character string for title of worksheet or numeric for 
+#' @param value a character string for the title of worksheet or numeric for 
 #' index of worksheet
+#' 
 #' @return A worksheet object with number of rows and cols component.
+#' 
 #' @examples
 #' ws <- open_worksheet(ss, "Sheet1")
 #' ws <- open_worksheet(ss, 1)
@@ -153,7 +164,10 @@ open_worksheet <- function(ss, value)
 #' 
 #' @param ss_title spreadsheet title
 #' @param ws_value title or numeric index of worksheet
-#'
+#' 
+#' @examples
+#' open_at_once("Temperature", "Sheet1")
+#' open_at_once("Temperature", 1)
 #' @export
 open_at_once <- function(ss_title, ws_value) 
 {
@@ -176,7 +190,7 @@ open_at_once <- function(ss_title, ws_value)
 #' 
 #' @importFrom XML xmlNode toString.XMLNode
 #' @export
-add_worksheet <- function(ss, title, nrow, ncol, token = get_google_token()) 
+add_worksheet <- function(ss, title, nrow, ncol) 
 {   
   the_body <- 
     xmlNode("entry", 
@@ -513,18 +527,7 @@ read_range <- function(ws, x, header = TRUE)
 }
 
 
-#' Get a list of worksheet objects
-#'
-#' The returned list of worksheet objects enables \code{plyr} functions to 
-#' operate on mutiple worksheets at once.
-#' 
-#' @param ss spreadsheet object
-#' @importFrom plyr llply
-#' @export
-list_worksheet_objs <- function(ss) 
-{
-  llply(ss$worksheets, function(x) open_worksheet(ss, x$title))
-}
+
 
 
 #' Find a cell with string value
@@ -591,6 +594,9 @@ find_all <- function(ws, x)
 
 #' Update a cell's value
 #' 
+#' Modify the contents of cells (those already with values) in worksheet. 
+#' To empty a cell, update it with an empty string. 
+#' 
 #' @param ws worksheet object
 #' @param pos cell position in label (ex. "A1") or coordinate (ex. "R1C1") 
 #' format
@@ -612,7 +618,7 @@ update_cell <- function(ws, pos, value)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-  
+
   nodes <- getNodeSet(feed, '//ns:link[@rel="edit"]', c("ns" = default_ns),
                       function(x) xmlGetAttr(x, "href"))
   
@@ -635,16 +641,17 @@ update_cell <- function(ws, pos, value)
   gsheets_PUT(req_url, the_body)
 }
 
+
 #' Update multiple cells' values
 #' 
-#' Update a range of cells by specifiying the range and values to update with. 
+#' Modify a range of cells by specifiying the range and values to update with. 
+#' The range should not include empty cells because those cells will not be 
+#' captured in the response of the request.
 #' 
 #' @param ws worksheet object
 #' @param range character string for range of cells (ie. "A1:A2", "A1:B6") 
 #' @param new_values vector of new values to update cells
-#' @param vis either "private or "public"
-#' @param value character string for new value
-#'
+#' 
 #' @export 
 update_cells <- function(ws, range, new_values)
 {
@@ -738,7 +745,6 @@ view_all <- function(ss)
           axis.title.x = element_blank(),
           axis.ticks.x = element_blank())
   
-  # grid.arrange(p1, p2) # gives error: cannot find function "ggplotGrob"
   p3 <- arrangeGrob(p1, p2)
   p3
 }
@@ -768,7 +774,7 @@ str.worksheet <- function(ws)
   tbl <- get_lookup_tbl(feed)
   tbl <- select(tbl, row, col, val)
   
-  tbl_clean <- fill_missing_tbl_row_only(tbl)
+  tbl_clean <- fill_missing_tbl(tbl, row_only = TRUE)
   tbl_bycol <- group_by(tbl_clean, col)
   
   a1 <- summarise(tbl_bycol, 

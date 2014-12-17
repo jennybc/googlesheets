@@ -14,9 +14,9 @@ build_req_url(feed_type, key = NULL, ws_id = NULL, visibility = "private",
 
 \item{ws_id}{id of worksheet contained in spreadsheet}
 
-\item{visibility}{Either private or public}
+\item{visibility}{either private or public}
 
-\item{projection}{Either full or basic}
+\item{projection}{either full or basic}
 }
 \value{
 URL

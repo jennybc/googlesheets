@@ -14,6 +14,7 @@ format}
 \item{value}{character string for new value}
 }
 \description{
-Update a cell's value
+Modify the contents of cells (those already with values) in worksheet.
+To empty a cell, update it with an empty string.
 }
 

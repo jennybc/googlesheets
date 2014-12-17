@@ -6,6 +6,6 @@
 list_spreadsheets()
 }
 \description{
-Retrieve the names of spreadsheets in Google drive.
+Retrieve the names of the user's spreadsheets in Google drive.
 }
 
