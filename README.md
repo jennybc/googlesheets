@@ -1,3 +1,6 @@
+<span style="color:blue">**Not quite ready for showtime but release coming very soon!**</span>
+---
+
 Google Spreadsheets R API
 ---
 
@@ -137,10 +140,11 @@ str(ws)
 
 ```r
 # Take a peek at your worksheet
+ggplotGrob <- function(x) ggplot2:::gtable_gTree(ggplot2:::ggplot_gtable(x))
 view(ws)
 ```
 
-![plot of chunk view worksheet](figure/one-worksheet.png) 
+![plot of chunk one-worksheet](figure/one-worksheet.png) 
 
 ```r
 # Take a peek at all the worksheets in the spreadsheet
@@ -148,7 +152,7 @@ ss <- open_spreadsheet("Gapminder by Continent")
 view_all(ss)
 ```
 
-![plot of chunk view all worksheets](figure/all-worksheets.png) 
+![plot of chunk view all worksheets](figure/all-worksheets.png)
 
 ### Creating and Deleting a worksheet
 

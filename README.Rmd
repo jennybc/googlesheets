@@ -1,3 +1,6 @@
+<span style="color:blue">**Not quite ready for showtime but release coming very soon!**</span>
+---
+
 Google Spreadsheets R API
 ---
 
