@@ -179,12 +179,13 @@ open_at_once <- function(ss_title, ws_value)
 #' Add a new (empty) worksheet to spreadsheet
 #'
 #' Add a new (empty) worksheet to spreadsheet, specify title, number of rows 
-#' and columns.
+#' and columns. The title should not be the names of exisiting worksheets else 
+#' a bad request error is returned.
 #'
 #' @param ss spreadsheet object
 #' @param title character string for title of new worksheet 
-#' @param nrow Number of rows
-#' @param ncol Number of columns
+#' @param nrow number of rows
+#' @param ncol number of columns
 #' @param token Google token obtained from \code{\link{login}} or 
 #' \code{\link{authorize}}
 #' 
@@ -765,6 +766,9 @@ view_all <- function(ss)
 str.worksheet <- function(ws)
 {
   item1 <- paste(ws$title, ":", ws$nrow, "rows and", ws$ncol, "columns")
+  
+  if(ws$nrow == 0)
+    return(item1)
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = 1, max_col = ws$ncol, visibility = "private")
