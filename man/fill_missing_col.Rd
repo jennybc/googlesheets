@@ -3,7 +3,7 @@
 \alias{fill_missing_col}
 \title{Fill in missing columns in a row}
 \usage{
-fill_missing_col(x)
+fill_missing_col(x, col_min)
 }
 \arguments{
 \item{x}{data frame returned by \code{\link{get_lookup_tbl}}}

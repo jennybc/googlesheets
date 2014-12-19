@@ -63,3 +63,17 @@ test_that("Delete worksheet", {
   expect_false(name_match)
   
 })
+
+test_that("Spreadsheet is added", {
+  old <- length(list_spreadsheets())
+  add_spreadsheet("One more spreadsheet")
+  expect_equal(length(list_spreadsheets()), old + 1)
+  
+})
+ 
+ test_that("Spreadsheet is trashed", {
+   old <- length(list_spreadsheets())
+   del_spreadsheet("One more spreadsheet")
+   expect_equal(length(list_spreadsheets()), old - 1)
+   
+ })

@@ -3,7 +3,7 @@
 \alias{get_lookup_tbl}
 \title{Get lookup table}
 \usage{
-get_lookup_tbl(feed)
+get_lookup_tbl(feed, include_sheet_title = FALSE)
 }
 \arguments{
 \item{feed}{cellfeed from GET request}

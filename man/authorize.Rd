@@ -12,7 +12,8 @@ google account}
 \description{
 User will be directed to web browser and asked to sign into their Google
 account and grant gspreadr access permission to user data for Google
-Spreadsheets and Google Drive.
+Spreadsheets and Google Drive. User credentials will be cached in .httr-oauth
+in the current working directory.
 }
 \details{
 This method follows the demo described at:

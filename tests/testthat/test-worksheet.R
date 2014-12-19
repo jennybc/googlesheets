@@ -2,6 +2,7 @@ context("worksheet operations")
 
 ws <- open_at_once("Testing", "Sheet1")
 
+
 test_that("Get value of cell", {
   
   expect_equal(get_cell(ws, "A1"), "country")
@@ -20,7 +21,7 @@ test_that("Get all values in 1 row", {
 test_that("Get a range of rows", {
   
   expect_equal(nrow(get_rows(ws, 2, 3)), 2)
-  expect_equal(get_rows(ws, 7, 8), get_rows(ws, 8, 7))
+  expect_equal(ncol(get_rows(ws, 2, 3)), 7)
 })
 
 test_that("Get all values of 1 col", {
@@ -48,3 +49,22 @@ test_that("Get region of worksheet", {
   expect_equal(dim(read_region(ws, 1, 2, 3, 5, header = FALSE)), c(2, 3))
   expect_equal(dim(read_region(ws, 1, 2, 3, 5,)), c(1, 3))
 })
+
+test_that("Dont plot for empty worksheet", {
+  
+  ws_empty <- open_at_once("Testing", "Sheet2")
+  
+  expect_error(view(ws_empty), "Worksheet is empty!")
+  
+})
+
+
+test_that("Cell is updated", {
+  
+  update_cell(ws, "A14", "new")
+  expect_equal(get_cell(ws, "A14"), "new")
+  
+  update_cell(ws, "A14", "")
+  expect_equal(get_cell(ws, "R14C1"), "")
+})
+

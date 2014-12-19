@@ -10,15 +10,16 @@ add_worksheet(ss, title, nrow, ncol)
 
 \item{title}{character string for title of new worksheet}
 
-\item{nrow}{Number of rows}
+\item{nrow}{number of rows}
 
-\item{ncol}{Number of columns}
+\item{ncol}{number of columns}
 
 \item{token}{Google token obtained from \code{\link{login}} or
 \code{\link{authorize}}}
 }
 \description{
 Add a new (empty) worksheet to spreadsheet, specify title, number of rows
-and columns.
+and columns. The title should not be the names of exisiting worksheets else
+a bad request error is returned.
 }
 
