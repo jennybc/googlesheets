@@ -301,13 +301,12 @@ get_rows <- function(ws, from, to, header = FALSE)
 #'
 #' @param ws worksheet object
 #' @param col column number or letter (case insensitive)
-#' @param vis either "private" or "public", "public" for public worksheet
 #' @return A data frame.
 #' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{read_all}}, \code{\link{read_region}}, 
 #' \code{\link{read_range}}
 #' @export
-get_col <- function(ws, col, vis = "private") 
+get_col <- function(ws, col) 
 {
   if(!is.numeric(col)) 
     col <- letter_to_num(col)
@@ -435,8 +434,6 @@ get_cell <- function(ws, cell)
 #' @param ws worksheet object 
 #' @param header logical value indicating whether the first line contains the 
 #' names of the variables
-#' @param vis either "private" or "public" indicating whether the worksheet is 
-#' private or public
 #' @return A dataframe. 
 #' 
 #' This function calls on \code{\link{get_cols}} with \code{to} set as the 
@@ -461,7 +458,6 @@ read_all <- function(ws, header = TRUE)
 #' @param ws worksheet object
 #' @param from_row,to_row range of rows to extract
 #' @param from_col,to_col range of cols to extract
-#' @param vis either \code{private} or \code{public}
 #' @return A data frame.
 #' @seealso \code{\link{read_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
 #' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
@@ -515,7 +511,6 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
 #' @param x character string for range separated by ":"
 #' @param header \code{logical} for whether or not first row should be taken as 
 #' header
-#' @param vis either "private" (default) or "public" for public spreadsheets
 #' @examples
 #' read_range("A1:B10")
 #' read_range("C10:D20")
@@ -670,7 +665,13 @@ update_cells <- function(ws, range, new_values)
   rows <- as.numeric(gsub("[^0-9]", "", bounds))  
   cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
   
-  if(max(rows) * max(cols) != length(new_values))
+  # generate table of cells that needs to be updated
+  i <- seq(rows[1], rows[2])
+  j <- seq(cols[1], cols[2])
+  cells_in_range <- dplyr::mutate(expand.grid(i, j), coord = paste0("R", Var1, "C", Var2))
+  cells_in_range <- plyr::rename(cells_in_range, c("Var1" = "row", "Var2" = "col"))
+  
+  if(nrow(cells_in_range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
@@ -897,7 +898,7 @@ open_by_key <- function(key, visibility = "public")
 #' @param url URL of spreadsheet as it appears in browser
 #' @return Object of class spreadsheet.
 #'
-#' This function currently only works for public spreadsheets.
+#' This function only works for public spreadsheets.
 #' This function extracts the key from the url and calls on 
 #' \code{\link{open_by_key}}.
 #' @export
