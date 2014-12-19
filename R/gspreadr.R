@@ -246,9 +246,13 @@ get_row <- function(ws, row)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl)
   
-  data.frame(t(tbl_clean$val))
+  if(nrow(tbl) == 0) {
+    message("Row contains no values.")
+  } else {
+    tbl_clean <- fill_missing_tbl(tbl, row_min = row)
+    data.frame(t(tbl_clean$val))
+  }
 }
 
 
@@ -278,10 +282,10 @@ get_rows <- function(ws, from, to, header = FALSE)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl)
+  tbl_clean <- fill_missing_tbl(tbl, row_min = from)
   
   list_of_df <- 
-    dlply(tbl_clean, "row_adj", 
+    dlply(tbl_clean, "row", 
           function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
   
   my_df <- rbind.fill(list_of_df)
@@ -319,9 +323,13 @@ get_col <- function(ws, col, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl)
   
-  tbl_clean$val
+  if(nrow(tbl) == 0) {
+    message("Column contains no values.")
+  } else {
+    tbl_clean <- fill_missing_tbl(tbl, col_min = col)
+    tbl_clean$val
+  }
 }
 
 
@@ -361,10 +369,11 @@ get_cols <- function(ws, from, to, header = TRUE)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl)
+  
+  tbl_clean <- fill_missing_tbl(tbl, col_min = from)
   
   list_of_df <- 
-    dlply(tbl_clean, "row_adj", 
+    dlply(tbl_clean, "row", 
           function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
   
   my_df <- rbind.fill(list_of_df)
@@ -373,6 +382,7 @@ get_cols <- function(ws, from, to, header = TRUE)
     set_header(my_df)
   else 
     my_df
+  
 }
 
 
@@ -475,10 +485,10 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
   
   tbl <- get_lookup_tbl(feed)
   
-  tbl_clean <- fill_missing_tbl(tbl)
+  tbl_clean <- fill_missing_tbl(tbl, row_min = from_row, col_min = from_col)
   
   list_of_df <- 
-    dlply(tbl_clean, "row_adj", 
+    dlply(tbl_clean, "row", 
           function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
   
   my_df <- rbind.fill(list_of_df)
@@ -527,7 +537,7 @@ read_range <- function(ws, x, header = TRUE)
 }
 
 
-#' Find a cell with string value
+#' Find first cell matching string value
 #' 
 #' Get the cell location of the first occurence of a cell value.
 #' 
@@ -649,6 +659,7 @@ update_cell <- function(ws, pos, value)
 #' @param range character string for range of cells (ie. "A1:A2", "A1:B6") 
 #' @param new_values vector of new values to update cells
 #' 
+#' @importFrom plyr rename
 #' @export 
 update_cells <- function(ws, range, new_values)
 {
@@ -669,6 +680,7 @@ update_cells <- function(ws, range, new_values)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
+  
   the_body <- create_update_feed(feed, new_values)
   
   req_url <- paste("https://spreadsheets.google.com/feeds/cells",

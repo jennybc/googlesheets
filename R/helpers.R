@@ -232,26 +232,21 @@ get_lookup_tbl <- function(feed, include_sheet_title = FALSE)
 #' @importFrom dplyr arrange
 #' @importFrom dplyr mutate
 #' @importFrom plyr ddply
-fill_missing_tbl <- function(lookup_tbl, row_only = FALSE) 
+fill_missing_tbl <- function(lookup_tbl, row_min = 1, col_min = 1, row_only = FALSE) 
 {
-  # create adjusted row/col indices
-  row_diff <- min(lookup_tbl$row) - 1
-  col_diff <- min(lookup_tbl$col) - 1
-  
-  lookup_tbl <- mutate(lookup_tbl, row_adj = row - row_diff, 
-                       col_adj = col - col_diff)
-  
   if(row_only) {
     lookup_tbl_clean1 <- ddply(lookup_tbl, "col", fill_missing_row2)
   } else {
-    lookup_tbl_clean <- ddply(lookup_tbl, "row_adj", fill_missing_col)
-    lookup_tbl_clean1 <- ddply(lookup_tbl_clean, "col_adj", fill_missing_row)
+    lookup_tbl_clean <- ddply(lookup_tbl, "row", 
+                              function(x) fill_missing_col(x, col_min))
+    lookup_tbl_clean1 <- ddply(lookup_tbl_clean, "col", 
+                               function(x) fill_missing_row(x, row_min))
     
-    lookup_tbl_clean1$row_adj <- as.numeric(lookup_tbl_clean1$row_adj)
+    lookup_tbl_clean1$row <- as.numeric(lookup_tbl_clean1$row)
   }
   
-  lookup_tbl_clean1$col_adj <- as.numeric(lookup_tbl_clean1$col_adj)
-  arrange(lookup_tbl_clean1, row_adj, col_adj) 
+  lookup_tbl_clean1$col <- as.numeric(lookup_tbl_clean1$col)
+  arrange(lookup_tbl_clean1, row, col) 
 }
 
 
@@ -265,13 +260,13 @@ fill_missing_tbl <- function(lookup_tbl, row_only = FALSE)
 #' 
 #' @note This function operates on the lookup table grouped by row.
 #'
-fill_missing_col <- function(x) 
+fill_missing_col <- function(x, col_min) 
 {
-  r <- as.numeric(x$col_adj)
+  r <- as.numeric(x$col)
   
-  for(i in 1: max(r)) {
+  for(i in col_min: max(r)) {
     if(is.na(match(i, r))) {
-      new_tuple <- c("-", "-", NA, unique(x$row_adj), i)
+      new_tuple <- c(unique(x$row), i, NA)
       x <- rbind(x, new_tuple)
     }
   }
@@ -289,13 +284,13 @@ fill_missing_col <- function(x)
 #' 
 #' @note This function operates on the lookup table grouped by column.
 #'
-fill_missing_row <- function(x) 
+fill_missing_row <- function(x, row_min) 
 {
-  r <- as.numeric(x$row_adj)
+  r <- as.numeric(x$row)
   
-  for(i in 1: max(r)) {
+  for(i in row_min: max(r)) {
     if(is.na(match(i, r))) {
-      new_tuple <- c("-", "-", NA, i, unique(x$col_adj))
+      new_tuple <- c(i, unique(x$col), NA)
       x <- rbind(x, new_tuple)
     }
   }
@@ -309,7 +304,7 @@ fill_missing_row2 <- function(x)
   
   for(i in 1: max(r)) {
     if(is.na(match(i, r))) {
-      new_tuple <- c(i, unique(x$col), NA, i, unique(x$col))
+      new_tuple <- c(i, unique(x$col), NA)
       x <- rbind(x, new_tuple)
     }
   }
@@ -345,8 +340,6 @@ make_plot <- function(tbl)
 create_update_feed <- function(feed, new_values)
 {
   tbl <- get_lookup_tbl(feed)
-  
-  print(tbl)
   
   self_link <- getNodeSet(feed, '//ns:entry//ns:link[@rel="self"]', 
                           c("ns" = default_ns),
@@ -392,9 +385,11 @@ make_entry_node <- function(x)
                   xmlNode("batch:operation", attrs = c(type = "update")),
                   xmlNode("id", x$self_link),
                   xmlNode("link", 
-                          attrs = c("rel" = "edit", "type" = "application/atom+xml",
+                          attrs = c("rel" = "edit", 
+                                    "type" = "application/atom+xml",
                                     "href" = x$edit_link)),
-                  xmlNode("gs:cell", attrs = c("row" = x$row, "col" = x$col, "inputValue" = x$new_vals)))
+                  xmlNode("gs:cell", attrs = c("row" = x$row, "col" = x$col, 
+                                               "inputValue" = x$new_vals)))
   toString.XMLNode(node)
 }  
 
