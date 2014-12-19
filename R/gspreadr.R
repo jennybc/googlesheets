@@ -483,11 +483,15 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
   
   my_df <- rbind.fill(list_of_df)
   
-  my_df
-  if(header) 
-    set_header(my_df)
-  else 
+  if(header) {
+    if(nrow(my_df) == 1) {
+      my_df
+    } else {
+      set_header(my_df)
+    }
+  } else { 
     my_df
+  }
 }
 
 
@@ -797,7 +801,7 @@ str.worksheet <- function(ws)
   a3 <- join(a1, a2, by = "col")
   
   item2 <- rename(a3, c("V1" = "Runs", "nrow" = "Rows", "col" = "Column"))
-
+  
   cat("Worksheet", item1, sep = "\n")
   print(item2)
 }
