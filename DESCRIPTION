@@ -11,7 +11,8 @@ LazyData: true
 Imports:
     httr,
     XML,
-    ggplot2
+    ggplot2,
+    gridExtra
 Suggests:
     testthat,
     knitr
