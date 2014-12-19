@@ -523,9 +523,6 @@ read_range <- function(ws, x, header = TRUE)
 }
 
 
-
-
-
 #' Find a cell with string value
 #' 
 #' Get the cell location of the first occurence of a cell value.
@@ -608,9 +605,11 @@ update_cell <- function(ws, pos, value)
   
   row_num <- sub("R([0-9]+)C([0-9]+)", "\\1", pos)
   col_num <- sub("R([0-9]+)C([0-9]+)", "\\2", pos)
+  coord <- paste0("R", row_num, "C", col_num)
   
   # get cell feed to get cell version (needed in put request)
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
+  url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
+  the_url <- paste(url, coord, sep = "/")
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -618,9 +617,7 @@ update_cell <- function(ws, pos, value)
   nodes <- getNodeSet(feed, '//ns:link[@rel="edit"]', c("ns" = default_ns),
                       function(x) xmlGetAttr(x, "href"))
   
-  nodes <- unlist(nodes)
-  ind <- grep(pos, nodes)
-  req_url <- nodes[ind]
+  req_url <- unlist(nodes)
   
   # create entry element 
   the_body <- 
