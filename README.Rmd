@@ -1,4 +1,4 @@
-<span style="color:blue">**Not quite ready for showtime but release coming very soon!**</span>
+**Not quite ready for showtime but release coming very soon!**
 ---
 
 Google Spreadsheets R API
@@ -14,7 +14,7 @@ Features:
 -   Open a spreadsheet by its **title** or **url**.
 -   Extract range, entire row or column values.
 
-![gspreadr](gspreadr.png)
+![gspreadr](figure/gspreadr.png)
 
 Basic Usage
 ---
@@ -104,8 +104,7 @@ view(ws)
 ```
 ```{r all-worksheets}
 # Take a peek at all the worksheets in the spreadsheet
-ss <- open_spreadsheet("Gapminder by Continent")
-view_all(ss)
+view_all(ssheet)
 ```
 
 ### Creating and Deleting a worksheet
@@ -174,10 +173,18 @@ find_all(ws, "10")
 ```
 
 ### Updating cells 
-```{r eval = FALSE}
+```{r eval}
 #update a cell
 update_cell(ws, "B4", "2.0")
 
+get_cell(ws, "B4")
+
 # Update in batch
-update_cells(ws, "A3:A4", c("1.0", "2.0"))
+update_cells(ws, "B2:C2", c("January", "February"))
+
+read_range(ws, "B2:C2")
 ```
+
+```{r return to normal, include=FALSE}
+update_cells(ws, "B2:C2", c("Jan", "Feb"))
+update_cell(ws, "B4", "3.3")

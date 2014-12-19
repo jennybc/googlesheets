@@ -1,4 +1,4 @@
-<span style="color:blue">**Not quite ready for showtime but release coming very soon!**</span>
+**Not quite ready for showtime but release coming very soon!**
 ---
 
 Google Spreadsheets R API
@@ -67,10 +67,12 @@ str(ssheet)
 
 ```
 ## Spreadsheet:
-## Temperature: 1 worksheets
+## Temperature: 3 worksheets
 ## 
 ## Worksheets:
 ## Sheet1 : 78 rows and 13 columns
+## Sheet2 : 78 rows and 13 columns
+## Sheet3 : 78 rows and 13 columns
 ```
 
 ##### Usually for public spreadsheets (set visibility = "private" for private spreadsheets): 
@@ -103,7 +105,7 @@ list_worksheets(ssheet)
 ```
 
 ```
-## [1] "Sheet1"
+## [1] "Sheet1" "Sheet2" "Sheet3"
 ```
 
 ```r
@@ -140,19 +142,17 @@ str(ws)
 
 ```r
 # Take a peek at your worksheet
-ggplotGrob <- function(x) ggplot2:::gtable_gTree(ggplot2:::ggplot_gtable(x))
 view(ws)
 ```
 
-![plot of chunk one-worksheet](figure/one-worksheet.png) 
+![plot of chunk one-worksheet](figure/one-worksheet-1.png) 
 
 ```r
 # Take a peek at all the worksheets in the spreadsheet
-ss <- open_spreadsheet("Gapminder by Continent")
-view_all(ss)
+view_all(ssheet)
 ```
 
-![plot of chunk view all worksheets](figure/all-worksheets.png)
+![plot of chunk all-worksheets](figure/all-worksheets-1.png) 
 
 ### Creating and Deleting a worksheet
 
@@ -183,10 +183,10 @@ get_rows(ws, from = 2, to = 5, header = TRUE)
 ```
 
 ```
-##     NA  Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1 1937 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2 1938  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3 1939  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##     NA January February Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
+## 1 1937    -3.8        2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
+## 2 1938       2        4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
+## 3 1939     4.6      2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
 ```
 
 ### Getting all values from a column or range of columns
@@ -205,10 +205,10 @@ read_region(ws, from_row = 2, to_row = 5, from_col = 2, to_col = 13)
 ```
 
 ```
-##    Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##   January February Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
+## 1    -3.8        2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
+## 2       2        4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
+## 3     4.6      2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
 ```
 
 ```r
@@ -217,10 +217,10 @@ read_range(ws, "B2:M5")
 ```
 
 ```
-##    Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##   January February Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
+## 1    -3.8        2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
+## 2       2        4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
+## 3     4.6      2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
 ```
 
 ### Getting the entire worksheet
@@ -244,7 +244,7 @@ get_cell(ws, "B2")
 ```
 
 ```
-## [1] "Jan"
+## [1] "January"
 ```
 
 ```r
@@ -253,7 +253,7 @@ get_cell(ws, "R2C2")
 ```
 
 ```
-## [1] "Jan"
+## [1] "January"
 ```
 
 ### Finding cells
@@ -264,7 +264,7 @@ find_cell(ws, "Jan")
 ```
 
 ```
-## [1] "Cell R2C2, B2"
+## Cell not found
 ```
 
 ```r
@@ -289,6 +289,23 @@ find_all(ws, "10")
 #update a cell
 update_cell(ws, "B4", "2.0")
 
-# Update in batch
-update_cells(ws, "A3:A4", c("1.0", "2.0"))
+get_cell(ws, "B4")
 ```
+
+```
+## [1] "2"
+```
+
+```r
+# Update in batch
+update_cells(ws, "B2:C2", c("January", "February"))
+
+read_range(ws, "B2:C2")
+```
+
+```
+##        V1       V2
+## 1 January February
+```
+
+

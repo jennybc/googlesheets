@@ -31,11 +31,11 @@ If you want to access a different account, run `authorize(new_user = TRUE)`, as 
 
 To access public spreadsheets, you will either need the key of the spreadsheet (as found in the URL) or the entire URL. 
 
-```{r open public sheets}
+```{r open public sheets, eval = FALSE}
 
-#pub_sheet <- open_by_key("1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU")
+pub_sheet <- open_by_key("1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU")
 
-#pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU/pubhtml")
+pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU/pubhtml")
 
 ```
 
@@ -114,10 +114,10 @@ view(ws)
 view_all(ssheet2)
 ```
 
-## Get structure of spreadsheet and worksheet
+## Display structure of spreadsheet and worksheet
 
 To get a more detailed report of your worksheet, use `str()`. This function summarizes your worksheet by letting you know the number of rows and columns, empty cells, and the cell pattern per column (a string of ##V for values and ##NA for empty cells).
-```{r generate report}
+```{r display structure}
 
 # str for a spreadsheet
 str(ssheet2)
