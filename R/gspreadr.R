@@ -788,7 +788,7 @@ str.worksheet <- function(ws)
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = 1, max_col = ws$ncol, 
-                           visibility = "private")
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
