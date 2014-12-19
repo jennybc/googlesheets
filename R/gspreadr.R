@@ -246,7 +246,6 @@ get_row <- function(ws, row)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   data.frame(t(tbl_clean$val))
@@ -279,7 +278,6 @@ get_rows <- function(ws, from, to, header = FALSE)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   list_of_df <- 
@@ -321,7 +319,6 @@ get_col <- function(ws, col, vis = "private")
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   tbl_clean$val
@@ -364,7 +361,6 @@ get_cols <- function(ws, from, to, header = TRUE)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl <- select(tbl, c(row, col, val))
   tbl_clean <- fill_missing_tbl(tbl)
   
   list_of_df <- 
@@ -478,7 +474,6 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
-  tbl <- select(tbl, c(row, col, val))
   
   tbl_clean <- fill_missing_tbl(tbl)
   
@@ -619,7 +614,7 @@ update_cell <- function(ws, pos, value)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-
+  
   nodes <- getNodeSet(feed, '//ns:link[@rel="edit"]', c("ns" = default_ns),
                       function(x) xmlGetAttr(x, "href"))
   
@@ -696,6 +691,9 @@ view <- function(ws)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = 1, max_col = ws$ncol, visibility = "private")
   
+  if(ws$nrow == 0)
+    stop("Worksheet is empty!")
+  
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   tbl <- get_lookup_tbl(feed)
@@ -726,7 +724,7 @@ view_all <- function(ss)
                                      min_col = 1, max_col = ws$ncol, visibility = "private")
             req <- gsheets_GET(the_url)
             feed <- gsheets_parse(req)
-            get_lookup_tbl(feed)
+            get_lookup_tbl(feed, include_sheet_title = TRUE)
           })
   
   p1 <- make_plot(tbl)
@@ -771,12 +769,12 @@ str.worksheet <- function(ws)
     return(item1)
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = 1, max_col = ws$ncol, visibility = "private")
+                           min_col = 1, max_col = ws$ncol, 
+                           visibility = "private")
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   tbl <- get_lookup_tbl(feed)
-  tbl <- select(tbl, row, col, val)
   
   tbl_clean <- fill_missing_tbl(tbl, row_only = TRUE)
   tbl_bycol <- group_by(tbl_clean, col)
@@ -799,25 +797,21 @@ str.worksheet <- function(ws)
   }
   
   a2 <- ddply(tbl_clean, "col", runs)
-  
   a3 <- join(a1, a2, by = "col")
   
   item2 <- rename(a3, c("V1" = "Runs", "nrow" = "Rows", "col" = "Column"))
-  
-  item2
+
   cat("Worksheet", item1, sep = "\n")
   print(item2)
 }
 
 
-#' Get report for a spreadsheet
+#' Get the structure for a spreadsheet
 #' 
-#' Generate a report for a spreadsheet.
+#' Display the structure of a spreadsheet: the name of the spreadsheet, the 
+#' number of worksheets contained and the corresponding worksheet dimensions.
 #' 
 #' @param ss spreadsheet object
-#' 
-#' @return A list containing the name of the spreadsheet and the number of 
-#' worksheets it contains and worksheet dimensions.
 #' 
 #' @importFrom dplyr summarise group_by select
 #' @importFrom plyr llply

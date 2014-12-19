@@ -131,6 +131,7 @@ ssfeed_to_df <- function()
 {
   the_url <- build_req_url("spreadsheets")
   req <- gsheets_GET(the_url)
+ 
   ssfeed <- gsheets_parse(req)
   
   ss_titles <- getNodeSet(ssfeed, "//ns:entry//ns:title", c("ns" = default_ns),
@@ -188,8 +189,10 @@ worksheet_dim <- function(ws, visibility = "private", auth = get_google_token())
 #' Create lookup table from cellfeed.
 #' 
 #' @param feed cellfeed from GET request
+#' 
+#' @importFrom XML xmlValue xmlAttrs
 #'
-get_lookup_tbl <- function(feed)
+get_lookup_tbl <- function(feed, include_sheet_title = FALSE)
 {
   val <- getNodeSet(feed, "//ns:entry//gs:cell", 
                     c("ns" = default_ns, "gs"), xmlValue)
@@ -202,16 +205,16 @@ get_lookup_tbl <- function(feed)
                          c("ns" = default_ns, "gs"),
                          function(x) as.numeric(xmlAttrs(x)["col"]))
   
-  title <- getNodeSet(feed, "//ns:title", c("ns" = default_ns), xmlValue)[1]
-  
   rows <- unlist(row_num)
   cols <- unlist(col_num)
   
   lookup_tbl <- data.frame(row = rows, col = cols, val = unlist(val),
                            stringsAsFactors = FALSE)
   
-  if(nrow(lookup_tbl) != 0)
+  if(nrow(lookup_tbl) != 0 & include_sheet_title) {
+    title <- getNodeSet(feed, "//ns:title", c("ns" = default_ns), xmlValue)[1]
     lookup_tbl$Sheet <- unlist(title)
+  }
   
   lookup_tbl
 }
