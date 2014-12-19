@@ -675,8 +675,7 @@ update_cells <- function(ws, range, new_values)
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = rows[1], max_row = rows[2],
-                           min_col = cols[1], max_col = cols[2], 
-                           visibility = "private")
+                           min_col = cols[1], max_col = cols[2])
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -702,14 +701,15 @@ update_cells <- function(ws, range, new_values)
 view <- function(ws)
 {
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = 1, max_col = ws$ncol, visibility = "private")
+                           min_col = 1, max_col = ws$ncol,
+                           visibility = ws$visibility)
   
   if(ws$nrow == 0)
     stop("Worksheet is empty!")
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-  tbl <- get_lookup_tbl(feed)
+  tbl <- get_lookup_tbl(feed, include_sheet_title = TRUE)
   make_plot(tbl)
 }
 
@@ -720,13 +720,13 @@ view <- function(ws)
 #' worksheets and the second is an overlay of all the worksheets.
 #' 
 #' @param ss spreadsheet object
-#'
-#' @return a list of 2 ggplot objects
+#' @param show_overlay \code{logical} set to \code{TRUE} if want to also 
+#' display the overlay of all the worksheets
 #'
 #' @importFrom plyr ldply
-#' @importFrom gridExtra arrangeGrob
+#' @importFrom gridExtra arrangeGrob grid.arrange
 #' @export
-view_all <- function(ss)
+view_all <- function(ss, show_overlay = FALSE)
 {
   ws_objs <- list_worksheet_objs(ss)
   
@@ -734,7 +734,8 @@ view_all <- function(ss)
     ldply(ws_objs, 
           function(ws)  {
             the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                                     min_col = 1, max_col = ws$ncol, visibility = "private")
+                                     min_col = 1, max_col = ws$ncol,
+                                     visibility = ws$visibility)
             req <- gsheets_GET(the_url)
             feed <- gsheets_parse(req)
             get_lookup_tbl(feed, include_sheet_title = TRUE)
@@ -757,8 +758,12 @@ view_all <- function(ss)
           axis.title.x = element_blank(),
           axis.ticks.x = element_blank())
   
-  p3 <- arrangeGrob(p1, p2)
-  p3
+  if(show_overlay) {
+    p3 <- arrangeGrob(p1, p2)
+    p3
+  }else {
+    p1
+  }
 }
 
 
@@ -872,6 +877,7 @@ open_by_key <- function(key, visibility = "public")
   ss$updated <- wsfeed_list$updated
   ss$sheet_title <- wsfeed_list$title$text
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
+  ss$visibility <- visibility
   
   # return list of worksheet objs
   ws_objs<- getNodeSet(wsfeed, "//ns:entry", c("ns" = default_ns),

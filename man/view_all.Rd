@@ -3,13 +3,13 @@
 \alias{view_all}
 \title{View all your worksheets}
 \usage{
-view_all(ss)
+view_all(ss, show_overlay = FALSE)
 }
 \arguments{
 \item{ss}{spreadsheet object}
-}
-\value{
-a list of 2 ggplot objects
+
+\item{show_overlay}{\code{logical} set to \code{TRUE} if want to also
+display the overlay of all the worksheets}
 }
 \description{
 Get a view of all the worksheets contained in the spreadsheet. This function
