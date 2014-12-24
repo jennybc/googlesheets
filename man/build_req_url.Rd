@@ -3,9 +3,9 @@
 \alias{build_req_url}
 \title{Build URL for GET requests}
 \usage{
-build_req_url(feed_type, key = NULL, ws_id = NULL, visibility = "private",
-  projection = "full", min_row = NULL, max_row = NULL, min_col = NULL,
-  max_col = NULL)
+build_req_url(feed_type, key = NULL, ws_id = NULL, min_row = NULL,
+  max_row = NULL, min_col = NULL, max_col = NULL,
+  visibility = "private", projection = "full")
 }
 \arguments{
 \item{feed_type}{one of the following: spreadsheets, worksheets, list, cells}
@@ -13,6 +13,10 @@ build_req_url(feed_type, key = NULL, ws_id = NULL, visibility = "private",
 \item{key}{spreadsheet key}
 
 \item{ws_id}{id of worksheet contained in spreadsheet}
+
+\item{min_row,max_row}{minimum and maximum rows}
+
+\item{min_col,max_col}{miniumum and maximum columns}
 
 \item{visibility}{either private or public}
 

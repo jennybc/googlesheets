@@ -2,7 +2,6 @@ context("worksheet operations")
 
 ws <- open_at_once("Testing", "Sheet1")
 
-
 test_that("Get value of cell", {
   
   expect_equal(get_cell(ws, "A1"), "country")

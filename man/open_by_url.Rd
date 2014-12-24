@@ -7,11 +7,14 @@ open_by_url(url, visibility = "public")
 }
 \arguments{
 \item{url}{URL of spreadsheet as it appears in browser}
+
+\item{visibility}{either "public" for public spreadsheets or "private"
+for private spreadsheets}
 }
 \value{
 Object of class spreadsheet.
 
-This function currently only works for public spreadsheets.
+This function only works for public spreadsheets.
 This function extracts the key from the url and calls on
 \code{\link{open_by_key}}.
 }

@@ -13,9 +13,6 @@ add_worksheet(ss, title, nrow, ncol)
 \item{nrow}{number of rows}
 
 \item{ncol}{number of columns}
-
-\item{token}{Google token obtained from \code{\link{login}} or
-\code{\link{authorize}}}
 }
 \description{
 Add a new (empty) worksheet to spreadsheet, specify title, number of rows

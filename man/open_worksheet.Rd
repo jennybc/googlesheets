@@ -18,7 +18,9 @@ A worksheet object with number of rows and cols component.
 Use the title or index of a worksheet to retrieve the worksheet object.
 }
 \examples{
+\dontrun{
 ws <- open_worksheet(ss, "Sheet1")
 ws <- open_worksheet(ss, 1)
+}
 }
 

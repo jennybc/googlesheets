@@ -9,19 +9,15 @@ get_cols(ws, from, to, header = TRUE)
 \item{ws}{worksheet object}
 
 \item{from,to}{start and end column indexes either integer or letter}
+
+\item{header}{\code{logical} to indicate if the first row should be taken as
+the header}
 }
 \value{
 A data frame.
 }
 \description{
 Specify range of columns to get from worksheet.
-}
-\examples{
-get_cols(ws, 1, 2)
-get_cols(ws, 30, 40)
-
-get_cols(ws, "A", "B")
-get_cols(ws, "c", "f")
 }
 \seealso{
 \code{\link{get_col}}, \code{\link{get_row}},

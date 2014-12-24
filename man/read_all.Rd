@@ -8,11 +8,8 @@ read_all(ws, header = TRUE)
 \arguments{
 \item{ws}{worksheet object}
 
-\item{header}{logical value indicating whether the first line contains the
-names of the variables}
-
-\item{vis}{either "private" or "public" indicating whether the worksheet is
-private or public}
+\item{header}{\code{logical} to indicate if the first row should be taken as the
+header}
 }
 \value{
 A dataframe.

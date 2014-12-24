@@ -7,6 +7,9 @@ get_lookup_tbl(feed, include_sheet_title = FALSE)
 }
 \arguments{
 \item{feed}{cellfeed from GET request}
+
+\item{include_sheet_title}{include column with worksheet title in lookup
+table}
 }
 \description{
 Create lookup table from cellfeed.

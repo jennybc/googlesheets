@@ -11,8 +11,4 @@ num_to_letter(x)
 \description{
 Convert column number letter
 }
-\examples{
-num_to_letter(1)
-num_to_letter(26)
-}
 

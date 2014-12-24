@@ -7,6 +7,8 @@ fill_missing_col(x, col_min)
 }
 \arguments{
 \item{x}{data frame returned by \code{\link{get_lookup_tbl}}}
+
+\item{col_min}{leftmost column that row begins at}
 }
 \description{
 The lookup table returned by \code{\link{get_lookup_tbl}} may contain missing tuples

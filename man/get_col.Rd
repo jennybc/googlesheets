@@ -3,14 +3,12 @@
 \alias{get_col}
 \title{Get all values in a column.}
 \usage{
-get_col(ws, col, vis = "private")
+get_col(ws, col)
 }
 \arguments{
 \item{ws}{worksheet object}
 
 \item{col}{column number or letter (case insensitive)}
-
-\item{vis}{either "private" or "public", "public" for public worksheet}
 }
 \value{
 A data frame.

@@ -11,10 +11,13 @@ gsheets_POST(url, the_body, content_type = "atom+xml",
 
 \item{the_body}{body of POST request}
 
+\item{content_type}{the content type, default is "atom+xml" for posting to
+Sheets API, "json" for posting to Drive API}
+
 \item{token}{Google auth token obtained from \code{\link{login}}
 or \code{\link{authorize}}}
 }
 \description{
-Make POST request to Google Sheets API.
+Make POST request to Google Sheets/Drive API.
 }
 

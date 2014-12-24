@@ -43,7 +43,7 @@ pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/1WNUDoBbGsPccRk
 
 Once you have authenticated, you can use `list_spreadsheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title.
 
-```{r spreadsheet ops}
+```{r spreadsheet ops, eval = FALSE}
 list_spreadsheets()
 
 ssheet <- open_spreadsheet("basic-usage")
@@ -51,7 +51,7 @@ ssheet <- open_spreadsheet("basic-usage")
 
 This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 
 
-```{r}
+```{r, eval = FALSE}
 # spreadsheet components
 ssheet$sheet_id ; ssheet$sheet_title ; ssheet$updated ; ssheet$nsheets ; ssheet$ws_names
 ```
@@ -59,14 +59,14 @@ ssheet$sheet_id ; ssheet$sheet_title ; ssheet$updated ; ssheet$nsheets ; ssheet$
 # Open a worksheet
 
 You can use `list_worksheets()` to see the worksheets living in the spreadsheet. This is a wrapper around `ssheet$ws_names`.
-```{r list ws}
+```{r list ws, eval = FALSE}
 
 list_worksheets(ssheet)
 ```
 
 To open a worksheet, you can pass in a spreadsheet object and then specify the worksheet using its title or index, or this can be done in one step using `open_at_once(ss_title, ws_index)`. This saves a bit of typing but the spreadsheet object will not be stored, so if you want to open another worksheet, `open_spreadsheet("title")` will be called again. So if you want to open multiple worksheets from a spreadsheet, save the spreadsheet as an R object and use it for `open_worksheet(ss, x)`  
 
-```{r open ws}
+```{r open ws, eval = FALSE}
 
 # by title
 ws <- open_worksheet(ssheet, "Sheet1")
@@ -82,7 +82,7 @@ ws <- open_at_once(ss_title = "basic-usage", ws_index = 1)
 
 This returns a worksheet object. You can get the ids of the spreadsheet and worksheet, worksheet title, and the number of rows and columns.
 
-```{r}
+```{r, eval = FALSE}
 # worksheet components
 ws$sheet_id ; ws$id ; ws$title ; ws$ncol ; ws$specs
 ```
@@ -91,7 +91,7 @@ ws$sheet_id ; ws$id ; ws$title ; ws$ncol ; ws$specs
 
 You can open all the worksheets from a spreadsheet using `list_worksheet_objs()` passing the spreadsheet object as the argument. This will return a list of worksheet objects which you can then use `plyr` functions to perform worksheet operations such as `get_cell()`, `get_row()`, `read_region()`, etc.   
 
-```{r open multiple worksheets}
+```{r open multiple worksheets, eval = FALSE}
 
 ssheet2 <- open_spreadsheet("Gapminder by Continent")
 
@@ -107,7 +107,7 @@ plyr::llply(ws_objs, function(x) get_cell(x, "A2"))
 
 You can take a look at your worksheets to get an idea of what it looks like. Use `view()` to look at one worksheet and `view_all()` to look at all worksheets contained in a spreadsheet. `view_all()` returns a list of 2 ggplot objects. The first is a gallery of all the worksheets and the second is an overlay of all the worksheets to identify the density of the cells occupied by worksheets.
 
-```{r, fig.width=7, fig.height=7}
+```{r, fig.width=7, fig.height=7, eval = FALSE}
 
 view(ws)
 
@@ -117,7 +117,7 @@ view_all(ssheet2)
 ## Display structure of spreadsheet and worksheet
 
 To get a more detailed report of your worksheet, use `str()`. This function summarizes your worksheet by letting you know the number of rows and columns, empty cells, and the cell pattern per column (a string of ##V for values and ##NA for empty cells).
-```{r display structure}
+```{r display structure, eval = FALSE}
 
 # str for a spreadsheet
 str(ssheet2)
@@ -132,7 +132,7 @@ str(ws)
 You can get row(s), col(s), a region, or an entire worksheet. 
 
 ## Get row(s)
-```{r get rows}
+```{r get rows, eval = FALSE}
 get_row(ws, 1)
 
 get_rows(ws, from = 1, to = 3)
@@ -142,7 +142,7 @@ get_rows(ws, from = 1, to = 3)
 
 You can get columns either by integer or letter. 
 
-```{r get cols}
+```{r get cols, eval = FALSE}
 get_col(ws, 1)
 
 get_col(ws, "A")
@@ -159,7 +159,7 @@ get_cols(ws, from = "A", to = "E")
 
 You can get a region of a worksheet by specifying the boundary rows and columns. The first row will be taken as the `header` by default.
 
-```{r get region}
+```{r get region, eval = FALSE}
 read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5)
 
 # set header to FALSE
@@ -170,7 +170,7 @@ read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5, header = FAL
 
 You can also get a region of a worksheet by specifying the cell ranges as a character string. The first row will be taken as the `header` by default.
 
-```{r get range}
+```{r get range, eval = FALSE}
 
 read_range(ws, "A1:E5")
 
@@ -182,7 +182,7 @@ read_range(ws, "A1:E5")
 You can get the entire worksheet. Empty cells will be filled with NAs. Boundaries are determined by the right-most and bottom-most cells that contain a value.  The first row will be taken as the `header` by default.
 
 
-```{r get all}
+```{r get all, eval = FALSE}
 read_all(ws)
 ```
 
@@ -190,7 +190,7 @@ read_all(ws)
 
 You can get the value of a specific cell. There are two notations you can use: `A1` and `R1C1`. For `A1` notation, columns are indicated by a letter followed by the row as an integer. For `R1C1` notation, integers represent the rows and columns, and are preceded by `R` or `C`. Note that `A1` and `R1C1` are equivalent.
 
-```{r get cell}
+```{r get cell, eval = FALSE}
 
 get_cell(ws, "A1")
 
@@ -202,7 +202,7 @@ get_cell(ws, "R1C1")
 
 You can find the first position of the cell containing the specified value or all the cells that contain the specified value. 
 
-```{r find cell}
+```{r find cell, eval = FALSE}
 
 find_cell(ws, "Afghanistan")
 
@@ -216,7 +216,7 @@ find_all(ws, "Afghanistan")
 
 You can update a cell's value by specifying the cell's position, either in `A1` or `R1C1` notation, and the new value.
 
-```{r update cell}
+```{r update cell, eval = FALSE}
 
 update_cell(ws, "A1", "new value")
 
@@ -232,7 +232,7 @@ get_cell(ws, "R1C1")
 
 You can update a batch of cells by specifying the range of cells, ie. "A1:A4", and the vector of values to update to.
 
-```{r update cells}
+```{r update cells, eval = FALSE}
 
 update_cells(ws, "A1:B1", c("new_value1", "new_value2"))
 

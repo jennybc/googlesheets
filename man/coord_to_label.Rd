@@ -11,8 +11,4 @@ coord_to_label(x)
 \description{
 A1 and R1C1 are equivalent addresses for position of cells.
 }
-\examples{
-coord_to_label("R1C1")
-coord_to_label("R10C10")
-}
 

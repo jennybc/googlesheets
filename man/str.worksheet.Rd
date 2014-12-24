@@ -3,10 +3,12 @@
 \alias{str.worksheet}
 \title{Get report for a worksheet}
 \usage{
-\method{str}{worksheet}(ws)
+\method{str}{worksheet}(object, ...)
 }
 \arguments{
-\item{ws}{worksheet object}
+\item{object}{worksheet object}
+
+\item{...}{potential further arguments (required for Method/Generic reasons)}
 }
 \value{
 A list of 2.

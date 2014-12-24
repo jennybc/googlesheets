@@ -10,7 +10,8 @@ get_rows(ws, from, to, header = FALSE)
 
 \item{from,to}{start and end row indexes}
 
-\item{header}{logical indicating whether first row should be taken as header}
+\item{header}{\code{logical} to indicate if the first row should be taken as the
+header}
 }
 \value{
 A data frame.

@@ -12,7 +12,9 @@ Imports:
     httr,
     XML,
     ggplot2,
-    gridExtra
+    gridExtra,
+    dplyr,
+    plyr
 Suggests:
     testthat,
     knitr

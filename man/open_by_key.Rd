@@ -6,7 +6,10 @@
 open_by_key(key, visibility = "public")
 }
 \arguments{
-\item{spreadsheet_key}{A key of a spreadsheet as it appears in browser URL.}
+\item{key}{A key of a spreadsheet as it appears in browser URL.}
+
+\item{visibility}{either "public" for public spreadsheets or "private"
+for private spreadsheets}
 }
 \value{
 Object of class spreadsheet.

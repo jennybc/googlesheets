@@ -10,10 +10,8 @@ read_range(ws, x, header = TRUE)
 
 \item{x}{character string for range separated by ":"}
 
-\item{header}{\code{logical} for whether or not first row should be taken as
+\item{header}{\code{logical} to indicate if the first row should be taken as the
 header}
-
-\item{vis}{either "private" (default) or "public" for public spreadsheets}
 }
 \description{
 Extract cells of a worksheet by specifying the minimum and maximum rows and
@@ -21,8 +19,10 @@ columns. If the specified range is beyond the dimensions of the worksheet,
 the boundaries of the worksheet will be used instead.
 }
 \examples{
+\dontrun{
 read_range("A1:B10")
 read_range("C10:D20")
+}
 }
 \seealso{
 \code{\link{read_region}}, \code{\link{get_row}},

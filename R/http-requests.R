@@ -5,13 +5,15 @@
 #' @param feed_type one of the following: spreadsheets, worksheets, list, cells
 #' @param key spreadsheet key
 #' @param ws_id id of worksheet contained in spreadsheet
+#' @param min_row,max_row minimum and maximum rows
+#' @param min_col,max_col miniumum and maximum columns
 #' @param visibility either private or public
 #' @param projection either full or basic
 #' @return URL
 build_req_url <- function(feed_type, key = NULL, ws_id = NULL, 
-                          visibility = "private", projection = "full", 
                           min_row = NULL, max_row = NULL, 
-                          min_col = NULL, max_col = NULL) 
+                          min_col = NULL, max_col = NULL, 
+                          visibility = "private", projection = "full") 
 {
   base_url <- "https://spreadsheets.google.com/feeds"
   
@@ -112,10 +114,12 @@ gsheets_PUT <- function(url, the_body, token = get_google_token())
 
 #' Create POST request
 #'
-#' Make POST request to Google Sheets API.
+#' Make POST request to Google Sheets/Drive API.
 #'
 #' @param url URL for POST request
 #' @param the_body body of POST request
+#' @param content_type the content type, default is "atom+xml" for posting to 
+#' Sheets API, "json" for posting to Drive API 
 #' @param token Google auth token obtained from \code{\link{login}} 
 #' or \code{\link{authorize}} 
 #' @importFrom httr POST stop_for_status
@@ -126,7 +130,8 @@ gsheets_POST <- function(url, the_body, content_type = "atom+xml",
     stop("Must be authorized in order to perform request")
   } else {
     req <- POST(url, gsheets_auth(token), 
-                add_headers("Content-Type" = paste0("application/", content_type)),
+                add_headers("Content-Type" = 
+                              paste0("application/", content_type)),
                 body = the_body)
     stop_for_status(req)
   }

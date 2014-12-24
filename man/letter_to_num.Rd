@@ -11,9 +11,4 @@ letter_to_num(x)
 \description{
 Convert column letter to number
 }
-\examples{
-letter_to_num("A")
-letter_to_num("AB")
-letter_to_num("ab")
-}
 

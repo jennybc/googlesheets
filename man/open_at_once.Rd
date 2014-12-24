@@ -13,8 +13,4 @@ open_at_once(ss_title, ws_value)
 \description{
 Open a worksheet from a spreadsheet in one go
 }
-\examples{
-open_at_once("Temperature", "Sheet1")
-open_at_once("Temperature", 1)
-}
 

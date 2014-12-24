@@ -3,10 +3,12 @@
 \alias{str.spreadsheet}
 \title{Get the structure for a spreadsheet}
 \usage{
-\method{str}{spreadsheet}(ss)
+\method{str}{spreadsheet}(object, ...)
 }
 \arguments{
-\item{ss}{spreadsheet object}
+\item{object}{spreadsheet object}
+
+\item{...}{potential further arguments (required for Method/Generic reasons)}
 }
 \description{
 Display the structure of a spreadsheet: the name of the spreadsheet, the

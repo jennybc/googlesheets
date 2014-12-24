@@ -18,10 +18,4 @@ The value of the cell as a character string.
 Get the value of a cell using label (A1) notation or coordinate (R1C1)
 notation.
 }
-\examples{
-get_cell(ws, "A1")
-get_cell(ws, "R1C1")
-get_cell(ws, "AB1")
-get_cell(ws, "R1C27")
-}
 

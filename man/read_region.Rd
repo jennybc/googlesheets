@@ -12,7 +12,8 @@ read_region(ws, from_row, to_row, from_col, to_col, header = TRUE)
 
 \item{from_col,to_col}{range of cols to extract}
 
-\item{vis}{either \code{private} or \code{public}}
+\item{header}{\code{logical} to indicate if the first row should be taken as
+the header}
 }
 \value{
 A data frame.
