@@ -101,12 +101,16 @@ gsheets_GET <- function(url, token = get_google_token())
 #' @importFrom httr PUT stop_for_status
 gsheets_PUT <- function(url, the_body, token = get_google_token()) 
 { 
+  body_as_string <- toString.XMLNode(the_body)
+  leng <- as.character(nchar(body_as_string))
+  
   if(is.null(token)) {
     stop("Must be authorized in order to perform request")
   } else {
     req <- PUT(url, gsheets_auth(token), 
-               add_headers("Content-Type" = "application/atom+xml"),
-               body = toString.XMLNode(the_body))
+               add_headers("Content-Type" = "application/atom+xml",
+                           "Content-Length" = leng),
+               body = body_as_string)
     stop_for_status(req)
   }
 }
