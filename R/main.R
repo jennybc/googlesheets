@@ -9,10 +9,10 @@ list_spreadsheets <- function()
 }
 
 
-#' Add a new spreadsheet
+#' Create a new spreadsheet
 #' 
-#' Create a new (empty) spreadsheet with 1 worksheet titled "Sheet1" (default)
-#' in your Google Drive.
+#' Create a new (empty) spreadsheet in your Google Drive. The new spreadsheet
+#' will contain 1 default worksheet titled "Sheet1".
 #' 
 #' @param title the title for the new spreadsheet
 #' 
@@ -62,10 +62,10 @@ del_spreadsheet <- function(title)
 #' or \code{\link{open_at_once}} is used to open a worksheet. It is time 
 #' consuming to make a cellfeed request for every worksheet in the spreadsheet 
 #' to determine the number of rows and columns. Use 
-#' \code{\link{list_worksheet_objs}} to open all worksheets contained in the 
+#' \code{\link{open_worksheets}} to open all worksheets contained in the 
 #' spreadsheet. 
 #' 
-#' @seealso \code{\link{list_worksheet_objs}}
+#' @seealso \code{\link{open_worksheets}}
 #' 
 #' @importFrom XML xmlToList getNodeSet
 #' @export
@@ -116,14 +116,15 @@ list_worksheets <- function(ss)
 
 #' Get a list of worksheet objects
 #'
-#' The returned list of worksheet objects enables \code{plyr} functions to 
-#' operate on mutiple worksheets at once.
+#' Return a list of all the worksheets in a spreadsheet as worksheet objects so 
+#' that \code{plyr} functions can be used to perform worksheet operations on 
+#' multiple worksheets at once.
 #' 
 #' @param ss a spreadsheet object returned by \code{\link{open_spreadsheet}}
 #' 
 #' @importFrom plyr llply
 #' @export
-list_worksheet_objs <- function(ss) 
+open_worksheets <- function(ss) 
 {
   llply(ss$worksheets, function(x) open_worksheet(ss, x$title))
 }
@@ -248,7 +249,7 @@ get_row <- function(ws, row)
     message("Row contains no values.")
   } else {
     tbl_clean <- fill_missing_tbl(tbl, row_min = row)
-    data.frame(t(tbl_clean$val))
+    tbl_clean$val
   }
 }
 
@@ -467,6 +468,9 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
   if(to_col > ws$ncol)
     to_col <- ws$ncol
   
+  if(ws$nrow == 0)
+    stop("Worksheet is empty!")
+  
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from_row, max_row = to_row,
                            min_col = from_col, max_col = to_col, 
@@ -476,6 +480,9 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)
+  
+  if(nrow(tbl) == 0)
+    stop("Range is empty")
   
   tbl_clean <- fill_missing_tbl(tbl, row_min = from_row, col_min = from_col)
   
@@ -541,7 +548,8 @@ read_range <- function(ws, x, header = TRUE)
 find_cell <- function(ws, x)
 {
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = 1, max_col = ws$ncol, visibility = "private")
+                           min_col = 1, max_col = ws$ncol, 
+                           visibility = "private")
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -584,10 +592,11 @@ find_all <- function(ws, x)
   if(nrow(vals) == 0) {
     message("Cell not found")
   } else {
-    dat <- mutate(vals, Coord = paste0("R", ~ row, "C", ~ col),
-                  Label = paste0(vnum_to_letter(col), ~ row),
-                  Val = ~ val)
-    select_(dat, ~ Label, ~ Coord, ~ Val)
+    dat <- mutate_(vals, 
+                   Coord = ~paste0("R", row, "C", col),
+                   Label = ~paste0(vnum_to_letter(col), row),
+                   Val = ~val)
+    select_(dat, ~Label, ~Coord, ~Val)
   }
 }
 
@@ -667,8 +676,8 @@ update_cells <- function(ws, range, new_values)
   i <- seq(rows[1], rows[2])
   j <- seq(cols[1], cols[2])
   cells_in_range <- mutate_(expand.grid(i, j), 
-                            coord = paste0("R", ~ Var1, "C", ~ Var2))
-  cells_in_range <- rename_(cells_in_range, c(~ Var1 == "row", ~ Var2 == "col"))
+                            coord = ~paste0("R", Var1, "C", Var2))
+  cells_in_range <- rename_(cells_in_range, "row" = "Var1", "col" = "Var2")
   
   if(nrow(cells_in_range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
@@ -728,7 +737,7 @@ view <- function(ws)
 #' @export
 view_all <- function(ss, show_overlay = FALSE)
 {
-  ws_objs <- list_worksheet_objs(ss)
+  ws_objs <- open_worksheets(ss)
   
   tbl <- 
     ldply(ws_objs, 
@@ -797,13 +806,13 @@ str.worksheet <- function(object, ...)
   tbl <- get_lookup_tbl(feed)
   
   tbl_clean <- fill_missing_tbl(tbl, row_only = TRUE)
-  tbl_bycol <- group_by_(tbl_clean, ~ col)
+  tbl_bycol <- group_by_(tbl_clean, ~col)
   
   a1 <- summarise_(tbl_bycol, 
-                  Label = num_to_letter(~ col[1]),
-                  nrow = max(~ row),
-                  Empty.Cells = length(which(is.na(~ val))),
-                  Missing = round(~ Empty.Cells/nrow, 2))
+                   Label = ~num_to_letter(mean(col)),
+                   nrow = ~max(row),
+                   Empty.Cells = ~length(which(is.na(val))),
+                   Missing = ~round(Empty.Cells/nrow, 2))
   
   # Find the cell pattern for each column
   runs <- function(x) 
@@ -819,7 +828,7 @@ str.worksheet <- function(object, ...)
   a2 <- ddply(tbl_clean, "col", runs)
   a3 <- join(a1, a2, by = "col")
   
-  item2 <- rename(a3, c(~ V1 == "Runs", ~ nrow == "Rows", ~ col == "Column"))
+  item2 <- rename_(a3, "Column" = "col", "Rows" = "nrow", "Runs" = "V1")
   
   cat("Worksheet", item1, sep = "\n")
   print(item2)
@@ -842,7 +851,7 @@ str.spreadsheet <- function(object, ...)
 {
   item1 <- paste0(object$sheet_title, ": ", object$nsheets, " worksheets")
   
-  list_ws <- list_worksheet_objs(object)
+  list_ws <- open_worksheets(object)
   
   item2 <- llply(list_ws, function(x) paste(x$title, ":", x$nrow, 
                                             "rows and", x$ncol, "columns"))

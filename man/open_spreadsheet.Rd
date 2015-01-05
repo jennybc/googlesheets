@@ -20,10 +20,10 @@ visibility components. Those are determined when \code{\link{open_worksheet}}
 or \code{\link{open_at_once}} is used to open a worksheet. It is time
 consuming to make a cellfeed request for every worksheet in the spreadsheet
 to determine the number of rows and columns. Use
-\code{\link{list_worksheet_objs}} to open all worksheets contained in the
+\code{\link{open_worksheets}} to open all worksheets contained in the
 spreadsheet.
 }
 \seealso{
-\code{\link{list_worksheet_objs}}
+\code{\link{open_worksheets}}
 }
 
