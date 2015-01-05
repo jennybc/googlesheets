@@ -179,8 +179,8 @@ open_at_once <- function(ss_title, ws_value)
 #' Add a new (empty) worksheet to spreadsheet
 #'
 #' Add a new (empty) worksheet to spreadsheet, specify title, number of rows 
-#' and columns. The title should not be the names of exisiting worksheets else 
-#' a bad request error is returned.
+#' and columns. The title of the new worksheet should not be the same as any of
+#' the existing worksheets
 #'
 #' @param ss spreadsheet object
 #' @param title character string for title of new worksheet 
@@ -190,7 +190,13 @@ open_at_once <- function(ss_title, ws_value)
 #' @importFrom XML xmlNode toString.XMLNode
 #' @export
 add_worksheet <- function(ss, title, nrow, ncol) 
-{   
+{ 
+  exist <- match(title, list_worksheets(ss))
+  
+  if(!is.na(exist))
+    stop("A worksheet with the same name already exists", 
+         ", please choose a different name!")
+  
   the_body <- 
     xmlNode("entry", 
             namespaceDefinitions = 
@@ -210,12 +216,20 @@ add_worksheet <- function(ss, title, nrow, ncol)
 
 #' Delete a worksheet from spreadsheet
 #'
-#' The worksheet and all of its data will be removed from spreadsheet.
+#' The worksheet and all of its data will be removed from the spreadsheet.
 #'
-#' @param ws worksheet object
+#' @param ss spreadsheet object
+#' @param ws_title title of worksheet 
 #' @export
-del_worksheet<- function(ws) 
+del_worksheet<- function(ss, ws_title) 
 {
+  index <- match(ws_title, names(ss$worksheets))
+  
+  if(is.na(index))
+    stop("Worksheet not found.")
+
+  ws <- ss$worksheets[[index]]
+  
   the_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
   gsheets_DELETE(the_url) 
 }

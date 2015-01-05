@@ -3,12 +3,14 @@
 \alias{del_worksheet}
 \title{Delete a worksheet from spreadsheet}
 \usage{
-del_worksheet(ws)
+del_worksheet(ss, ws_title)
 }
 \arguments{
-\item{ws}{worksheet object}
+\item{ss}{spreadsheet object}
+
+\item{ws_title}{title of worksheet}
 }
 \description{
-The worksheet and all of its data will be removed from spreadsheet.
+The worksheet and all of its data will be removed from the spreadsheet.
 }
 

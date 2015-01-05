@@ -6,7 +6,7 @@
 ssfeed_to_df()
 }
 \description{
-Get spreadsheets' titles, keys, and date/time of last update and organize into
-a data frame for easy post-processing.
+Get spreadsheets' titles, date/time of last update and its unique key, and
+organize into a data frame for easy post-processing.
 }
 

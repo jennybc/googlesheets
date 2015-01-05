@@ -16,7 +16,7 @@ add_worksheet(ss, title, nrow, ncol)
 }
 \description{
 Add a new (empty) worksheet to spreadsheet, specify title, number of rows
-and columns. The title should not be the names of exisiting worksheets else
-a bad request error is returned.
+and columns. The title of the new worksheet should not be the same as any of
+the existing worksheets
 }
 
