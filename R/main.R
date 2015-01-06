@@ -650,11 +650,11 @@ update_cell <- function(ws, pos, value)
   
   row_num <- sub("R([0-9]+)C([0-9]+)", "\\1", pos)
   col_num <- sub("R([0-9]+)C([0-9]+)", "\\2", pos)
-  coord <- paste0("R", row_num, "C", col_num)
   
-  # get cell feed to get cell version (needed in put request)
-  url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
-  the_url <- paste(url, coord, sep = "/")
+  url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                       visibility = ws$visibility)
+  
+  the_url <- paste(url, pos, sep = "/")
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -702,7 +702,8 @@ update_cells <- function(ws, range, new_values)
   if(ncells(range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
   
-  the_url0 <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
+  the_url0 <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                            visibility = ws$visibility)
   
   the_url <- paste0(the_url0, "?range=", range, "&return-empty=true")
 
