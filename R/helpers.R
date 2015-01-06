@@ -81,6 +81,23 @@ set_header <- function(x)
 }
 
 
+#' Determine the number of cells in the range
+#' 
+#'@param range character string for range value
+#'
+#'@return numeric value for count of cells in range.
+ncells <- function(range)
+{
+  bounds <- unlist(strsplit(range, split = ":"))
+  rows <- as.numeric(gsub("[^0-9]", "", bounds))  
+  cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
+  
+  i <- seq(rows[1], rows[2])
+  j <- seq(cols[1], cols[2])
+  cells_in_range <- expand.grid(i, j)
+  nrow(cells_in_range)
+}
+
 
 #' Create worksheet objects from worksheets feed
 #' 
@@ -105,8 +122,8 @@ make_ws_obj <- function(node, sheet_id)
 
 #' Put information from spreadsheets feed into data frame 
 #'
-#' Get spreadsheets' titles, keys, and date/time of last update and organize into 
-#' a data frame for easy post-processing.
+#' Get spreadsheets' titles, date/time of last update and its unique key, and 
+#' organize into a data frame for easy post-processing.
 #'
 #' @importFrom XML xmlValue xmlGetAttr getNodeSet
 ssfeed_to_df <- function() 
@@ -222,7 +239,8 @@ fill_missing_tbl <- function(lookup_tbl, row_min = 1, col_min = 1,
                              row_only = FALSE) 
 {
   if(row_only) {
-    lookup_tbl_clean1 <- ddply(lookup_tbl, "col", fill_missing_row2)
+    lookup_tbl_clean1 <- ddply(lookup_tbl, "col", 
+                               function(x) fill_missing_row(x, row_min))
   } else {
     lookup_tbl_clean <- ddply(lookup_tbl, "row", 
                               function(x) fill_missing_col(x, col_min))
@@ -287,30 +305,17 @@ fill_missing_row <- function(x, row_min)
 }
 
 
-fill_missing_row2 <- function(x) 
-{
-  r <- as.numeric(x$row)
-  
-  for(i in 1: max(r)) {
-    if(is.na(match(i, r))) {
-      new_tuple <- c(i, unique(x$col), NA)
-      x <- rbind(x, new_tuple)
-    }
-  }
-  x
-}
-
-
 #' Plot worksheet
 #'
 #' @param tbl data frame returned by \code{\link{get_lookup_tbl}}
 make_plot <- function(tbl)
 {
-  ggplot(tbl, aes(x = col, y = row)) +
-    geom_tile(fill = "steelblue2", aes(x = col, y = row), alpha = 0.4) +
+  ggplot(data = tbl, aes(x = col, y = row)) +
+    geom_tile(width = 1, height = 1, fill = "steelblue2", alpha = 0.4) +
     facet_wrap(~ Sheet) +
-    scale_x_continuous(breaks = seq(1, max(tbl$col), 1), expand = c(0, 0)) +
-    annotate("text", x = seq(1, max(tbl$col) ,1), y = (-0.05) * max(tbl$row), 
+    scale_x_continuous(breaks = seq(1, max(tbl$col), 1), expand = c(0, 0),
+                       limits = c(1 - 0.5, max(tbl$col) + 0.5)) +
+    annotate("text", x = seq(1, max(tbl$col), 1), y = (-0.05) * max(tbl$row), 
              label = LETTERS[1:max(tbl$col)], colour = "blue",
              fontface = "bold") +
     scale_y_reverse() +
@@ -323,6 +328,13 @@ make_plot <- function(tbl)
 }
 
 
+#' Generate a cells feed to update cell values
+#' 
+#' Create an update feed for the new values.
+#' 
+#' @param feed cell feed returned and parsed from GET request
+#' @param new_values vector of new values to update cells
+#' 
 #' @importFrom XML xmlNode getNodeSet
 #' @importFrom dplyr mutate
 #' @importFrom plyr dlply
@@ -366,6 +378,11 @@ create_update_feed <- function(feed, new_values)
 }
 
 
+#' Make entry element
+#' 
+#' Make the new value into an entry element required by the update feed. 
+#' 
+#' @param x a character string or numeric 
 #' @importFrom XML xmlNode toString.XMLNode
 make_entry_node <- function(x)
 {
