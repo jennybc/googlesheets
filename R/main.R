@@ -421,7 +421,8 @@ get_cell <- function(ws, cell)
     }
   }
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+                           visibility = ws$visibility)
   new_url <- paste(the_url, cell, sep = "/")
   
   req <- gsheets_GET(new_url)
@@ -568,7 +569,7 @@ find_cell <- function(ws, x)
 {
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = 1, max_col = ws$ncol, 
-                           visibility = "private")
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
@@ -601,7 +602,8 @@ find_cell <- function(ws, x)
 find_all <- function(ws, x)
 {
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_col = 1, max_col = ws$ncol)
+                           min_col = 1, max_col = ws$ncol, 
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
