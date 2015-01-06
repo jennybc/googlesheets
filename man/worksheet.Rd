@@ -9,6 +9,6 @@ worksheet()
 worksheet object
 }
 \description{
-This function creates worksheet objects
+Create a worksheet object.
 }
 

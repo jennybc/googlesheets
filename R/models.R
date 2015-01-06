@@ -2,9 +2,9 @@
 
 #' Spreadsheet 
 #'
-#' This function creates spreadsheet objects.
+#' Create a spreadsheet spreadsheet object.
 #'
-#'@return spreadsheet object
+#' @return spreadsheet object
 #'
 spreadsheet <- function() {
   structure(list(sheet_id = character(),
@@ -18,9 +18,9 @@ spreadsheet <- function() {
 
 #' Worksheet
 #'
-#' This function creates worksheet objects
+#' Create a worksheet object.
 #'
-#'@return worksheet object
+#' @return worksheet object
 #'
 worksheet <- function() {
   structure(list(sheet_id = character(),

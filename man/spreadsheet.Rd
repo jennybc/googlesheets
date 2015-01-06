@@ -9,6 +9,6 @@ spreadsheet()
 spreadsheet object
 }
 \description{
-This function creates spreadsheet objects.
+Create a spreadsheet spreadsheet object.
 }
 

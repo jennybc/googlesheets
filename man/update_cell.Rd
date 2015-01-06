@@ -14,7 +14,17 @@ format}
 \item{value}{character string for new value}
 }
 \description{
-Modify the contents of cells (those already with values) in worksheet.
-To empty a cell, update it with an empty string.
+Modify the contents of a cell in a worksheet. Formulas can be set on a cell
+by starting with an = character. The calculated value will be the cell's
+actual value. To empty a cell, update it with an empty string.
+}
+\note{
+Currently you can only update cells contained in the worksheet.
+}
+\examples{
+\dontrun{
+update_cell(worksheet, "A1", "First Cell")
+update_cell(worksheet, "C1", "=A1+B1")
+}
 }
 

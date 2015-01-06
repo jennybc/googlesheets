@@ -20,8 +20,10 @@ the boundaries of the worksheet will be used instead.
 }
 \examples{
 \dontrun{
-read_range("A1:B10")
-read_range("C10:D20")
+worksheet <- open_at_once("My Spreadsheet", "Sheet1")
+
+read_range(worksheet, "A1:B10")
+read_range(worksheet, "C10:D20")
 }
 }
 \seealso{

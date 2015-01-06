@@ -1,4 +1,4 @@
- context("Sheets operations")
+context("Sheets operations")
 
 authorize()
 ss1 <- open_spreadsheet("Gapminder")
@@ -49,19 +49,16 @@ test_that("Add worksheet", {
   
   expect_equal(ss1$nsheets, 2)
   expect_true(name_match)
-  
 })
 
 test_that("Delete worksheet", {
   ss1 <- open_spreadsheet("Gapminder")
-  ws <- open_worksheet(ss1, "bar")
-  del_worksheet(ws)
+  del_worksheet(ss1, "bar")
   ss1 <- open_spreadsheet("Gapminder")
   name_match <- "bar" %in% ss1$ws_names
   
   expect_equal(ss1$nsheets, 1)
   expect_false(name_match)
-  
 })
 
 test_that("Spreadsheet is added", {
@@ -71,7 +68,7 @@ test_that("Spreadsheet is added", {
   
 })
  
- test_that("Spreadsheet is trashed", {
+test_that("Spreadsheet is trashed", {
    old <- length(list_spreadsheets())
    del_spreadsheet("One more spreadsheet")
    expect_equal(length(list_spreadsheets()), old - 1)

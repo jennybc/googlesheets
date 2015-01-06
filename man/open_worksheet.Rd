@@ -19,6 +19,8 @@ Use the title or index of a worksheet to retrieve the worksheet object.
 }
 \examples{
 \dontrun{
+ss <- open_spreadsheet("My Spreadsheet")
+
 ws <- open_worksheet(ss, "Sheet1")
 ws <- open_worksheet(ss, 1)
 }

@@ -141,6 +141,8 @@ open_worksheets <- function(ss)
 #' 
 #' @examples
 #' \dontrun{
+#' ss <- open_spreadsheet("My Spreadsheet")
+#' 
 #' ws <- open_worksheet(ss, "Sheet1")
 #' ws <- open_worksheet(ss, 1)
 #' }
@@ -530,9 +532,12 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
 #' header
 #' @examples
 #' \dontrun{
-#' read_range("A1:B10")
-#' read_range("C10:D20")
+#' worksheet <- open_at_once("My Spreadsheet", "Sheet1")
+#' 
+#' read_range(worksheet, "A1:B10")
+#' read_range(worksheet, "C10:D20")
 #' }
+#' 
 #' @seealso \code{\link{read_region}}, \code{\link{get_row}}, 
 #' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}, 
 #' \code{\link{read_all}}
@@ -617,14 +622,22 @@ find_all <- function(ws, x)
 
 #' Update a cell's value
 #' 
-#' Modify the contents of cells (those already with values) in worksheet. 
-#' To empty a cell, update it with an empty string. 
+#' Modify the contents of a cell in a worksheet. Formulas can be set on a cell 
+#' by starting with an = character. The calculated value will be the cell's
+#' actual value. To empty a cell, update it with an empty string. 
 #' 
 #' @param ws worksheet object
 #' @param pos cell position in label (ex. "A1") or coordinate (ex. "R1C1") 
 #' format
 #' @param value character string for new value
 #'
+#' @note Currently you can only update cells contained in the worksheet.
+#' 
+#' @examples
+#' \dontrun{
+#' update_cell(worksheet, "A1", "First Cell")
+#' update_cell(worksheet, "C1", "=A1+B1")
+#' }
 #' @importFrom XML getNodeSet xmlNode
 #' @export
 update_cell <- function(ws, pos, value)
@@ -671,6 +684,8 @@ update_cell <- function(ws, pos, value)
 #' The range should not include empty cells because those cells will not be 
 #' captured in the response of the request.
 #' 
+#' Update by columns
+#' 
 #' @param ws worksheet object
 #' @param range character string for range of cells (ie. "A1:A2", "A1:B6") 
 #' @param new_values vector of new values to update cells
@@ -681,28 +696,17 @@ update_cells <- function(ws, range, new_values)
 {
   if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", range)) 
     stop("Please check cell notation.")
-  
-  bounds <- unlist(strsplit(range, split = ":"))
-  rows <- as.numeric(gsub("[^0-9]", "", bounds))  
-  cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
-  
-  # generate table of cells that needs to be updated
-  i <- seq(rows[1], rows[2])
-  j <- seq(cols[1], cols[2])
-  cells_in_range <- mutate_(expand.grid(i, j), 
-                            coord = ~paste0("R", Var1, "C", Var2))
-  cells_in_range <- rename_(cells_in_range, "row" = "Var1", "col" = "Var2")
-  
-  if(nrow(cells_in_range) != length(new_values))
+
+  if(ncells(range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           min_row = rows[1], max_row = rows[2],
-                           min_col = cols[1], max_col = cols[2])
+  the_url0 <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id)
   
+  the_url <- paste0(the_url0, "?range=", range, "&return-empty=true")
+
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-  
+
   the_body <- create_update_feed(feed, new_values)
   
   req_url <- paste("https://spreadsheets.google.com/feeds/cells",
@@ -790,14 +794,16 @@ view_all <- function(ss, show_overlay = FALSE)
 }
 
 
-#' Get report for a worksheet
+#' Display the structure of a worksheet
 #' 
-#' Generate a report for a worksheet.
+#' Show the structure of a worksheet. Display the title, number of rows and 
+#' columns, and summary of what patterns each column contains (ie. the number 
+#' of missing cells before cells with values). 
 #' 
 #' @param object worksheet object
 #' @param ... potential further arguments (required for Method/Generic reasons)
 #' 
-#' @return A list of 2.
+#' @return Does not return anything, prints to the console.
 #' 
 #' @importFrom dplyr summarise_ group_by_ select_ arrange_
 #' @importFrom plyr ddply join rename

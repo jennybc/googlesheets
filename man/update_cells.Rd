@@ -17,4 +17,7 @@ Modify a range of cells by specifiying the range and values to update with.
 The range should not include empty cells because those cells will not be
 captured in the response of the request.
 }
+\details{
+Update by columns
+}
 
