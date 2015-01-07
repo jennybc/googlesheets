@@ -38,7 +38,7 @@ df <- read_range(ws, "A1:B7")
 Authorization
 ---
 ##### Authorization using OAuth2 (recommended)
-```{r authorize}
+```{r authorize, eval = FALSE}
 # Give gspreadr permission to access your spreadsheets and google drive
 authorize() 
 ```
@@ -150,7 +150,7 @@ all_my_data <- read_all(ws)
 
 ### Getting all worksheets from a spreadsheet as a list of worksheet objects
 ```{r eval = FALSE}
-my_ws <- list_worksheet_objs(ssheet)
+my_ws <- open_worksheets(ssheet)
 ```
 
 ### Getting a cell value

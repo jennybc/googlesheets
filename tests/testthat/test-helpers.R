@@ -45,6 +45,7 @@ test_that("Worksheet dimensions are correct", {
   
   ss1 <- open_spreadsheet("Testing")
   ws <- ss1$worksheets[[1]]
+  ws$visibility <- "private"
   ws <- worksheet_dim(ws)
   
   expect_equal(ws$nrow, 13)

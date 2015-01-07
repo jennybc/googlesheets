@@ -33,9 +33,9 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ```{r open public sheets, eval = FALSE}
 
-pub_sheet <- open_by_key("1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU")
+pub_sheet <- open_by_key("17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA")
 
-pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU/pubhtml")
+pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA/pubhtml")
 
 ```
 
@@ -46,7 +46,11 @@ Once you have authenticated, you can use `list_spreadsheets()` to remind yoursel
 ```{r spreadsheet ops, eval = FALSE}
 list_spreadsheets()
 
-ssheet <- open_spreadsheet("basic-usage")
+ssheet <- open_spreadsheet("Gapminder by Continent")
+```
+
+```{r, include=FALSE }
+ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA")
 ```
 
 This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 
@@ -66,36 +70,33 @@ list_worksheets(ssheet)
 
 To open a worksheet, you can pass in a spreadsheet object and then specify the worksheet using its title or index, or this can be done in one step using `open_at_once(ss_title, ws_index)`. This saves a bit of typing but the spreadsheet object will not be stored, so if you want to open another worksheet, `open_spreadsheet("title")` will be called again. So if you want to open multiple worksheets from a spreadsheet, save the spreadsheet as an R object and use it for `open_worksheet(ss, x)`  
 
-```{r open ws, eval = FALSE}
-
+```{r open ws}
 # by title
-ws <- open_worksheet(ssheet, "Sheet1")
+ws <- open_worksheet(ssheet, "Oceania")
 ```
 ```{r, eval=FALSE}
-# or by index
-ws <- open_worksheet(ssheet, 1)
+# or by index (starting at 1)
+ws <- open_worksheet(ssheet, 5)
 
 # or in one shot
-ws <- open_at_once(ss_title = "basic-usage", ws_index = "Sheet1")
-ws <- open_at_once(ss_title = "basic-usage", ws_index = 1)
+ws <- open_at_once(ss_title = "Gapminder by Continent", ws_index = "Oceania")
+ws <- open_at_once(ss_title = "Gapminder by Continent", ws_index = 5)
 ```
 
 This returns a worksheet object. You can get the ids of the spreadsheet and worksheet, worksheet title, and the number of rows and columns.
 
 ```{r, eval = FALSE}
 # worksheet components
-ws$sheet_id ; ws$id ; ws$title ; ws$ncol ; ws$specs
+ws$sheet_id ; ws$id ; ws$title ; ws$ncol ; ws$nrow
 ```
 
 # Open multiple worksheets
 
-You can open all the worksheets from a spreadsheet using `list_worksheet_objs()` passing the spreadsheet object as the argument. This will return a list of worksheet objects which you can then use `plyr` functions to perform worksheet operations such as `get_cell()`, `get_row()`, `read_region()`, etc.   
+You can open all the worksheets from a spreadsheet using `open_worksheets()` passing the spreadsheet object as the argument. This will return a list of worksheet objects which you can then use `plyr` functions to perform worksheet operations such as `get_cell()`, `get_row()`, `read_region()`, etc.   
 
 ```{r open multiple worksheets, eval = FALSE}
 
-ssheet2 <- open_spreadsheet("Gapminder by Continent")
-
-ws_objs <- list_worksheet_objs(ssheet2)
+ws_objs <- open_worksheets(ssheet)
 
 plyr::llply(ws_objs, function(x) get_cell(x, "A2"))
 
@@ -105,22 +106,22 @@ plyr::llply(ws_objs, function(x) get_cell(x, "A2"))
 
 ## View worksheet
 
-You can take a look at your worksheets to get an idea of what it looks like. Use `view()` to look at one worksheet and `view_all()` to look at all worksheets contained in a spreadsheet. `view_all()` returns a list of 2 ggplot objects. The first is a gallery of all the worksheets and the second is an overlay of all the worksheets to identify the density of the cells occupied by worksheets.
+You can take a look at your worksheets to get an idea of what it looks like. Use `view()` to look at one worksheet and `view_all()` to look at all worksheets contained in a spreadsheet. `view_all()` returns a gallery of all the worksheets. Set `show_overlay = TRUE` to view an overlay of all the worksheets to identify the density of the cells occupied by worksheets. **showing Error: could not find function "ggplotGrob"**
 
-```{r, fig.width=7, fig.height=7, eval = FALSE}
+```{r, fig.width=7, fig.height=7}
 
 view(ws)
 
-view_all(ssheet2)
+view_all(ssheet)
 ```
 
 ## Display structure of spreadsheet and worksheet
 
 To get a more detailed report of your worksheet, use `str()`. This function summarizes your worksheet by letting you know the number of rows and columns, empty cells, and the cell pattern per column (a string of ##V for values and ##NA for empty cells).
-```{r display structure, eval = FALSE}
+```{r display structure}
 
 # str for a spreadsheet
-str(ssheet2)
+str(ssheet)
 
 # str for a worksheet
 str(ws)
@@ -132,7 +133,7 @@ str(ws)
 You can get row(s), col(s), a region, or an entire worksheet. 
 
 ## Get row(s)
-```{r get rows, eval = FALSE}
+```{r get rows}
 get_row(ws, 1)
 
 get_rows(ws, from = 1, to = 3)
@@ -142,14 +143,14 @@ get_rows(ws, from = 1, to = 3)
 
 You can get columns either by integer or letter. 
 
-```{r get cols, eval = FALSE}
-get_col(ws, 1)
+```{r get cols}
+head(get_col(ws, 1))
 
-get_col(ws, "A")
+head(get_col(ws, "A"))
 
-get_cols(ws, from = 1, to = 5)
+head(get_cols(ws, from = 1, to = 5))
 
-get_cols(ws, from = "A", to = "E")
+head(get_cols(ws, from = "A", to = "E"))
 
 ```
 
@@ -159,7 +160,7 @@ get_cols(ws, from = "A", to = "E")
 
 You can get a region of a worksheet by specifying the boundary rows and columns. The first row will be taken as the `header` by default.
 
-```{r get region, eval = FALSE}
+```{r get region}
 read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5)
 
 # set header to FALSE
@@ -170,7 +171,7 @@ read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5, header = FAL
 
 You can also get a region of a worksheet by specifying the cell ranges as a character string. The first row will be taken as the `header` by default.
 
-```{r get range, eval = FALSE}
+```{r get range}
 
 read_range(ws, "A1:E5")
 
@@ -190,7 +191,7 @@ read_all(ws)
 
 You can get the value of a specific cell. There are two notations you can use: `A1` and `R1C1`. For `A1` notation, columns are indicated by a letter followed by the row as an integer. For `R1C1` notation, integers represent the rows and columns, and are preceded by `R` or `C`. Note that `A1` and `R1C1` are equivalent.
 
-```{r get cell, eval = FALSE}
+```{r get cell}
 
 get_cell(ws, "A1")
 
@@ -202,15 +203,16 @@ get_cell(ws, "R1C1")
 
 You can find the first position of the cell containing the specified value or all the cells that contain the specified value. 
 
-```{r find cell, eval = FALSE}
+```{r find cell}
 
-find_cell(ws, "Afghanistan")
+find_cell(ws, "Australia")
 
-find_all(ws, "Afghanistan")
+find_all(ws, "Australia")
 
 ```
 
-## Update cells
+
+## Update cells (currently only works for your own private spreadsheets)
 
 ### Update a single cell
 
@@ -218,7 +220,7 @@ You can update a cell's value by specifying the cell's position, either in `A1` 
 
 ```{r update cell, eval = FALSE}
 
-update_cell(ws, "A1", "new value")
+update_cell(ws, "A1", "Oops")
 
 get_cell(ws, "A1")
 
@@ -234,23 +236,34 @@ You can update a batch of cells by specifying the range of cells, ie. "A1:A4", a
 
 ```{r update cells, eval = FALSE}
 
-update_cells(ws, "A1:B1", c("new_value1", "new_value2"))
+update_cells(ws, "C1:E1", c("A", "B", "C"))
 
-get_row(ws, 1)
-
+read_range(ws, "A1:F3")
 ```
 
-## Add a worksheet
+```{r return to orig, eval = FALSE}
 
-To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns.
+update_cells(ws, "C1:E1", c("pop", "continent", "lifeExp"))
+```
+
+## Add or delete a worksheet
+
+To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. Similarly, to delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet.
 
 ```{r, eval = FALSE}
 add_worksheet(ssheet, title = "foo", rows = 10, cols = 10)
+
+del_worksheet(ssheet, ws_title)
 ```
 
-## Delete a worksheet
-```{r, eval = FALSE}
-del_worksheet(ssheet, ws)
+## Add or delete a spreadsheet
+
+To add or delete a spreadsheet in your Google Drive, use `add_spreadsheet()` or `del_spreadsheet()` and simply pass in the title of the spreadsheet as a character string.
+
+```{r create and delete spreadsheet, eval = FALSE}
+# Create a new spreadsheet by title
+add_spreadsheet("New Spreadsheet")
+
+# Move spreadsheet to trash
+del_spreadsheet("New Spreadsheet")
 ```
-
-
