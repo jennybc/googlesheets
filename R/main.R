@@ -20,7 +20,7 @@ list_spreadsheets <- function()
 add_spreadsheet <- function(title)
 {
   the_body <- paste0('{ "title" : "', title ,'", 
-                    "mimeType" : "application/vnd.google-apps.spreadsheet"}')
+                     "mimeType" : "application/vnd.google-apps.spreadsheet"}')
   
   gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body, 
                content_type = "json")
@@ -161,7 +161,9 @@ open_worksheet <- function(ss, value)
   
   ws <- ss$worksheets[[index]]
   ws$visibility <- ss$visibility
-  worksheet_dim(ws, visibility = ss$visibility)
+  
+  worksheet_dim(ws)
+  
 }
 
 
@@ -229,7 +231,7 @@ del_worksheet<- function(ss, ws_title)
   
   if(is.na(index))
     stop("Worksheet not found.")
-
+  
   ws <- ss$worksheets[[index]]
   
   the_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
@@ -698,7 +700,7 @@ update_cells <- function(ws, range, new_values)
 {
   if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", range)) 
     stop("Please check cell notation.")
-
+  
   if(ncells(range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
   
@@ -706,10 +708,10 @@ update_cells <- function(ws, range, new_values)
                             visibility = ws$visibility)
   
   the_url <- paste0(the_url0, "?range=", range, "&return-empty=true")
-
+  
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
-
+  
   the_body <- create_update_feed(feed, new_values)
   
   req_url <- paste("https://spreadsheets.google.com/feeds/cells",
@@ -738,6 +740,7 @@ view <- function(ws)
     stop("Worksheet is empty!")
   
   req <- gsheets_GET(the_url)
+  
   feed <- gsheets_parse(req)
   tbl <- get_lookup_tbl(feed, include_sheet_title = TRUE)
   make_plot(tbl)
@@ -766,7 +769,9 @@ view_all <- function(ss, show_overlay = FALSE)
             the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                                      min_col = 1, max_col = ws$ncol,
                                      visibility = ws$visibility)
+            
             req <- gsheets_GET(the_url)
+            
             feed <- gsheets_parse(req)
             get_lookup_tbl(feed, include_sheet_title = TRUE)
           })
@@ -823,8 +828,8 @@ str.worksheet <- function(object, ...)
   the_url <- build_req_url("cells", key = object$sheet_id, ws_id = object$id, 
                            min_col = 1, max_col = object$ncol, 
                            visibility = object$visibility)
-  
   req <- gsheets_GET(the_url)
+  
   feed <- gsheets_parse(req)
   tbl <- get_lookup_tbl(feed)
   
@@ -907,6 +912,8 @@ open_by_key <- function(key, visibility = "public")
   }
   
   req <- gsheets_GET(the_url)
+  
+  
   wsfeed <- gsheets_parse(req)
   wsfeed_list <- xmlToList(wsfeed)
   

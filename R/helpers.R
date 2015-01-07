@@ -158,16 +158,15 @@ ssfeed_to_df <- function()
 #' Get the rows and columns of a worksheet by making a request for cellfeed.
 #'
 #' @param ws a worksheet object
-#' @param visibility either "private" or "public"
-#' @param auth Google token
 #' 
 #' @export
-worksheet_dim <- function(ws, visibility = "private", auth = get_google_token())
+worksheet_dim <- function(ws)
 {
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                           visibility = visibility)
+                           visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
+  
   feed <- gsheets_parse(req)
   
   tbl <- get_lookup_tbl(feed)

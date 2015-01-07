@@ -3,14 +3,10 @@
 \alias{worksheet_dim}
 \title{Find the dimensions of a worksheet}
 \usage{
-worksheet_dim(ws, visibility = "private", auth = get_google_token())
+worksheet_dim(ws)
 }
 \arguments{
 \item{ws}{a worksheet object}
-
-\item{visibility}{either "private" or "public"}
-
-\item{auth}{Google token}
 }
 \description{
 Get the rows and columns of a worksheet by making a request for cellfeed.
