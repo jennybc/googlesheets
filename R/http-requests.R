@@ -78,11 +78,12 @@ build_query <- function(min_row, max_row, min_col, max_col)
 #' @param token Google auth token obtained from \code{\link{login}} 
 #' or \code{\link{authorize}} 
 #' @importFrom httr GET stop_for_status
-gsheets_GET <- function(url, token = get_google_token()) 
+gsheets_GET <- function(url, token = NULL) 
 { 
-  if(is.null(token)) {
+  if(grepl("public", url)) {
     req <- GET(url)
   } else {
+    token = get_google_token()
     req <- GET(url, gsheets_auth(token))
   }
   stop_for_status(req)

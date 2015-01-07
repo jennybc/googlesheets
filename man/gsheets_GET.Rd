@@ -3,7 +3,7 @@
 \alias{gsheets_GET}
 \title{Create GET request}
 \usage{
-gsheets_GET(url, token = get_google_token())
+gsheets_GET(url, token = NULL)
 }
 \arguments{
 \item{url}{URL for GET request}
