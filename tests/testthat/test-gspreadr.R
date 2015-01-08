@@ -4,7 +4,12 @@ authorize()
 ss1 <- open_spreadsheet("Gapminder")
 
 test_that("List all my spreadsheets", {
-  expect_equal(length(list_spreadsheets()), 7)
+  
+  list1 <- list_spreadsheets()
+  list2 <- list_spreadsheets(show_key = TRUE)
+  
+  expect_equal(ncol(list1), 3)
+  expect_equal(ncol(list2), 4)
 })
 
 test_that("Open spreadsheet by title", {
@@ -62,15 +67,15 @@ test_that("Delete worksheet", {
 })
 
 test_that("Spreadsheet is added", {
-  old <- length(list_spreadsheets())
+  old <- nrow(list_spreadsheets())
   add_spreadsheet("One more spreadsheet")
-  expect_equal(length(list_spreadsheets()), old + 1)
+  expect_equal(nrow(list_spreadsheets()), old + 1)
   
 })
  
 test_that("Spreadsheet is trashed", {
-   old <- length(list_spreadsheets())
+   old <- nrow(list_spreadsheets())
    del_spreadsheet("One more spreadsheet")
-   expect_equal(length(list_spreadsheets()), old - 1)
+   expect_equal(nrow(list_spreadsheets()), old - 1)
    
  })

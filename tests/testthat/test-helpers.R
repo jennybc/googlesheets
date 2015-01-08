@@ -28,6 +28,7 @@ test_that("R1C1 notation converts to A1 notation", {
   expect_equal(coord_to_label("R10C28"), "AB10")
 })
 
+
 test_that("Header is set", {
   x <- data.frame(1:5, 1:5)
   
@@ -35,10 +36,18 @@ test_that("Header is set", {
 })
 
 
+test_that("Count the correct number of cells in the range", {
+  
+  expect_equal(ncells("A1:A1"), 1)
+  expect_equal(ncells("B2:I22"), 168)
+  expect_equal(ncells("C1:A1"), 3)
+})
+
+
 test_that("Info from spreadsheets feed put into data frame", {
   
   dat <- ssfeed_to_df()
-  expect_equal(ncol(dat), 3)
+  expect_equal(ncol(dat), 4)
 })
 
 test_that("Worksheet dimensions are correct", {

@@ -1,11 +1,23 @@
 #' Get list of spreadsheets
 #'
-#' Retrieve the names of the user's spreadsheets in Google drive.
-#'
+#' Retrieve the names of the user's spreadsheets in Google drive. All 
+#' private, public, and shared spreadsheets will be listed in order of most
+#' recently updated. 
+#' 
+#' @param show_key \code{logical} to indicate whether spreadsheet keys are shown
+#' 
+#' @importFrom dplyr select_
 #' @export
-list_spreadsheets <- function() 
+list_spreadsheets <- function(show_key = FALSE) 
 {
-  ssfeed_to_df()$sheet_title
+  sheets_df <- ssfeed_to_df()
+  
+  if(show_key) {
+    sheets_df
+  } else {
+    select_(sheets_df, quote(-sheet_key))
+  }
+  
 }
 
 
@@ -38,9 +50,13 @@ add_spreadsheet <- function(title)
 #' @export
 del_spreadsheet <- function(title)
 {
-  ss <-open_spreadsheet(title)
+  sheets_df <- ssfeed_to_df()
   
-  the_url <- paste("https://www.googleapis.com/drive/v2/files", ss$sheet_id,
+  index <- match(title, sheets_df$sheet_title)
+  
+  sheet_id <- sheets_df[index, "sheet_key"]
+  
+  the_url <- paste("https://www.googleapis.com/drive/v2/files", sheet_id,
                    "trash", sep = "/")
   
   gsheets_POST(the_url, the_body = NULL)
@@ -258,6 +274,7 @@ get_row <- function(ws, row)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = row, max_row = row, 
                            visibility = ws$visibility)
+  
   req <- gsheets_GET(the_url)
   feed <- gsheets_parse(req)
   

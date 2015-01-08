@@ -44,7 +44,11 @@ pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2
 Once you have authenticated, you can use `list_spreadsheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title.
 
 ```{r spreadsheet ops, eval = FALSE}
+# list spreadsheet titles, owners, and time of last update
 list_spreadsheets()
+
+# list the spreadsheet key too
+list_spreadsheets(show_key = TRUE)
 
 ssheet <- open_spreadsheet("Gapminder by Continent")
 ```

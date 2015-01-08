@@ -145,9 +145,13 @@ ssfeed_to_df <- function()
   
   ss_key <- sub(".*full/", "", unlist(ss_wsfeed)) # extract spreadsheet key
   
+  ss_owner <- getNodeSet(ssfeed, "//ns:entry//ns:author//ns:name", 
+                         c("ns" = default_ns), xmlValue)
+  
   ssdata_df <- data.frame(sheet_title = unlist(ss_titles),
-                          last_updated = unlist(ss_updated),
                           sheet_key = ss_key,
+                          owner = unlist(ss_owner),
+                          last_updated = unlist(ss_updated),
                           stringsAsFactors = FALSE)
   ssdata_df
 }
