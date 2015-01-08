@@ -94,6 +94,7 @@ open_spreadsheet <- function(title)
   sheet_key <- ssfeed_df[index, "sheet_key"]
   
   the_url <- build_req_url("worksheets", key = sheet_key)
+  
   req <- gsheets_GET(the_url)
   wsfeed <- gsheets_parse(req)
   
@@ -231,6 +232,8 @@ add_worksheet <- function(ss, title, nrow, ncol)
   the_url <- build_req_url("worksheets", key = ss$sheet_id)
   
   gsheets_POST(the_url, the_body)
+  
+  message(paste0('Worksheet "', title, '" successfully added.'))
 }
 
 
@@ -251,7 +254,10 @@ del_worksheet<- function(ss, ws_title)
   ws <- ss$worksheets[[index]]
   
   the_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
+  
   gsheets_DELETE(the_url) 
+  
+  message(paste0('Worksheet "', ws_title, '" successfully deleted.'))
 }
 
 
@@ -905,13 +911,12 @@ str.spreadsheet <- function(object, ...)
       sep = "\n")
 }
 
-# Public spreadsheets only -----
 
 #' Open spreadsheet by key 
 #'
 #' Use key found in browser URL and return an object of class spreadsheet.
 #'
-#' @param key A key of a spreadsheet as it appears in browser URL.
+#' @param key the key of a spreadsheet as it appears in browser URL.
 #' @param visibility either "public" for public spreadsheets or "private" 
 #' for private spreadsheets
 #' 
@@ -960,6 +965,8 @@ open_by_key <- function(key, visibility = "public")
 #' @param visibility either "public" for public spreadsheets or "private" 
 #' for private spreadsheets
 #' 
+#' @note This function assumes after splitting the url by the longest character string in the url is the 
+#' key of the spreadsheet.
 #' @return Object of class spreadsheet.
 #'
 #' This function only works for public spreadsheets.
@@ -968,7 +975,10 @@ open_by_key <- function(key, visibility = "public")
 #' @export
 open_by_url <- function(url, visibility = "public") 
 {
-  key <- unlist(strsplit(url, "/"))[6] 
+  elements <- unlist(strsplit(url, "/"))
+  
+  key <- elements[which.max(nchar(elements))]
+  
   open_by_key(key, visibility)
 }
 

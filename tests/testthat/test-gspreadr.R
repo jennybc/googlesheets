@@ -8,8 +8,8 @@ test_that("List all my spreadsheets", {
   list1 <- list_spreadsheets()
   list2 <- list_spreadsheets(show_key = TRUE)
   
-  expect_equal(ncol(list1), 3)
-  expect_equal(ncol(list2), 4)
+  expect_equal(ncol(list1), 4)
+  expect_equal(ncol(list2), 5)
 })
 
 test_that("Open spreadsheet by title", {

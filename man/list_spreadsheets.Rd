@@ -3,9 +3,14 @@
 \alias{list_spreadsheets}
 \title{Get list of spreadsheets}
 \usage{
-list_spreadsheets()
+list_spreadsheets(show_key = FALSE)
+}
+\arguments{
+\item{show_key}{\code{logical} to indicate whether spreadsheet keys are shown}
 }
 \description{
-Retrieve the names of the user's spreadsheets in Google drive.
+Retrieve the names of the user's spreadsheets in Google drive. All
+private, public, and shared spreadsheets will be listed in order of most
+recently updated.
 }
 

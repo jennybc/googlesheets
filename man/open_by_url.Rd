@@ -21,4 +21,8 @@ This function extracts the key from the url and calls on
 \description{
 Use url of spreadsheet and return an object of class spreadsheet.
 }
+\note{
+This function assumes after splitting the url by the longest character string in the url is the
+key of the spreadsheet.
+}
 

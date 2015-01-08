@@ -47,7 +47,7 @@ test_that("Count the correct number of cells in the range", {
 test_that("Info from spreadsheets feed put into data frame", {
   
   dat <- ssfeed_to_df()
-  expect_equal(ncol(dat), 4)
+  expect_equal(ncol(dat), 5)
 })
 
 test_that("Worksheet dimensions are correct", {

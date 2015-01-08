@@ -122,8 +122,8 @@ make_ws_obj <- function(node, sheet_id)
 
 #' Put information from spreadsheets feed into data frame 
 #'
-#' Get spreadsheets' titles, date/time of last update and its unique key, and 
-#' organize into a data frame for easy post-processing.
+#' Get spreadsheets' titles, owner, access type, date/time of last update and 
+#' its unique key, and organize into a data frame for easy post-processing.
 #'
 #' @importFrom XML xmlValue xmlGetAttr getNodeSet
 ssfeed_to_df <- function() 
@@ -139,6 +139,17 @@ ssfeed_to_df <- function()
   ss_updated <- getNodeSet(ssfeed, "//ns:entry//ns:updated", 
                            c("ns" = default_ns), xmlValue)
   
+  ss_access <- 
+    getNodeSet(ssfeed, '//ns:entry//ns:link[@rel="http://schemas.google.com/spreadsheets/2006#worksheetsfeed"]', 
+               c("ns" = default_ns),
+               function(x) xmlGetAttr(x, "href"))
+  
+  ss_access_log <- grepl("values", unlist(ss_access))
+  
+  ss_access_log[grep(TRUE, ss_access_log)] <- "read only"
+  ss_access_log[grep(FALSE, ss_access_log)] <- "read/write"
+  
+  
   ss_wsfeed <- 
     getNodeSet(ssfeed, '//ns:entry//ns:link[@rel="self"]', c("ns" = default_ns),
                function(x) xmlGetAttr(x, "href"))
@@ -151,6 +162,7 @@ ssfeed_to_df <- function()
   ssdata_df <- data.frame(sheet_title = unlist(ss_titles),
                           sheet_key = ss_key,
                           owner = unlist(ss_owner),
+                          access_type = ss_access_log,
                           last_updated = unlist(ss_updated),
                           stringsAsFactors = FALSE)
   ssdata_df
