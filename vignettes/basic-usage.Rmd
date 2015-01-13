@@ -33,9 +33,9 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ```{r open public sheets, eval = FALSE}
 
-pub_sheet <- open_by_key("17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA")
+pub_sheet <- open_by_key("17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA", visibility = "public")
 
-pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA/pubhtml")
+pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA/pubhtml", visibility = "public")
 
 ```
 
@@ -53,8 +53,8 @@ list_spreadsheets(show_key = TRUE)
 ssheet <- open_spreadsheet("Gapminder by Continent")
 ```
 
-```{r, include=FALSE }
-ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA")
+```{r, include = FALSE }
+ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA", visibility = "public")
 ```
 
 This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 

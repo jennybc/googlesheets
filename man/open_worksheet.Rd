@@ -12,10 +12,13 @@ open_worksheet(ss, value)
 index of worksheet}
 }
 \value{
-A worksheet object with number of rows and cols component.
+A worksheet object.
 }
 \description{
 Use the title or index of a worksheet to retrieve the worksheet object.
+}
+\note{
+Worksheet indexing starts at 1.
 }
 \examples{
 \dontrun{

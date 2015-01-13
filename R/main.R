@@ -154,7 +154,8 @@ open_worksheets <- function(ss)
 #' @param value a character string for the title of worksheet or numeric for 
 #' index of worksheet
 #' 
-#' @return A worksheet object with number of rows and cols component.
+#' @return A worksheet object.
+#' @note Worksheet indexing starts at 1.
 #' 
 #' @examples
 #' \dontrun{
@@ -177,10 +178,12 @@ open_worksheet <- function(ss, value)
   }
   
   ws <- ss$worksheets[[index]]
+  
   ws$visibility <- ss$visibility
   
-  worksheet_dim(ws)
+  ws <- worksheet_dim(ws)
   
+  ws
 }
 
 
@@ -676,8 +679,10 @@ update_cell <- function(ws, pos, value)
   row_num <- sub("R([0-9]+)C([0-9]+)", "\\1", pos)
   col_num <- sub("R([0-9]+)C([0-9]+)", "\\2", pos)
   
+  # use "private" for visibility because "public" will not allow for writing to
+  # public sheet, if dont have permission then error will be thrown
   url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                       visibility = ws$visibility)
+                       visibility = "private") 
   
   the_url <- paste(url, pos, sep = "/")
   
@@ -727,8 +732,10 @@ update_cells <- function(ws, range, new_values)
   if(ncells(range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
   
+  # use "private" for visibility because "public" will not allow for writing to
+  # public sheet, if dont have permission then error will be thrown
   the_url0 <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                            visibility = ws$visibility)
+                            visibility = "private")
   
   the_url <- paste0(the_url0, "?range=", range, "&return-empty=true")
   
@@ -925,16 +932,11 @@ str.spreadsheet <- function(object, ...)
 #' This function only works for keys of public spreadsheets.
 #' @importFrom XML xmlToList getNodeSet
 #' @export
-open_by_key <- function(key, visibility = "public") 
+open_by_key <- function(key, visibility = "private") 
 {
-  if(visibility == "public") {
-    the_url <- build_req_url("worksheets", key = key, visibility = "public")
-  } else {
-    the_url <- build_req_url("worksheets", key = key, visibility = "private")
-  }
+  the_url <- build_req_url("worksheets", key = key, visibility = visibility)
   
   req <- gsheets_GET(the_url)
-  
   
   wsfeed <- gsheets_parse(req)
   wsfeed_list <- xmlToList(wsfeed)
@@ -973,7 +975,7 @@ open_by_key <- function(key, visibility = "public")
 #' This function extracts the key from the url and calls on 
 #' \code{\link{open_by_key}}.
 #' @export
-open_by_url <- function(url, visibility = "public") 
+open_by_url <- function(url, visibility = "private") 
 {
   elements <- unlist(strsplit(url, "/"))
   
