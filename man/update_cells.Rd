@@ -2,23 +2,21 @@
 % Please edit documentation in R/main.R
 \name{update_cells}
 \alias{update_cells}
-\title{Update multiple cells' values}
+\title{Update multiple cells at once}
 \usage{
-update_cells(ws, range, new_values)
+update_cells(ws, range, dat, header = TRUE)
 }
 \arguments{
 \item{ws}{worksheet object}
 
 \item{range}{character string for range of cells (ie. "A1:A2", "A1:B6")}
 
-\item{new_values}{vector of new values to update cells}
+\item{dat}{character vector or data frame of new values to update cells}
+
+\item{header}{\code{logical} inidicating if data contains header row}
 }
 \description{
-Modify a range of cells by specifiying the range and values to update with.
-The range should not include empty cells because those cells will not be
-captured in the response of the request.
-}
-\details{
-Update by columns
+Modify a range of cells by specifiying the range and values to update to.
+Values will be updated by row.
 }
 

@@ -348,7 +348,7 @@ make_plot <- function(tbl)
 #' Create an update feed for the new values.
 #' 
 #' @param feed cell feed returned and parsed from GET request
-#' @param new_values vector of new values to update cells
+#' @param new_values vector of new values to update cells 
 #' 
 #' @importFrom XML xmlNode getNodeSet
 #' @importFrom dplyr mutate
@@ -367,7 +367,7 @@ create_update_feed <- function(feed, new_values)
   
   dat_tbl <- mutate(tbl, self_link = unlist(self_link), 
                     edit_link = unlist(edit_link), 
-                    new_vals = new_values, 
+                    new_vals = new_values,
                     row_id = 1:nrow(tbl))
   
   req_url <- unlist(getNodeSet(feed, '//ns:id', 

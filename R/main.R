@@ -710,24 +710,30 @@ update_cell <- function(ws, pos, value)
 }
 
 
-#' Update multiple cells' values
+#' Update multiple cells at once
 #' 
-#' Modify a range of cells by specifiying the range and values to update with. 
-#' The range should not include empty cells because those cells will not be 
-#' captured in the response of the request.
-#' 
-#' Update by columns
+#' Modify a range of cells by specifiying the range and values to update to.
+#' Values will be updated by row. 
 #' 
 #' @param ws worksheet object
 #' @param range character string for range of cells (ie. "A1:A2", "A1:B6") 
-#' @param new_values vector of new values to update cells
+#' @param dat character vector or data frame of new values to update cells
+#' @param header \code{logical} inidicating if data contains header row
 #' 
 #' @importFrom dplyr mutate_ rename_
 #' @export 
-update_cells <- function(ws, range, new_values)
+update_cells <- function(ws, range, dat, header = TRUE)
 {
   if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", range)) 
     stop("Please check cell notation.")
+  
+  if(!header) {
+    head_vals <- NULL
+  } else {
+    head_vals <- names(dat)
+  }
+    
+  new_values <- c(head_vals, as.vector(t(dat))) # dframe to vector by row
   
   if(ncells(range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
