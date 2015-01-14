@@ -1,81 +1,84 @@
-context("Sheets operations")
-
-authorize()
-ss1 <- open_spreadsheet("Gapminder")
-
-test_that("List all my spreadsheets", {
-  
-  list1 <- list_spreadsheets()
-  list2 <- list_spreadsheets(show_key = TRUE)
-  
-  expect_equal(ncol(list1), 4)
-  expect_equal(ncol(list2), 5)
-})
-
-test_that("Open spreadsheet by title", {
-  
-  expect_equal(class(ss1), "spreadsheet")
-  expect_equal(ss1$nsheets, 1)
-  expect_equal(ss1$sheet_title, "Gapminder")
-  expect_error(open_spreadsheet("Gap"), "Spreadsheet not found.")
-})
-
-test_that("List all my worksheets in spreadsheet", {
-  expect_equal(list_worksheets(ss1), "Sheet1")
-})
-
-test_that("Get worksheet object", {
-  
-  expect_equal(class(open_worksheet(ss1, "Sheet1")), "worksheet")
-  expect_equal(open_worksheet(ss1, "Sheet1"), open_worksheet(ss1, 1))
-  expect_error(open_worksheet(ss1, "Sheet2"), "Worksheet not found.")
-})
+context("Opening spreadsheets and worksheets")
 
 test_that("Open spreadsheet by key", {
-  good_key <- "1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-cmEaZU"
+  good_key <- "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk"
   bad_key <- "1WNUDoBbGsPccRkXlLqeUK9JUQNnqq2yvc9r7-XXXXXX"
   
-  expect_equal(class(open_by_key(good_key)), "spreadsheet")
+  expect_that(open_by_key(good_key, visibility = "public"), is_a("spreadsheet"))
   throws_error(open_by_key(bad_key))
 })
 
 test_that("Open spreadsheet by url", {
-  good_url <- "https://docs.google.com/spreadsheets/d/1nKnfjLX7L76eWlLJjthq_qf0FF1lprDv7rYs6Sm1iCw/pubhtml"
+  good_url <- "https://docs.google.com/spreadsheets/d/1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk/pubhtml"
   bad_url <- "https://docs.google.com/spreadsheets/d/1nKnfjLX7L76eWlLJjthq_XXXXXX/pubhtml"
   
-  expect_equal(class(open_by_url(good_url)), "spreadsheet")
+  expect_that(open_by_url(good_url, visibility = "public"), is_a("spreadsheet"))
   throws_error(open_by_key(bad_url))
 })
 
-test_that("Add worksheet", {
-  add_worksheet(ss1, "bar", 10, 10)
-  ss1 <- open_spreadsheet("Gapminder")
-  name_match <- "bar" %in% ss1$ws_names
+
+test_that("Open a public spreadsheet", {
+  sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+                        visibility = "public")
+  sheet2 <- open_by_url("https://docs.google.com/spreadsheets/d/1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk/pubhtml", 
+                        visibility = "public")
   
-  expect_equal(ss1$nsheets, 2)
-  expect_true(name_match)
+  expect_equal(sheet1, sheet2)
+  
 })
+
+sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+                      visibility = "public")
+
+test_that("Worksheets are listed", {
+  expect_true(all(list_worksheets(sheet1) %in% 
+                    c("Asia", "Africa", "Americas", "Europe", "Oceania", "Blank")))          
+})
+
+test_that("Get worksheet object", {
+  
+  wks1 <- open_worksheet(sheet1, "Asia")
+  wks2 <- open_worksheet(sheet1, 1)
+
+  expect_that(wks1, is_a("worksheet"))
+  expect_equal(wks1, wks2)
+  expect_error(open_worksheet(sheet1, "Sheet1"), "Worksheet not found.")
+})
+
+# test_that("Print structure of spreadsheet", {
+#   
+# })
+
+test_that("Print structure of worksheet", {
+  
+  wks1 <- open_worksheet(sheet1, "Asia")
+  
+  expect_that(str(sheet1), prints_text("Asia : 7 rows and 6 columns"))
+  
+})
+
+
+test_that("Add worksheet", {
+  add_worksheet(sheet1, "bar", 10, 10)
+  
+  sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+                        visibility = "public")
+  
+  expect_true("bar" %in% sheet1$ws_names)
+  expect_error(add_worksheet(sheet1, "Asia", 10, 10), 
+               "A worksheet with the same name already exists, please choose a different name!")
+})
+
+sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+                      visibility = "public")
 
 test_that("Delete worksheet", {
-  ss1 <- open_spreadsheet("Gapminder")
-  del_worksheet(ss1, "bar")
-  ss1 <- open_spreadsheet("Gapminder")
-  name_match <- "bar" %in% ss1$ws_names
+  del_worksheet(sheet1, "bar")
   
-  expect_equal(ss1$nsheets, 1)
-  expect_false(name_match)
+  sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+                        visibility = "public")
+  
+  expect_false("bar" %in% sheet1$ws_names)
 })
 
-test_that("Spreadsheet is added", {
-  old <- nrow(list_spreadsheets())
-  add_spreadsheet("One more spreadsheet")
-  expect_equal(nrow(list_spreadsheets()), old + 1)
-  
-})
- 
-test_that("Spreadsheet is trashed", {
-   old <- nrow(list_spreadsheets())
-   del_spreadsheet("One more spreadsheet")
-   expect_equal(nrow(list_spreadsheets()), old - 1)
-   
- })
+
