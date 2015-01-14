@@ -61,7 +61,7 @@ ssheet <- open_spreadsheet("Temperature")
 str(ssheet)
 ```
 
-##### Usually for public spreadsheets (set visibility = "private" for private spreadsheets): 
+##### Usually for public spreadsheets (set visibility = "public" for public spreadsheets): 
 ```{r public spreadsheet, eval = FALSE}
 # Open a spreadsheet by its key 
 ssheet <- open_by_key("1GLsDOyR8hDgkjC6fzaDCVVjYsN8tLvnySDayk3HfxxA")
@@ -174,17 +174,24 @@ find_all(ws, "10")
 
 ### Updating cells 
 ```{r eval}
-#update a cell
+# update a single cell
 update_cell(ws, "B4", "2.0")
 
 get_cell(ws, "B4")
 
-# Update in batch
+# Update cells in batch - specify range
 update_cells(ws, "B2:C2", c("January", "February"))
 
 read_range(ws, "B2:C2")
+
+# Update cells in batch - specify anchor cell
+update_cells(ws, "D2", c("March", "April", "May"))
+
+read_range(ws, "B2:F2")
 ```
 
 ```{r return to normal, include=FALSE}
-update_cells(ws, "B2:C2", c("Jan", "Feb"))
+update_cells(ws, "B2:F2", c("Jan", "Feb", "Mar", "Apr", "May"))
 update_cell(ws, "B4", "3.3")
+```
+
