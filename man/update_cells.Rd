@@ -9,7 +9,8 @@ update_cells(ws, range, dat, header = TRUE)
 \arguments{
 \item{ws}{worksheet object}
 
-\item{range}{character string for range of cells (ie. "A1:A2", "A1:B6")}
+\item{range}{character string for range of cells (ie. "A1:A2", "A1:B6") or a
+single cell to represent an "anchor" cell}
 
 \item{dat}{character vector or data frame of new values to update cells}
 

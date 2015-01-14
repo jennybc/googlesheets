@@ -9,7 +9,7 @@ find_cell(ws, x)
 \arguments{
 \item{ws}{worksheet object}
 
-\item{x}{a character string}
+\item{x}{a character string (case sensitive)}
 }
 \description{
 Get the cell location of the first occurence of a cell value.

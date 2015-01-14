@@ -83,9 +83,9 @@ set_header <- function(x)
 
 #' Determine the number of cells in the range
 #' 
-#'@param range character string for range value
+#' @param range character string for range value
 #'
-#'@return numeric value for count of cells in range.
+#' @return numeric value for count of cells in range.
 ncells <- function(range)
 {
   bounds <- unlist(strsplit(range, split = ":"))
@@ -97,6 +97,42 @@ ncells <- function(range)
   cells_in_range <- expand.grid(i, j)
   nrow(cells_in_range)
 }
+
+
+#' Determine the range occupied by a data frame
+#' 
+#' @param dat a data frame
+#' @param anchor position of cell used as an "anchor"
+#' @param header \code{logical} indicating whether the header of the data should 
+#' be included in the range
+#'
+#' @return character string for the range taken up by a data frame
+build_range <- function(dat, anchor, header) {
+  
+  if(!is.data.frame(dat)) {
+    row <- 0
+    col <- length(dat) - 1
+  } else {
+    
+    if(header) {
+      row <- nrow(dat)
+    } else { 
+      row <- nrow(dat) - 1 
+    }
+    col <- ncol(dat) - 1
+  }
+  
+  letter <- unlist(strsplit(anchor, "[0-9]+"))
+  
+  right_col_num <- letter_to_num(letter) + col
+  right_col_letter <- num_to_letter(right_col_num)
+  
+  row_num <- gsub("[[:alpha:]]", "", anchor)
+  bottom_row <- as.numeric(row_num) + row
+  
+  paste0(anchor, ":", right_col_letter, bottom_row)
+}
+
 
 
 #' Create worksheet objects from worksheets feed
@@ -426,3 +462,13 @@ gsheets_parse <- function(req)
   xmlInternalTreeParse(req)
 }
 
+
+#' Check if worksheet is empty
+#'
+#' Throw an error if worksheet is empty
+#'
+#' @param ws worksheet object
+check_empty <- function(ws) {
+  if(ws$nrow == 0)
+    stop("Worksheet does not contain any values.")
+}

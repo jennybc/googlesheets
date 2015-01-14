@@ -513,8 +513,7 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
   if(to_col > ws$ncol)
     to_col <- ws$ncol
   
-  if(ws$nrow == 0)
-    stop("Worksheet is empty!")
+  check_empty(ws)
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_row = from_row, max_row = to_row,
@@ -590,7 +589,7 @@ read_range <- function(ws, x, header = TRUE)
 #' Get the cell location of the first occurence of a cell value.
 #' 
 #' @param ws worksheet object
-#' @param x a character string
+#' @param x a character string (case sensitive)
 #' 
 #' @export
 find_cell <- function(ws, x)
@@ -716,7 +715,8 @@ update_cell <- function(ws, pos, value)
 #' Values will be updated by row. 
 #' 
 #' @param ws worksheet object
-#' @param range character string for range of cells (ie. "A1:A2", "A1:B6") 
+#' @param range character string for range of cells (ie. "A1:A2", "A1:B6") or a
+#' single cell to represent an "anchor" cell
 #' @param dat character vector or data frame of new values to update cells
 #' @param header \code{logical} inidicating if data contains header row
 #' 
@@ -724,15 +724,19 @@ update_cell <- function(ws, pos, value)
 #' @export 
 update_cells <- function(ws, range, dat, header = TRUE)
 {
-  if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", range)) 
-    stop("Please check cell notation.")
+  if(grepl("^[[:alpha:]]+[[:digit:]]+$", range)) {
+    range <- build_range(dat, range, header)
+  } else {
+    if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", range))
+      stop("Please check cell notation.")
+  }
   
   if(!header) {
     head_vals <- NULL
   } else {
     head_vals <- names(dat)
   }
-    
+  
   new_values <- c(head_vals, as.vector(t(dat))) # dframe to vector by row
   
   if(ncells(range) != length(new_values))
@@ -771,9 +775,7 @@ view <- function(ws)
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
                            min_col = 1, max_col = ws$ncol,
                            visibility = ws$visibility)
-  
-  if(ws$nrow == 0)
-    stop("Worksheet is empty!")
+  check_empty(ws)
   
   req <- gsheets_GET(the_url)
   
@@ -943,7 +945,7 @@ open_by_key <- function(key, visibility = "private")
   the_url <- build_req_url("worksheets", key = key, visibility = visibility)
   
   req <- gsheets_GET(the_url)
-  
+
   wsfeed <- gsheets_parse(req)
   wsfeed_list <- xmlToList(wsfeed)
   
