@@ -33,8 +33,6 @@ test_that("Open a public spreadsheet not shared with me", {
   expect_that(sheet1, is_a("spreadsheet"))
 })
 
-
-authorize()
 ss1 <- open_spreadsheet("Gapminder")
 
 test_that("List all my spreadsheets", {
@@ -73,3 +71,15 @@ test_that("Info from spreadsheets feed put into data frame", {
   
   expect_equal(ncol(dat), 5)
 })
+
+test_that("Worksheet is renamed", {
+  
+  rename_worksheet(ss1, "Sheet1", "New Title")
+  ss1 <- open_spreadsheet("Gapminder")
+
+  expect_equal(list_worksheets(ss1), "New Title")
+  
+  rename_worksheet(ss1, "New Title", "Sheet1")
+})
+
+

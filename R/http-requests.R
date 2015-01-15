@@ -101,8 +101,13 @@ gsheets_GET <- function(url, token = NULL)
 #' or \code{\link{authorize}} 
 #' @importFrom httr PUT stop_for_status
 gsheets_PUT <- function(url, the_body, token = get_google_token()) 
-{ 
-  body_as_string <- toString.XMLNode(the_body)
+{
+  if(is.character(the_body)) {
+    body_as_string <- the_body
+  } else {
+    body_as_string <- toString.XMLNode(the_body)
+  }
+  
   leng <- as.character(nchar(body_as_string))
   
   if(is.null(token)) {

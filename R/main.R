@@ -945,7 +945,7 @@ open_by_key <- function(key, visibility = "private")
   the_url <- build_req_url("worksheets", key = key, visibility = visibility)
   
   req <- gsheets_GET(the_url)
-
+  
   wsfeed <- gsheets_parse(req)
   wsfeed_list <- xmlToList(wsfeed)
   
@@ -990,5 +990,35 @@ open_by_url <- function(url, visibility = "private")
   key <- elements[which.max(nchar(elements))]
   
   open_by_key(key, visibility)
+}
+
+
+#' Rename a worksheet
+#'
+#' @param ss spreadsheet object
+#' @param from_title worksheet's current title
+#' @param to_title worksheets's new title
+#' 
+#' @export
+rename_worksheet <- function(ss, old_title, new_title)
+{
+  index <- match(old_title, names(ss$worksheets))
+  
+  if(is.na(index))
+    stop("Worksheet not found.")
+  
+  ws <- ss$worksheets[[index]]
+  
+  req_url <- build_req_url("worksheets", key = ss$sheet_id, ws_id = ws$id)
+  req <- gsheets_GET(req_url)
+  feed <- gsheets_parse(req)
+  
+  edit_url <- unlist(getNodeSet(feed, '//ns:link[@rel="edit"]', 
+                                c("ns" = default_ns),
+                                function(x) xmlGetAttr(x, "href")))
+  
+  new_feed <- sub(old_title, new_title, toString.XMLNode(feed))
+  
+  gsheets_PUT(edit_url, new_feed)
 }
 
