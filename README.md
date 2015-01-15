@@ -75,7 +75,7 @@ str(ssheet)
 ## Sheet3 : 78 rows and 13 columns
 ```
 
-##### Usually for public spreadsheets (set visibility = "private" for private spreadsheets): 
+##### Usually for public spreadsheets (set visibility = "public" for public spreadsheets): 
 
 ```r
 # Open a spreadsheet by its key 
@@ -166,6 +166,13 @@ new_ws <- open_worksheet(ssheet, "foo")
 del_worksheet(new_ws)
 ```
 
+### Renaming a worksheet
+
+
+```r
+rename_worksheet(ssheet, old_title = "Old Name", new_title = "Cooler Name")
+```
+
 ### Getting all values from a row or range of rows
 
 
@@ -174,8 +181,8 @@ get_row(ws, 3)
 ```
 
 ```
-##     X1   X2 X3  X4  X5   X6   X7   X8   X9  X10  X11 X12 X13
-## 1 1937 -3.8  2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
+##  [1] "1937" "-3.8" "2"    "7.3"  "8.4"  "11.5" "15.3" "17.1" "15.7" "13.9"
+## [11] "10.8" "6.5"  "4"
 ```
 
 ```r
@@ -183,10 +190,10 @@ get_rows(ws, from = 2, to = 5, header = TRUE)
 ```
 
 ```
-##     NA January February Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1 1937    -3.8        2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2 1938       2        4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3 1939     4.6      2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##     NA  Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
+## 1 1937 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
+## 2 1938  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
+## 3 1939  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
 ```
 
 ### Getting all values from a column or range of columns
@@ -205,10 +212,10 @@ read_region(ws, from_row = 2, to_row = 5, from_col = 2, to_col = 13)
 ```
 
 ```
-##   January February Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1    -3.8        2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2       2        4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3     4.6      2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##    Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
+## 1 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
+## 2  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
+## 3  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
 ```
 
 ```r
@@ -217,10 +224,10 @@ read_range(ws, "B2:M5")
 ```
 
 ```
-##   January February Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1    -3.8        2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2       2        4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3     4.6      2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##    Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
+## 1 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
+## 2  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
+## 3  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
 ```
 
 ### Getting the entire worksheet
@@ -232,7 +239,7 @@ all_my_data <- read_all(ws)
 ### Getting all worksheets from a spreadsheet as a list of worksheet objects
 
 ```r
-my_ws <- list_worksheet_objs(ssheet)
+my_ws <- open_worksheets(ssheet)
 ```
 
 ### Getting a cell value
@@ -244,7 +251,7 @@ get_cell(ws, "B2")
 ```
 
 ```
-## [1] "January"
+## [1] "Jan"
 ```
 
 ```r
@@ -253,7 +260,7 @@ get_cell(ws, "R2C2")
 ```
 
 ```
-## [1] "January"
+## [1] "Jan"
 ```
 
 ### Finding cells
@@ -264,7 +271,7 @@ find_cell(ws, "Jan")
 ```
 
 ```
-## Cell not found
+## [1] "Cell R2C2, B2"
 ```
 
 ```r
@@ -286,7 +293,7 @@ find_all(ws, "10")
 ### Updating cells 
 
 ```r
-#update a cell
+# update a single cell
 update_cell(ws, "B4", "2.0")
 
 get_cell(ws, "B4")
@@ -297,7 +304,7 @@ get_cell(ws, "B4")
 ```
 
 ```r
-# Update in batch
+# Update cells in batch - specify range
 update_cells(ws, "B2:C2", c("January", "February"))
 
 read_range(ws, "B2:C2")
@@ -307,5 +314,18 @@ read_range(ws, "B2:C2")
 ##        V1       V2
 ## 1 January February
 ```
+
+```r
+# Update cells in batch - specify anchor cell
+update_cells(ws, "D2", c("March", "April", "May"))
+
+read_range(ws, "B2:F2")
+```
+
+```
+##        V1       V2    V3    V4  V5
+## 1 January February March April May
+```
+
 
 

@@ -118,6 +118,12 @@ new_ws <- open_worksheet(ssheet, "foo")
 del_worksheet(new_ws)
 ```
 
+### Renaming a worksheet
+
+```{r rename a worksheet, eval = FALSE }
+rename_worksheet(ssheet, old_title = "Old Name", new_title = "Cooler Name")
+```
+
 ### Getting all values from a row or range of rows
 
 ```{r get row(s)}
