@@ -11,11 +11,10 @@
 #' This method is using API as described at:
 #' \url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
 #'
-#' @importFrom httr POST
-#' @importFrom httr status_code
-#' @importFrom httr content
+#' @importFrom httr POST status_code content
 #' @export
-login <- function(email, passwd) {
+login <- function(email, passwd) 
+{
   service = "wise"
   account_type = "HOSTED_OR_GOOGLE"
   the_url = "https://www.google.com/accounts/ClientLogin"
@@ -39,23 +38,25 @@ login <- function(email, passwd) {
 #'
 #' User will be directed to web browser and asked to sign into their Google
 #' account and grant gspreadr access permission to user data for Google 
-#' Spreadsheets and Google Drive.
+#' Spreadsheets and Google Drive. User credentials will be cached in .httr-oauth
+#' in the current working directory.
 #'
 #' This method follows the demo described at:
 #' \url{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}
 #' @param new_user set to \code{TRUE} if you want to authenticate a different
 #' google account
-#' @importFrom httr oauth_app
-#' @importFrom httr oauth_endpoints
-#' @importFrom httr oauth2.0_token
+#' @importFrom httr oauth_app oauth_endpoints oauth2.0_token
 #' @export
-authorize <- function(new_user = FALSE) {
-  
-  if(new_user)
+authorize <- function(new_user = FALSE) 
+{
+  if(new_user & file.exists(".httr-oauth")) {
+    message("Removing old credentials ...")
     system("rm .httr-oauth")
+  }
   
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds")
+  
   client_id <- 
     "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
   client_secret <- "iWPrYg0lFHNQblnRrDbypvJL"
@@ -95,11 +96,10 @@ gsheets_check <- function(req) {
 #' (oauth2.0).
 #' 
 #' @param token Google token
-#' @importFrom httr config
-#' @importFrom httr add_headers
+#' @importFrom httr config add_headers
 gsheets_auth <- function(token) 
 {
-  if(class(token) != "character")
+  if(any(class(token) != "character"))
     auth <- config(token = .state$token)
   else 
     auth <- add_headers('Authorization' = .state$token)
@@ -122,7 +122,7 @@ check_token <- function(token) {
 #' Get token if it's previously stored, else prompt user to get one.
 #'
 get_google_token <- function() {
-  if(is.null(.state$token))
+  if(is.null(.state$token)) 
     authorize()
   .state$token
 }
