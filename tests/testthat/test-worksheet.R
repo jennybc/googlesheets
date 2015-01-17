@@ -105,3 +105,18 @@ test_that("Lots of cells are updated", {
   
 })
 
+test_that("Worksheet is resized", {
+  new_vals <- head(iris)
+  
+  update_cells(wks, "A15:E21", new_vals)
+  
+  wks <- open_worksheet(sheet1, "Oceania")
+  
+  expect_equal(wks$row_extent, 21)
+  
+  resize_worksheet(wks, nrow = 7)
+  
+  wks_new <- open_worksheet(sheet1, "Oceania")
+  
+  expect_equal(wks_new$row_extent, 7)
+})

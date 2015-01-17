@@ -9,9 +9,9 @@ rename_worksheet(ss, old_title, new_title)
 \arguments{
 \item{ss}{spreadsheet object}
 
-\item{from_title}{worksheet's current title}
+\item{old_title}{worksheet's current title}
 
-\item{to_title}{worksheets's new title}
+\item{new_title}{worksheets's new title}
 }
 \description{
 Rename a worksheet

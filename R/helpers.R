@@ -137,8 +137,9 @@ build_range <- function(dat, anchor, header) {
 
 #' Create worksheet objects from worksheets feed
 #' 
-#' Extract worksheet info (spreadsheet id, worksheet id, worksheet title) 
-#' from entry nodes in worksheets feed as worksheet objects.
+#' Extract worksheet info (spreadsheet id, worksheet id, worksheet title, 
+#' row count and col count) from entry nodes in worksheets feed as worksheet 
+#' objects.
 #' 
 #' @param node entry node for worksheet
 #' @param sheet_id spreadsheet id housing worksheet
@@ -152,6 +153,8 @@ make_ws_obj <- function(node, sheet_id)
   ws$sheet_id <- sheet_id
   ws$id <- unlist(strsplit(attr_list$id, "/"))[[9]]
   ws$title <- (attr_list$title)$text
+  ws$row_extent <- as.numeric(attr_list$rowCount)
+  ws$col_extent <- as.numeric(attr_list$colCount)
   ws
 }
 
@@ -220,6 +223,10 @@ worksheet_dim <- function(ws)
   req <- gsheets_GET(the_url)
   
   feed <- gsheets_parse(req)
+  
+  feed_list <- xmlToList(feed)
+  ws$row_extent <- as.numeric(feed_list$rowCount)
+  ws$col_extent <- as.numeric(feed_list$colCount)
   
   tbl <- get_lookup_tbl(feed)
   

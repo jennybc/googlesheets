@@ -28,6 +28,8 @@ worksheet <- function() {
                  title = character(),
                  ncol = numeric(),
                  nrow = numeric(),
+                 row_extent = numeric(),
+                 col_extent = numeric(),
                  visibility = character()),
             class = "worksheet")
 }

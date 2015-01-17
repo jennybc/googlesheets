@@ -20,7 +20,8 @@ by starting with an = character. The calculated value will be the cell's
 actual value. To empty a cell, update it with an empty string.
 }
 \note{
-Currently you can only update cells contained in the worksheet.
+If the cell to update is beyond the extent of the worksheet, the
+worksheet will be resized.
 }
 \examples{
 \dontrun{

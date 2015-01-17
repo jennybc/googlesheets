@@ -208,12 +208,12 @@ open_at_once <- function(ss_title, ws_value)
 #'
 #' @param ss spreadsheet object
 #' @param title character string for title of new worksheet 
-#' @param nrow number of rows
-#' @param ncol number of columns
+#' @param nrow number of rows (default is 1000)
+#' @param ncol number of columns (default is 26)
 #' 
 #' @importFrom XML xmlNode toString.XMLNode
 #' @export
-add_worksheet <- function(ss, title, nrow, ncol) 
+add_worksheet <- function(ss, title, nrow = 1000, ncol = 26) 
 { 
   exist <- match(title, list_worksheets(ss))
   
@@ -507,12 +507,6 @@ read_all <- function(ws, header = TRUE)
 #' @export
 read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
 {
-  if(to_row > ws$nrow)
-    to_row <- ws$nrow
-  
-  if(to_col > ws$ncol)
-    to_col <- ws$ncol
-  
   check_empty(ws)
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
@@ -660,7 +654,8 @@ find_all <- function(ws, x)
 #' format
 #' @param value character string for new value
 #'
-#' @note Currently you can only update cells contained in the worksheet.
+#' @note If the cell to update is beyond the extent of the worksheet, the
+#' worksheet will be resized.
 #' 
 #' @examples
 #' \dontrun{
@@ -675,8 +670,24 @@ update_cell <- function(ws, pos, value)
     pos <- label_to_coord(pos)
   }
   
-  row_num <- sub("R([0-9]+)C([0-9]+)", "\\1", pos)
-  col_num <- sub("R([0-9]+)C([0-9]+)", "\\2", pos)
+  row_num <- as.numeric(sub("R([0-9]+)C([0-9]+)", "\\1", pos))
+  col_num <- as.numeric(sub("R([0-9]+)C([0-9]+)", "\\2", pos))
+  
+  if(ws$row_extent < row_num) {
+    new_row <- row_num
+  } else {
+    new_row <- NULL
+  }
+  
+  if(ws$col_extent < col_num) {
+    new_col <- col_num
+  } else {
+    new_col <- NULL
+  }
+  
+  if(any(c(!is.null(new_row), !is.null(new_col)))) {
+    resize_worksheet(ws, nrow = new_row, ncol = new_col )
+  }
   
   # use "private" for visibility because "public" will not allow for writing to
   # public sheet, if dont have permission then error will be thrown
@@ -720,6 +731,9 @@ update_cell <- function(ws, pos, value)
 #' @param dat character vector or data frame of new values to update cells
 #' @param header \code{logical} inidicating if data contains header row
 #' 
+#' @note If the cells to update are beyond the extent of the worksheet, the
+#' worksheet will be resized.
+#' 
 #' @importFrom dplyr mutate_ rename_
 #' @export 
 update_cells <- function(ws, range, dat, header = TRUE)
@@ -741,6 +755,26 @@ update_cells <- function(ws, range, dat, header = TRUE)
   
   if(ncells(range) != length(new_values))
     stop("Length of new values do not match number of cells to update")
+  
+  bounds <- unlist(strsplit(range, split = ":"))
+  rows <- as.numeric(gsub("[^0-9]", "", bounds))  
+  cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
+  
+  if(ws$row_extent < max(rows)) {
+    new_row <- max(rows)
+  } else {
+    new_row <- NULL
+  }
+  
+  if(ws$col_extent < max(cols)) {
+    new_col <- max(cols)
+  } else {
+    new_col <- NULL
+  }
+  
+  if(any(c(!is.null(new_row), !is.null(new_col)))) {
+    resize_worksheet(ws, nrow = new_row, ncol = new_col )
+  }
   
   # use "private" for visibility because "public" will not allow for writing to
   # public sheet, if dont have permission then error will be thrown
@@ -866,6 +900,7 @@ str.worksheet <- function(object, ...)
   the_url <- build_req_url("cells", key = object$sheet_id, ws_id = object$id, 
                            min_col = 1, max_col = object$ncol, 
                            visibility = object$visibility)
+  
   req <- gsheets_GET(the_url)
   
   feed <- gsheets_parse(req)
@@ -996,8 +1031,8 @@ open_by_url <- function(url, visibility = "private")
 #' Rename a worksheet
 #'
 #' @param ss spreadsheet object
-#' @param from_title worksheet's current title
-#' @param to_title worksheets's new title
+#' @param old_title worksheet's current title
+#' @param new_title worksheets's new title
 #' 
 #' @export
 rename_worksheet <- function(ss, old_title, new_title)
@@ -1022,3 +1057,46 @@ rename_worksheet <- function(ss, old_title, new_title)
   gsheets_PUT(edit_url, new_feed)
 }
 
+
+#' Resize a worksheet
+#'
+#' @param ws worksheet object
+#' @param nrow \code{numeric} for new row dimension
+#' @param ncol \code{numeric} for new column dimension
+#' 
+#' @note Setting rows and columns to less than the current worksheet dimensions 
+#' will delete contents without warning.
+#' 
+#' @export
+resize_worksheet <- function(ws, nrow = NULL, ncol = NULL)
+{
+#   index <- match(ws_title, names(ss$worksheets))
+#   
+#   if(is.na(index))
+#     stop("Worksheet not found.")
+#   
+#   ws <- ss$worksheets[[index]]
+  
+  req_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
+  req <- gsheets_GET(req_url)
+  feed <- gsheets_parse(req)
+  new_feed <- toString.XMLNode(feed)
+  
+  if(!is.null(ncol)) {
+    new_feed <- 
+      sub("<gs:colCount>([0-9]+)</gs:colCount>", 
+          paste0("<gs:colCount>", ncol, "</gs:colCount>"), new_feed)
+  }
+  
+  if(!is.null(nrow)) {
+    new_feed <- 
+      sub("<gs:rowCount>([0-9]+)</gs:rowCount>", 
+          paste0("<gs:rowCount>", nrow, "</gs:rowCount>"), new_feed)
+  }
+  
+  edit_url <- unlist(getNodeSet(feed, '//ns:link[@rel="edit"]', 
+                                c("ns" = default_ns),
+                                function(x) xmlGetAttr(x, "href")))
+  
+  gsheets_PUT(edit_url, new_feed)
+}

@@ -20,4 +20,8 @@ single cell to represent an "anchor" cell}
 Modify a range of cells by specifiying the range and values to update to.
 Values will be updated by row.
 }
+\note{
+If the cells to update are beyond the extent of the worksheet, the
+worksheet will be resized.
+}
 

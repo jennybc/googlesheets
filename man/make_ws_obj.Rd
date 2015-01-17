@@ -12,7 +12,8 @@ make_ws_obj(node, sheet_id)
 \item{sheet_id}{spreadsheet id housing worksheet}
 }
 \description{
-Extract worksheet info (spreadsheet id, worksheet id, worksheet title)
-from entry nodes in worksheets feed as worksheet objects.
+Extract worksheet info (spreadsheet id, worksheet id, worksheet title,
+row count and col count) from entry nodes in worksheets feed as worksheet
+objects.
 }
 

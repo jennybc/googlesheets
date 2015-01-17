@@ -4,16 +4,16 @@
 \alias{add_worksheet}
 \title{Add a new (empty) worksheet to spreadsheet}
 \usage{
-add_worksheet(ss, title, nrow, ncol)
+add_worksheet(ss, title, nrow = 1000, ncol = 26)
 }
 \arguments{
 \item{ss}{spreadsheet object}
 
 \item{title}{character string for title of new worksheet}
 
-\item{nrow}{number of rows}
+\item{nrow}{number of rows (default is 1000)}
 
-\item{ncol}{number of columns}
+\item{ncol}{number of columns (default is 26)}
 }
 \description{
 Add a new (empty) worksheet to spreadsheet, specify title, number of rows
