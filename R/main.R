@@ -835,11 +835,18 @@ view_all <- function(ss, show_overlay = FALSE)
 {
   ws_objs <- open_worksheets(ss)
   
-  tbl <- 
+  dat_tbl <- 
     ldply(ws_objs, 
           function(ws)  {
+            
+            if(ws$ncol == 0) {
+              col = 0
+            } else {
+              col = 1
+            }
+            
             the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
-                                     min_col = 1, max_col = ws$ncol,
+                                     min_col = col, max_col = ws$ncol,
                                      visibility = ws$visibility)
             
             req <- gsheets_GET(the_url)
@@ -848,13 +855,13 @@ view_all <- function(ss, show_overlay = FALSE)
             get_lookup_tbl(feed, include_sheet_title = TRUE)
           })
   
-  p1 <- make_plot(tbl)
+  p1 <- make_plot(dat_tbl)
   
-  p2 <- ggplot(tbl, aes(x = col, y = row, group = ~ Sheet)) +
+  p2 <- ggplot(dat_tbl, aes(x = col, y = row, group = ~ Sheet)) +
     geom_tile(fill = "steelblue2", aes(x = col, y = row), alpha = 0.4) +
-    scale_x_continuous(breaks = seq(1, max(tbl$col), 1), expand = c(0, 0)) +
-    annotate("text", x = seq(1, max(tbl$col) ,1), y = (-0.05) * max(tbl$row), 
-             label = LETTERS[1:max(tbl$col)], colour = "steelblue4",
+    scale_x_continuous(breaks = seq(1, max(dat_tbl$col), 1), expand = c(0, 0)) +
+    annotate("text", x = seq(1, max(dat_tbl$col) ,1), y = (-0.05) * max(dat_tbl$row), 
+             label = LETTERS[1:max(dat_tbl$col)], colour = "steelblue4",
              fontface = "bold") +
     scale_y_reverse() +
     ylab("Row") +
