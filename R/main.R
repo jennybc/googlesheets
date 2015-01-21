@@ -1032,6 +1032,11 @@ open_by_url <- function(url, visibility = "private")
   key <- elements[which.max(nchar(elements))]
   
   open_by_key(key, visibility)
+  # Further cleaning
+  key1 <- sub(".*?key=", "", key)
+  key2 <- sub("&.*", "", key1)
+  
+  open_by_key(key2, visibility)
 }
 
 
