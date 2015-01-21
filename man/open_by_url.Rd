@@ -13,7 +13,7 @@ open_by_url(url, visibility = "private")
 for private spreadsheets}
 }
 \value{
-Object of class spreadsheet.
+Object of class spreadsheet
 
 This function only works for public spreadsheets.
 This function extracts the key from the url and calls on
@@ -23,7 +23,11 @@ This function extracts the key from the url and calls on
 Use url of spreadsheet and return an object of class spreadsheet.
 }
 \note{
-This function assumes after splitting the url by the longest character string in the url is the
+This function assumes the longest character string separated by "/" in the url is the
 key of the spreadsheet.
+
+The visibility should be set to "public" only if the spreadsheet is
+"Published to the web". This is different from setting the spreadsheet to "Public on the web"
+in the visibility options in the sharing dialog of a Google Sheets file.
 }
 

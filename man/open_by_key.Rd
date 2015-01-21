@@ -14,10 +14,13 @@ for private spreadsheets}
 }
 \value{
 Object of class spreadsheet.
-
-This function only works for keys of public spreadsheets.
 }
 \description{
 Use key found in browser URL and return an object of class spreadsheet.
+}
+\note{
+The visibility should be set to "public" only if the spreadsheet is
+"Published to the web". This is different from setting the spreadsheet to "Public on the web"
+in the visibility options in the sharing dialog of a Google Sheets file.
 }
 

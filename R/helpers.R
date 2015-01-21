@@ -17,7 +17,7 @@ letter_to_num <- function(x)
 }
 
 
-#' Convert column number letter
+#' Convert column number to letter
 #'
 #' @param x column number
 num_to_letter <- function(x)
@@ -134,87 +134,11 @@ build_range <- function(dat, anchor, header) {
 }
 
 
-
-#' Create worksheet objects from worksheets feed
-#' 
-#' Extract worksheet info (spreadsheet id, worksheet id, worksheet title, 
-#' row count and col count) from entry nodes in worksheets feed as worksheet 
-#' objects.
-#' 
-#' @param node entry node for worksheet
-#' @param sheet_id spreadsheet id housing worksheet
-#' 
-#' @importFrom XML xmlToList
-make_ws_obj <- function(node, sheet_id)
-{
-  attr_list <- xmlToList(node)
-  
-  ws <- worksheet()
-  ws$sheet_id <- sheet_id
-  ws$id <- unlist(strsplit(attr_list$id, "/"))[[9]]
-  ws$title <- (attr_list$title)$text
-  ws$row_extent <- as.numeric(attr_list$rowCount)
-  ws$col_extent <- as.numeric(attr_list$colCount)
-  ws
-}
-
-
-#' Put information from spreadsheets feed into data frame 
-#'
-#' Get spreadsheets' titles, owner, access type, date/time of last update and 
-#' its unique key, and organize into a data frame for easy post-processing.
-#'
-#' @importFrom XML xmlValue xmlGetAttr getNodeSet
-ssfeed_to_df <- function() 
-{
-  the_url <- build_req_url("spreadsheets")
-  req <- gsheets_GET(the_url)
-  
-  ssfeed <- gsheets_parse(req)
-  
-  ss_titles <- getNodeSet(ssfeed, "//ns:entry//ns:title", c("ns" = default_ns),
-                          xmlValue)
-  
-  ss_updated <- getNodeSet(ssfeed, "//ns:entry//ns:updated", 
-                           c("ns" = default_ns), xmlValue)
-  
-  ss_access <- 
-    getNodeSet(ssfeed, '//ns:entry//ns:link[@rel="http://schemas.google.com/spreadsheets/2006#worksheetsfeed"]', 
-               c("ns" = default_ns),
-               function(x) xmlGetAttr(x, "href"))
-  
-  ss_access_log <- grepl("values", unlist(ss_access))
-  
-  ss_access_log[grep(TRUE, ss_access_log)] <- "read only"
-  ss_access_log[grep(FALSE, ss_access_log)] <- "read/write"
-  
-  
-  ss_wsfeed <- 
-    getNodeSet(ssfeed, '//ns:entry//ns:link[@rel="self"]', c("ns" = default_ns),
-               function(x) xmlGetAttr(x, "href"))
-  
-  ss_key <- sub(".*full/", "", unlist(ss_wsfeed)) # extract spreadsheet key
-  
-  ss_owner <- getNodeSet(ssfeed, "//ns:entry//ns:author//ns:name", 
-                         c("ns" = default_ns), xmlValue)
-  
-  ssdata_df <- data.frame(sheet_title = unlist(ss_titles),
-                          sheet_key = ss_key,
-                          owner = unlist(ss_owner),
-                          access_type = ss_access_log,
-                          last_updated = unlist(ss_updated),
-                          stringsAsFactors = FALSE)
-  ssdata_df
-}
-
-
 #' Find the dimensions of a worksheet
 #'
 #' Get the rows and columns of a worksheet by making a request for cellfeed.
 #'
 #' @param ws a worksheet object
-#' 
-#' @export
 worksheet_dim <- function(ws)
 {
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
@@ -237,6 +161,30 @@ worksheet_dim <- function(ws)
     ws$nrow <- max(tbl$row)
     ws$ncol <- max(tbl$col)
   }
+  ws
+}
+
+
+#' Create worksheet objects from worksheets feed
+#' 
+#' Extract worksheet info (spreadsheet id, worksheet id, worksheet title, 
+#' row count and col count) from entry nodes in worksheets feed as worksheet 
+#' objects.
+#' 
+#' @param node entry node for worksheet
+#' @param sheet_id spreadsheet id housing worksheet
+#' 
+#' @importFrom XML xmlToList
+make_ws_obj <- function(node, sheet_id)
+{
+  attr_list <- xmlToList(node)
+  
+  ws <- worksheet()
+  ws$sheet_id <- sheet_id
+  ws$id <- unlist(strsplit(attr_list$id, "/"))[[9]]
+  ws$title <- (attr_list$title)$text
+  ws$row_extent <- as.numeric(attr_list$rowCount)
+  ws$col_extent <- as.numeric(attr_list$colCount)
   ws
 }
 
@@ -312,7 +260,6 @@ fill_missing_tbl <- function(lookup_tbl, row_min = 1, col_min = 1,
   arrange(lookup_tbl_clean1, row, col) 
 }
 
-
 #' Fill in missing columns in a row
 #' 
 #' The lookup table returned by \code{\link{get_lookup_tbl}} may contain missing tuples 
@@ -363,6 +310,29 @@ fill_missing_row <- function(x, row_min)
 }
 
 
+#' Check if worksheet is empty
+#'
+#' Throw an error if worksheet is empty
+#'
+#' @param ws worksheet object
+check_empty <- function(ws) {
+  if(ws$nrow == 0)
+    stop("Worksheet does not contain any values.")
+}
+
+
+#' Wrapper around xmlInternalTreeParse
+#'
+#' Simply for code neatness.
+#'
+#' @param req response from \code{\link{gsheets_GET}} request
+#' @importFrom XML xmlInternalTreeParse
+gsheets_parse <- function(req) 
+{
+  xmlInternalTreeParse(req)
+}
+
+
 #' Plot worksheet
 #'
 #' @param tbl data frame returned by \code{\link{get_lookup_tbl}}
@@ -383,6 +353,55 @@ make_plot <- function(tbl)
           axis.text.x = element_blank(),
           axis.title.x = element_blank(),
           axis.ticks.x = element_blank())
+}
+
+
+#' Put information from spreadsheets feed into data frame 
+#'
+#' Get spreadsheets' titles, owner, access type, date/time of last update and 
+#' its unique key, and organize into a data frame for easy post-processing.
+#'
+#' @importFrom XML xmlValue xmlGetAttr getNodeSet
+ssfeed_to_df <- function() 
+{
+  the_url <- build_req_url("spreadsheets")
+
+  req <- gsheets_GET(the_url)
+  ssfeed <- gsheets_parse(req)
+  
+  ss_titles <- getNodeSet(ssfeed, "//ns:entry//ns:title", c("ns" = default_ns),
+                          xmlValue)
+  
+  ss_updated <- getNodeSet(ssfeed, "//ns:entry//ns:updated", 
+                           c("ns" = default_ns), xmlValue)
+  
+  ss_access <- 
+    getNodeSet(ssfeed, '//ns:entry//ns:link[@rel="http://schemas.google.com/spreadsheets/2006#worksheetsfeed"]', 
+               c("ns" = default_ns),
+               function(x) xmlGetAttr(x, "href"))
+  
+  ss_access_log <- grepl("values", unlist(ss_access))
+  
+  ss_access_log[grep(TRUE, ss_access_log)] <- "read only"
+  ss_access_log[grep(FALSE, ss_access_log)] <- "read/write"
+  
+  
+  ss_wsfeed <- 
+    getNodeSet(ssfeed, '//ns:entry//ns:link[@rel="self"]', c("ns" = default_ns),
+               function(x) xmlGetAttr(x, "href"))
+  
+  ss_key <- sub(".*full/", "", unlist(ss_wsfeed)) # extract spreadsheet key
+  
+  ss_owner <- getNodeSet(ssfeed, "//ns:entry//ns:author//ns:name", 
+                         c("ns" = default_ns), xmlValue)
+  
+  ssdata_df <- data.frame(sheet_title = unlist(ss_titles),
+                          sheet_key = ss_key,
+                          owner = unlist(ss_owner),
+                          access_type = ss_access_log,
+                          last_updated = unlist(ss_updated),
+                          stringsAsFactors = FALSE)
+  ssdata_df
 }
 
 
@@ -457,25 +476,3 @@ make_entry_node <- function(x)
   toString.XMLNode(node)
 }  
 
-
-#' Wrapper around xmlInternalTreeParse
-#'
-#' Simply for code neatness.
-#'
-#' @param req response from \code{\link{gsheets_GET}} request
-#' @importFrom XML xmlInternalTreeParse
-gsheets_parse <- function(req) 
-{
-  xmlInternalTreeParse(req)
-}
-
-
-#' Check if worksheet is empty
-#'
-#' Throw an error if worksheet is empty
-#'
-#' @param ws worksheet object
-check_empty <- function(ws) {
-  if(ws$nrow == 0)
-    stop("Worksheet does not contain any values.")
-}

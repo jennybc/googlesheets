@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{num_to_letter}
 \alias{num_to_letter}
-\title{Convert column number letter}
+\title{Convert column number to letter}
 \usage{
 num_to_letter(x)
 }
@@ -10,6 +10,6 @@ num_to_letter(x)
 \item{x}{column number}
 }
 \description{
-Convert column number letter
+Convert column number to letter
 }
 

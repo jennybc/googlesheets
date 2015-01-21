@@ -47,6 +47,9 @@ add_spreadsheet <- function(title)
 #' 
 #' @param title the title of the spreadsheet
 #' 
+#' @note Shared spreadsheets can not be removed from your Google Drive with 
+#' this function. You must remove it manually in the web browser.
+#' 
 #' @export
 del_spreadsheet <- function(title)
 {
@@ -690,13 +693,15 @@ update_cell <- function(ws, pos, value)
   }
   
   # use "private" for visibility because "public" will not allow for writing to
-  # public sheet, if dont have permission then error will be thrown
-  url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  # public sheet since does not return edit url in the response feed,
+  # if dont have permission then error will be thrown
+  url <- build_req_url("cells", key = ws$sheet_id, ws_id =  ws$id, 
                        visibility = "private") 
   
   the_url <- paste(url, pos, sep = "/")
   
   req <- gsheets_GET(the_url)
+  
   feed <- gsheets_parse(req)
   
   nodes <- getNodeSet(feed, '//ns:link[@rel="edit"]', c("ns" = default_ns),
@@ -979,7 +984,10 @@ str.spreadsheet <- function(object, ...)
 #' 
 #' @return Object of class spreadsheet.
 #'
-#' This function only works for keys of public spreadsheets.
+#' @note The visibility should be set to "public" only if the spreadsheet is
+#' "Published to the web". This is different from setting the spreadsheet to "Public on the web"
+#' in the visibility options in the sharing dialog of a Google Sheets file.
+#'
 #' @importFrom XML xmlToList getNodeSet
 #' @export
 open_by_key <- function(key, visibility = "private") 
@@ -987,6 +995,9 @@ open_by_key <- function(key, visibility = "private")
   the_url <- build_req_url("worksheets", key = key, visibility = visibility)
   
   req <- gsheets_GET(the_url)
+  
+  if(grepl("html", req$headers$`content-type`))
+    stop("Please check visibility settings.")
   
   wsfeed <- gsheets_parse(req)
   wsfeed_list <- xmlToList(wsfeed)
@@ -1017,9 +1028,13 @@ open_by_key <- function(key, visibility = "private")
 #' @param visibility either "public" for public spreadsheets or "private" 
 #' for private spreadsheets
 #' 
-#' @note This function assumes after splitting the url by the longest character string in the url is the 
+#' @note This function assumes the longest character string separated by "/" in the url is the 
 #' key of the spreadsheet.
-#' @return Object of class spreadsheet.
+#' @note The visibility should be set to "public" only if the spreadsheet is
+#' "Published to the web". This is different from setting the spreadsheet to "Public on the web"
+#' in the visibility options in the sharing dialog of a Google Sheets file.
+#' 
+#' @return Object of class spreadsheet
 #'
 #' This function only works for public spreadsheets.
 #' This function extracts the key from the url and calls on 
@@ -1031,7 +1046,6 @@ open_by_url <- function(url, visibility = "private")
   
   key <- elements[which.max(nchar(elements))]
   
-  open_by_key(key, visibility)
   # Further cleaning
   key1 <- sub(".*?key=", "", key)
   key2 <- sub("&.*", "", key1)
@@ -1082,12 +1096,12 @@ rename_worksheet <- function(ss, old_title, new_title)
 #' @export
 resize_worksheet <- function(ws, nrow = NULL, ncol = NULL)
 {
-#   index <- match(ws_title, names(ss$worksheets))
-#   
-#   if(is.na(index))
-#     stop("Worksheet not found.")
-#   
-#   ws <- ss$worksheets[[index]]
+  #   index <- match(ws_title, names(ss$worksheets))
+  #   
+  #   if(is.na(index))
+  #     stop("Worksheet not found.")
+  #   
+  #   ws <- ss$worksheets[[index]]
   
   req_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
   req <- gsheets_GET(req_url)

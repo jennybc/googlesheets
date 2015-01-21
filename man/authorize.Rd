@@ -4,11 +4,14 @@
 \alias{authorize}
 \title{Authorize user using Oauth2.0 Credentials}
 \usage{
-authorize(new_user = FALSE)
+authorize(new_user = FALSE, cache_cred = TRUE)
 }
 \arguments{
 \item{new_user}{set to \code{TRUE} if you want to authenticate a different
 google account}
+
+\item{cache_cred}{set to \code{TRUE} if you want to cache credentials, wont
+prompt for authentication the next time you use this library.}
 }
 \description{
 User will be directed to web browser and asked to sign into their Google

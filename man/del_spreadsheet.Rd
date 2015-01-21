@@ -12,4 +12,8 @@ del_spreadsheet(title)
 \description{
 Move a spreadsheet to trash in Google Drive.
 }
+\note{
+Shared spreadsheets can not be removed from your Google Drive with
+this function. You must remove it manually in the web browser.
+}
 
