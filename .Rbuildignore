@@ -2,3 +2,4 @@
 ^\.Rproj\.user$
 ^\.httr-oauth$
 vignettes/basic-usage.Rmd
+^\.travis\.yml$
