@@ -135,3 +135,42 @@ test_that("Structure of spreadsheet is displayed", {
 #   
 #   expect_equal(wks_new$row_extent, 7)
 # })
+
+# 
+# 
+# test_that("Add worksheet", {
+#   add_worksheet(sheet1, "bar", 10, 10)
+#   
+#   sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+#                         visibility = "public")
+#   
+#   expect_true("bar" %in% sheet1$ws_names)
+#   expect_error(add_worksheet(sheet1, "Asia", 10, 10), 
+#                "A worksheet with the same name already exists, please choose a different name!")
+# })
+# 
+# sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+#                       visibility = "public")
+# 
+# test_that("Delete worksheet", {
+#   del_worksheet(sheet1, "bar")
+#   
+#   sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
+#                         visibility = "public")
+#   
+#   expect_false("bar" %in% sheet1$ws_names)
+# })
+# 
+
+# 
+# test_that("Worksheet is renamed", {
+#   
+#   rename_worksheet(ss1, "Sheet1", "New Title")
+#   ss1 <- open_spreadsheet("Gapminder")
+# 
+#   expect_equal(list_worksheets(ss1), "New Title")
+#   
+#   rename_worksheet(ss1, "New Title", "Sheet1")
+# })
+# 
+# 

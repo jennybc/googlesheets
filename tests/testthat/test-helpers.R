@@ -137,4 +137,12 @@ tbl <- data.frame("row" = c(1, 1, 1), "col" = c(1, 2, 3), "val" = c(0, 0, 0))
 expect_that(make_plot(tbl), is_a("ggplot"))
 })
 
+
 ## Hard to test : ssfeed_to_df(), create_update_feed(), make_entry_node()
+
+# test_that("Info from spreadsheets feed put into data frame", {
+#   
+#   dat <- ssfeed_to_df()
+#   
+#   expect_equal(ncol(dat), 5)
+# })
