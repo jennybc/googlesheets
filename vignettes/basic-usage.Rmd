@@ -33,9 +33,9 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ```{r open public sheets, eval = FALSE}
 
-pub_sheet <- open_by_key("17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA", visibility = "public")
+pub_sheet <- open_by_key("1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE", visibility = "public")
 
-pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA/pubhtml", visibility = "public")
+pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/pubhtml", visibility = "public")
 
 ```
 
@@ -50,29 +50,41 @@ list_spreadsheets()
 # list the spreadsheet key too
 list_spreadsheets(show_key = TRUE)
 
-ssheet <- open_spreadsheet("Gapminder by Continent")
+ssheet <- open_spreadsheet("Gapminder")
 ```
 
 ```{r, include = FALSE }
-ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/17nhc-Dih2Usxz2m1rX5a8h_W0NXANeCXfW2J8oAS1gA", visibility = "public")
+ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE", visibility = "public")
 ```
 
 This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 
 
-```{r, eval = FALSE}
+```{r}
 # spreadsheet components
 ssheet$sheet_id ; ssheet$sheet_title ; ssheet$updated ; ssheet$nsheets ; ssheet$ws_names
 ```
 
+## Add or delete a spreadsheet
+
+To add or delete a spreadsheet in your Google Drive, use `add_spreadsheet()` or `del_spreadsheet()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1".
+
+```{r create and delete spreadsheet, eval = FALSE}
+# Create a new spreadsheet by title
+add_spreadsheet("New Spreadsheet")
+
+# Move spreadsheet to trash
+del_spreadsheet("New Spreadsheet")
+```
+
 # Open a worksheet
 
-You can use `list_worksheets()` to see the worksheets living in the spreadsheet. This is a wrapper around `ssheet$ws_names`.
-```{r list ws, eval = FALSE}
+You can use `list_worksheets()` to see the worksheets living in a spreadsheet. This is a wrapper around `ssheet$ws_names`.
+```{r list ws}
 
 list_worksheets(ssheet)
 ```
 
-To open a worksheet, you can pass in a spreadsheet object and then specify the worksheet using its title or index, or this can be done in one step using `open_at_once(ss_title, ws_index)`. This saves a bit of typing but the spreadsheet object will not be stored, so if you want to open another worksheet, `open_spreadsheet("title")` will be called again. So if you want to open multiple worksheets from a spreadsheet, save the spreadsheet as an R object and use it for `open_worksheet(ss, x)`  
+To open a worksheet, you can pass in a spreadsheet object and then specify the worksheet using its title or index, or this can be done in one step using `open_at_once(ss_title, ws_index)`. This saves a bit of typing but the spreadsheet object will not be stored, so if you want to open another worksheet, `open_spreadsheet("title")` will be called again. So if you want to open multiple worksheets from a spreadsheet, it is best to open the spreadsheet and save the spreadsheet as an R object and call `open_worksheet(ss, x)`  
 
 ```{r open ws}
 # by title
@@ -106,6 +118,24 @@ plyr::llply(ws_objs, function(x) get_cell(x, "A2"))
 
 ```
 
+# Add or delete a worksheet
+
+To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must open the spreadsheet again to "refresh" it. 
+
+```{r, eval = FALSE}
+add_worksheet(ssheet, title = "foo", rows = 10, cols = 10)
+
+del_worksheet(ssheet, ws_title)
+```
+
+# Rename a worksheet
+
+To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
+
+```{r eval = FALSE}
+rename_worksheet(ssheet, "Sheet1", "First Sheet")
+```
+
 # Worksheet Operations
 
 ## View worksheet
@@ -136,14 +166,14 @@ str(ws)
 
 You can get row(s), col(s), a region, or an entire worksheet. 
 
-## Get row(s)
+### Get row(s)
 ```{r get rows}
 get_row(ws, 1)
 
 get_rows(ws, from = 1, to = 3)
 ```
 
-## Get col(s)
+### Get col(s)
 
 You can get columns either by integer or letter. 
 
@@ -158,7 +188,7 @@ head(get_cols(ws, from = "A", to = "E"))
 
 ```
 
-## Get a region as a data frame
+### Get a region as a data frame
 
 #### Specify by min/max rows and columns
 
@@ -182,7 +212,7 @@ read_range(ws, "A1:E5")
 ```
 
 
-## Get the entire worksheet as data frame
+### Get the entire worksheet as data frame
 
 You can get the entire worksheet. Empty cells will be filled with NAs. Boundaries are determined by the right-most and bottom-most cells that contain a value.  The first row will be taken as the `header` by default.
 
@@ -191,7 +221,7 @@ You can get the entire worksheet. Empty cells will be filled with NAs. Boundarie
 read_all(ws)
 ```
 
-## Get a cell
+### Get a cell
 
 You can get the value of a specific cell. There are two notations you can use: `A1` and `R1C1`. For `A1` notation, columns are indicated by a letter followed by the row as an integer. For `R1C1` notation, integers represent the rows and columns, and are preceded by `R` or `C`. Note that `A1` and `R1C1` are equivalent.
 
@@ -203,7 +233,7 @@ get_cell(ws, "R1C1")
 
 ```
 
-## Find a cell
+### Find a cell
 
 You can find the first position of the cell containing the specified value or all the cells that contain the specified value. 
 
@@ -215,12 +245,11 @@ find_all(ws, "Australia")
 
 ```
 
-
-## Update cells (currently only works for your own private spreadsheets)
+## Update cells
 
 ### Update a single cell
 
-You can update a cell's value by specifying the cell's position, either in `A1` or `R1C1` notation, and the new value.
+You can update a cell's value by specifying the cell's position, either in `A1` or `R1C1` notation, and the new value. The new value may be a formula followed by a `=`, ie. `=A1+B1`. 
 
 ```{r update cell, eval = FALSE}
 
@@ -236,38 +265,22 @@ get_cell(ws, "R1C1")
 
 ### Update cells in batch
 
-You can update a batch of cells by specifying the range of cells, ie. "A1:A4", and the vector of values to update to.
+You can update a batch of cells by specifying the range (ie. "A1:A4"). Alternatively, if you just want to dump an entire dataframe or vector into a worksheet, you can specify an anchor cell as the reference cell position and the range will be calculated for you. You can pass in a vector of new values or an entire data frame.
 
 ```{r update cells, eval = FALSE}
 
 update_cells(ws, "C1:E1", c("A", "B", "C"))
 
 read_range(ws, "A1:F3")
+
+update_cells(ws, "G1", head(iris))
+
+read_range(ws, "G1:K7")
 ```
 
-```{r return to orig, eval = FALSE}
+```{r return to orig, include = FALSE, eval = FALSE}
 
 update_cells(ws, "C1:E1", c("pop", "continent", "lifeExp"))
+update_cells(ws, "G1:K7", ncol(head(iris) * (nrow(iris) + 1)))
 ```
 
-## Add or delete a worksheet
-
-To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. Similarly, to delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet.
-
-```{r, eval = FALSE}
-add_worksheet(ssheet, title = "foo", rows = 10, cols = 10)
-
-del_worksheet(ssheet, ws_title)
-```
-
-## Add or delete a spreadsheet
-
-To add or delete a spreadsheet in your Google Drive, use `add_spreadsheet()` or `del_spreadsheet()` and simply pass in the title of the spreadsheet as a character string.
-
-```{r create and delete spreadsheet, eval = FALSE}
-# Create a new spreadsheet by title
-add_spreadsheet("New Spreadsheet")
-
-# Move spreadsheet to trash
-del_spreadsheet("New Spreadsheet")
-```
