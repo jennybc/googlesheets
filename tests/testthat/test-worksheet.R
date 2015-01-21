@@ -57,10 +57,10 @@ test_that("Get range of worksheet", {
 })
 
 
-# test_that("Plotting spreadsheets", {
-#   # Bad request error if spreadsheet contains blank worksheet
-#   expect_that(view_all(sheet1), is_a("ggplot"))
-# })
+test_that("Plotting spreadsheets", {
+  
+  expect_that(view_all(sheet1), is_a("ggplot"))
+})
 
 test_that("Plotting worksheets", {
   
@@ -69,7 +69,6 @@ test_that("Plotting worksheets", {
   
   expect_that(view(wks), is_a("ggplot"))
   expect_error(view(wks_empty), "Worksheet does not contain any values.")
-
 })
 
 test_that("Cell is found", {
@@ -77,46 +76,62 @@ test_that("Cell is found", {
   expect_equal(find_cell(wks, "Canada"), message("Cell not found"))
 })
 
-
-test_that("A cell is updated", {
+test_that("Structure of worksheet is displayed", {
   
-  update_cell(wks, "A14", "new")
-  expect_equal(get_cell(wks, "A14"), "new")
-  
-  update_cell(wks, "A14", "")
-  expect_equal(get_cell(wks, "R14C1"), "")
+  expect_output(str(wks), wks$title)
+  expect_output(str(wks), as.character(wks$nrow))
+  expect_output(str(wks), as.character(wks$ncol))
 })
 
-test_that("Lots of cells are updated", {
+
+test_that("Structure of spreadsheet is displayed", {
   
-  new_vals <- head(iris)
-  update_cells(wks, "A15:E21", new_vals)
-  
-  dat1 <- read_range(wks, "A15:E21", header = TRUE)
-  
-  update_cells(wks, "A15", new_vals)
-  
-  dat2 <- read_range(wks, "A15:E21", header = TRUE)
-  
-  expect_equal(dat1, dat2) 
-  expect_equal(dat1, dat2) 
-  
-  update_cells(wks, "A15:E21", rep("", 35))
-  
+  expect_output(str(sheet1), sheet1$sheet_title)
+  expect_output(str(sheet1), as.character(sheet1$nsheets))
+  expect_output(str(sheet1), sheet1$ws_names[1])
 })
 
-test_that("Worksheet is resized", {
-  new_vals <- head(iris)
-  
-  update_cells(wks, "A15:E21", new_vals)
-  
-  wks <- open_worksheet(sheet1, "Oceania")
-  
-  expect_equal(wks$row_extent, 21)
-  
-  resize_worksheet(wks, nrow = 7)
-  
-  wks_new <- open_worksheet(sheet1, "Oceania")
-  
-  expect_equal(wks_new$row_extent, 7)
-})
+# ---- Require  authorization
+
+# test_that("A cell is updated", {
+#   
+#   update_cell(wks, "A14", "new")
+#   expect_equal(get_cell(wks, "A14"), "new")
+#   
+#   update_cell(wks, "A14", "")
+#   expect_equal(get_cell(wks, "R14C1"), "")
+# })
+
+# test_that("Lots of cells are updated", {
+#   
+#   new_vals <- head(iris)
+#   update_cells(wks, "A15:E21", new_vals)
+#   
+#   dat1 <- read_range(wks, "A15:E21", header = TRUE)
+#   
+#   update_cells(wks, "A15", new_vals)
+#   
+#   dat2 <- read_range(wks, "A15:E21", header = TRUE)
+#   
+#   expect_equal(dat1, dat2) 
+#   expect_equal(dat1, dat2) 
+#   
+#   update_cells(wks, "A15:E21", rep("", 35))
+#   
+# })
+
+# test_that("Worksheet is resized", {
+#   new_vals <- head(iris)
+#   
+#   update_cells(wks, "A15:E21", new_vals)
+#   
+#   wks <- open_worksheet(sheet1, "Oceania")
+#   
+#   expect_equal(wks$row_extent, 21)
+#   
+#   resize_worksheet(wks, nrow = 7)
+#   
+#   wks_new <- open_worksheet(sheet1, "Oceania")
+#   
+#   expect_equal(wks_new$row_extent, 7)
+# })
