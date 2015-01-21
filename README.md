@@ -3,6 +3,7 @@
 
 Google Spreadsheets R API
 ---
+[![Build Status](https://travis-ci.org/jennybc/gspreadr.png?branch=master)](https://travis-ci.org/jennybc/gspreadr)
 
 Manage your spreadsheets with *gspreadr* in R. 
 
@@ -59,30 +60,37 @@ More Examples
 
 ```r
 # You can open a spreadsheet by its title as it appears in Google Drive
-ssheet <- open_spreadsheet("Temperature")
-
-# See the structure
-str(ssheet)
-```
-
-```
-## Spreadsheet:
-## Temperature: 3 worksheets
-## 
-## Worksheets:
-## Sheet1 : 78 rows and 13 columns
-## Sheet2 : 78 rows and 13 columns
-## Sheet3 : 78 rows and 13 columns
+ssheet <- open_spreadsheet("Gapminder")
 ```
 
 ##### Usually for public spreadsheets (set visibility = "public" for public spreadsheets): 
 
 ```r
 # Open a spreadsheet by its key 
-ssheet <- open_by_key("1GLsDOyR8hDgkjC6fzaDCVVjYsN8tLvnySDayk3HfxxA")
+ssheet <- open_by_key("1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE")
 
 # You can also use the entire URL
-ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/1WNUDoBb...")
+ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/1hS762...")
+```
+
+
+
+
+```r
+# See the structure
+str(ssheet)
+```
+
+```
+## Spreadsheet:
+## Gapminder: 5 worksheets
+## 
+## Worksheets:
+## Africa : 619 rows and 6 columns
+## Americas : 301 rows and 6 columns
+## Asia : 397 rows and 6 columns
+## Europe : 361 rows and 6 columns
+## Oceania : 25 rows and 6 columns
 ```
 
 ### Creating and Deleting a spreadsheet
@@ -105,7 +113,7 @@ list_worksheets(ssheet)
 ```
 
 ```
-## [1] "Sheet1" "Sheet2" "Sheet3"
+## [1] "Africa"   "Americas" "Asia"     "Europe"   "Oceania"
 ```
 
 ```r
@@ -113,7 +121,7 @@ list_worksheets(ssheet)
 ws <- open_worksheet(ssheet, 1)
 
 # By title
-ws <- open_worksheet(ssheet, "Sheet1")
+ws <- open_worksheet(ssheet, "Africa")
 
 # See the structure
 str(ws)
@@ -121,21 +129,14 @@ str(ws)
 
 ```
 ## Worksheet
-## Sheet1 : 78 rows and 13 columns
-##    Column Label Rows Empty.Cells Missing         Runs
-## 1       1     A   78           1    0.01 1V, 1NA, 76V
-## 2       2     B   78           1    0.01     1NA, 77V
-## 3       3     C   78           1    0.01     1NA, 77V
-## 4       4     D   78           1    0.01     1NA, 77V
-## 5       5     E   78           1    0.01     1NA, 77V
-## 6       6     F   78           1    0.01     1NA, 77V
-## 7       7     G   78           1    0.01     1NA, 77V
-## 8       8     H   78           1    0.01     1NA, 77V
-## 9       9     I   78           1    0.01     1NA, 77V
-## 10     10     J   78           1    0.01     1NA, 77V
-## 11     11     K   78           1    0.01     1NA, 77V
-## 12     12     L   78           1    0.01     1NA, 77V
-## 13     13     M   78           1    0.01     1NA, 77V
+## Africa : 619 rows and 6 columns
+##   Column Label Rows Empty.Cells Missing Runs
+## 1      1     A  619           0       0 619V
+## 2      2     B  619           0       0 619V
+## 3      3     C  619           0       0 619V
+## 4      4     D  619           0       0 619V
+## 5      5     E  619           0       0 619V
+## 6      6     F  619           0       0 619V
 ```
 
 ### Viewing a worksheet
@@ -181,8 +182,7 @@ get_row(ws, 3)
 ```
 
 ```
-##  [1] "1937" "-3.8" "2"    "7.3"  "8.4"  "11.5" "15.3" "17.1" "15.7" "13.9"
-## [11] "10.8" "6.5"  "4"
+## [1] "Angola"    "Africa"    "2007"      "42.731"    "12420476"  "4797.2313"
 ```
 
 ```r
@@ -190,10 +190,10 @@ get_rows(ws, from = 2, to = 5, header = TRUE)
 ```
 
 ```
-##     NA  Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1 1937 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2 1938  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3 1939  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##    Algeria Africa 2007 72.301 33333216  6223.3675
+## 1   Angola Africa 2007 42.731 12420476  4797.2313
+## 2    Benin Africa 2007 56.728  8078314  1441.2849
+## 3 Botswana Africa 2007 50.728  1639131 12569.8518
 ```
 
 ### Getting all values from a column or range of columns
@@ -208,26 +208,28 @@ many_cols <- get_cols(ws, from_col = 1, to_col = 3)
 
 ```r
 # By boundary rows and cols
-read_region(ws, from_row = 2, to_row = 5, from_col = 2, to_col = 13)
+read_region(ws, from_row = 1, to_row = 5, from_col = 1, to_col = 6)
 ```
 
 ```
-##    Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##    country continent year lifeExp      pop  gdpPercap
+## 1  Algeria    Africa 2007  72.301 33333216  6223.3675
+## 2   Angola    Africa 2007  42.731 12420476  4797.2313
+## 3    Benin    Africa 2007  56.728  8078314  1441.2849
+## 4 Botswana    Africa 2007  50.728  1639131 12569.8518
 ```
 
 ```r
 # By range
-read_range(ws, "B2:M5")
+read_range(ws, "A1:F5")
 ```
 
 ```
-##    Jan Feb Mar Apr  May  Jun  Jul  Aug  Sep  Oct Nov Dec
-## 1 -3.8   2 7.3 8.4 11.5 15.3 17.1 15.7 13.9 10.8 6.5   4
-## 2  3.3   4   6 9.2 11.8 15.3 17.5   16 14.9   10 4.5 3.3
-## 3  4.6 2.2 5.6   9 12.5 13.9 16.4 17.3 13.7  9.8 8.9   7
+##    country continent year lifeExp      pop  gdpPercap
+## 1  Algeria    Africa 2007  72.301 33333216  6223.3675
+## 2   Angola    Africa 2007  42.731 12420476  4797.2313
+## 3    Benin    Africa 2007  56.728  8078314  1441.2849
+## 4 Botswana    Africa 2007  50.728  1639131 12569.8518
 ```
 
 ### Getting the entire worksheet
@@ -251,7 +253,7 @@ get_cell(ws, "B2")
 ```
 
 ```
-## [1] "Jan"
+## [1] "Africa"
 ```
 
 ```r
@@ -260,71 +262,76 @@ get_cell(ws, "R2C2")
 ```
 
 ```
-## [1] "Jan"
+## [1] "Africa"
 ```
 
 ### Finding cells
 
 ```r
 # find a cell with value (cell of first appearance)
-find_cell(ws, "Jan")
+find_cell(ws, "Algeria")
 ```
 
 ```
-## [1] "Cell R2C2, B2"
+## [1] "Cell R2C1, A2"
 ```
 
 ```r
 # find all cells with value
-find_all(ws, "10")
+find_all(ws, "Algeria")
 ```
 
 ```
-##   Label  Coord Val
-## 1    K4  R4C11  10
-## 2   E46  R46C5  10
-## 3   E59  R59C5  10
-## 4   K67 R67C11  10
-## 5   K72 R72C11  10
-## 6   K74 R74C11  10
-## 7   K75 R75C11  10
+##    Label  Coord     Val
+## 1     A2   R2C1 Algeria
+## 2    A54  R54C1 Algeria
+## 3   A105 R105C1 Algeria
+## 4   A157 R157C1 Algeria
+## 5   A208 R208C1 Algeria
+## 6   A260 R260C1 Algeria
+## 7   A311 R311C1 Algeria
+## 8   A363 R363C1 Algeria
+## 9   A414 R414C1 Algeria
+## 10  A466 R466C1 Algeria
+## 11  A517 R517C1 Algeria
+## 12  A569 R569C1 Algeria
 ```
 
 ### Updating cells 
 
 ```r
 # update a single cell
-update_cell(ws, "B4", "2.0")
+update_cell(ws, "B4", "Oops")
 
 get_cell(ws, "B4")
 ```
 
 ```
-## [1] "2"
+## [1] "Oops"
 ```
 
 ```r
 # Update cells in batch - specify range
-update_cells(ws, "B2:C2", c("January", "February"))
+update_cells(ws, "A1:C1", c("Country", "Continent", "Year"))
 
-read_range(ws, "B2:C2")
+read_range(ws, "A1:C1")
 ```
 
 ```
-##        V1       V2
-## 1 January February
+##        V1        V2   V3
+## 1 Country Continent Year
 ```
 
 ```r
 # Update cells in batch - specify anchor cell
-update_cells(ws, "D2", c("March", "April", "May"))
+update_cells(ws, "D1", c("Life Expectancy", "Population", "GDP Per Capita"))
 
-read_range(ws, "B2:F2")
+read_range(ws, "D1:F1")
 ```
 
 ```
-##        V1       V2    V3    V4  V5
-## 1 January February March April May
+##                V1         V2             V3
+## 1 Life Expectancy Population GDP Per Capita
 ```
 
 
