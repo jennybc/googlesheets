@@ -1,4 +1,5 @@
 library(devtools)
+library(plyr)
 
 # Load source_GitHubData
 # The functions' gist ID is 4466237
