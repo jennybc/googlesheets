@@ -2,14 +2,25 @@
 % Please edit documentation in R/models.R
 \name{spreadsheet}
 \alias{spreadsheet}
-\title{Spreadsheet}
+\title{The spreadsheet object}
 \usage{
 spreadsheet()
 }
-\value{
-spreadsheet object
-}
 \description{
-Create a spreadsheet spreadsheet object.
+The spreadsheet object stores information about a spreadsheet. It includes the fields:
+}
+\details{
+\itemize{
+  \item \code{sheet_id} the key of the spreadsheet
+  \item \code{sheet_title} the title of the spreadsheet
+  \item \code{updated} the time of last update
+  \item \code{nsheets} the number of worksheets contained in the spreadsheet
+  \item \code{ws_names} the names of the worksheets contained in the
+  spreadsheet
+  \item \code{visibility} visibility of spreadsheet, determines whether
+  authorization is required for request
+  \item \code{worksheets} a list of worksheet objects for every worksheet
+  contained in the spreadsheet
+}
 }
 

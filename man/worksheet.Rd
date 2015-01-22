@@ -2,14 +2,28 @@
 % Please edit documentation in R/models.R
 \name{worksheet}
 \alias{worksheet}
-\title{Worksheet}
+\title{The worksheet object}
 \usage{
 worksheet()
 }
-\value{
-worksheet object
-}
 \description{
-Create a worksheet object.
+The worksheet object stores information about a worksheet. It includes the fields:
+}
+\details{
+\itemize{
+  \item \code{sheet_id} the key of the spreadsheet housing the worksheet
+  \item \code{id} the id of the worksheet
+  \item \code{title} the title of the worksheet
+  \item \code{ncol} the number of columns contained in the worksheet,
+   measured by the leftmost and rightmost columns that contains values
+  \item \code{nrow} the number of rows contained in the worksheet,
+   measured by the top-most and bottom-most rows that contains values
+  \item \code{col_extent} the actual number of columns contained in the
+   worksheet even if cells are empty
+  \item \code{row_extent} the actual number of rows contained in the
+   worksheet even if cells are empty
+  \item \code{visibility} visibility of worksheet, determines whether
+  authorization is required for request
+}
 }
 
