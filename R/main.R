@@ -1126,3 +1126,24 @@ resize_worksheet <- function(ws, nrow = NULL, ncol = NULL)
   
   gsheets_PUT(edit_url, new_feed)
 }
+
+
+#' Add rows to a worksheet
+#'
+#' @param ws worksheet object
+#' @param n \code{numeric} the number of rows to add
+#' 
+#' @export
+add_rows <- function(ws, n) {
+  resize_worksheet(ws, nrow = n, ncol = NULL)
+}
+
+#' Add columns to a worksheet
+#'
+#' @param ws worksheet object
+#' @param n \code{numeric} the number of columns to add
+#' 
+#' @export
+add_cols <- function(ws, n) {
+  resize_worksheet(ws, nrow = NULL, ncol = n)
+}

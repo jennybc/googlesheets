@@ -2,6 +2,8 @@
 
 S3method(str,spreadsheet)
 S3method(str,worksheet)
+export(add_cols)
+export(add_rows)
 export(add_spreadsheet)
 export(add_worksheet)
 export(authorize)
