@@ -23,7 +23,7 @@ login <- function(email, passwd)
                                    "Email" = email,
                                    "Passwd" = passwd,
                                    "service" = service))
-  
+
   gsheets_check(req)
   
   # SID, LSID not active, extract auth token
@@ -57,9 +57,8 @@ authorize <- function(new_user = FALSE)
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds")
   
-  client_id <- 
-    "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
-  client_secret <- "iWPrYg0lFHNQblnRrDbypvJL"
+  client_id <- Sys.getenv("GSPREADR_CLIENT_ID")
+  client_secret <- Sys.getenv("GSPREADR_CLIENT_SECRET")
   
   gspreadr_app <- oauth_app("google", client_id, client_secret)
   
