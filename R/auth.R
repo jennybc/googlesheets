@@ -57,8 +57,8 @@ authorize <- function(new_user = FALSE)
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds")
   
-  client_id <- Sys.getenv("GSPREADR_CLIENT_ID")
-  client_secret <- Sys.getenv("GSPREADR_CLIENT_SECRET")
+  client_id <- "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
+  client_secret <- "iWPrYg0lFHNQblnRrDbypvJL"
   
   gspreadr_app <- oauth_app("google", client_id, client_secret)
   
