@@ -1,0 +1,29 @@
+---
+title: "Runtime Experiment"
+output: html_document
+---
+
+
+```{r}
+library(gspreadr)
+
+ss <- open_spreadsheet("Gapminder")
+
+system.time(open_worksheets(ss))
+
+system.time(str(ss))
+
+system.time(open_worksheet(ss, "Africa"))
+
+system.time(open_worksheet(ss, "Americas"))
+
+system.time(open_worksheet(ss, "Asia"))
+
+system.time(open_worksheet(ss, "Europe"))
+
+system.time(open_worksheet(ss, "Oceania"))
+```
+
+
+
+
