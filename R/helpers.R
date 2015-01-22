@@ -148,15 +148,20 @@ worksheet_dim <- function(ws)
   
   feed <- gsheets_parse(req)
   
-  feed_list <- xmlToList(feed)
-  ws$row_extent <- as.numeric(feed_list$rowCount)
-  ws$col_extent <- as.numeric(feed_list$colCount)
+  row_count <- unlist(getNodeSet(feed, "//gs:rowCount", 
+                                     c("ns" = default_ns, "gs"), xmlValue))
+  
+  col_count <- unlist(getNodeSet(feed, "//gs:colCount", 
+                                     c("ns" = default_ns, "gs"), xmlValue))
+  
+  ws$row_extent <- as.numeric(row_count)
+  ws$col_extent <- as.numeric(col_count)
   
   tbl <- get_lookup_tbl(feed)
   
   if(nrow(tbl) == 0) {
-    ws$nrow <- 0
-    ws$ncol <- 0
+  ws$nrow <- 0
+  ws$ncol <- 0
   } else {
     ws$nrow <- max(tbl$row)
     ws$ncol <- max(tbl$col)
@@ -365,7 +370,7 @@ make_plot <- function(tbl)
 ssfeed_to_df <- function() 
 {
   the_url <- build_req_url("spreadsheets")
-
+  
   req <- gsheets_GET(the_url)
   ssfeed <- gsheets_parse(req)
   
