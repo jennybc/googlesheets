@@ -21,7 +21,7 @@ In order to access your own spreadsheets (non-public), you must log in. There ar
 1.  `login("email", "password")` (if you really want to...)
 2.  `authorize()` (recommended)
 
-For the first time, `authorize()` will authenticate the user interactively. The user will be directed to a web browser where they will be asked to login to their Google account, and give `gspreadr` permission to access Sheets and Google Drive. Credentials will be cached and authentication will not be needed for subsequent requests/sessions as `httr` handles the storing and refreshing of tokens.
+For the first time, `authorize()` will authenticate the user interactively. The user will be directed to a web browser where they will be asked to login to their Google account, and give `gspreadr` permission to access Sheets and Google Drive. Credentials will be cached and authentication will not be needed for subsequent requests/sessions as `httr` handles the storing and refreshing of tokens. (A `.httr-oauth` file will be left behind in the current working directory)
 
 If you want to access a different account, run `authorize(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
 
