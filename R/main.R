@@ -28,11 +28,14 @@ list_spreadsheets <- function(show_key = FALSE)
 #' 
 #' @param title the title for the new spreadsheet
 #' 
+#' @importFrom jsonlite toJSON
 #' @export
 add_spreadsheet <- function(title)
 {
-  the_body <- paste0('{ "title" : "', title ,'", 
-                     "mimeType" : "application/vnd.google-apps.spreadsheet"}')
+  dat <- data.frame("title" = title, 
+                    "mimeType" = "application/vnd.google-apps.spreadsheet")
+  
+  the_body <- toJSON(dat)
   
   gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body, 
                content_type = "json")

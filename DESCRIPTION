@@ -14,7 +14,8 @@ Imports:
     ggplot2,
     gridExtra,
     dplyr,
-    plyr
+    plyr,
+    jsonlite
 Suggests:
     testthat,
     knitr
