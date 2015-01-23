@@ -95,8 +95,8 @@ ws <- open_worksheet(ssheet, "Oceania")
 ws <- open_worksheet(ssheet, 5)
 
 # or in one shot
-ws <- open_at_once(ss_title = "Gapminder by Continent", ws_index = "Oceania")
-ws <- open_at_once(ss_title = "Gapminder by Continent", ws_index = 5)
+ws <- open_at_once(ss_title = "Gapminder by Continent", ws_value = "Oceania")
+ws <- open_at_once(ss_title = "Gapminder by Continent", ws_value = 5)
 ```
 
 This returns a worksheet object. You can get the ids of the spreadsheet and worksheet, worksheet title, and the number of rows and columns.
@@ -123,9 +123,9 @@ plyr::llply(ws_objs, function(x) get_cell(x, "A2"))
 To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must open the spreadsheet again to "refresh" it. 
 
 ```{r, eval = FALSE}
-add_worksheet(ssheet, title = "foo", rows = 10, cols = 10)
+add_worksheet(ssheet, title = "foo", nrow = 10, ncol = 10)
 
-del_worksheet(ssheet, ws_title)
+del_worksheet(ssheet, ws_title = "foo")
 ```
 
 # Rename a worksheet
