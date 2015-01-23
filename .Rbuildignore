@@ -3,3 +3,6 @@
 ^\.httr-oauth$
 vignettes/basic-usage.Rmd
 ^\.travis\.yml$
+^data-for-demo$
+^README\.Rmd$
+^README-*\.png$

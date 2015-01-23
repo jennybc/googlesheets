@@ -1,3 +1,19 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
 **Not quite ready for showtime but release coming very soon!**
 ---
 
@@ -15,7 +31,7 @@ Features:
 -   Open a spreadsheet by its **title** or **url**.
 -   Extract range, entire row or column values.
 
-![gspreadr](figure/gspreadr.png)
+![gspreadr](README-gspreadr.png)
 
 Basic Usage
 ---
@@ -186,7 +202,7 @@ find_all(ws, "Algeria")
 ```
 
 ### Updating cells 
-```{r eval}
+```{r eval, eval = FALSE}
 # update a single cell
 update_cell(ws, "B4", "Oops")
 
@@ -203,7 +219,7 @@ update_cells(ws, "D1", c("Life Expectancy", "Population", "GDP Per Capita"))
 read_range(ws, "D1:F1")
 ```
 
-```{r return to normal, include=FALSE}
+```{r return to normal, include=FALSE, eval = FALSE}
 update_cells(ws, "A1", c("country", "continent", "year", "lifeExp", "pop", "gdpPercap"))
 update_cell(ws, "B4", "Africa")
 ```
