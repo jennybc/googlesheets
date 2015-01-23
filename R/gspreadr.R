@@ -6,4 +6,5 @@
 #' 
 #' @docType package
 #' @name gspreadr
+#' @importFrom XML getNodeSet
 NULL

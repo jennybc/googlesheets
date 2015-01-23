@@ -82,7 +82,7 @@ add_cols <- function(ws, n) {
 #' update_cell(worksheet, "A1", "First Cell")
 #' update_cell(worksheet, "C1", "=A1+B1")
 #' }
-#' @importFrom XML getNodeSet xmlNode
+#' @importFrom XML xmlNode
 #' @export
 update_cell <- function(ws, pos, value)
 {

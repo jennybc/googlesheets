@@ -17,7 +17,6 @@
 #' 
 #' @seealso \code{\link{open_worksheets}}
 #' 
-#' @importFrom XML xmlToList getNodeSet
 #' @export
 open_spreadsheet <- function(title) 
 {
@@ -32,7 +31,7 @@ open_spreadsheet <- function(title)
   req <- gsheets_GET(the_url)
   wsfeed <- gsheets_parse(req)
   
-  wsfeed_list <- xmlToList(wsfeed)
+  wsfeed_list <- XML::xmlToList(wsfeed)
   
   ws_objs <- getNodeSet(wsfeed, "//ns:entry", c(ns = default_ns), 
                         function(x) make_ws_obj(x, sheet_key))
@@ -136,7 +135,6 @@ open_at_once <- function(ss_title, ws_value)
 #' "Published to the web". This is different from setting the spreadsheet to "Public on the web"
 #' in the visibility options in the sharing dialog of a Google Sheets file.
 #'
-#' @importFrom XML xmlToList getNodeSet
 #' @export
 open_by_key <- function(key, visibility = "private") 
 {
@@ -148,7 +146,7 @@ open_by_key <- function(key, visibility = "private")
     stop("Please check visibility settings.")
   
   wsfeed <- gsheets_parse(req)
-  wsfeed_list <- xmlToList(wsfeed)
+  wsfeed_list <- XML::xmlToList(wsfeed)
   
   ss <- spreadsheet()
   ss$sheet_id <- key

@@ -179,10 +179,9 @@ worksheet_dim <- function(ws)
 #' @param node entry node for worksheet
 #' @param sheet_id spreadsheet id housing worksheet
 #' 
-#' @importFrom XML xmlToList
 make_ws_obj <- function(node, sheet_id)
 {
-  attr_list <- xmlToList(node)
+  attr_list <- XML::xmlToList(node)
   
   ws <- worksheet()
   ws$sheet_id <- sheet_id
@@ -366,7 +365,7 @@ make_plot <- function(tbl)
 #' Get spreadsheets' titles, owner, access type, date/time of last update and 
 #' its unique key, and organize into a data frame for easy post-processing.
 #'
-#' @importFrom XML xmlValue xmlGetAttr getNodeSet
+#' @importFrom XML xmlValue xmlGetAttr
 ssfeed_to_df <- function() 
 {
   the_url <- build_req_url("spreadsheets")
@@ -417,7 +416,7 @@ ssfeed_to_df <- function()
 #' @param feed cell feed returned and parsed from GET request
 #' @param new_values vector of new values to update cells 
 #' 
-#' @importFrom XML xmlNode getNodeSet
+#' @importFrom XML xmlNode
 #' @importFrom dplyr mutate
 #' @importFrom plyr dlply
 create_update_feed <- function(feed, new_values)
