@@ -32,7 +32,7 @@ spreadsheet <- function() {
 #' 
 #' \itemize{
 #'   \item \code{sheet_id} the key of the spreadsheet housing the worksheet
-#'   \item \code{id} the id of the worksheet
+#'   \item \code{ws_id} the id of the worksheet
 #'   \item \code{title} the title of the worksheet
 #'   \item \code{ncol} the number of columns contained in the worksheet,
 #'    measured by the leftmost and rightmost columns that contains values
@@ -49,7 +49,7 @@ spreadsheet <- function() {
 #' @name worksheet
 worksheet <- function() {
   structure(list(sheet_id = character(),
-                 id = character(),
+                 ws_id = character(),
                  title = character(),
                  ncol = numeric(),
                  nrow = numeric(),

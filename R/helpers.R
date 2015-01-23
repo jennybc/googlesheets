@@ -141,7 +141,7 @@ build_range <- function(dat, anchor, header) {
 #' @param ws a worksheet object
 worksheet_dim <- function(ws)
 {
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            visibility = ws$visibility)
   
   req <- gsheets_GET(the_url)
@@ -186,7 +186,7 @@ make_ws_obj <- function(node, sheet_id)
   
   ws <- worksheet()
   ws$sheet_id <- sheet_id
-  ws$id <- unlist(strsplit(attr_list$id, "/"))[[9]]
+  ws$ws_id <- unlist(strsplit(attr_list$id, "/"))[[9]]
   ws$title <- (attr_list$title)$text
   ws$row_extent <- as.numeric(attr_list$rowCount)
   ws$col_extent <- as.numeric(attr_list$colCount)

@@ -259,7 +259,7 @@ del_worksheet<- function(ss, ws_title)
   
   ws <- ss$worksheets[[index]]
   
-  the_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
+  the_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$ws_id)
   
   gsheets_DELETE(the_url) 
   
@@ -283,7 +283,7 @@ get_row <- function(ws, row)
   if(row > ws$nrow)
     stop("Specified row exceeds the number of rows contained in the worksheet.")
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_row = row, max_row = row, 
                            visibility = ws$visibility)
   
@@ -321,7 +321,7 @@ get_rows <- function(ws, from, to, header = FALSE)
   if(to > ws$nrow)
     to <- ws$nrow
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_row = from, max_row = to, 
                            visibility = ws$visibility)
   
@@ -361,7 +361,7 @@ get_col <- function(ws, col)
   if(col > ws$ncol)
     stop("Column exceeds current worksheet size")
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_col = col, max_col = col, 
                            visibility = ws$visibility)
   
@@ -405,7 +405,7 @@ get_cols <- function(ws, from, to, header = TRUE)
   if(to > ws$ncol) 
     to <- ws$ncol
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_col = from, max_col = to, 
                            visibility = ws$visibility)
   
@@ -452,7 +452,7 @@ get_cell <- function(ws, cell)
     }
   }
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            visibility = ws$visibility)
   new_url <- paste(the_url, cell, sep = "/")
   
@@ -512,7 +512,7 @@ read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
 {
   check_empty(ws)
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_row = from_row, max_row = to_row,
                            min_col = from_col, max_col = to_col, 
                            visibility = ws$visibility)
@@ -591,7 +591,7 @@ read_range <- function(ws, x, header = TRUE)
 #' @export
 find_cell <- function(ws, x)
 {
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_col = 1, max_col = ws$ncol, 
                            visibility = ws$visibility)
   
@@ -625,7 +625,7 @@ find_cell <- function(ws, x)
 #' @export
 find_all <- function(ws, x)
 {
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_col = 1, max_col = ws$ncol, 
                            visibility = ws$visibility)
   
@@ -695,7 +695,7 @@ update_cell <- function(ws, pos, value)
   # use "private" for visibility because "public" will not allow for writing to
   # public sheet since does not return edit url in the response feed,
   # if dont have permission then error will be thrown
-  url <- build_req_url("cells", key = ws$sheet_id, ws_id =  ws$id, 
+  url <- build_req_url("cells", key = ws$sheet_id, ws_id =  ws$ws_id, 
                        visibility = "private") 
   
   the_url <- paste(url, pos, sep = "/")
@@ -783,7 +783,7 @@ update_cells <- function(ws, range, dat, header = TRUE)
   
   # use "private" for visibility because "public" will not allow for writing to
   # public sheet, if dont have permission then error will be thrown
-  the_url0 <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url0 <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                             visibility = "private")
   
   the_url <- paste0(the_url0, "?range=", range, "&return-empty=true")
@@ -794,7 +794,7 @@ update_cells <- function(ws, range, dat, header = TRUE)
   the_body <- create_update_feed(feed, new_values)
   
   req_url <- paste("https://spreadsheets.google.com/feeds/cells",
-                   ws$sheet_id, ws$id, "private/full/batch", sep = "/")
+                   ws$sheet_id, ws$ws_id, "private/full/batch", sep = "/")
   
   gsheets_POST(req_url, the_body)
 }
@@ -811,7 +811,7 @@ update_cells <- function(ws, range, dat, header = TRUE)
 #' @export 
 view <- function(ws)
 {
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            min_col = 1, max_col = ws$ncol,
                            visibility = ws$visibility)
   check_empty(ws)
@@ -850,7 +850,7 @@ view_all <- function(ss, show_overlay = FALSE)
               col = 1
             }
             
-            the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$id, 
+            the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                                      min_col = col, max_col = ws$ncol,
                                      visibility = ws$visibility)
             
@@ -865,7 +865,7 @@ view_all <- function(ss, show_overlay = FALSE)
   p2 <- ggplot(dat_tbl, aes(x = col, y = row, group = ~ Sheet)) +
     geom_tile(fill = "steelblue2", aes(x = col, y = row), alpha = 0.4) +
     scale_x_continuous(breaks = seq(1, max(dat_tbl$col), 1), expand = c(0, 0)) +
-    annotate("text", x = seq(1, max(dat_tbl$col) ,1), y = (-0.05) * max(dat_tbl$row), 
+    annotate("text", x = seq(1, max(dat_tbl$col), 1), y = (-0.05) * max(dat_tbl$row), 
              label = LETTERS[1:max(dat_tbl$col)], colour = "steelblue4",
              fontface = "bold") +
     scale_y_reverse() +
@@ -909,7 +909,7 @@ str.worksheet <- function(object, ...)
   if(object$nrow == 0)
     return(item1)
   
-  the_url <- build_req_url("cells", key = object$sheet_id, ws_id = object$id, 
+  the_url <- build_req_url("cells", key = object$sheet_id, ws_id = object$ws_id, 
                            min_col = 1, max_col = object$ncol, 
                            visibility = object$visibility)
   
@@ -1004,10 +1004,11 @@ open_by_key <- function(key, visibility = "private")
   
   ss <- spreadsheet()
   ss$sheet_id <- key
+  ss$visibility <- visibility
+  
   ss$updated <- wsfeed_list$updated
   ss$sheet_title <- wsfeed_list$title$text
   ss$nsheets <- as.numeric(wsfeed_list$totalResults)
-  ss$visibility <- visibility
   
   # return list of worksheet objs
   ws_objs<- getNodeSet(wsfeed, "//ns:entry", c("ns" = default_ns),
@@ -1070,7 +1071,7 @@ rename_worksheet <- function(ss, old_title, new_title)
   
   ws <- ss$worksheets[[index]]
   
-  req_url <- build_req_url("worksheets", key = ss$sheet_id, ws_id = ws$id)
+  req_url <- build_req_url("worksheets", key = ss$sheet_id, ws_id = ws$ws_id)
   req <- gsheets_GET(req_url)
   feed <- gsheets_parse(req)
   
@@ -1103,7 +1104,7 @@ resize_worksheet <- function(ws, nrow = NULL, ncol = NULL)
   #   
   #   ws <- ss$worksheets[[index]]
   
-  req_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$id)
+  req_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$ws_id)
   req <- gsheets_GET(req_url)
   feed <- gsheets_parse(req)
   new_feed <- toString.XMLNode(feed)

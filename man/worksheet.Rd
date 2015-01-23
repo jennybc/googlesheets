@@ -12,7 +12,7 @@ The worksheet object stores information about a worksheet. It includes the field
 \details{
 \itemize{
   \item \code{sheet_id} the key of the spreadsheet housing the worksheet
-  \item \code{id} the id of the worksheet
+  \item \code{ws_id} the id of the worksheet
   \item \code{title} the title of the worksheet
   \item \code{ncol} the number of columns contained in the worksheet,
    measured by the leftmost and rightmost columns that contains values
