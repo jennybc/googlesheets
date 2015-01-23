@@ -35,7 +35,10 @@ add_spreadsheet <- function(title)
   dat <- data.frame("title" = title, 
                     "mimeType" = "application/vnd.google-apps.spreadsheet")
   
-  the_body <- toJSON(dat)
+  the_body_pre <- toJSON(dat)
+  
+  the_body_clean <- sub('\\[', "", the_body_pre)
+  the_body <- sub('\\]', "", the_body_clean)
   
   gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body, 
                content_type = "json")
