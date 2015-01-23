@@ -1,9 +1,3 @@
-add_cols
-add_rows
-resize_worksheet
-update_cell
-update_cells
-
 #' Resize a worksheet
 #'
 #' @param ws worksheet object
