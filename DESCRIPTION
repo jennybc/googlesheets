@@ -6,7 +6,7 @@ Description: Google Spreadsheets R API patterned after gspread,
     a Google Spreadsheets Python API
 Depends:
     R (>= 3.1.1)
-License: TBD
+License: MIT
 LazyData: true
 Imports:
     httr,
