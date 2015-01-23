@@ -208,3 +208,52 @@ str.spreadsheet <- function(object, ...)
 }
 
 
+#' Print method for a spreadsheet object
+#' 
+#' @param x spreadsheet object
+#' @param ... potential further arguments
+#' 
+#' 
+#' @export
+print.spreadsheet <- function(x, ...)
+{
+  dat <- llply(x$worksheets, function(x) paste(x$title, ":", x$row_extent, "rows and", x$col_extent, "columns"))
+  
+  cat("Spreadsheet:", x$sheet_title)
+  cat("\n")
+  cat("Spreadsheet id:", x$sheet_id)
+  cat("\n")
+  cat("Last updated:", x$updated)
+  cat("\n")
+  cat("\n")
+  cat("Contains", x$nsheets, "worksheets:")
+  cat("\n")
+  cat("(Title) : (Worksheet dimensions)")
+  cat("\n")
+  cat(paste(dat, sep = "\n"), sep = "\n")
+  cat("\n")
+  
+  invisible(x)
+}
+
+
+#' Print method for a worksheet object
+#' 
+#' @param x worksheet object
+#' @param ... potential further arguments
+#' 
+#' @export
+print.worksheet <- function(x, ...)
+{
+  cat("Worksheet:", x$title)
+  cat("\n")
+  cat("Worksheet id:", x$ws_id)
+  cat("\n")
+  cat("Dimensions:", x$row_extent, "rows and", x$col_extent, "columns")
+  cat("\n")
+  cat("With data:", x$nrow, "rows and", x$ncol, "columns")
+  cat("\n")
+  
+  invisible(x)
+}
+
