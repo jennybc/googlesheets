@@ -250,7 +250,7 @@ get_cell <- function(ws, cell)
   
   the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
                            visibility = ws$visibility)
-  new_url <- paste(the_url, cell, sep = "/")
+  new_url <- slaste(the_url, cell)
   
   req <- gsheets_GET(new_url)
   feed <- gsheets_parse(req)

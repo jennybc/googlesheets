@@ -20,24 +20,22 @@ build_req_url <- function(feed_type, key = NULL, ws_id = NULL,
   switch(
     feed_type,
     spreadsheets = {
-      the_url <- paste(base_url, feed_type, visibility, projection, 
-                       sep = "/")
+      the_url <- slaste(base_url, feed_type, visibility, projection)
     },
     worksheets = {
       if(!is.null(ws_id))
-        the_url <- paste(base_url, feed_type, key, visibility, projection, ws_id,
-                         sep = "/")
+        the_url <-
+        slaste(base_url, feed_type, key, visibility, projection, ws_id)
       else
-        the_url <- paste(base_url, feed_type, key, visibility, projection, 
-                         sep = "/")
+        the_url <- slaste(base_url, feed_type, key, visibility, projection)
     },
     list = {
-      the_url <- paste(base_url, feed_type, key, ws_id, visibility, 
-                       projection , sep = "/")
+      the_url <- slaste(base_url, feed_type, key, ws_id, visibility, 
+                        projection)
     },
     cells = {
-      the_url <- paste(base_url, feed_type, key, ws_id, visibility, 
-                       projection, sep = "/")
+      the_url <- slaste(base_url, feed_type, key, ws_id, visibility, 
+                        projection)
       
       if(sum(min_row, max_row, min_col, max_col) > 0) {
         query <- build_query(min_row, max_row, min_col, max_col)

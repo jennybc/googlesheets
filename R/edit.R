@@ -42,8 +42,8 @@ del_spreadsheet <- function(title)
   
   sheet_id <- sheets_df[index, "sheet_key"]
   
-  the_url <- paste("https://www.googleapis.com/drive/v2/files", sheet_id,
-                   "trash", sep = "/")
+  the_url <- slaste("https://www.googleapis.com/drive/v2/files", sheet_id,
+                    "trash")
   
   gsheets_POST(the_url, the_body = NULL)
   

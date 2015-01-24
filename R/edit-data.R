@@ -115,7 +115,7 @@ update_cell <- function(ws, pos, value)
   url <- build_req_url("cells", key = ws$sheet_id, ws_id =  ws$ws_id, 
                        visibility = "private") 
   
-  the_url <- paste(url, pos, sep = "/")
+  the_url <- slaste(url, pos)
   
   req <- gsheets_GET(the_url)
   
@@ -210,8 +210,8 @@ update_cells <- function(ws, range, dat, header = TRUE)
   
   the_body <- create_update_feed(feed, new_values)
   
-  req_url <- paste("https://spreadsheets.google.com/feeds/cells",
-                   ws$sheet_id, ws$ws_id, "private/full/batch", sep = "/")
+  req_url <- slaste("https://spreadsheets.google.com/feeds/cells",
+                    ws$sheet_id, ws$ws_id, "private/full/batch")
   
   gsheets_POST(req_url, the_body)
 }
