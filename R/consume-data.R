@@ -375,3 +375,77 @@ read_range <- function(ws, x, header = TRUE)
   
   read_region(ws, rows[1], rows[2], cols[1], cols[2], header)
 }
+
+#' Get rows or columns from a worksheet
+#'
+#' Get row(s) or column(s) from a worksheet by specifying the desired row/column
+#' number. 
+#'
+#' @param ws worksheet object
+#' @param type either "row" or "col"
+#' @param values a vector of length 1 or 2 depending on if a single or a range 
+#' of rows or columns is to be returned
+#' @param header indicating if the first row should be taken as header row
+#' 
+get_data <- function(ws, type, values, header = FALSE) {
+  min_row <- NULL
+  max_row <- NULL
+  min_col <- NULL
+  max_col <- NULL
+  
+  if(length(values) == 1)
+    values <- rep(values, 2)
+  
+  if(grepl("row", type)) {
+    min_row <- values[1]
+    max_row <- values[2]
+  } else {
+    min_col <- values[1]
+    max_col <- values[2]
+  }
+  
+  #old way
+  url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id,
+                       visibility = ws$visibility)
+  
+  # get the cells feed link
+  #x <- parse_url("https://spreadsheets.google.com/feeds/cells/1WpFeaRU_9bBEuK8fI21e5TcbCjQZy90dQYgXF_0JvyQ/od6/private/full")
+  
+  x <- parse_url(url)
+  # enter query params
+  x$query <- list("min-row" = min_row, "max-row" = max_row, 
+                  "min-col" = min_col, "max-col" = max_col)
+  
+  the_url <- build_url(x)
+  
+  req <- gsheets_GET(the_url)
+  feed <- gsheets_parse(req)
+  tbl <- get_lookup_tbl(feed)
+  
+  if(nrow(tbl) == 0) { 
+    stop("No data found in current selection")
+  }
+  
+  row_min <- 1
+  col_min <- 1
+  
+  if(is.null(min_row)) {
+    col_min <- min_col
+  } else {
+    row_min <- min_row
+  }
+  
+  tbl_clean <- fill_missing_tbl(tbl, row_min, col_min)
+  
+  list_of_df <- 
+    dlply(tbl_clean, "row", 
+          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
+  
+  my_df <- rbind.fill(list_of_df)
+  
+  if(header) {
+    set_header(my_df)
+  } else {
+    my_df
+  }
+}
