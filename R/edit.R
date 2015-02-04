@@ -142,3 +142,42 @@ rename_worksheet <- function(ss, old_title, new_title)
   
   gsheets_PUT(edit_url, new_feed)
 }
+
+
+#' Copy an existing spreadsheet
+#' 
+#' Make a copy of an existing spreadsheet into your Google Drive. You can either
+#' make a copy of your own spreadsheet or another user's spreadsheet. If the 
+#' spreadsheet you want to make a copy of already exists in your Google Drive, 
+#' pass in the title of the spreadsheet. To get a copy of another user's 
+#' spreadsheet, enter the key of that spreadsheet. Make sure that the target 
+#' spreadsheet is made 'accessible' in the link sharing options or else it wont 
+#' be found.
+#' 
+#' @param title_or_key either the title of a spreadsheet or the key of a 
+#' spreadsheet
+#' @param new_title if \code{new_title} is NULL then the copied spreadsheet will
+#' be given the default name: "Copy of ..."
+#' 
+#' @export
+copy_spreadsheet <- function(title_or_key, new_title = NULL)
+{
+  sheets_df <- ssfeed_to_df()
+  index <- match(title_or_key, sheets_df$sheet_title)
+  
+  if(is.na(index)) {
+    sheet_id <- title_or_key
+  } else {
+    sheet_id <- sheets_df[index, "sheet_key"]
+  } 
+  
+  the_body_pre <- jsonlite::toJSON(data.frame("title" = new_title))
+  the_body <- gsub("\\[|\\]", "", the_body_pre)
+  
+  the_url <- slaste("https://www.googleapis.com/drive/v2/files", 
+                    sheet_id, "copy")
+  
+  req <- gsheets_POST(the_url, the_body, content_type = "json")
+  
+  message("A copy of the spreadsheet has been made in your Google Drive.")
+}
