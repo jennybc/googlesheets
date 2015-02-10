@@ -73,10 +73,8 @@ build_query <- function(min_row, max_row, min_col, max_col)
 #' Make GET request to Google Sheets API.
 #'
 #' @param url URL for GET request
-#' @param token Google auth token obtained from \code{\link{login}} 
-#' or \code{\link{authorize}} 
 #' @importFrom httr GET stop_for_status
-gsheets_GET <- function(url, token = NULL) 
+gsheets_GET <- function(url) 
 { 
   if(grepl("public", url)) {
     req <- GET(url)
