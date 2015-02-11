@@ -20,10 +20,12 @@ pts_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1hff6AzFAZgFdb5
 
 ## hack on top of the above hack so that lighter-weight approaches to testing,
 ## that don't fire up a fresh R process, e.g. "Test package", also works
-if(Sys.getenv("GSPREADR_USERNAME") == "") {
-  gspreadr_credentials <- read.table(file.path("~", ".R", "check.Renviron"),
-                                     sep = "=", stringsAsFactors = FALSE)
-  login(gspreadr_credentials$V2[1], gspreadr_credentials$V2[2])
-} else {
-  login(Sys.getenv("GSPREADR_USERNAME"), Sys.getenv("GSPREADR_PASSWORD"))
+if(Sys.getenv("TRAVIS") != "true") {
+  if(Sys.getenv("GSPREADR_USERNAME") == "") {
+    gspreadr_credentials <- read.table(file.path("~", ".R", "check.Renviron"),
+                                       sep = "=", stringsAsFactors = FALSE)
+    login(gspreadr_credentials$V2[1], gspreadr_credentials$V2[2])
+  } else {
+    login(Sys.getenv("GSPREADR_USERNAME"), Sys.getenv("GSPREADR_PASSWORD"))
+  }
 }

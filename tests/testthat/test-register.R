@@ -2,10 +2,13 @@ context("register a spreadsheet")
 
 test_that("Bad spreadsheet specification throws informative error", {
   
+  skip_on_travis()
+  
   ## errors that prevent production of a ws_feed
   expect_error(get_ws_feed(4L), "must be character")
   expect_error(get_ws_feed(c("Gapminder", "Gapminder")),
                "must be of length 1")
+  skip_on_travis()
   expect_error(get_ws_feed("spatula"), "doesn't match the title or key")
   
   ## errors caused by well-formed input that refers to a nonexistent spreadsheet
@@ -20,6 +23,8 @@ test_that("Bad spreadsheet specification throws informative error", {
 
 test_that("Spreadsheet can be registered by any means necessary", {
   
+  skip_on_travis()
+  
   expect_equal(get_ws_feed(pts_url, "public"), pts_ws_feed)
   expect_equal(get_ws_feed(pts_key, "public"), pts_ws_feed)
   expect_equal(get_ws_feed(pts_title, "public"), pts_ws_feed)
@@ -31,6 +36,9 @@ test_that("Spreadsheet can be registered by any means necessary", {
 ## TO DO: test re: visibility?
 
 test_that("Number and titles of worksheets are obtained", {
+  
+  skip_on_travis()
+  
   ss <- register(pts_ws_feed)
   expect_equal(ss$n_ws, 6L)
   expect_true(all(ss$ws$ws_title %in%
