@@ -9,6 +9,8 @@ before_install:
 
 install:
   - ./travis-tool.sh install_deps
+  - ./travis-tool.sh github_package hadley/stringr
+
 
 script: ./travis-tool.sh run_tests
 
