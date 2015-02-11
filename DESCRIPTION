@@ -1,21 +1,24 @@
 Package: gspreadr
 Title: Manage your Google spreadsheets in R
 Version: 0.1.1
-Authors@R: "Joanna Zhao <joanna.zhao@alumni.ubc.ca> [aut, cre]"
 Description: Google Spreadsheets R API patterned after gspread,
-    a Google Spreadsheets Python API
+    a Google Spreadsheets Python API 
+Authors@R: c(
+    person("Jennifer", "Bryan", , "jenny@stat.ubc.ca", c("aut", "cre")),
+    person("Joanna", "Zhao", , "joanna.zhao@alumni.ubc.ca", role = "aut")
+    )
+URL: https://github.com/jennybc/gspreadr
+BugReports: https://github.com/jennybc/gspreadr/issues
 Depends:
     R (>= 3.1.1)
 License: MIT + file LICENSE
 LazyData: true
 Imports:
-    httr,
-    XML,
-    ggplot2,
-    gridExtra,
     dplyr,
+    httr,
     plyr,
-    jsonlite
+    stringr,
+    XML,
 Suggests:
     testthat,
     knitr

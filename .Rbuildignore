@@ -7,3 +7,4 @@ vignettes/basic-usage.Rmd
 ^README\.Rmd$
 ^README-.*\.png$
 ^internal$
+^awaiting-resurrection$

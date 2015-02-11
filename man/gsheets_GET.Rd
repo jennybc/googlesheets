@@ -4,13 +4,10 @@
 \alias{gsheets_GET}
 \title{Create GET request}
 \usage{
-gsheets_GET(url, token = NULL)
+gsheets_GET(url)
 }
 \arguments{
 \item{url}{URL for GET request}
-
-\item{token}{Google auth token obtained from \code{\link{login}}
-or \code{\link{authorize}}}
 }
 \description{
 Make GET request to Google Sheets API.

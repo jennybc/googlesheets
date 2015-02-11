@@ -10,11 +10,14 @@ output:
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "README-",
+  eval = FALSE
 )
 ```
 
 **Not quite ready for showtime but release coming very soon!**
+
+**NOTE: refactoring underway and README not up-to-date**
 ---
 
 Google Spreadsheets R API
