@@ -2,13 +2,10 @@ context("register a spreadsheet")
 
 test_that("Bad spreadsheet specification throws informative error", {
   
-  skip_on_travis()
-  
   ## errors that prevent production of a ws_feed
   expect_error(get_ws_feed(4L), "must be character")
   expect_error(get_ws_feed(c("Gapminder", "Gapminder")),
                "must be of length 1")
-  skip_on_travis()
   expect_error(get_ws_feed("spatula"), "doesn't match the title or key")
   
   ## errors caused by well-formed input that refers to a nonexistent spreadsheet
@@ -21,23 +18,35 @@ test_that("Bad spreadsheet specification throws informative error", {
                "client error: \\(400\\) Bad Request")
 })
 
-test_that("Spreadsheet can be registered by any means necessary", {
-  
-  skip_on_travis()
-  
+test_that("Spreadsheets visible to authenticated user can be listed", {
+  ss_list <- list_spreadsheets()
+  expect_is(ss_list, "tbl_df")
+  expect_more_than(nrow(ss_list), 0)
+})
+
+test_that("Spreadsheet ws_feed can be formed from url", {
   expect_equal(get_ws_feed(pts_url, "public"), pts_ws_feed)
+})
+
+test_that("Spreadsheet ws_feed can be formed from key", {
   expect_equal(get_ws_feed(pts_key, "public"), pts_ws_feed)
+})
+
+test_that("Spreadsheet ws_feed can be formed from title", {
   expect_equal(get_ws_feed(pts_title, "public"), pts_ws_feed)
+})
+
+test_that("Spreadsheet ws_feed can be formed from ws_feed", {
   expect_equal(get_ws_feed(pts_ws_feed), pts_ws_feed)
-  
-  expect_is(register(pts_ws_feed), "spreadsheet")
+})
+
+test_that("Spreadsheet can be registered via ws_feed", {
+    expect_is(register(pts_ws_feed), "spreadsheet")
 })
 
 ## TO DO: test re: visibility?
 
 test_that("Number and titles of worksheets are obtained", {
-  
-  skip_on_travis()
   
   ss <- register(pts_ws_feed)
   expect_equal(ss$n_ws, 6L)

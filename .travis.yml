@@ -11,6 +11,7 @@ install:
   - ./travis-tool.sh install_deps
   - ./travis-tool.sh github_package hadley/stringr
   - ./travis-tool.sh github_package hadley/testthat
+  - ./travis-tool.sh github_package smbache/magrittr
 
 script: ./travis-tool.sh run_tests
 
@@ -24,3 +25,6 @@ notifications:
   email:
     on_success: change
     on_failure: change
+
+env:
+  - secure: "KG+szfdd5qhWb5C/kz05BND8wkEreqSOlZOWc9o2XXH2wFoabNUbA90mK2WeSR99gzoPqeydphrGwco+UPfoXcAwowhk3PzVOAZPhMlEX3G2znpeq8d17k4cQ/KoqpO1upKiADYqmxHkMaxjxb8JDOmeCqhhW5HYcOvTNUHdH2I="
