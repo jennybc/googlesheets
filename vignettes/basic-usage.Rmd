@@ -4,10 +4,13 @@ author: "Joanna Zhao"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette gspeadr Basic Usage}
+  %\VignetteIndexEntry{gspreadr Basic Usage}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
+
+__NOTE__: This has not been edited since the Great Refactor of Febrary 2015.
+
 ```{r load package}
 library(gspreadr)
 ```
@@ -27,7 +30,13 @@ If you want to access a different account, run `authorize(new_user = TRUE)`, as 
 
 # Open a spreadsheet
 
-## For public spreadsheets
+Under the hood, `gspread` functions must access a spreadsheet with either public or private __visiblity__. Visibility determines whether or not authorization will be used for a request.
+
+No authorization is used when visibility is set to "public", which will only work for spreadsheets that have been "Published to the Web". Note that requests with visibility set to "public" __will not work__ for spreadsheets that are made "Public on the web" from the "Visibility options" portion of the sharing dialog of a Google Sheets file. In summary, "Published to the web" and "Public on the web" are __different__ ways to share a spreadsheet.
+
+Authorization is used when visibility is set to "private".
+
+## For spreadsheets that have been published to the web
 
 To access public spreadsheets, you will either need the key of the spreadsheet (as found in the URL) or the entire URL. 
 
@@ -53,13 +62,13 @@ list_spreadsheets(show_key = TRUE)
 ssheet <- open_spreadsheet("Gapminder")
 ```
 
-```{r, include = FALSE }
+```{r, include = FALSE, eval = FALSE}
 ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE", visibility = "public")
 ```
 
 This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 
 
-```{r}
+```{r eval = FALSE}
 # spreadsheet components
 ssheet$sheet_id ; ssheet$sheet_title ; ssheet$updated ; ssheet$nsheets ; ssheet$ws_names
 ```
@@ -79,14 +88,14 @@ del_spreadsheet("New Spreadsheet")
 # Open a worksheet
 
 You can use `list_worksheets()` to see the worksheets living in a spreadsheet. This is a wrapper around `ssheet$ws_names`.
-```{r list ws}
+```{r list ws, eval = FALSE}
 
 list_worksheets(ssheet)
 ```
 
 To open a worksheet, you can pass in a spreadsheet object and then specify the worksheet using its title or index, or this can be done in one step using `open_at_once(ss_title, ws_index)`. This saves a bit of typing but the spreadsheet object will not be stored, so if you want to open another worksheet, `open_spreadsheet("title")` will be called again. So if you want to open multiple worksheets from a spreadsheet, it is best to open the spreadsheet and save the spreadsheet as an R object and call `open_worksheet(ss, x)`  
 
-```{r open ws}
+```{r open ws, eval = FALSE}
 # by title
 ws <- open_worksheet(ssheet, "Oceania")
 ```
@@ -136,13 +145,26 @@ To rename a worksheet, pass in the spreadsheet object, the worksheet's current n
 rename_worksheet(ssheet, "Sheet1", "First Sheet")
 ```
 
+# Consuming data from a worksheet
+
+Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `gspreadr` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
+
+There are two basic modes of consuming data stored in a worksheet (quotes taken from the [API docs](https://developers.google.com/google-apps/spreadsheets/):
+
+  * the __list feed__: implicitly assumes data is in a neat rectangle, like an R matrix or data.frame, with a header row followed by one or more data rows, none of which are completely empty
+    - "list row: Row of cells in a worksheet, represented as a key-value pair, where each key is a column name, and each value is the cell value. The first row of a worksheet is always considered the header row when using the API, and therefore is the row that defines the keys represented in each row."
+  * the __cell feed__: unconstrained access to individual cells specified in either Excel-like notation, e.g. cell D9, or in row-number-column-number notation, e.g. R9C4
+    - "cell: Single piece of data in a worksheet."
+
+
+
 # Worksheet Operations
 
 ## View worksheet
 
 You can take a look at your worksheets to get an idea of what it looks like. Use `view()` to look at one worksheet and `view_all()` to look at all worksheets contained in a spreadsheet. `view_all()` returns a gallery of all the worksheets. Set `show_overlay = TRUE` to view an overlay of all the worksheets to identify the density of the cells occupied by worksheets. **showing Error: could not find function "ggplotGrob"**
 
-```{r, fig.width=7, fig.height=7}
+```{r, fig.width=7, fig.height=7, eval = FALSE}
 
 view(ws)
 
@@ -152,7 +174,7 @@ view_all(ssheet)
 ## Display structure of spreadsheet and worksheet
 
 To get a more detailed report of your worksheet, use `str()`. This function summarizes your worksheet by letting you know the number of rows and columns, empty cells, and the cell pattern per column (a string of ##V for values and ##NA for empty cells).
-```{r display structure}
+```{r display structure, eval = FALSE}
 
 # str for a spreadsheet
 str(ssheet)
@@ -167,7 +189,7 @@ str(ws)
 You can get row(s), col(s), a region, or an entire worksheet. 
 
 ### Get row(s)
-```{r get rows}
+```{r get rows, eval = FALSE}
 get_row(ws, 1)
 
 get_rows(ws, from = 1, to = 3)
@@ -177,7 +199,7 @@ get_rows(ws, from = 1, to = 3)
 
 You can get columns either by integer or letter. 
 
-```{r get cols}
+```{r get cols, eval = FALSE}
 head(get_col(ws, 1))
 
 head(get_col(ws, "A"))
@@ -194,7 +216,7 @@ head(get_cols(ws, from = "A", to = "E"))
 
 You can get a region of a worksheet by specifying the boundary rows and columns. The first row will be taken as the `header` by default.
 
-```{r get region}
+```{r get region, eval = FALSE}
 read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5)
 
 # set header to FALSE
@@ -205,7 +227,7 @@ read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5, header = FAL
 
 You can also get a region of a worksheet by specifying the cell ranges as a character string. The first row will be taken as the `header` by default.
 
-```{r get range}
+```{r get range, eval = FALSE}
 
 read_range(ws, "A1:E5")
 
@@ -225,7 +247,7 @@ read_all(ws)
 
 You can get the value of a specific cell. There are two notations you can use: `A1` and `R1C1`. For `A1` notation, columns are indicated by a letter followed by the row as an integer. For `R1C1` notation, integers represent the rows and columns, and are preceded by `R` or `C`. Note that `A1` and `R1C1` are equivalent.
 
-```{r get cell}
+```{r get cell, eval = FALSE}
 
 get_cell(ws, "A1")
 
@@ -237,7 +259,7 @@ get_cell(ws, "R1C1")
 
 You can find the first position of the cell containing the specified value or all the cells that contain the specified value. 
 
-```{r find cell}
+```{r find cell, eval = FALSE}
 
 find_cell(ws, "Australia")
 
@@ -278,9 +300,24 @@ update_cells(ws, "G1", head(iris))
 read_range(ws, "G1:K7")
 ```
 
-```{r return to orig, include = FALSE, eval = FALSE}
+```{r return to orig, include = FALSE, eval = FALSE, eval = FALSE}
 
 update_cells(ws, "C1:E1", c("pop", "continent", "lifeExp"))
 update_cells(ws, "G1:K7", ncol(head(iris) * (nrow(iris) + 1)))
 ```
 
+# Appendix: Visibility table
+
+Accessing spreadsheets that are or are not "published to the web" with visibility set of "public" vs "private"
+
+
+| Sheet Type           | Public? (Published to the web) | URL visibility setting | Response      | Content Type         | Content                |
+|----------------------|--------------------------------|------------------------|---------------|----------------------|------------------------|
+| My sheet             | Yes                            | private                | 200 OK        | application/atom+xml | data                   |
+| My sheet             | Yes                            | public                 | 200 OK        | application/atom+xml | data                   |
+| My sheet             | No                             | private                | 200 OK        | application/atom+xml | data                   |
+| My sheet             | No                             | public                 | 200 OK        | text/html            | this doc is not public |
+| Someone else's sheet | Yes                            | private                | 403 Forbidden | Error                | Error                  |
+| Someone else's sheet | Yes                            | public                 | 200 OK        | application/atom+xml | data                   |
+| Someone else's sheet | No                             | private                | 200 OK        | application/atom+xml | data                   |
+| Someone else's sheet | No                             | public                 | 200 OK        | text/html            | this doc is not public |

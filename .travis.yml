@@ -9,8 +9,13 @@ before_install:
 
 install:
   - ./travis-tool.sh install_deps
+  - ./travis-tool.sh github_package hadley/stringr
+  - ./travis-tool.sh github_package hadley/testthat
 
 script: ./travis-tool.sh run_tests
+
+after_script:
+  - ./travis-tool.sh dump_sysinfo
 
 on_failure:
   - ./travis-tool.sh dump_logs

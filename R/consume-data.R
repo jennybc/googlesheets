@@ -1,451 +1,182 @@
-#' Find first cell matching string value
+#' Get data from a rectangular worksheet as a tbl_df
 #' 
-#' Get the cell location of the first occurence of a cell value.
-#' 
-#' @param ws worksheet object
-#' @param x a character string (case sensitive)
-#' 
+#' @param ss a registered Google spreadsheet
+#' @param ws positive integer or character string specifying index or title, 
+#'   respectively, of the worksheet to consume
+#'   
+#'   Gets data via the listfeed, which assumes populated cells form a neat
+#'   rectangle. First row regarded as header row of variable or column names. If
+#'   data is neatly rectangular and you want all of it, this is the fastest way
+#'   to get it. Anecdotally, ~3x faster than using methods based on the
+#'   cellfeed.
+#'   
 #' @export
-find_cell <- function(ws, x)
-{
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           min_col = 1, max_col = ws$ncol, 
-                           visibility = ws$visibility)
+get_via_lf <- function(ss, ws = 1) {
   
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
+  this_ws <- get_ws(ss, ws)
+  req <- gsheets_GET(this_ws$listfeed)
+  row_data <- req$content %>% lfilt("entry")
+  component_names <- row_data[[1]] %>% names
+  boilerplate_names <- ## what if spreadsheet header row contains these names??
+    ## safer to get via ... numeric index? or by parsing entry$title and
+    ## entry$content$text?
+    ## sigh: if I were still using XML, use of gsx namespace would disambiguate
+    ## this
+    ## TO DO: experiment with empty header cells, header cells with
+    ## space or other non-alphanumeric characters
+    ## https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds
+    c("id", "updated", "category", "title", "content", "link")
+  var_names <- component_names %>% dplyr::setdiff(boilerplate_names)
+  dat <- row_data %>%
+    ## get just the data, as named character vector
+    plyr::llply(function(x) x[var_names] %>% unlist) %>%
+    ## rowbind to produce character matrix
+    do.call("rbind", .) %>%
+    ## drop stupid repetitive "entry" rownames
+    `rownames<-`(NULL) %>%
+    ## convert to integer, numeric, etc. but w/ stringsAsFactors = FALSE
+    plyr::alply(2, type.convert, as.is = TRUE, .dims = TRUE) %>%
+    ## convert to data.frame (tbl_df, actually)
+    dplyr::as_data_frame
   
-  tbl <- get_lookup_tbl(feed)
-  ind <- match(x, tbl$val)
+}
+
+#' Create a data.frame of the non-empty cells in a rectangular region of a 
+#' worksheet
+#' 
+#' No attempt to shape the returned data! Data.frame will have one row per cell.
+#' 
+#' Use the limits, e.g. min_row or max_col, to delineate the rectangular region 
+#' of interest. You can specify any subset of the limits or none at all. If 
+#' limits are provided, validity will be checked as well as internal consistency
+#' and compliance with known extent of the worksheet. If no limits are provided,
+#' all cells will be returned but user should realize that access via the list 
+#' feed is potentially a much faster to consume data from a rectangular 
+#' worksheet.
+#' 
+#' Empty cells, even if "embedded" in a rectangular region of populated cells, 
+#' are not returned by the API and will not appear in the returned data.frame.
+#' 
+#' @param ss a registered Google spreadsheet
+#' @param ws positive integer or character specifying index or title, 
+#'   respectively, of the worksheet to consume; defaults to 1, i.e. the first
+#'   worksheet
+#' @param min_row positive integer, optional
+#' @param max_row positive integer, optional
+#' @param min_col positive integer, optional
+#' @param max_col positive integer, optional
+#'   
+#' @export
+get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
+                      min_col = NULL, max_col = NULL) {
   
-  if(is.na(ind)) {
-    message("Cell not found")
+  this_ws <- get_ws(ss, ws)
+  
+  limits <- list(min_row = min_row, max_row = max_row,
+                 min_col = min_col, max_col = max_col)
+  limits <- limits %>%
+    validate_limits(this_ws$row_extent, this_ws$col_extent)
+  limits <- limits[!plyr::laply(limits, is.null)]
+  if(length(limits) > 0) {
+    query_string <- 
+      stringr::str_c(names(limits), unlist(limits),
+                     sep = "=", collapse = "&") %>%
+      stringr::str_replace("_", "-")
   } else {
-    letter <- num_to_letter(tbl[ind, "col"])
-    paste0("Cell R", tbl[ind, "row"], "C", tbl[ind, "col"], 
-           ", ", letter, tbl[ind, "row"])
-  }
-}
-
-
-#' Find all cells with string value
-#' 
-#' Get all the cell locations for a string value
-#' 
-#' @param ws worksheet object
-#' @param x a character string
-#' 
-#' @return a data frame listing the cell locations in label and coordinate 
-#' format
-#' @importFrom dplyr filter_ mutate_ select_
-#' 
-#' @export
-find_all <- function(ws, x)
-{
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           min_col = 1, max_col = ws$ncol, 
-                           visibility = ws$visibility)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  tbl <- get_lookup_tbl(feed)
-  vals <- filter_(tbl, ~ val == x)
-  
-  if(nrow(vals) == 0) {
-    message("Cell not found")
-  } else {
-    dat <- mutate_(vals, 
-                   Coord = ~paste0("R", row, "C", col),
-                   Label = ~paste0(vnum_to_letter(col), row),
-                   Val = ~val)
-    select_(dat, ~Label, ~Coord, ~Val)
-  }
-}
-
-
-#' Get all values in a row
-#'
-#' Specify row of values to get from worksheet.
-#'
-#' @param ws worksheet object
-#' @param row row number
-#' @return A data frame.
-#' @seealso \code{\link{get_rows}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}, \code{\link{read_all}}, \code{\link{read_region}}, 
-#' \code{\link{read_range}}
-#' @export
-get_row <- function(ws, row) 
-{
-  if(row > ws$nrow)
-    stop("Specified row exceeds the number of rows contained in the worksheet.")
-  
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           min_row = row, max_row = row, 
-                           visibility = ws$visibility)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  tbl <- get_lookup_tbl(feed)
-  
-  if(nrow(tbl) == 0) {
-    message("Row contains no values.")
-  } else {
-    tbl_clean <- fill_missing_tbl(tbl, row_min = row)
-    tbl_clean$val
-  }
-}
-
-
-#' Get all values in range of rows
-#'
-#' Specify range of rows to get from worksheet.
-#'
-#' @param ws worksheet object
-#' @param from,to start and end row indexes
-#' @param header \code{logical} to indicate if the first row should be taken as the
-#' header
-#' 
-#' @return A data frame.
-#' @seealso \code{\link{get_row}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}, \code{\link{read_all}}, \code{\link{read_region}}, 
-#' \code{\link{read_range}}
-#' @importFrom plyr dlply rbind.fill
-#' @export
-get_rows <- function(ws, from, to, header = FALSE)
-{
-  if(to > ws$nrow)
-    to <- ws$nrow
-  
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           min_row = from, max_row = to, 
-                           visibility = ws$visibility)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  tbl <- get_lookup_tbl(feed)
-  tbl_clean <- fill_missing_tbl(tbl, row_min = from)
-  
-  list_of_df <- 
-    dlply(tbl_clean, "row", 
-          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
-  
-  my_df <- rbind.fill(list_of_df)
-  
-  if(header) 
-    set_header(my_df)
-  else 
-    my_df
-}
-
-
-#' Get all values in a column.
-#'
-#' @param ws worksheet object
-#' @param col column number or letter (case insensitive)
-#' @return A data frame.
-#' @seealso \code{\link{get_cols}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{read_all}}, \code{\link{read_region}}, 
-#' \code{\link{read_range}}
-#' @export
-get_col <- function(ws, col) 
-{
-  if(!is.numeric(col)) 
-    col <- letter_to_num(col)
-  
-  if(col > ws$ncol)
-    stop("Column exceeds current worksheet size")
-  
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           min_col = col, max_col = col, 
-                           visibility = ws$visibility)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  tbl <- get_lookup_tbl(feed)
-  
-  if(nrow(tbl) == 0) {
-    message("Column contains no values.")
-  } else {
-    tbl_clean <- fill_missing_tbl(tbl, col_min = col)
-    tbl_clean$val
-  }
-}
-
-
-#' Get all values in a range of columns.
-#'
-#' Specify range of columns to get from worksheet.
-#'
-#' @param ws worksheet object
-#' @param from,to start and end column indexes either integer or letter
-#' @param header \code{logical} to indicate if the first row should be taken as 
-#' the header
-#' 
-#' @return A data frame.
-#'
-#' @seealso \code{\link{get_col}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{read_all}}, \code{\link{read_region}},
-#' \code{\link{read_range}}
-#' @importFrom plyr dlply rbind.fill
-#' @export
-get_cols <- function(ws, from, to, header = TRUE) 
-{
-  if(!is.numeric(from) & !is.numeric(to)) {
-    from <- letter_to_num(from)
-    to <- letter_to_num(to)
+    query_string <- NULL
   }
   
-  if(to > ws$ncol) 
-    to <- ws$ncol
+  get_url <- this_ws$cellsfeed %>%
+    httr::modify_url(query = query_string)
+  req <- gsheets_GET(get_url)
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           min_col = from, max_col = to, 
-                           visibility = ws$visibility)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  tbl <- get_lookup_tbl(feed)
-  
-  tbl_clean <- fill_missing_tbl(tbl, col_min = from)
-  
-  list_of_df <- 
-    dlply(tbl_clean, "row", 
-          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
-  
-  my_df <- rbind.fill(list_of_df)
-  
-  if(header) 
-    set_header(my_df)
-  else 
-    my_df
-  
+  req$content %>% lfilt("entry") %>%
+    lapply(FUN = function(x) {
+      dplyr::data_frame(cell = x$title$text,
+                        cell_alt = x$id %>% basename,
+                        row = x$cell$.attrs["row"] %>% as.integer,
+                        col = x$cell$.attr["col"] %>% as.integer,
+                        # see issue #19 about all the places cell data is
+                        # (mostly redundantly) stored in the XML
+                        #content_text = x$content$text,
+                        #cell_inputValue = x$cell$.attrs["inputValue"],
+                        #cell_numericValue = x$cell$.attrs["numericValue"],
+                        
+                        cell_text = x$cell$text)
+    }) %>%
+    dplyr::bind_rows
 }
 
+## argument validity checks and transformation
 
-#' Get the value of a cell
-#'
-#' Get the value of a cell using label (A1) notation or coordinate (R1C1) 
-#' notation.
-#'
-#' @param ws worksheet object
-#' @param cell character string specifying cell position, 
-#' either in label or coordinate notation
-#' @return The value of the cell as a character string.
-#' @export
-get_cell <- function(ws, cell)
-{
-  if(grepl("[R][[:digit:]]+[C][[:digit:]]+", cell)) {
-    cell
+## re: min_row, max_row, min_col, max_col = query params for cell feed
+validate_limits <-
+  function(limits, ws_row_extent = NULL, ws_col_extent = NULL) {
+  
+  ## limits must be length one vector, holding a positive integer
+
+  ## why do I proceed this way?
+  ## [1] want to preserve original invalid limits for use in error message
+  ## [2] want to be able to say which element(s) of limits is/are invalid
+  tmp_limits <- limits %>% plyr::llply(make_integer)
+  tmp_limits <- tmp_limits %>% plyr::llply(affirm_length_one)
+  tmp_limits <- tmp_limits %>% plyr::llply(affirm_positive)
+  if(any(oops <- is.na(tmp_limits))) {
+    mess <- sprintf("A row or column limit must be a single positive integer (or not given at all).\nInvalid input:\n%s",
+                    paste(capture.output(limits[oops]), collapse = "\n"))
+    stop(mess)
   } else {
-    if(grepl("^[[:alpha:]]+[[:digit:]]+$", cell)) {
-      cell <- label_to_coord(cell)
-    } else {
-      stop("Please check cell notation.")
+    limits <- tmp_limits
+  }
+  
+  ## min must be <= max, min and max must be <= nominal worksheet extent
+  jfun <- function(x, upper_bound) {
+    x_name <- deparse(substitute(x))
+    ub_name <- deparse(substitute(upper_bound))
+    if(!is.null(x) && !is.null(upper_bound) && x > upper_bound) {
+      mess <-
+        sprintf("%s must be less than or equal to %s\n%s = %d, %s = %d\n",
+                x_name, ub_name, x_name, x, ub_name, upper_bound)
+      stop(mess)
     }
   }
   
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           visibility = ws$visibility)
-  new_url <- slaste(the_url, cell)
+  jfun(limits$min_row, limits$max_row)
+  jfun(limits$min_row, ws_row_extent)
+  jfun(limits$max_row, ws_row_extent)
+  jfun(limits$min_col, limits$max_col)
+  jfun(limits$min_col, ws_col_extent)
+  jfun(limits$max_col, ws_col_extent)
+
+  limits
   
-  req <- gsheets_GET(new_url)
-  feed <- gsheets_parse(req)
-  
-  cell_val <- 
-    getNodeSet(feed, "//ns:entry//gs:cell", c("ns" = default_ns, "gs"),
-               xmlValue)
-  unlist(cell_val)
 }
 
-
-#' Get all values in a worksheet.
-#'
-#' Extract the entire worksheet and turn it into a data frame. This function
-#' uses the rightmost cell with a value as the maximum number of columns and 
-#' bottom-most cell as the maximum row.
-#'
-#' @param ws worksheet object 
-#' @param header \code{logical} to indicate if the first row should be taken as the
-#' header
-#' 
-#' @return A dataframe. 
-#' 
-#' This function calls on \code{\link{get_cols}} with \code{to} set as the 
-#' number of columns of the worksheet.
-#' @seealso \code{\link{read_region}}, \code{\link{read_range}}, 
-#' \code{\link{get_row}}, \code{\link{get_rows}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}
-#' 
-#' @export
-read_all <- function(ws, header = TRUE) 
-{
-  get_cols(ws, 1, ws$ncol, header)
-}
-
-
-#' Get a region of a worksheet by min/max row and column
-#'
-#' Extract cells of a worksheet by specifying the minimum and maximum rows and 
-#' columns. If the specified range is beyond the dimensions of the worksheet, 
-#' the boundaries of the worksheet will be used instead.
-#'
-#' @param ws worksheet object
-#' @param from_row,to_row range of rows to extract
-#' @param from_col,to_col range of cols to extract
-#' @param header \code{logical} to indicate if the first row should be taken as 
-#' the header
-#' 
-#' @return A data frame.
-#' @seealso \code{\link{read_all}}, \code{\link{get_row}}, \code{\link{get_rows}},
-#' \code{\link{get_col}}, \code{\link{get_cols}}, \code{\link{read_range}}
-#' @importFrom plyr ddply
-#' @export
-read_region <- function(ws, from_row, to_row, from_col, to_col, header = TRUE)
-{
-  check_empty(ws)
-  
-  the_url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id, 
-                           min_row = from_row, max_row = to_row,
-                           min_col = from_col, max_col = to_col, 
-                           visibility = ws$visibility)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  
-  tbl <- get_lookup_tbl(feed)
-  
-  if(nrow(tbl) == 0)
-    stop("Range is empty")
-  
-  tbl_clean <- fill_missing_tbl(tbl, row_min = from_row, col_min = from_col)
-  
-  list_of_df <- 
-    dlply(tbl_clean, "row", 
-          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
-  
-  my_df <- rbind.fill(list_of_df)
-  
-  if(header) {
-    if(nrow(my_df) == 1) {
-      my_df
-    } else {
-      set_header(my_df)
+make_integer <- function(x) {
+  suppressWarnings(try({
+    if(!is.null(x)) {
+      storage.mode(x) <- "integer"
+      ## why not use as.integer? because names are lost :(
+      ## must use this method based on storage.mode
+      ## if coercion fails, x is NA
+      ## note this will "succeed" and coerce, eg, 4.7 to 4L
     }
-  } else { 
-    my_df
+    x
+  }, silent = FALSE))
+}
+
+affirm_length_one <- function(x) {
+  if(is.null(x) || length(x) == 1L) {
+    x
+  } else {
+    NA
   }
 }
 
-
-#' Get a region of a worksheet by range
-#'
-#' Extract cells of a worksheet by specifying the minimum and maximum rows and 
-#' columns. If the specified range is beyond the dimensions of the worksheet, 
-#' the boundaries of the worksheet will be used instead.
-#'
-#' @param ws worksheet object
-#' @param x character string for range separated by ":"
-#' @param header \code{logical} to indicate if the first row should be taken as the
-#' header
-#' @examples
-#' \dontrun{
-#' worksheet <- open_at_once("My Spreadsheet", "Sheet1")
-#' 
-#' read_range(worksheet, "A1:B10")
-#' read_range(worksheet, "C10:D20")
-#' }
-#' 
-#' @seealso \code{\link{read_region}}, \code{\link{get_row}}, 
-#' \code{\link{get_rows}}, \code{\link{get_col}}, \code{\link{get_cols}}, 
-#' \code{\link{read_all}}
-#' 
-#' @export
-read_range <- function(ws, x, header = TRUE) 
-{
-  if(!grepl("[[:alpha:]]+[[:digit:]]+:[[:alpha:]]+[[:digit:]]+", x)) 
-    stop("Please check cell notation.")
-  
-  bounds <- unlist(strsplit(x, split = ":"))
-  rows <- as.numeric(gsub("[^0-9]", "", bounds))  
-  cols <- unname(sapply(gsub("[^A-Z]", "", bounds), letter_to_num))
-  
-  read_region(ws, rows[1], rows[2], cols[1], cols[2], header)
-}
-
-#' Get rows or columns from a worksheet
-#'
-#' Get row(s) or column(s) from a worksheet by specifying the desired row/column
-#' number. 
-#'
-#' @param ws worksheet object
-#' @param type either "row" or "col"
-#' @param values a vector of length 1 or 2 depending on if a single or a range 
-#' of rows or columns is to be returned
-#' @param header indicating if the first row should be taken as header row
-#' 
-get_data <- function(ws, type, values, header = FALSE) {
-  min_row <- NULL
-  max_row <- NULL
-  min_col <- NULL
-  max_col <- NULL
-  
-  if(length(values) == 1)
-    values <- rep(values, 2)
-  
-  if(grepl("row", type)) {
-    min_row <- values[1]
-    max_row <- values[2]
+affirm_positive <- function(x) {
+  if(is.null(x) || x > 0) {
+    x
   } else {
-    min_col <- values[1]
-    max_col <- values[2]
-  }
-  
-  #old way
-  url <- build_req_url("cells", key = ws$sheet_id, ws_id = ws$ws_id,
-                       visibility = ws$visibility)
-  
-  # get the cells feed link
-  #x <- parse_url("https://spreadsheets.google.com/feeds/cells/1WpFeaRU_9bBEuK8fI21e5TcbCjQZy90dQYgXF_0JvyQ/od6/private/full")
-  
-  x <- parse_url(url)
-  # enter query params
-  x$query <- list("min-row" = min_row, "max-row" = max_row, 
-                  "min-col" = min_col, "max-col" = max_col)
-  
-  the_url <- build_url(x)
-  
-  req <- gsheets_GET(the_url)
-  feed <- gsheets_parse(req)
-  tbl <- get_lookup_tbl(feed)
-  
-  if(nrow(tbl) == 0) { 
-    stop("No data found in current selection")
-  }
-  
-  row_min <- 1
-  col_min <- 1
-  
-  if(is.null(min_row)) {
-    col_min <- min_col
-  } else {
-    row_min <- min_row
-  }
-  
-  tbl_clean <- fill_missing_tbl(tbl, row_min, col_min)
-  
-  list_of_df <- 
-    dlply(tbl_clean, "row", 
-          function(x) as.data.frame(t(x$val), stringsAsFactors = FALSE))
-  
-  my_df <- rbind.fill(list_of_df)
-  
-  if(header) {
-    set_header(my_df)
-  } else {
-    my_df
+    NA
   }
 }
