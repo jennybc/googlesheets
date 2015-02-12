@@ -44,6 +44,7 @@ build_req_url <- function(feed_type, key = NULL, ws_id = NULL,
 #'
 #' @param url URL for GET request
 gsheets_GET <- function(url) {
+
   if(grepl("public", url)) {
     req <- httr::GET(url)
   } else {
