@@ -27,15 +27,15 @@ number of worksheets contained, and their titles.
 \note{
 The data extent reported for worksheets is probably not what you think
   or hope it is. It does not report how many rows or columns are actually
-  populated. This cannot be determined via the Google Spreadsheets API
-  without consuming the data and noting which cells are populated. Therefore,
-  these numbers generally reflect the default extent of a new worksheet,
-  e.g., x rows and y columns, and provide an upper bound on the true number
-  of rows and columns.
+  nonempty This cannot be determined via the Google Spreadsheets API without
+  consuming the data and noting which cells are populated. Therefore, these
+  numbers generally reflect the default extent of a new worksheet, e.g., 1000
+  rows and 26 columns at the time or writing, and provide an upper bound on
+  the true number of rows and columns.
 
-The visibility should be set to "public" only if the spreadsheet is
-  "Published to the web". Gotcha: this is different from setting the
-  spreadsheet to "Public on the web" in the visibility options in the sharing
-  dialog of a Google Sheets file.
+The visibility can only be "public" if the spreadsheet is "Published to
+  the web". Gotcha: this is different from setting the spreadsheet to "Public
+  on the web" in the visibility options in the sharing dialog of a Google
+  Sheets file.
 }
 
