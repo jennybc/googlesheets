@@ -68,7 +68,7 @@ get_via_lf <- function(ss, ws = 1) {
 #'   
 #' @export
 get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
-                      min_col = NULL, max_col = NULL) {
+                       min_col = NULL, max_col = NULL) {
   
   this_ws <- get_ws(ss, ws)
   
@@ -104,7 +104,7 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
                         
                         cell_text = x$cell$text)
     }) %>%
-    dplyr::bind_rows
+    dplyr::bind_rows()
 }
 
 ## argument validity checks and transformation
@@ -112,44 +112,53 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
 ## re: min_row, max_row, min_col, max_col = query params for cell feed
 validate_limits <-
   function(limits, ws_row_extent = NULL, ws_col_extent = NULL) {
-  
-  ## limits must be length one vector, holding a positive integer
-
-  ## why do I proceed this way?
-  ## [1] want to preserve original invalid limits for use in error message
-  ## [2] want to be able to say which element(s) of limits is/are invalid
-  tmp_limits <- limits %>% plyr::llply(make_integer)
-  tmp_limits <- tmp_limits %>% plyr::llply(affirm_length_one)
-  tmp_limits <- tmp_limits %>% plyr::llply(affirm_positive)
-  if(any(oops <- is.na(tmp_limits))) {
-    mess <- sprintf("A row or column limit must be a single positive integer (or not given at all).\nInvalid input:\n%s",
-                    paste(capture.output(limits[oops]), collapse = "\n"))
-    stop(mess)
-  } else {
-    limits <- tmp_limits
-  }
-  
-  ## min must be <= max, min and max must be <= nominal worksheet extent
-  jfun <- function(x, upper_bound) {
-    x_name <- deparse(substitute(x))
-    ub_name <- deparse(substitute(upper_bound))
-    if(!is.null(x) && !is.null(upper_bound) && x > upper_bound) {
-      mess <-
-        sprintf("%s must be less than or equal to %s\n%s = %d, %s = %d\n",
-                x_name, ub_name, x_name, x, ub_name, upper_bound)
+    
+    ## limits must be length one vector, holding a positive integer
+    
+    ## why do I proceed this way?
+    ## [1] want to preserve original invalid limits for use in error message
+    ## [2] want to be able to say which element(s) of limits is/are invalid
+    tmp_limits <- limits %>% plyr::llply(affirm_not_factor)
+    tmp_limits <- tmp_limits %>% plyr::llply(make_integer)
+    tmp_limits <- tmp_limits %>% plyr::llply(affirm_length_one)
+    tmp_limits <- tmp_limits %>% plyr::llply(affirm_positive)
+    if(any(oops <- is.na(tmp_limits))) {
+      mess <- sprintf("A row or column limit must be a single positive integer (or not given at all).\nInvalid input:\n%s",
+                      paste(capture.output(limits[oops]), collapse = "\n"))
       stop(mess)
+    } else {
+      limits <- tmp_limits
     }
+    
+    ## min must be <= max, min and max must be <= nominal worksheet extent
+    jfun <- function(x, upper_bound) {
+      x_name <- deparse(substitute(x))
+      ub_name <- deparse(substitute(upper_bound))
+      if(!is.null(x) && !is.null(upper_bound) && x > upper_bound) {
+        mess <-
+          sprintf("%s must be less than or equal to %s\n%s = %d, %s = %d\n",
+                  x_name, ub_name, x_name, x, ub_name, upper_bound)
+        stop(mess)
+      }
+    }
+    
+    jfun(limits$min_row, limits$max_row)
+    jfun(limits$min_row, ws_row_extent)
+    jfun(limits$max_row, ws_row_extent)
+    jfun(limits$min_col, limits$max_col)
+    jfun(limits$min_col, ws_col_extent)
+    jfun(limits$max_col, ws_col_extent)
+    
+    limits
+    
   }
-  
-  jfun(limits$min_row, limits$max_row)
-  jfun(limits$min_row, ws_row_extent)
-  jfun(limits$max_row, ws_row_extent)
-  jfun(limits$min_col, limits$max_col)
-  jfun(limits$min_col, ws_col_extent)
-  jfun(limits$max_col, ws_col_extent)
 
-  limits
-  
+affirm_not_factor <- function(x) {
+  if(is.null(x) || !inherits(x, "factor")) {
+    x
+  } else {
+    NA
+  }
 }
 
 make_integer <- function(x) {
@@ -166,7 +175,7 @@ make_integer <- function(x) {
 }
 
 affirm_length_one <- function(x) {
-  if(is.null(x) || length(x) == 1L) {
+  if(is.null(x) || length(x) == 1L || is.na(x)) {
     x
   } else {
     NA
@@ -174,7 +183,7 @@ affirm_length_one <- function(x) {
 }
 
 affirm_positive <- function(x) {
-  if(is.null(x) || x > 0) {
+  if(is.null(x) || x > 0 || is.na(x)) {
     x
   } else {
     NA

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_ws}
 \alias{get_ws}
-\title{Retrieve a worksheet from a spreadsheet}
+\title{Retrieve a worksheet-describing list from a spreadsheet}
 \usage{
 get_ws(ss, ws)
 }
@@ -12,7 +12,7 @@ get_ws(ss, ws)
 \item{ws}{a positive integer or character string specifying which worksheet}
 }
 \description{
-Retrieve a worksheet from a spreadsheet based on either a positive integer
-index or worksheet title.
+From a registered spreadsheet, retrieve a list (actually a row of a
+data.frame) giving everything we know about a specific worksheet.
 }
 

@@ -146,7 +146,7 @@ register <- function(x, visibility = "private") {
 #' Simple regexes are used to detect if the input is a worksheets feed or the 
 #' URL one would see when visiting a spreadsheet in the browser. If it's a URL, 
 #' we attempt to extract the spreadsheet's unique key, assuming the URL follows
-#' the pattern characterisitc of "new style" Google spreadsheets.
+#' the pattern characteristic of "new style" Google spreadsheets.
 #' 
 #' Otherwise the input is assumed to be the spreadsheet's title or unique key. 
 #' When we say title, we mean the name of the spreadsheet in, say, Google Drive 
