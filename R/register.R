@@ -116,11 +116,12 @@ register <- function(x, visibility = "private") {
   
   ws_list <- req$content %>% lfilt("^entry$")
   ws_info <-
-    dplyr::data_frame(ws_id = ws_list %>% lapluck("id"),
-                    ws_key = ws_id %>% basename,
-                    ws_title = plyr::laply(ws_list, function(x) x$title$text),
-                    row_extent = ws_list %>% lapluck("rowCount") %>% as.integer,
-                    col_extent = ws_list %>% lapluck("colCount") %>% as.integer)
+    dplyr::data_frame_(
+      list(ws_id = ~ ws_list %>% lapluck("id"),
+           ws_key = ~ ws_id %>% basename,
+           ws_title = ~ plyr::laply(ws_list, function(x) x$title$text),
+           row_extent = ~ ws_list %>% lapluck("rowCount") %>% as.integer(),
+           col_extent = ~ ws_list %>% lapluck("colCount") %>% as.integer()))
   ws_links <- plyr::ldply(ws_list, function(x) {
     links <- x %>% lfilt("^link$") %>% do.call("cbind", .)
     links["href", ] %>%
