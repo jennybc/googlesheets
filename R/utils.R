@@ -5,20 +5,25 @@
 #' @param ... one or more R objects, to be converted to character vectors
 slaste <- function(...) paste(..., sep = "/")
 
-#' Retrieve a worksheet from a spreadsheet
+#' Retrieve a worksheet-describing list from a spreadsheet
 #' 
-#' Retrieve a worksheet from a spreadsheet based on either a positive integer
-#' index or worksheet title.
+#' From a registered spreadsheet, retrieve a list (actually a row of a
+#' data.frame) giving everything we know about a specific worksheet.
 #' 
 #' @param ss a registered spreadsheet
 #' @param ws a positive integer or character string specifying which worksheet
 get_ws <- function(ss, ws) {
+  
+  stopifnot(inherits(ss, "spreadsheet"),
+            length(ws) == 1L,
+            is.character(ws) || (is.numeric(ws) && ws > 0))
+  
   if(is.character(ws)) {
     index <- match(ws, ss$ws$ws_title)
     if(is.na(index)) {
       stop(sprintf("Worksheet %s not found.", ws))    
     } else {
-      ws <- index
+      ws <- index %>% as.integer()
     }
   }
   if(ws > ss$n_ws) {
