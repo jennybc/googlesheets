@@ -65,3 +65,54 @@ gsheets_GET <- function(url) {
   req$content <- XML::xmlToList(req$content)
   req
 }
+
+
+
+#' Create POST request
+#'
+#' Make POST request to Google Sheets/Drive API.
+#'
+#' @param url URL for POST request
+#' @param the_body body of POST request
+gsheets_POST <- function(url, the_body)
+{
+  token <- get_google_token()
+  
+  if(is.null(token)) {
+    stop("Must be authorized in order to perform request")
+  } else {
+    
+    # first look at the url to determine contents, 
+    # must be either talking to "drive" or "spreadsheets" API
+    if(stringr::str_detect(stringr::fixed(url), "drive")) {
+      content_type <- "application/json" # send json to drive api
+    } else {
+      content_type <- "application/atom+xml" # send xml to sheets api
+    } 
+    
+    req <- httr::POST(url, gsheets_auth(token), 
+                      httr::add_headers("Content-Type" = content_type),
+                      body = the_body)
+    
+    httr::stop_for_status(req)
+    
+    ## TO DO: inform users of why client error (404) Not Found may arise when copying a spreadsheet
+    #     message(paste("The spreadsheet can not be found.",
+    #                   "Please make sure that the spreadsheet exists and that you have permission to access it.",
+    #                   'A "published to the web" spreadsheet does not necessarily mean you have permission for access.',
+    #                   "Permission for access is set in the sharing dialog of a sheets file."))
+  }
+}
+
+
+#' Create DELETE request
+#'
+#' Make DELETE request to Google Sheets API.
+#'
+#' @param url URL for DELETE request
+gsheets_DELETE <- function(url)
+{
+  token <- get_google_token()
+  req <- httr::DELETE(url, gsheets_auth(token))
+  httr::stop_for_status(req)
+}
