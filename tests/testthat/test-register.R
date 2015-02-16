@@ -41,7 +41,7 @@ test_that("We get correct number and titles of worksheets", {
   expect_equal(ss$n_ws, 6L)
   expect_true(all(ss$ws$ws_title %in%
                     c("Asia", "Africa", "Americas", "Europe",
-                      "Oceania", "Blank")))      
+                      "Oceania", "embedded_empty_cells")))      
 })
 
 ## TO DO: test re: visibility?
