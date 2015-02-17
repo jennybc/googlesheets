@@ -93,11 +93,17 @@ get_google_token <- function() {
   # check if token is obtained from login or oauth2.0 and format it for 
   # making request
   
-  state_token <- .state$token
-  
-  if(any(class(state_token) != "character")) {
-    formatted_token <- httr::config(token = state_token)
+  if(token_from_oauth()) {
+    # token from oauth2.0
+    formatted_token <- httr::config(token = .state$token)
   } else {
-    formatted_token <- httr::add_headers('Authorization' = state_token)
+    # token from login
+    formatted_token <- httr::add_headers('Authorization' = .state$token)
   }
+}
+
+
+# Check if token is obtained from using oauth2.0
+token_from_oauth <- function() {
+  inherits(.state$token, "Token2.0")
 }
