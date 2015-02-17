@@ -47,9 +47,8 @@ gsheets_GET <- function(url) {
 
   if(grepl("public", url)) {
     req <- httr::GET(url)
-  } else {
-    token <- get_google_token()
-    req <- httr::GET(url, gsheets_auth(token))
+  } else { 
+    req <- httr::GET(url, get_google_token())
   }
   httr::stop_for_status(req)
   ## TO DO: interpret some common problems for user? for example, a well-formed
