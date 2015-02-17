@@ -1,43 +1,3 @@
-#' Build URL for GET requests
-#'
-#' Construct URL for talking to Google Sheets API. 
-#'
-#' @param feed_type one of the following: spreadsheets, worksheets, list, cells
-#' @param key spreadsheet key
-#' @param ws_id id of worksheet contained in spreadsheet
-#' @param min_row,max_row minimum and maximum rows
-#' @param min_col,max_col miniumum and maximum columns
-#' @param visibility either private or public
-#' @param projection either full or basic
-#' @return URL
-build_req_url <- function(feed_type, key = NULL, ws_id = NULL, 
-                          min_row = NULL, max_row = NULL, 
-                          min_col = NULL, max_col = NULL, 
-                          visibility = "private", projection = "full") 
-{
-  base_url <- "https://spreadsheets.google.com/feeds"
-  
-  switch(
-    feed_type,
-    spreadsheets = {
-      the_url <- slaste(base_url, feed_type, visibility, projection)
-    },
-    worksheets = {
-      if(!is.null(ws_id))
-        the_url <-
-        slaste(base_url, feed_type, key, visibility, projection, ws_id)
-      else
-        the_url <- slaste(base_url, feed_type, key, visibility, projection)
-    },
-    list = {
-      the_url <- slaste(base_url, feed_type, key, ws_id, visibility, 
-                        projection)
-    },
-    NA_character_
-  )
-  the_url
-}
-
 #' Create GET request
 #'
 #' Make GET request to Google Sheets API.
@@ -64,3 +24,4 @@ gsheets_GET <- function(url) {
   req$content <- XML::xmlToList(req$content)
   req
 }
+

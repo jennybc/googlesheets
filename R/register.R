@@ -9,8 +9,8 @@
 #'   
 #' @export
 list_spreadsheets <- function(include_key = TRUE) {
-  
-  the_url <- build_req_url("spreadsheets")
+  # only calling spreadsheets feed from here so just place url here
+  the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
   
   req <- gsheets_GET(the_url)
   
@@ -75,7 +75,7 @@ list_spreadsheets <- function(include_key = TRUE) {
 register <- function(x, visibility = "private") {
   
   ws_feed <- get_ws_feed(x, visibility)
-
+  
   req <- gsheets_GET(ws_feed)
   
   if(grepl("html", req$headers[["content-type"]])) {
@@ -109,7 +109,7 @@ register <- function(x, visibility = "private") {
   
   ss$links <- req$content %>%
     lfilt("^link$") %>%
-    plyr::ldply %>% dplyr::select_(quote(-.id))
+    plyr::ldply() %>% dplyr::select_(quote(-.id))
   ## select_() will be unnecessary when this PR gets merged into plyr
   ## https://github.com/hadley/plyr/pull/207
   ## and ldply handles '.id = NULL' correctly
@@ -221,10 +221,12 @@ get_ws_feed <- function(x, visibility = "private") {
       
     }  
   }
-    
+  
   if(is_key) {
     ## TO DO: set the visibility based on ownership reported in ssfeed_df?
-    return(build_req_url("worksheets", key = x, visibility = visibility))
+    req_url <- slaste("https://spreadsheets.google.com/feeds/worksheets", x, 
+                      visibility, "full")
+    return(req_url)
   } else {
     ## honestly, I don't think we should ever get to this point
     stop("This spreadsheet specification seems to be none of these things: URL, title, unique key, or worksheets feed.")
