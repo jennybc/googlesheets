@@ -12,6 +12,7 @@ slaste <- function(...) paste(..., sep = "/")
 #' 
 #' @param ss a registered spreadsheet
 #' @param ws a positive integer or character string specifying which worksheet
+#' @param verbose logical, indicating whether to give a message re: title of the worksheet being accessed
 get_ws <- function(ss, ws, verbose = TRUE) {
   
   stopifnot(inherits(ss, "spreadsheet"),

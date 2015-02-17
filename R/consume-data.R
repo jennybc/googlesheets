@@ -108,8 +108,6 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
   x
 }
 
-}
-
 ## argument validity checks and transformation
 
 ## re: min_row, max_row, min_col, max_col = query params for cell feed
