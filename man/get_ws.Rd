@@ -4,7 +4,7 @@
 \alias{get_ws}
 \title{Retrieve a worksheet-describing list from a spreadsheet}
 \usage{
-get_ws(ss, ws)
+get_ws(ss, ws, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered spreadsheet}

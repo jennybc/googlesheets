@@ -90,7 +90,7 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
     httr::modify_url(query = query_string)
   req <- gsheets_GET(get_url)
   
-  req$content %>% lfilt("entry") %>%
+  x <- req$content %>% lfilt("entry") %>%
     lapply(FUN = function(x) {
       dplyr::data_frame(cell = x$title$text,
                         cell_alt = x$id %>% basename,
@@ -101,10 +101,13 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
                         #content_text = x$content$text,
                         #cell_inputValue = x$cell$.attrs["inputValue"],
                         #cell_numericValue = x$cell$.attrs["numericValue"],
-                        
                         cell_text = x$cell$text)
     }) %>%
     dplyr::bind_rows()
+  attr(x, "ws_title") <- this_ws$ws_title
+  x
+}
+
 }
 
 ## argument validity checks and transformation
