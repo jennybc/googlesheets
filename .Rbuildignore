@@ -6,5 +6,5 @@ vignettes/basic-usage.Rmd
 ^data-for-demo$
 ^README\.Rmd$
 ^README-.*\.png$
-^internal$
+^jenny-tmp.R$
 ^awaiting-resurrection$

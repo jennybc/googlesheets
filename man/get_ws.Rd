@@ -4,12 +4,14 @@
 \alias{get_ws}
 \title{Retrieve a worksheet-describing list from a spreadsheet}
 \usage{
-get_ws(ss, ws)
+get_ws(ss, ws, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered spreadsheet}
 
 \item{ws}{a positive integer or character string specifying which worksheet}
+
+\item{verbose}{logical, indicating whether to give a message re: title of the worksheet being accessed}
 }
 \description{
 From a registered spreadsheet, retrieve a list (actually a row of a

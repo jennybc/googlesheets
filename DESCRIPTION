@@ -19,6 +19,7 @@ Imports:
     jsonlite,
     plyr,
     stringr,
+    tidyr,
     XML,
 Suggests:
     testthat,
