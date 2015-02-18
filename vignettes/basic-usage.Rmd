@@ -1,6 +1,6 @@
 ---
 title: "gspreadr Basic Usage"
-author: "Joanna Zhao"
+author: "Joanna Zhao, Jenny Bryan"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -9,26 +9,142 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-__NOTE__: This has not been edited since the Great Refactor of Febrary 2015.
+__NOTE__: We have just begun the updating necessary due to the Great Refactor of Febrary 2015. Things are still in disarray.
 
 ```{r load package}
 library(gspreadr)
+suppressMessages(library(dplyr))
 ```
 
 This vignette shows the basic functionality of `gspreadr`.
 
 # User Authentication
 
-In order to access your own spreadsheets (non-public), you must log in. There are 2 ways to do it in `gspreadr`. 
+In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. There are 2 ways to do this in `gspreadr`. 
 
 1.  `login("email", "password")` (if you really want to...)
 2.  `authorize()` (recommended)
 
-For the first time, `authorize()` will authenticate the user interactively. The user will be directed to a web browser where they will be asked to login to their Google account, and give `gspreadr` permission to access Sheets and Google Drive. Credentials will be cached and authentication will not be needed for subsequent requests/sessions as `httr` handles the storing and refreshing of tokens. (A `.httr-oauth` file will be left behind in the current working directory)
+Many `gspreadr` functions require authentication and will simply trigger the proactive process we describe here.
 
-If you want to access a different account, run `authorize(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
+The `authorize()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `gspreadr` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
 
-# Open a spreadsheet
+If you want to switch to a different Google account, run `authorize(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
+
+*In a hidden chunk, we are logging into Google as a user associated with this package, so we can work with some Google spreadsheets later in this vignette.*
+
+```{r login, include = FALSE}
+if(Sys.getenv("GSPREADR_PASSWORD") == "") {
+  gspreadr_credentials <- read.table(file.path("~", ".R", "check.Renviron"),
+                                     sep = "=", stringsAsFactors = FALSE)
+  login("gspreadr@gmail.com", gspreadr_credentials$V2[2])
+} else {
+  login("gspreadr@gmail.com", Sys.getenv("GSPREADR_PASSWORD"))
+}
+```
+
+# Get a Google spreadsheet to practice with
+
+*Maybe kick off w/ some code just to copy/paste that will copy the Gapminder spreadsheet into the authenticated user's Google Drive. So they can follow along?*
+
+# List your spreadsheets
+
+As an authenticated user, you can get a list of the spreadsheets you can access. If you have not yet authenticated, you will be prompted to do so. If it's been a while since you authenticated, you'll see a message about refreshing a stale OAuth token.
+
+```{r list-spreadsheets}
+my_sheets <- list_spreadsheets()
+```
+
+Explore the `my_sheets` object. Here's a look at the top of ours, where we've truncated the variables `sheet_title` and `sheet_key` and suppressed the variable `ws_id` for readability.
+
+```{r view-my-sheets, echo = FALSE}
+my_sheets %>% 
+  head %>% 
+  mutate(sheet_title = substr(sheet_title, 1, 10),
+         sheet_key = sheet_key %>% substr(1, 7) %>% stringr::str_c("...")) %>% 
+  select(-ws_feed)
+```
+
+This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
+
+# Register a spreadsheet
+
+Before you can access a spreadsheet, you must first __register__ it. This returns an object that is of little interest to the user, but is needed by various `gspreadr` functions in order to retrieve or edit spreadsheet data.
+
+Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We can use `str()` to get an overview of the spreadsheet.
+
+```{r}
+gap <- register("Gapminder")
+str(gap)
+```
+
+Besides using the spreadsheet title, you can also specify a spreadsheet in three other ways:
+
+  * By key: this unfriendly but unique string is probably the best long-term strategy.
+  * By URL: copy and paste the URL in your browser while visiting the spreadsheet. Note: `gspreadr` currently only anticipates the URL structure of ["new" spreadsheets](https://support.google.com/docs/answer/3544847?hl=en).
+  * By the "worksheets feed": under the hood, this is how `gspreadr` actually gets spreadsheet information from the API. Unlikely to be relevant to a regular user.
+
+Here's an example of using the sheet title to retrieve the key, then registering the sheet by key. While registration by title is handy for interactive use, registration by key is preferred for scripts.
+
+```{r}
+(gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
+ss2 <- register(gap_key)
+str(ss2)
+```
+
+# Consuming data from a worksheet
+
+Spreadsheet data is parcelled out into __worksheets__. To consume data from a Google spreadsheet, you'll need to specify a registered spreadsheet and, within that, a worksheet. Specify the worksheet either by name or positive integer index.
+
+There are two ways to consume data.
+
+  * The "list feed": only suitable for well-behaved tabular data. Think: data that looks like an R data.frame
+  * The "cell feed": for everything else. Of course, you can get well-behaved tabular data with the cell feed but it's up to 3x slower and will require post-processing.
+  
+Example of getting nice tabular data from the "list feed":
+
+```{r}
+str(gap)
+oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
+str(oceania_list_feed, give.attr = FALSE)
+oceania_list_feed
+```
+
+If you wish, go look at the [Oceania worksheet from the Gapminder spreadsheet](https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit#gid=431684907) for comparison.
+
+Example of getting the same data from the "cell feed".
+
+```{r}
+oceania_cell_feed <- get_via_cf(gap, ws = "Oceania") 
+str(oceania_cell_feed, give.attr = FALSE)
+head(oceania_cell_feed, 10)
+oceania_reshaped <- gspreadr:::reshape_cf(oceania_cell_feed)
+str(oceania_reshaped, give.attr = FALSE)
+head(oceania_reshaped, 10)
+```
+
+Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `reshape_cf()` to reshape this data into something tabular. *`reshape_cf()` is currently not exported because I plan to write some wrappers*
+
+*To add, using row and column limits on the cell feed.*
+
+*Stuff below partialy redundant with above*
+
+Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `gspreadr` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
+
+There are two basic modes of consuming data stored in a worksheet (quotes taken from the [API docs](https://developers.google.com/google-apps/spreadsheets/):
+
+  * the __list feed__: implicitly assumes data is in a neat rectangle, like an R matrix or data.frame, with a header row followed by one or more data rows, none of which are completely empty
+    - "list row: Row of cells in a worksheet, represented as a key-value pair, where each key is a column name, and each value is the cell value. The first row of a worksheet is always considered the header row when using the API, and therefore is the row that defines the keys represented in each row."
+  * the __cell feed__: unconstrained access to individual non-empty cells specified in either Excel-like notation, e.g. cell D9, or in row-number-column-number notation, e.g. R9C4
+    - "cell: Single piece of data in a worksheet."
+
+*note: current cell feed function doesn't support what we say above but it's still being brought back online; revise above when dust has settled.*
+
+*show how to iterate across worksheets, i.e. get cell D4 from all worksheets*
+
+### Visibility stuff
+
+*Rework this for the new era.*
 
 Under the hood, `gspread` functions must access a spreadsheet with either public or private __visiblity__. Visibility determines whether or not authorization will be used for a request.
 
@@ -36,44 +152,21 @@ No authorization is used when visibility is set to "public", which will only wor
 
 Authorization is used when visibility is set to "private".
 
-## For spreadsheets that have been published to the web
+#### For spreadsheets that have been published to the web
 
-To access public spreadsheets, you will either need the key of the spreadsheet (as found in the URL) or the entire URL. 
+To access public spreadsheets, you will either need the key of the spreadsheet (as found in the URL) or the entire URL.
 
-```{r open public sheets, eval = FALSE}
+*show registering a sheet by these two methods*
 
-pub_sheet <- open_by_key("1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE", visibility = "public")
+#### For private spreadsheets
 
-pub_sheet <- open_by_url("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/pubhtml", visibility = "public")
+*this is the scenario when you can use `list_spreadsheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title. kind of covered above, since it's what we do first*
 
-```
+# Add, delete, rename spreadsheets and worksheets
 
-## For private spreadsheets
+*needs updating*
 
-Once you have authenticated, you can use `list_spreadsheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title.
-
-```{r spreadsheet ops, eval = FALSE}
-# list spreadsheet titles, owners, and time of last update
-list_spreadsheets()
-
-# list the spreadsheet key too
-list_spreadsheets(show_key = TRUE)
-
-ssheet <- open_spreadsheet("Gapminder")
-```
-
-```{r, include = FALSE, eval = FALSE}
-ssheet <- open_by_url("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE", visibility = "public")
-```
-
-This returns a spreadsheet object. You can get the spreadsheet id, title, time of last update, and the number and names of worksheets contained. 
-
-```{r eval = FALSE}
-# spreadsheet components
-ssheet$sheet_id ; ssheet$sheet_title ; ssheet$updated ; ssheet$nsheets ; ssheet$ws_names
-```
-
-## Add or delete a spreadsheet
+### Add or delete spreadsheet
 
 To add or delete a spreadsheet in your Google Drive, use `add_spreadsheet()` or `del_spreadsheet()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1".
 
@@ -85,49 +178,7 @@ add_spreadsheet("New Spreadsheet")
 del_spreadsheet("New Spreadsheet")
 ```
 
-# Open a worksheet
-
-You can use `list_worksheets()` to see the worksheets living in a spreadsheet. This is a wrapper around `ssheet$ws_names`.
-```{r list ws, eval = FALSE}
-
-list_worksheets(ssheet)
-```
-
-To open a worksheet, you can pass in a spreadsheet object and then specify the worksheet using its title or index, or this can be done in one step using `open_at_once(ss_title, ws_index)`. This saves a bit of typing but the spreadsheet object will not be stored, so if you want to open another worksheet, `open_spreadsheet("title")` will be called again. So if you want to open multiple worksheets from a spreadsheet, it is best to open the spreadsheet and save the spreadsheet as an R object and call `open_worksheet(ss, x)`  
-
-```{r open ws, eval = FALSE}
-# by title
-ws <- open_worksheet(ssheet, "Oceania")
-```
-```{r, eval=FALSE}
-# or by index (starting at 1)
-ws <- open_worksheet(ssheet, 5)
-
-# or in one shot
-ws <- open_at_once(ss_title = "Gapminder by Continent", ws_value = "Oceania")
-ws <- open_at_once(ss_title = "Gapminder by Continent", ws_value = 5)
-```
-
-This returns a worksheet object. You can get the ids of the spreadsheet and worksheet, worksheet title, and the number of rows and columns.
-
-```{r, eval = FALSE}
-# worksheet components
-ws$sheet_id ; ws$id ; ws$title ; ws$ncol ; ws$nrow
-```
-
-# Open multiple worksheets
-
-You can open all the worksheets from a spreadsheet using `open_worksheets()` passing the spreadsheet object as the argument. This will return a list of worksheet objects which you can then use `plyr` functions to perform worksheet operations such as `get_cell()`, `get_row()`, `read_region()`, etc.   
-
-```{r open multiple worksheets, eval = FALSE}
-
-ws_objs <- open_worksheets(ssheet)
-
-plyr::llply(ws_objs, function(x) get_cell(x, "A2"))
-
-```
-
-# Add or delete a worksheet
+### Add, delete, or rename a worksheet
 
 To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must open the spreadsheet again to "refresh" it. 
 
@@ -137,30 +188,17 @@ add_worksheet(ssheet, title = "foo", nrow = 10, ncol = 10)
 del_worksheet(ssheet, ws_title = "foo")
 ```
 
-# Rename a worksheet
-
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
 
 ```{r eval = FALSE}
 rename_worksheet(ssheet, "Sheet1", "First Sheet")
 ```
 
-# Consuming data from a worksheet
-
-Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `gspreadr` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
-
-There are two basic modes of consuming data stored in a worksheet (quotes taken from the [API docs](https://developers.google.com/google-apps/spreadsheets/):
-
-  * the __list feed__: implicitly assumes data is in a neat rectangle, like an R matrix or data.frame, with a header row followed by one or more data rows, none of which are completely empty
-    - "list row: Row of cells in a worksheet, represented as a key-value pair, where each key is a column name, and each value is the cell value. The first row of a worksheet is always considered the header row when using the API, and therefore is the row that defines the keys represented in each row."
-  * the __cell feed__: unconstrained access to individual cells specified in either Excel-like notation, e.g. cell D9, or in row-number-column-number notation, e.g. R9C4
-    - "cell: Single piece of data in a worksheet."
-
-
-
 # Worksheet Operations
 
 ## View worksheet
+
+*this function has not been resurrected yet*
 
 You can take a look at your worksheets to get an idea of what it looks like. Use `view()` to look at one worksheet and `view_all()` to look at all worksheets contained in a spreadsheet. `view_all()` returns a gallery of all the worksheets. Set `show_overlay = TRUE` to view an overlay of all the worksheets to identify the density of the cells occupied by worksheets. **showing Error: could not find function "ggplotGrob"**
 
@@ -171,103 +209,10 @@ view(ws)
 view_all(ssheet)
 ```
 
-## Display structure of spreadsheet and worksheet
-
-To get a more detailed report of your worksheet, use `str()`. This function summarizes your worksheet by letting you know the number of rows and columns, empty cells, and the cell pattern per column (a string of ##V for values and ##NA for empty cells).
-```{r display structure, eval = FALSE}
-
-# str for a spreadsheet
-str(ssheet)
-
-# str for a worksheet
-str(ws)
-
-```
-
-## Get data from a worksheet
-
-You can get row(s), col(s), a region, or an entire worksheet. 
-
-### Get row(s)
-```{r get rows, eval = FALSE}
-get_row(ws, 1)
-
-get_rows(ws, from = 1, to = 3)
-```
-
-### Get col(s)
-
-You can get columns either by integer or letter. 
-
-```{r get cols, eval = FALSE}
-head(get_col(ws, 1))
-
-head(get_col(ws, "A"))
-
-head(get_cols(ws, from = 1, to = 5))
-
-head(get_cols(ws, from = "A", to = "E"))
-
-```
-
-### Get a region as a data frame
-
-#### Specify by min/max rows and columns
-
-You can get a region of a worksheet by specifying the boundary rows and columns. The first row will be taken as the `header` by default.
-
-```{r get region, eval = FALSE}
-read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5)
-
-# set header to FALSE
-read_region(ws, from_row = 1, to_row = 3, from_col = 1, to_col = 5, header = FALSE)
-```
-
-#### Specify by range
-
-You can also get a region of a worksheet by specifying the cell ranges as a character string. The first row will be taken as the `header` by default.
-
-```{r get range, eval = FALSE}
-
-read_range(ws, "A1:E5")
-
-```
-
-
-### Get the entire worksheet as data frame
-
-You can get the entire worksheet. Empty cells will be filled with NAs. Boundaries are determined by the right-most and bottom-most cells that contain a value.  The first row will be taken as the `header` by default.
-
-
-```{r get all, eval = FALSE}
-read_all(ws)
-```
-
-### Get a cell
-
-You can get the value of a specific cell. There are two notations you can use: `A1` and `R1C1`. For `A1` notation, columns are indicated by a letter followed by the row as an integer. For `R1C1` notation, integers represent the rows and columns, and are preceded by `R` or `C`. Note that `A1` and `R1C1` are equivalent.
-
-```{r get cell, eval = FALSE}
-
-get_cell(ws, "A1")
-
-get_cell(ws, "R1C1")
-
-```
-
-### Find a cell
-
-You can find the first position of the cell containing the specified value or all the cells that contain the specified value. 
-
-```{r find cell, eval = FALSE}
-
-find_cell(ws, "Australia")
-
-find_all(ws, "Australia")
-
-```
 
 ## Update cells
+
+*this functionality has not been resurrected yet*
 
 ### Update a single cell
 

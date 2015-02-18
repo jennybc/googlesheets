@@ -12,7 +12,8 @@ slaste <- function(...) paste(..., sep = "/")
 #' 
 #' @param ss a registered spreadsheet
 #' @param ws a positive integer or character string specifying which worksheet
-get_ws <- function(ss, ws) {
+#' @param verbose logical, indicating whether to give a message re: title of the worksheet being accessed
+get_ws <- function(ss, ws, verbose = TRUE) {
   
   stopifnot(inherits(ss, "spreadsheet"),
             length(ws) == 1L,
@@ -28,6 +29,9 @@ get_ws <- function(ss, ws) {
   }
   if(ws > ss$n_ws) {
     stop(sprintf("Spreadsheet only contains %d worksheets.", ss$n_ws)) 
+  }
+  if(verbose) {
+    message(sprintf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws]))
   }
   ss$ws[ws, ]
 }
