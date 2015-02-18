@@ -1,6 +1,5 @@
 context("http-requests functions")
 
-
 test_that("URL is built correctly", {
   
   key <- "key"
