@@ -18,6 +18,7 @@ Imports:
     httr,
     plyr,
     stringr,
+    tidyr,
     XML,
 Suggests:
     testthat,

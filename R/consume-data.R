@@ -108,6 +108,49 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
   x
 }
 
+#' Reshape cell-level data and convert to data.frame
+#' 
+#' This will not be exported long-term. Will write wrappers. Temporary export.
+#' 
+#' @param x a data.frame returned by \code{get_via_cf()}
+#' @param header logical indicating whether first row should be taken as
+#'   variable names
+#'   
+#' @export
+reshape_cf <- function(x, header = TRUE) {
+  
+  limits <- x %>%
+    dplyr::summarise_each_(dplyr::funs(min, max), list(~ row, ~ col))
+  all_possible_cells <-
+    with(limits,
+         expand.grid(row = row_min:row_max, col = col_min:col_max))
+  suppressMessages(
+    x_augmented <- all_possible_cells %>% dplyr::left_join(x)
+    ## tidyr::spread(), used below, could do something similar as this join, but
+    ## it would handle completely missing rows and columns differently; still
+    ## thinking about this
+  )
+
+  if(header) {
+    row_one <- x_augmented %>% 
+      dplyr::filter_(~ row == 1L)
+    var_names <- ifelse(is.na(row_one$cell_text),
+                        stringr::str_c("C", row_one$col),
+                        row_one$cell_text) %>% make.names
+    x_augmented <- x_augmented %>%
+      dplyr::filter_(~ row > 1)
+  } else {
+    var_names <- with(limits, col_min:col_max) %>% make.names
+  }
+
+  x_augmented %>%
+    dplyr::select_(~ row, ~ col, ~ cell_text) %>%
+    tidyr::spread_("col", "cell_text", convert = TRUE) %>% 
+    dplyr::select_(~ -row) %>%
+    setNames(var_names)
+
+}
+
 ## argument validity checks and transformation
 
 ## re: min_row, max_row, min_col, max_col = query params for cell feed
