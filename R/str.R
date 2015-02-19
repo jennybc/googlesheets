@@ -17,9 +17,9 @@ str.spreadsheet <- function(object, ...) {
           object$updated %>% format.POSIXct(usetz = TRUE)) %>% cat
   cat("\n")
   
-  ws_string <- "%s: %d x %d"
-  ws_output <- plyr::daply(object$ws, ~ ws_title, function(x) {
-    sprintf(ws_string, x$ws_title, x$row_extent, x$col_extent)})
+  ws_output <-
+    sprintf("%s: %d x %d",
+            object$ws$ws_title, object$ws$row_extent, object$ws$col_extent)
   sprintf("Contains %d worksheets:\n", object$n_ws) %>% cat
   cat("(Title): (Nominal worksheet extent as rows x columns)\n")
   cat(ws_output, sep = "\n")

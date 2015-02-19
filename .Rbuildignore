@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.httr-oauth$
+^tests/testthat/\.httr-oauth$
 vignettes/basic-usage.Rmd
 ^\.travis\.yml$
 ^data-for-demo$

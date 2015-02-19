@@ -4,20 +4,22 @@
 \alias{new_ws}
 \title{Add a new (empty) worksheet to spreadsheet}
 \usage{
-new_ws(ss, ws_title, nrow = 1000, ncol = 26)
+new_ws(ss, ws_title, nrow = 1000, ncol = 26, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google sheet}
 
 \item{ws_title}{character string for title of new worksheet}
 
 \item{nrow}{number of rows (default is 1000)}
 
 \item{ncol}{number of columns (default is 26)}
+
+\item{verbose}{logical; do you want informative message?}
 }
 \description{
-Add a new (empty) worksheet to spreadsheet, specify title, worksheet extent (number of rows
-and columns). The title of the new worksheet can not be the same as any
-existing worksheets in the spreadsheet.
+Add a new (empty) worksheet to spreadsheet, specify title, worksheet extent
+(number of rows and columns). The title of the new worksheet can not be the
+same as any existing worksheets in the sheet.
 }
 

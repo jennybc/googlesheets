@@ -61,6 +61,9 @@ gsheets_GET <- function(url) {
                  "application/atom+xml; charset=UTF-8",
                  req$headers[["content-type"]]))
   }
+  ## TO DO: eventually we will depend on xml2 instead of XML and then we should
+  ## use it to parse the XML instead of httr:content()
+  ## see https://github.com/hadley/httr/issues/189
   req$content <- httr::content(req, type = "text/xml")
   req$content <- XML::xmlToList(req$content)
   req
@@ -74,12 +77,12 @@ gsheets_GET <- function(url) {
 #'
 #' @param url URL for POST request
 #' @param the_body body of POST request
-gsheets_POST <- function(url, the_body)
-{
+gsheets_POST <- function(url, the_body) {
+  
   token <- get_google_token()
   
   if(is.null(token)) {
-    stop("Must be authorized in order to perform request")
+    stop("Must be authorized user in order to perform request")
   } else {
     
     # first look at the url to determine contents, 
@@ -96,7 +99,8 @@ gsheets_POST <- function(url, the_body)
     
     httr::stop_for_status(req)
     
-    ## TO DO: inform users of why client error (404) Not Found may arise when copying a spreadsheet
+    ## TO DO: inform users of why client error (404) Not Found may arise when
+    ## copying a spreadsheet
     #     message(paste("The spreadsheet can not be found.",
     #                   "Please make sure that the spreadsheet exists and that you have permission to access it.",
     #                   'A "published to the web" spreadsheet does not necessarily mean you have permission for access.',
@@ -110,8 +114,7 @@ gsheets_POST <- function(url, the_body)
 #' Make DELETE request to Google Sheets API.
 #'
 #' @param url URL for DELETE request
-gsheets_DELETE <- function(url)
-{
+gsheets_DELETE <- function(url) {
   token <- get_google_token()
   req <- httr::DELETE(url, gsheets_auth(token))
   httr::stop_for_status(req)

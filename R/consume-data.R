@@ -140,7 +140,7 @@ reshape_cf <- function(x, header = TRUE) {
     x_augmented <- x_augmented %>%
       dplyr::filter_(~ row > 1)
   } else {
-    var_names <- with(limits, col_min:col_max) %>% make.names
+    var_names <- limits$col_min:limits$col_max %>% make.names
   }
 
   x_augmented %>%

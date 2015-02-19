@@ -4,13 +4,21 @@
 \alias{register}
 \title{Register a Google spreadsheet}
 \usage{
-register(x, visibility = "private")
+register(x, key = NULL, ws_feed = NULL, visibility = "private")
 }
 \arguments{
-\item{x}{character vector of length one, with spreadsheet-identifying
-information}
+\item{x}{character vector of length one, with sheet-identifying
+information; valid inputs are title, key, URL, worksheets feed}
 
-\item{visibility}{either "public" or "private"}
+\item{key}{character vector of length one that is guaranteed to be unique key
+for sheet; supercedes argument \code{x}}
+
+\item{ws_feed}{character vector of length one that is guaranteed to be
+worksheets feed for sheet; supercedes arguments \code{x} and
+\code{key}}
+
+\item{visibility}{either "public" or "private"; used to specify visibility
+  when sheet identified via \code{key}}
 }
 \value{
 Object of class spreadsheet.
@@ -19,22 +27,22 @@ Object of class spreadsheet.
 Specify a Google spreadsheet via its URL, unique key, title, or worksheets
 feed and register it for further use. This function returns an object of
 class \code{spreadsheet}, which contains all the information other
-\code{gspreadr} functions will need to consume data from the spreadsheet or
-to edit the spreadsheet. This object also contains spreadsheet information
+\code{gspreadr} functions will need to consume data from the sheet or
+to edit the sheet. This object also contains sheet information
 that may be of interest to the user, such as the time of last update, the
 number of worksheets contained, and their titles.
 }
 \note{
 The data extent reported for worksheets is probably not what you think
   or hope it is. It does not report how many rows or columns are actually
-  nonempty This cannot be determined via the Google Spreadsheets API without
+  nonempty This cannot be determined via the Google sheets API without
   consuming the data and noting which cells are populated. Therefore, these
   numbers generally reflect the default extent of a new worksheet, e.g., 1000
   rows and 26 columns at the time or writing, and provide an upper bound on
   the true number of rows and columns.
 
-The visibility can only be "public" if the spreadsheet is "Published to
-  the web". Gotcha: this is different from setting the spreadsheet to "Public
+The visibility can only be "public" if the sheet is "Published to
+  the web". Gotcha: this is different from setting the sheet to "Public
   on the web" in the visibility options in the sharing dialog of a Google
   Sheets file.
 }

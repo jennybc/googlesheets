@@ -1,55 +1,52 @@
 context("edit spreadsheets")
 
-test_that("Make a new spreadsheet", {
-  skip("Can not use login() to talk to Drive API")
+## TO DO: clean out stuff in Google Drive and Public Testing Sheet that could 
+## have been left behind by previous unsuccessful tests? such as all sheets 
+## titled testing[1-9], Copy of Public Testing Sheet, "eggplants are purple",
+## etc.
+
+test_that("Spreadsheet can be created and deleted", {
   
-  new_ss("New spreadsheet from test")
+  check_oauth()
   
-  ss_df <- list_spreadsheets()
+  x <- sample(9, 1)
+  sheet_title <- stringr::str_c("testing", x) 
   
-  index <- match("New spreadsheet from test", ss_df[["sheet_title"]])
+  expect_message(new_sheet(sheet_title), "created")
+  ss_df <- list_sheets()
+  expect_true(sheet_title %in% ss_df$sheet_title)
+  expect_message(delete_sheet(sheet_title), "moved to trash")
+  ss_df <- list_sheets()
+  expect_false(sheet_title %in% ss_df$sheet_title)
   
-  expect_equal(index, 1) 
 })
 
-
-test_that("Copy a spreadsheet", {
+test_that("Spreadsheet can be copied", {
   
-  skip("Can not use login() to talk to Drive API")
+  check_oauth()
   
-  # copy ss that exists already in Google drive  
-  copy_ss(pts_title)
-  copy_ss(pts_title, "PTS_COPY")
+  copy_sheet(pts_title)
+  copy_sheet(pts_title, to = "eggplants are purple")
   
-  ss_df <- list_spreadsheets()
+  ss_df <- list_sheets()
   
   expect_true(paste("Copy of", pts_title) %in% ss_df[["sheet_title"]]) 
-  expect_true("PTS_COPY" %in% ss_df[["sheet_title"]]) 
+  expect_true("eggplants are purple" %in% ss_df[["sheet_title"]])
   
-  # copy ss that doesnt exist
-  expect_error(copy_ss(paste(pts_title, "phony")))
+  delete_sheet(paste("Copy of", pts_title))
+  delete_sheet("eggplants are purple")
   
 })
 
-
-test_that("Delete a spreadsheet", {
+test_that("Nonexistent spreadsheet can NOT be deleted or copied", {
   
-  skip("Can not use login() to talk to Drive API")
+  check_oauth()
   
-  del_ss("This is a new spreadsheet")
-  del_ss(pts_title)
-  del_ss("PTS_COPY")
+  expect_error(delete_sheet("flyingpig"), "doesn't match")
+  expect_error(copy_sheet("flyingpig"),  "doesn't match")
   
-  ss_df <- list_spreadsheets()
-  
-  expect_false("This is a new spreadsheet" %in% ss_df[["sheet_title"]]) 
-  expect_false(pts_title %in% ss_df[["sheet_title"]]) 
-  expect_false("PTS_COPY" %in% ss_df[["sheet_title"]]) 
-  
-  # copy ss that doesnt exist
-  expect_error(del_ss("PTS_COPY_COPY"))
 })
-
+  
 test_that("Add a new worksheet", {
 
   ss_old <- register(pts_title)
