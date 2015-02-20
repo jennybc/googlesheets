@@ -18,11 +18,11 @@ You can either make a copy of your own spreadsheet or another user's
 spreadsheet. If the spreadsheet you want to make a copy of already exists in
 your Google Drive, pass in the title of the spreadsheet. To get a copy of
 another user's spreadsheet, enter the key of that spreadsheet. Make sure
-that the target spreadsheet is made 'accessible' in the sharing dialog
+that the source spreadsheet is made 'accessible' in the sharing dialog
 options or else it wont be found.
 }
 \note{
-if two spreadsheets with the same name exist in your Google drive then
-spreadsheet with the most recent "last updated" timestamp will be copied.
+if two spreadsheets with the same name exists in your Google Drive then
+the spreadsheet with the most recent "last updated" timestamp will be copied.
 }
 

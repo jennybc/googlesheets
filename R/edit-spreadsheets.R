@@ -18,18 +18,19 @@ new_ss <- function(title)
   message(paste0('Spreadsheet "', title, '" created in Google Drive.'))
 }
 
-
-#' Move a spreadsheet to trash{"__src__":"file","ids":"1PmCRtmcX4r7LOS-XVw6u8f-E3sVnFgamJaKCmVF3Sv0","parentId":"0AFlKxBjVWN80Uk9PVA"}
-#' 
+ 
 #' Move a spreadsheet to trash in Google Drive.
+#' 
+#' You must be the owner of the spreadsheet in order to move it to the trash. 
+#' If you try to delete a spreadsheet that doesnt belong to you, a 403 Forbidden 
+#' HTTP status code will be returned; such shared spreadsheets can only be moved 
+#' to the trash manually in the web browser. If you trash a spreadsheet that is 
+#' shared with others, it will no longer appear in any of their Google Drives. 
 #' 
 #' @param x the title or key of a spreadsheet
 #' 
 #' @note Using the key is useful when there are spreadsheets with the same name 
 #' since the default is to send the most recent spreadsheet to the trash.
-#' 
-#' @note Shared spreadsheets can not be removed from your Google Drive with 
-#' this function. You must remove it manually in the web browser.
 #' 
 #' @export
 delete_ss <- function(x)
@@ -60,7 +61,7 @@ delete_ss <- function(x)
 #' spreadsheet. If the spreadsheet you want to make a copy of already exists in 
 #' your Google Drive, pass in the title of the spreadsheet. To get a copy of 
 #' another user's spreadsheet, enter the key of that spreadsheet. Make sure 
-#' that the target spreadsheet is made 'accessible' in the sharing dialog 
+#' that the source spreadsheet is made 'accessible' in the sharing dialog 
 #' options or else it wont be found.
 #' 
 #' @param x the title or key or url of a spreadsheet
@@ -69,8 +70,8 @@ delete_ss <- function(x)
 #' if \code{new_title} is NULL then the copied spreadsheet will
 #' be given the default name: "Copy of ..."
 #' 
-#' @note if two spreadsheets with the same name exist in your Google drive then 
-#' spreadsheet with the most recent "last updated" timestamp will be copied. 
+#' @note if two spreadsheets with the same name exists in your Google Drive then 
+#' the spreadsheet with the most recent "last updated" timestamp will be copied. 
 #' @export
 copy_ss <- function(x, new_title = NULL)
 {
@@ -111,9 +112,9 @@ copy_ss <- function(x, new_title = NULL)
 
 #' Add a new (empty) worksheet to spreadsheet
 #'
-#' Add a new (empty) worksheet to spreadsheet, specify title, worksheet extent (number of rows 
-#' and columns). The title of the new worksheet can not be the same as any 
-#' existing worksheets in the spreadsheet.
+#' Add a new (empty) worksheet to a spreadsheet, specify the title, worksheet 
+#' extent (number of rows and columns). The title of the new worksheet can not 
+#' be the same as any of the existing worksheets in the spreadsheet.
 #'
 #' @param ss a registered Google spreadsheet
 #' @param ws_title character string for title of new worksheet 

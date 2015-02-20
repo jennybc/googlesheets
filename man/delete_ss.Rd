@@ -2,7 +2,7 @@
 % Please edit documentation in R/edit-spreadsheets.R
 \name{delete_ss}
 \alias{delete_ss}
-\title{Move a spreadsheet to trash{"__src__":"file","ids":"1PmCRtmcX4r7LOS-XVw6u8f-E3sVnFgamJaKCmVF3Sv0","parentId":"0AFlKxBjVWN80Uk9PVA"}}
+\title{Move a spreadsheet to trash in Google Drive.}
 \usage{
 delete_ss(x)
 }
@@ -10,13 +10,14 @@ delete_ss(x)
 \item{x}{the title or key of a spreadsheet}
 }
 \description{
-Move a spreadsheet to trash in Google Drive.
+You must be the owner of the spreadsheet in order to move it to the trash.
+If you try to delete a spreadsheet that doesnt belong to you, a 403 Forbidden
+HTTP status code will be returned; such shared spreadsheets can only be moved
+to the trash manually in the web browser. If you trash a spreadsheet that is
+shared with others, it will no longer appear in any of their Google Drives.
 }
 \note{
 Using the key is useful when there are spreadsheets with the same name
 since the default is to send the most recent spreadsheet to the trash.
-
-Shared spreadsheets can not be removed from your Google Drive with
-this function. You must remove it manually in the web browser.
 }
 

@@ -16,8 +16,8 @@ new_ws(ss, ws_title, nrow = 1000, ncol = 26)
 \item{ncol}{number of columns (default is 26)}
 }
 \description{
-Add a new (empty) worksheet to spreadsheet, specify title, worksheet extent (number of rows
-and columns). The title of the new worksheet can not be the same as any
-existing worksheets in the spreadsheet.
+Add a new (empty) worksheet to a spreadsheet, specify the title, worksheet
+extent (number of rows and columns). The title of the new worksheet can not
+be the same as any of the existing worksheets in the spreadsheet.
 }
 
