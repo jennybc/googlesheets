@@ -8,10 +8,8 @@
 #' @export
 new_ss <- function(title)
 {
-  dat <- data.frame("title" = title, 
-                    "mimeType" = "application/vnd.google-apps.spreadsheet")
-  
-  the_body <- jsonlite::toJSON(dat) %>% stringr::str_sub(., 2, -2)
+  the_body <- list("title" = title, 
+                   "mimeType" = "application/vnd.google-apps.spreadsheet")
   
   the_url <- "https://www.googleapis.com/drive/v2/files"
   
@@ -53,6 +51,7 @@ delete_ss <- function(x)
   
   message('Spreadsheet moved to trash in Google Drive.')
 }
+
 
 
 #' Make a copy of an existing spreadsheet
@@ -100,8 +99,7 @@ copy_ss <- function(x, new_title = NULL)
     }
   }
   
-  the_body <- data.frame("title" = new_title) %>% jsonlite::toJSON(.) %>% 
-    stringr::str_sub(., 2, -2)
+  the_body <- list("title" = new_title)
   
   the_url <- slaste("https://www.googleapis.com/drive/v2/files", key, "copy")
   
