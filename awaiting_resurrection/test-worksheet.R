@@ -4,17 +4,6 @@
 # 
 # wks <- open_worksheet(public_testing_sheet, "Oceania")
 # 
-# test_that("Worksheet cell feed is stored as data.frame", {
-#   
-#   public_test_sheet <- open_by_key(key = pts_key, visibility = "public")
-#   asia <- ws_to_df(public_test_sheet, "Asia")
-#   expect_equal(nrow(asia), 42)
-#   expect_equal(ncol(asia), 4)
-#   expect_equal(head(asia$cell, 3), c('A1', 'B1', 'C1'))
-#   expect_equal(asia$value[7:10], c('Afghanistan', '1952', '8425333', 'Asia'))
-#   
-# })
-# 
 # test_that("Get value of cell", {
 #   expect_equal(get_cell(wks, "A1"), "country")
 #   expect_equal(get_cell(wks, "R1C1"), "country")
@@ -81,20 +70,6 @@
 #   expect_error(view(wks_empty), "Worksheet does not contain any values.")
 # })
 # 
-# test_that("Structure of worksheet is displayed", {
-#   
-#   expect_output(str(wks), wks$title)
-#   expect_output(str(wks), as.character(wks$nrow))
-#   expect_output(str(wks), as.character(wks$ncol))
-# })
-# 
-# 
-# test_that("Structure of spreadsheet is displayed", {
-#   
-#   expect_output(str(sheet1), sheet1$sheet_title)
-#   expect_output(str(sheet1), as.character(sheet1$nsheets))
-#   expect_output(str(sheet1), sheet1$ws_names[1])
-# })
 
 # ---- Require  authorization
 
@@ -141,33 +116,6 @@
 #   expect_equal(wks_new$row_extent, 7)
 # })
 
-# 
-# 
-# test_that("Add worksheet", {
-#   add_worksheet(sheet1, "bar", 10, 10)
-#   
-#   sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
-#                         visibility = "public")
-#   
-#   expect_true("bar" %in% sheet1$ws_names)
-#   expect_error(add_worksheet(sheet1, "Asia", 10, 10), 
-#                "A worksheet with the same name already exists, please choose a different name!")
-# })
-# 
-# sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
-#                       visibility = "public")
-# 
-# test_that("Delete worksheet", {
-#   del_worksheet(sheet1, "bar")
-#   
-#   sheet1 <- open_by_key("1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", 
-#                         visibility = "public")
-#   
-#   expect_false("bar" %in% sheet1$ws_names)
-# })
-# 
-
-# 
 # test_that("Worksheet is renamed", {
 #   
 #   rename_worksheet(ss1, "Sheet1", "New Title")
