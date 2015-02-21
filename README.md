@@ -5,8 +5,8 @@
 
 ------------------------------------------------------------------------
 
-Google Spreadsheets R API
--------------------------
+Google Sheets R API
+-------------------
 
 [![Build Status](https://travis-ci.org/jennybc/gspreadr.png?branch=master)](https://travis-ci.org/jennybc/gspreadr)
 
@@ -18,7 +18,7 @@ Features:
 
 -   Access a spreadsheet by its title, key or URL.
 -   Extract data or edit data.
--   Add | delete | rename spreadsheets and worksheets.
+-   Add | delete | rename | copy spreadsheets and worksheets.
 
 ![gspreadr](README-gspreadr.png)
 
@@ -33,36 +33,42 @@ suppressMessages(library(dplyr))
 ``` r
 # See what spreadsheets you have
 # (expect to authenticate with Google interactively HERE)
-list_spreadsheets()
-#> Source: local data frame [18 x 6]
+(my_sheets <- list_sheets())
+#> Source: local data frame [21 x 6]
 #> 
-#>                          sheet_title
-#> 1          New spreadsheet from test
-#> 2               Public Testing Sheet
-#> 3                        Temperature
-#> 4       Copy of Public Testing Sheet
-#> 5                          Gapminder
-#> 6                         Gapminderx
-#> 7                            Testing
-#> 8                      Gapminder Raw
-#> 9           Gapminder 2007 Can Write
-#> 10            Gapminder by Continent
-#> 11          Gapminder 2007 View Only
-#> 12          Gapminder by Continent R
-#> 13                       basic-usage
-#> 14      Caffeine craver? (Responses)
-#> 15             Private Sheet Example
-#> 16          Gapminder by Continent 2
-#> 17                       Code Sample
-#> 18 Effective Ways to Share Knowledge
+#>                                     sheet_title
+#> 1                          Public Testing Sheet
+#> 2  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 3                                Testing helper
+#> 4                               Old Style Sheet
+#> 5                                    jenny-test
+#> 6                                   gas_mileage
+#> 7                                   Temperature
+#> 8                                     Gapminder
+#> 9                                    Gapminderx
+#> 10                                      Testing
+#> ..                                          ...
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
+my_sheets %>% glimpse()
+#> Observations: 21
+#> Variables:
+#> $ sheet_title  (chr) "Public Testing Sheet", "1F0iNuYW4v_oG69s7c5NzdoM...
+#> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
+#> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
+#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "r", "rw", "rw", "r...
+#> $ last_updated (time) 2015-02-20 22:14:11, 2015-02-20 01:17:28, 2015-0...
+#> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 
 # Hey let's look at the Gapminder data
 gap <- register("Gapminder")
+#> Sheet identified!
+#> sheet_title: Gapminder
+#> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> ws_feed: https://spreadsheets.google.com/feeds/worksheets/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/private/full
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>      Date of gspreadr::register: 2015-02-17 10:50:20 PST
+#>      Date of gspreadr::register: 2015-02-20 14:20:46 PST
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -78,9 +84,21 @@ str(gap)
 
 # Oh, you don't own it? Access it by key!
 gap <- register("1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE")
+#> Sheet identified!
+#> sheet_title: Gapminder
+#> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> ws_feed: https://spreadsheets.google.com/feeds/worksheets/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/private/full
 
-# Get the data for Oceania: the fast tabular way
-oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
+# Oh, you don't own it? Access it by browser URL!
+gap <- register("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit")
+#> Identifying info "https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit" will be processed as a URL; gspreadr will attempt to extract sheet key from the URL.
+#> Sheet identified!
+#> sheet_title: Gapminder
+#> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> ws_feed: https://spreadsheets.google.com/feeds/worksheets/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/private/full
+
+# Get the data for Oceania: the fast tabular way ("list feed")
+oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
 str(oceania_list_feed, give.attr = FALSE)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:
@@ -106,8 +124,8 @@ oceania_list_feed
 #> 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
 #> ..         ...       ...  ...     ...      ...       ...
 
-# Get the data for Oceania: the slower cell-by-cell way
-oceania_cell_feed <- get_via_cf(gap, ws = "Oceania") 
+# Get the data for Oceania: the slower cell-by-cell way ("cell feed")
+oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
 str(oceania_cell_feed, give.attr = FALSE)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    150 obs. of  5 variables:
@@ -130,7 +148,7 @@ head(oceania_cell_feed, 10)
 #> 8    B2     R2C2   2   2   Oceania
 #> 9    C2     R2C3   2   3      2007
 #> 10   D2     R2C4   2   4    81.235
-oceania_reshaped <- gspreadr:::reshape_cf(oceania_cell_feed)
+oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
 str(oceania_reshaped, give.attr = FALSE)
 #> 'data.frame':    24 obs. of  6 variables:
 #>  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
@@ -174,7 +192,5 @@ Stuff we are in the process of bringing back online after the Great Refactor of 
 
 -   convenience wrappers for the cell feed, i.e. row(s), column(s), range
 -   edit cells
--   add/delete spreadsheets
--   add/delete/rename worksheets
 -   visual overview of which cells are populated
 -   finding a cell ?will we even do this?

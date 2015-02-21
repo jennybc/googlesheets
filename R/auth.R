@@ -12,8 +12,7 @@
 #' \url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
 #'
 #' @export
-login <- function(email, passwd) 
-{
+login <- function(email, passwd) {
   service <- "wise"
   account_type <- "HOSTED_OR_GOOGLE"
   the_url <- "https://www.google.com/accounts/ClientLogin"
@@ -52,8 +51,7 @@ login <- function(email, passwd)
 #' @param new_user set to \code{TRUE} if you want to authenticate a different
 #' google account
 #' @export
-authorize <- function(new_user = FALSE) 
-{
+authorize <- function(new_user = FALSE) {
   
   if(new_user & file.exists(".httr-oauth")) {
     message("Removing old credentials ...")

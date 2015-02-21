@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ---
 
-Google Spreadsheets R API
+Google Sheets R API
 ---
 [![Build Status](https://travis-ci.org/jennybc/gspreadr.png?branch=master)](https://travis-ci.org/jennybc/gspreadr)
 
@@ -28,12 +28,11 @@ Manage your spreadsheets with *gspreadr* in R.
 
 *gspreadr* is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API
 
-
 Features:
 
   - Access a spreadsheet by its title, key or URL.
   - Extract data or edit data.
-  - Add | delete | rename spreadsheets and worksheets.
+  - Add | delete | rename | copy spreadsheets and worksheets.
 
 ![gspreadr](README-gspreadr.png)
 
@@ -43,10 +42,12 @@ Basic Usage
 library(gspreadr)
 suppressMessages(library(dplyr))
 ```
+
 ```{r basic-usage}
 # See what spreadsheets you have
 # (expect to authenticate with Google interactively HERE)
-list_spreadsheets()
+(my_sheets <- list_sheets())
+my_sheets %>% glimpse()
 
 # Hey let's look at the Gapminder data
 gap <- register("Gapminder")
@@ -55,16 +56,19 @@ str(gap)
 # Oh, you don't own it? Access it by key!
 gap <- register("1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE")
 
-# Get the data for Oceania: the fast tabular way
-oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
+# Oh, you don't own it? Access it by browser URL!
+gap <- register("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit")
+
+# Get the data for Oceania: the fast tabular way ("list feed")
+oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
 str(oceania_list_feed, give.attr = FALSE)
 oceania_list_feed
 
-# Get the data for Oceania: the slower cell-by-cell way
-oceania_cell_feed <- get_via_cf(gap, ws = "Oceania") 
+# Get the data for Oceania: the slower cell-by-cell way ("cell feed")
+oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
 str(oceania_cell_feed, give.attr = FALSE)
 head(oceania_cell_feed, 10)
-oceania_reshaped <- gspreadr:::reshape_cf(oceania_cell_feed)
+oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
 str(oceania_reshaped, give.attr = FALSE)
 head(oceania_reshaped, 10)
 ```
@@ -88,9 +92,6 @@ Stuff we are in the process of bringing back online after the Great Refactor of 
 
   * convenience wrappers for the cell feed, i.e. row(s), column(s), range
   * edit cells
-  * add/delete spreadsheets
-  * add/delete/rename worksheets
   * visual overview of which cells are populated
   * finding a cell ?will we even do this?
   
-

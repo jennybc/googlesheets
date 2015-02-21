@@ -1,24 +1,53 @@
-## current hack to test as authenticted user
-## requires GSPREADR_PASSWORD environment variable
+`%>%` <- magrittr::`%>%`
 
-## achieved locally by the file ~/.R/check.Renviron
-## that contains:
+## current hacks to test as authorized user:
+## first choice is to use (and trigger auto-refresh) of .httr-oauth
+## second choice is to login w/ gpsreadr username and password, using
+## GSPREADR_PASSWORD environment variable
+
+## assume the worst
+Sys.setenv(OAUTH = "FALSE")
+
+## look for .httr-oauth in pwd (assuming pwd is gspreadr) or two levels up
+## (assuming pwd is gspreadr/tests/testthat)
+pwd <- getwd()
+two_up <- pwd %>% dirname() %>% dirname()
+HTTR_OAUTH <- c(two_up, pwd) %>% file.path(".httr-oauth")
+HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
+
+if(length(HTTR_OAUTH) > 0) {
+  HTTR_OAUTH <- HTTR_OAUTH[1]
+  file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
+  Sys.setenv(OAUTH = "TRUE")
+}
+
+## we define environment variables on local machines in ~/.R/check.Renviron
+## which contains:
 ## GSPREADR_USERNAME=blahblahblah <-- not actually consulted now
 ## GSPREADR_PASSWORD=blahblahblah
 ## this approach works for R CMD check
 
-## there is a second hack on top of the above hack so that lighter-weight
-## approaches to testing work, i.e. those that don't fire up a fresh R process,
-## such as RStudio > Build > Test package
+## for other testing approaches, we might just read that file explicitly
+## example: RStudio > Build > Test package (if no .httr-oauth had been found)
 
-## finally, this works on Travis because I followed the directions here
+## finally, login approach works on Travis because did this:
 ## http://docs.travis-ci.com/user/environment-variables/
 ## http://docs.travis-ci.com/user/encryption-keys/
 
-if(Sys.getenv("GSPREADR_PASSWORD") == "") {
-  gspreadr_credentials <- read.table(file.path("~", ".R", "check.Renviron"),
-                                     sep = "=", stringsAsFactors = FALSE)
-  login("gspreadr@gmail.com", gspreadr_credentials$V2[2])
-} else {
-  login("gspreadr@gmail.com", Sys.getenv("GSPREADR_PASSWORD"))
+if(Sys.getenv("OAUTH") == "FALSE") {
+  
+  if(Sys.getenv("GSPREADR_PASSWORD") == "") {
+    gspreadr_credentials <- read.table(file.path("~", ".R", "check.Renviron"),
+                                       sep = "=", stringsAsFactors = FALSE)
+    login("gspreadr@gmail.com", gspreadr_credentials$V2[2])
+  } else {
+    login("gspreadr@gmail.com", Sys.getenv("GSPREADR_PASSWORD"))
+  }
+
+}
+
+check_oauth <- function() {
+  if (Sys.getenv("OAUTH") == "FALSE") {
+    skip("OAuth not in use; cannot test this function")
+  }
 }
