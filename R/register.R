@@ -32,7 +32,8 @@
 #' @export
 list_sheets <- function() {
   
-  the_url <- build_req_url("spreadsheets")
+  # only calling spreadsheets feed from here, so hardwiring url
+  the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
   
   req <- gsheets_GET(the_url)
   
@@ -187,6 +188,8 @@ register <- function(x, key = NULL, ws_feed = NULL, visibility = "private") {
     }
   }                    # else ... take ws_feed at face value
   
+  ws_feed <- get_ws_feed(ws_feed, visibility)
+
   req <- gsheets_GET(ws_feed)
   
   if(grepl("html", req$headers[["content-type"]])) {
@@ -220,7 +223,7 @@ register <- function(x, key = NULL, ws_feed = NULL, visibility = "private") {
   
   ss$links <- req$content %>%
     lfilt("^link$") %>%
-    plyr::ldply %>% dplyr::select_(quote(-.id))
+    plyr::ldply() %>% dplyr::select_(quote(-.id))
   ## select_() will be unnecessary when this PR gets merged into plyr
   ## https://github.com/hadley/plyr/pull/207
   ## and ldply handles '.id = NULL' correctly
@@ -245,3 +248,101 @@ register <- function(x, key = NULL, ws_feed = NULL, visibility = "private") {
   ss
 }
 
+#' Obtain the worksheets feed for a spreadsheet
+#' 
+#' Given a Google spreadsheet's URL, unique key, title, or worksheets feed, 
+#' return its worksheets feed. The worksheets feed is simply a URL -- different 
+#' from the one you see when visiting a spreadsheet in the browser! -- and is 
+#' the very best way to specify a spreadsheet for API access. There's no simple 
+#' way to capture a spreadsheet's worksheets feed, so this function helps you 
+#' convert readily available information (spreadsheet title or URL) into the 
+#' worksheets feed.
+#' 
+#' Simple regexes are used to detect if the input is a worksheets feed or the 
+#' URL one would see when visiting a spreadsheet in the browser. If it's a URL, 
+#' we attempt to extract the spreadsheet's unique key, assuming the URL follows
+#' the pattern characteristic of "new style" Google spreadsheets.
+#' 
+#' Otherwise the input is assumed to be the spreadsheet's title or unique key. 
+#' When we say title, we mean the name of the spreadsheet in, say, Google Drive 
+#' or in the \code{sheet_title} variable of the data.frame returned by 
+#' \code{\link{list_spreadsheets}}. Spreadsheet title or key will be sought in 
+#' the listing of spreadsheets visible to the authenticated user and, if a match
+#' is found, the associated worksheets feed is returned.
+#' 
+#' @param x character vector of length one, with spreadsheet-identifying 
+#'   information
+#' @param visibility either "public" or "private"
+#'   
+#' @return The worksheets feed for the specified spreadsheet
+#'   
+#' @export
+get_ws_feed <- function(x, visibility = "private") {
+  
+  is_key <- FALSE
+  
+  if(!is.character(x)) {
+    stop("The information that specifies the spreadsheet must be character, regardless of whether it is the URL, title, key or worksheets feed.")
+  } else {
+    if(length(x) != 1) {
+      stop("The character vector that specifies the spreadsheet must be of length 1.")
+    }    
+  }
+  
+  ## is x already worksheets feed? if so, we're done!
+  url_start <- "https://spreadsheets.google.com/feeds/worksheets"
+  if(x %>%
+       stringr::str_detect(stringr::fixed(url_start))) {
+    return(x)
+  }
+  
+  ## is x the URL from visiting sheet in browser? if so, try to get key
+  ## this is dodgy, definitely assumes "new style sheets"
+  url_start <- "https://docs.google.com/spreadsheets/d/"
+  if(x %>% stringr::str_detect(stringr::fixed(url_start))) {
+    x <- x %>% stringr::str_replace(url_start, '') %>%
+      stringr::str_split_fixed('/', n = 2) %>%
+      "["(1)
+    is_key <- TRUE
+  }
+  
+  ## assume x is a spreadsheet title or key
+  
+  ## we need listing of spreadsheets visible to this user
+  ssfeed_df <- list_spreadsheets()
+  
+  if(!is_key) {
+    
+    ## is x a title?
+    title_index <- match(x, ssfeed_df$sheet_title)
+    
+    if(is.na(title_index)) { ## no, not a title ...
+      
+      ## is x a key?
+      key_index <- match(x, ssfeed_df$sheet_key)
+      
+      if(is.na(key_index)) { ## no, not a key ...
+        stop(sprintf("\nThis piece of identifying info:\n\"%s\"\ndoesn't match the title or key of a spreadsheet accessible by the current authenticated user.",
+                     x))
+      } else { ## yes, x is a key
+        x <- ssfeed_df$sheet_key[key_index]
+        is_key <- TRUE
+      }
+    } else { ## yes, x is a title
+      
+      x <- ssfeed_df$sheet_key[title_index]
+      is_key <- TRUE
+      
+    }  
+  }
+  
+  if(is_key) {
+    ## TO DO: set the visibility based on ownership reported in ssfeed_df?
+    req_url <- slaste("https://spreadsheets.google.com/feeds/worksheets", x, 
+                      visibility, "full")
+    return(req_url)
+  } else {
+    ## honestly, I don't think we should ever get to this point
+    stop("This spreadsheet specification seems to be none of these things: URL, title, unique key, or worksheets feed.")
+  }
+}

@@ -1,43 +1,3 @@
-#' Build URL for GET requests
-#'
-#' Construct URL for talking to Google Sheets API. 
-#'
-#' @param feed_type one of the following: spreadsheets, worksheets, list, cells
-#' @param key spreadsheet key
-#' @param ws_id id of worksheet contained in spreadsheet
-#' @param min_row,max_row minimum and maximum rows
-#' @param min_col,max_col miniumum and maximum columns
-#' @param visibility either private or public
-#' @param projection either full or basic
-#' @return URL
-build_req_url <- function(feed_type, key = NULL, ws_id = NULL, 
-                          min_row = NULL, max_row = NULL, 
-                          min_col = NULL, max_col = NULL, 
-                          visibility = "private", projection = "full") 
-{
-  base_url <- "https://spreadsheets.google.com/feeds"
-  
-  switch(
-    feed_type,
-    spreadsheets = {
-      the_url <- slaste(base_url, feed_type, visibility, projection)
-    },
-    worksheets = {
-      if(!is.null(ws_id))
-        the_url <-
-        slaste(base_url, feed_type, key, visibility, projection, ws_id)
-      else
-        the_url <- slaste(base_url, feed_type, key, visibility, projection)
-    },
-    list = {
-      the_url <- slaste(base_url, feed_type, key, ws_id, visibility, 
-                        projection)
-    },
-    NA_character_
-  )
-  the_url
-}
-
 #' Create GET request
 #'
 #' Make GET request to Google Sheets API.
@@ -47,9 +7,8 @@ gsheets_GET <- function(url) {
 
   if(grepl("public", url)) {
     req <- httr::GET(url)
-  } else {
-    token <- get_google_token()
-    req <- httr::GET(url, gsheets_auth(token))
+  } else { 
+    req <- httr::GET(url, get_google_token())
   }
   httr::stop_for_status(req)
   ## TO DO: interpret some common problems for user? for example, a well-formed
@@ -69,8 +28,6 @@ gsheets_GET <- function(url) {
   req
 }
 
-
-
 #' Create POST request
 #'
 #' Make POST request to Google Sheets/Drive API.
@@ -89,14 +46,14 @@ gsheets_POST <- function(url, the_body) {
     # must be either talking to "drive" or "spreadsheets" API
     if(stringr::str_detect(stringr::fixed(url), "drive")) {
       # send json to drive api
-      req <- httr::POST(url, config = gsheets_auth(token),
+      req <- httr::POST(url, config = get_google_token(),
                         body = the_body, encode = "json")
       
     } else {
       # send xml to sheets api
       content_type <- "application/atom+xml"
       
-      req <- httr::POST(url, config = c(gsheets_auth(token), 
+      req <- httr::POST(url, config = c(token, 
                         httr::add_headers("Content-Type" = content_type)),
                         body = the_body)
     } 
@@ -119,7 +76,6 @@ gsheets_POST <- function(url, the_body) {
 #'
 #' @param url URL for DELETE request
 gsheets_DELETE <- function(url) {
-  token <- get_google_token()
-  req <- httr::DELETE(url, gsheets_auth(token))
+  req <- httr::DELETE(url, get_google_token())
   httr::stop_for_status(req)
 }

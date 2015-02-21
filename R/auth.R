@@ -12,8 +12,7 @@
 #' \url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
 #'
 #' @export
-login <- function(email, passwd) 
-{
+login <- function(email, passwd) {
   service <- "wise"
   account_type <- "HOSTED_OR_GOOGLE"
   the_url <- "https://www.google.com/accounts/ClientLogin"
@@ -23,7 +22,14 @@ login <- function(email, passwd)
                                          "Passwd" = passwd,
                                          "service" = service))
   
-  gsheets_check(req)
+  # Check status of http response
+  # Google returns status 200 (success) or 403 (failure), show error msg if 403.
+  if(httr::status_code(req) == 403) {
+    if(grepl("BadAuthentication", httr::content(req)))
+      stop("Incorrect username or password.")
+    else
+      stop("Unable to authenticate")
+  }
   
   # SID, LSID not active, extract auth token
   token <- sub(".*Auth=", "", httr::content(req))
@@ -45,8 +51,8 @@ login <- function(email, passwd)
 #' @param new_user set to \code{TRUE} if you want to authenticate a different
 #' google account
 #' @export
-authorize <- function(new_user = FALSE) 
-{
+authorize <- function(new_user = FALSE) {
+  
   if(new_user & file.exists(".httr-oauth")) {
     message("Removing old credentials ...")
     system("rm .httr-oauth")
@@ -55,8 +61,8 @@ authorize <- function(new_user = FALSE)
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds")
   
-  client_id <- "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com"
-  client_secret <- "iWPrYg0lFHNQblnRrDbypvJL"
+  client_id <- getOption("gspreadr.client_id")
+  client_secret <- getOption("gspreadr.client_secret")
   
   gspreadr_app <- httr::oauth_app("google", client_id, client_secret)
   
@@ -64,58 +70,32 @@ authorize <- function(new_user = FALSE)
     httr::oauth2.0_token(httr::oauth_endpoints("google"), gspreadr_app,
                          scope = scope_list, cache = TRUE)
   
-  check_token(google_token)
+  # check for validity so error is found before making requests
+  # shouldn't happen if id and secret doesnt change
+  if("invalid_client" %in% unlist(google_token$credentials))
+    message("Authorization error. Please check client_id and client_secret.")
   
   .state$token <- google_token
 }
 
-
-#' Check status of http response
-#' 
-#' Google returns status 200 (success) or 403 (failure), show error msg if 403.
-#' 
-#' @param req response from \code{\link{gsheets_GET}} request
-gsheets_check <- function(req) {
-  if(httr::status_code(req) == 403) {
-    if(grepl("BadAuthentication", httr::content(req)))
-      stop("Incorrect username or password.")
-    else
-      stop("Unable to authenticate")
-  }
-}
-
-#' Format token for making request
-#' 
-#' Check if token is obtained from Google login or oauth2.0 and format it for 
-#' making request. Format token as a header (login) or in configuations 
-#' (oauth2.0).
-#' 
-#' @param token Google token
-gsheets_auth <- function(token) {
-  if(any(class(token) != "character"))
-    auth <- httr::config(token = .state$token)
-  else 
-    auth <- httr::add_headers('Authorization' = .state$token)
-}
-
-
-#' Check Google token for validity
-#' 
-#' Make sure Google token is good to use upon retrieval so error is found 
-#' before making requests. 
-#' 
-#' @param token Google authorization token
-check_token <- function(token) {
-  if("invalid_client" %in% unlist(token$credentials))
-    message("Authorization error. Please check client_id and client_secret.")
-}
 
 #' Retrieve Google token from environment
 #' 
 #' Get token if it's previously stored, else prompt user to get one.
 #'
 get_google_token <- function() {
-  if(is.null(.state$token)) 
+  
+  if(is.null(.state$token)) {  
     authorize()
-  .state$token
+  }
+  # check if token is obtained from login or oauth2.0 and format it for 
+  # making request
+  
+  if(inherits(.state$token, "Token2.0")) {
+    # token from oauth2.0
+    formatted_token <- httr::config(token = .state$token)
+  } else {
+    # token from login
+    formatted_token <- httr::add_headers('Authorization' = .state$token)
+  }
 }
