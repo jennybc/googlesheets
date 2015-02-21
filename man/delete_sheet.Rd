@@ -13,13 +13,14 @@ title, key, URL}
 \item{verbose}{logical; do you want informative message?}
 }
 \description{
-Move a spreadsheet to trash in Google Drive.
+You must own the sheet in order to move it to the trash. If you try to delete
+a sheet you do not own, a 403 Forbidden HTTP status code will be returned;
+such shared spreadsheets can only be moved to the trash manually in the web
+browser. If you trash a spreadsheet that is shared with others, it will no
+longer appear in any of their Google Drives.
 }
 \note{
 Use the key when there are multiple sheets with the same name, since
   the default will just send the most recent sheet to the trash.
-
-Shared sheets can not be removed from your Google Drive with this
-  function. You must remove it manually in the web browser.
 }
 

@@ -10,9 +10,8 @@
 new_sheet <- function(title = "my_sheet", verbose = TRUE) {
   
   the_body <- list(title = title,
-                   mimeType = "application/vnd.google-apps.spreadsheet") %>%
-    jsonlite::toJSON()
-  
+                   mimeType = "application/vnd.google-apps.spreadsheet")
+
   gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
   
   if(verbose) {
@@ -23,7 +22,11 @@ new_sheet <- function(title = "my_sheet", verbose = TRUE) {
 
 #' Move a spreadsheet to trash
 #' 
-#' Move a spreadsheet to trash in Google Drive.
+#' You must own the sheet in order to move it to the trash. If you try to delete
+#' a sheet you do not own, a 403 Forbidden HTTP status code will be returned;
+#' such shared spreadsheets can only be moved to the trash manually in the web
+#' browser. If you trash a spreadsheet that is shared with others, it will no
+#' longer appear in any of their Google Drives.
 #' 
 #' @param x character string giving identifying information for the sheet: 
 #'   title, key, URL
@@ -31,9 +34,6 @@ new_sheet <- function(title = "my_sheet", verbose = TRUE) {
 #'   
 #' @note Use the key when there are multiple sheets with the same name, since 
 #'   the default will just send the most recent sheet to the trash.
-#'   
-#' @note Shared sheets can not be removed from your Google Drive with this 
-#'   function. You must remove it manually in the web browser.
 #'   
 #' @export
 delete_sheet <- function(x, verbose = TRUE) {
@@ -51,6 +51,7 @@ delete_sheet <- function(x, verbose = TRUE) {
   }
 
 }
+
 
 #' Make a copy of an existing spreadsheet
 #' 
@@ -82,7 +83,7 @@ copy_sheet <- function(from, key = NULL, to = NULL, verbose = TRUE) {
     title <- key
   }
 
-  the_body <- list("title" = to) %>% jsonlite::toJSON()
+  the_body <- list("title" = to)
   
   the_url <- slaste("https://www.googleapis.com/drive/v2/files", key, "copy")
   

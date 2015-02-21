@@ -16,7 +16,6 @@ LazyData: true
 Imports:
     dplyr,
     httr,
-    jsonlite,
     plyr,
     stringr,
     tidyr,

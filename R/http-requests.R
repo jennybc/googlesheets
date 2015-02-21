@@ -88,15 +88,19 @@ gsheets_POST <- function(url, the_body) {
     # first look at the url to determine contents, 
     # must be either talking to "drive" or "spreadsheets" API
     if(stringr::str_detect(stringr::fixed(url), "drive")) {
-      content_type <- "application/json" # send json to drive api
+      # send json to drive api
+      req <- httr::POST(url, config = gsheets_auth(token),
+                        body = the_body, encode = "json")
+      
     } else {
-      content_type <- "application/atom+xml" # send xml to sheets api
+      # send xml to sheets api
+      content_type <- "application/atom+xml"
+      
+      req <- httr::POST(url, config = c(gsheets_auth(token), 
+                        httr::add_headers("Content-Type" = content_type)),
+                        body = the_body)
     } 
-    
-    req <- httr::POST(url, gsheets_auth(token), 
-                      httr::add_headers("Content-Type" = content_type),
-                      body = the_body)
-    
+
     httr::stop_for_status(req)
     
     ## TO DO: inform users of why client error (404) Not Found may arise when
