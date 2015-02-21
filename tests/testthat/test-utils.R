@@ -7,7 +7,7 @@ test_that("Column letter converts to correct column number", {
   expect_equal(letter_to_num("AB"), 28)
   expect_equal(letter_to_num(c("A", "Z", "AB")), c(1, 26, 28))
 
-  })
+})
 
 test_that("Column number converts to correct column letter", {
   
@@ -35,9 +35,10 @@ test_that("R1C1 notation converts to A1 notation", {
   
 })
 
+ss <- register(ws_feed = pts_ws_feed)
+
 test_that("We can obtain worksheet info from a registered spreadsheet", {
-  ss <- register(pts_ws_feed)
-  
+
   ## retrieve by worksheet title
   africa <- get_ws(ss, "Africa")
   expect_equal(africa$ws_title, "Africa")
@@ -55,8 +56,7 @@ test_that("We can obtain worksheet info from a registered spreadsheet", {
 })
 
 test_that("We throw error for bad worksheet request", {
-  ss <- register(pts_ws_feed)
-  
+
   expect_error(get_ws(ss, -3))
   expect_error(get_ws(ss, factor(1)))
   expect_error(get_ws(ss, LETTERS))
@@ -64,4 +64,17 @@ test_that("We throw error for bad worksheet request", {
   expect_error(get_ws(ss, "Mars"), "not found")
   expect_error(get_ws(ss, 10L), "only contains")
     
+})
+
+test_that("We can a extract a key from a URL", {
+  
+  # new style URL
+  expect_equal(extract_key_from_url(pts_url), pts_key)
+  
+  # old style URL
+  expect_equal(extract_key_from_url(old_url), old_key)
+  
+  # worksheets feed
+  expect_equal(extract_key_from_url(pts_ws_feed), pts_key)
+  
 })
