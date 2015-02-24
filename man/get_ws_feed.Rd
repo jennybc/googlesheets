@@ -33,7 +33,7 @@ the pattern characteristic of "new style" Google spreadsheets.
 Otherwise the input is assumed to be the spreadsheet's title or unique key.
 When we say title, we mean the name of the spreadsheet in, say, Google Drive
 or in the \code{sheet_title} variable of the data.frame returned by
-\code{\link{list_spreadsheets}}. Spreadsheet title or key will be sought in
+\code{\link{list_sheets}}. Spreadsheet title or key will be sought in
 the listing of spreadsheets visible to the authenticated user and, if a match
 is found, the associated worksheets feed is returned.
 }
