@@ -37,7 +37,7 @@ get_via_lf <- function(ss, ws = 1) {
     ## convert to integer, numeric, etc. but w/ stringsAsFactors = FALSE
     plyr::alply(2, type.convert, as.is = TRUE, .dims = TRUE) %>%
     ## convert to data.frame (tbl_df, actually)
-    dplyr::as_data_frame
+    dplyr::as_data_frame()
   
 }
 
