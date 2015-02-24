@@ -4,10 +4,12 @@
 \alias{gsheets_GET}
 \title{Create GET request}
 \usage{
-gsheets_GET(url)
+gsheets_GET(url, to_list = TRUE)
 }
 \arguments{
 \item{url}{URL for GET request}
+
+\item{to_list}{whether to convert response contents to list or not}
 }
 \description{
 Make GET request to Google Sheets API.

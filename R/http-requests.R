@@ -3,7 +3,8 @@
 #' Make GET request to Google Sheets API.
 #'
 #' @param url URL for GET request
-gsheets_GET <- function(url) {
+#' @param to_list whether to convert response contents to list or not
+gsheets_GET <- function(url, to_list = TRUE) {
 
   if(grepl("public", url)) {
     req <- httr::GET(url)
@@ -24,7 +25,11 @@ gsheets_GET <- function(url) {
   ## use it to parse the XML instead of httr:content()
   ## see https://github.com/hadley/httr/issues/189
   req$content <- httr::content(req, type = "text/xml")
+  
+  if(to_list) {
   req$content <- XML::xmlToList(req$content)
+  }
+  
   req
 }
 
@@ -78,4 +83,26 @@ gsheets_POST <- function(url, the_body) {
 gsheets_DELETE <- function(url) {
   req <- httr::DELETE(url, get_google_token())
   httr::stop_for_status(req)
+}
+
+
+#' Create PUT request
+#'
+#' Make PUT request to Google Sheets API.
+#'
+#' @param url URL for PUT request
+#' @param the_body body of PUT request 
+gsheets_PUT <- function(url, the_body) {
+  
+  token <- get_google_token()
+  
+  if(is.null(token)) {
+    stop("Must be authorized in order to perform request")
+  } else {
+    req <- httr::PUT(url, 
+               config = c(token, httr::add_headers("Content-Type" = "application/atom+xml")), 
+               body = the_body)
+    
+    httr::stop_for_status(req)
+  }
 }
