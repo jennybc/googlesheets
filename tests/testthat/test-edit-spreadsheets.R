@@ -76,3 +76,19 @@ test_that("Delete a worksheet", {
   
   expect_error(delete_ws(ss_old, "Hello World"))
 })
+
+test_that("Worksheet is renamed", {
+  
+  ss <- register(pts_title)
+  rename_ws(ss, "Asia", "Somewhere in Asia")
+  
+  ss <- register(pts_title) # 'refresh'
+  
+  expect_error(rename_ws(ss, "Africa", "Americas"))
+  expect_true("Somewhere in Asia" %in% ss$ws$ws_title)
+  
+  rename_ws(ss, "Somewhere in Asia", "Asia")
+})
+
+
+

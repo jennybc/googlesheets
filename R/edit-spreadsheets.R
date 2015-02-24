@@ -161,3 +161,41 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
                     ws_title, ss$sheet_title))
   }
 }
+
+
+#' Rename the title of a worksheet
+#' 
+#' Modify the title of a worksheet that is living in a spreadsheet. The new
+#' title must not be the same as any of the other existing worksheets' titles,
+#' or else a HTTP 400 Bad Request will be returned. 
+#' 
+#' @param ss a registered Google sheet
+#' @param ws_title character string for title of worksheet
+#' @param new_title character string for worksheet's new title
+#' @param verbose logical; do you want informative message?
+#'
+#' @export
+rename_ws <- function(ss, ws_title, new_title, verbose = TRUE) {
+  
+  ws_title_match <- match(ws_title, ss$ws$ws_title)
+  
+  if(is.na(ws_title_match)) {
+    stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
+                 ws_title, ss$sheet_title))
+  }
+  
+  # dont want it to convert to a list, want to just update the xml response with 
+  # new title element and send it back in PUT request
+  req <- gsheets_GET(ss$ws$ws_id[ws_title_match], to_list = FALSE) 
+
+  the_body <- XML::toString.XMLNode(httr::content(req)) %>% 
+    stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)', new_title)
+                       
+  gsheets_PUT(ss$ws$edit[ws_title_match], the_body)
+  
+  if(verbose) {
+    message(sprintf("Worksheet \"%s\" renamed to \"%s\" from sheet \"%s\".",
+                    ws_title, new_title, ss$sheet_title))
+  }
+}
+
