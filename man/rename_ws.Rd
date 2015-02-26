@@ -17,7 +17,12 @@ rename_ws(ss, ws_title, new_title, verbose = TRUE)
 }
 \description{
 Modify the title of a worksheet that is living in a spreadsheet. The new
-title must not be the same as any of the other existing worksheets' titles,
-or else a HTTP 400 Bad Request will be returned.
+title must not be the same as any of the other existing worksheets' titles.
+}
+\note{
+Since the edit link is used in the PUT request, the version path in the
+   url changes everytime changes are made to the worksheet, hence consecutive
+   function calls using the same edit link from the same sheet object without
+   'refreshing' it by re-registering results in a HTTP 409 Conflict.
 }
 

@@ -11,7 +11,7 @@ new_sheet <- function(title = "my_sheet", verbose = TRUE) {
   
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
-
+  
   gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
   
   if(verbose) {
@@ -49,7 +49,7 @@ delete_sheet <- function(x, verbose = TRUE) {
     message(sprintf("Sheet \"%s\" moved to trash in Google Drive.",
                     x_ss$sheet_title))
   }
-
+  
 }
 
 
@@ -82,7 +82,7 @@ copy_sheet <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   } else {           # else ... take key at face value
     title <- key
   }
-
+  
   the_body <- list("title" = to)
   
   the_url <- slaste("https://www.googleapis.com/drive/v2/files", key, "copy")
@@ -153,7 +153,7 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
     stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
                  ws_title, ss$sheet_title))
   }
-
+  
   gsheets_DELETE(ss$ws$ws_id[ws_title_match]) 
   
   if(verbose) {
@@ -166,16 +166,74 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #' Rename the title of a worksheet
 #' 
 #' Modify the title of a worksheet that is living in a spreadsheet. The new
-#' title must not be the same as any of the other existing worksheets' titles,
-#' or else a HTTP 400 Bad Request will be returned. 
+#' title must not be the same as any of the other existing worksheets' titles.
 #' 
 #' @param ss a registered Google sheet
 #' @param ws_title character string for title of worksheet
 #' @param new_title character string for worksheet's new title
 #' @param verbose logical; do you want informative message?
 #'
+#' @note Since the edit link is used in the PUT request, the version path in the 
+#'    url changes everytime changes are made to the worksheet, hence consecutive 
+#'    function calls using the same edit link from the same sheet object without 
+#'    'refreshing' it by re-registering results in a HTTP 409 Conflict.
+#'    
 #' @export
 rename_ws <- function(ss, ws_title, new_title, verbose = TRUE) {
+  
+  modify_ws(ss, ws_title, new_title = new_title)
+  
+  if(verbose) {
+    message(sprintf("Worksheet \"%s\" renamed to \"%s\" from sheet \"%s\".",
+                    ws_title, new_title, ss$sheet_title))
+  }
+}
+
+
+#' Resize a worksheet
+#' 
+#' Set the number of rows and columns of a worksheet. This function is useful
+#' when you need to send a batch update request and the range of data exceeds 
+#' the current worksheet dimensions. 
+#' 
+#' This function will probably only be called internally... exporting for now. 
+#' 
+#' @param ss a registered Google sheet
+#' @param ws_title character string for title of worksheet
+#' @param row_extent \code{numeric} for new row extent
+#' @param col_extent \code{numeric} for new column extent
+#' @param verbose logical; do you want informative message?
+#' 
+#' @note Setting rows and columns to less than the current worksheet dimensions 
+#' will delete contents without warning.
+#' 
+#' @note Since the edit link is used in the PUT request, the version path in the 
+#'    url changes everytime changes are made to the worksheet, hence consecutive 
+#'    function calls using the same edit link from the same sheet object without 
+#'    'refreshing' it by re-registering results in a HTTP 409 Conflict.
+#' 
+#' @export
+resize_ws <- function(ss, ws_title, row_extent = NULL, col_extent = NULL, verbose = TRUE) {
+  
+  modify_ws(ss, ws_title, new_dim = list("row_extent" = row_extent, 
+                                         "col_extent" = col_extent))
+  
+  # wont print if either row_extent or col_extent is NULL
+  if(verbose) {
+    message(sprintf("Worksheet \"%s\" dimensions changed to %d x %d from sheet \"%s\".",
+                    ws_title, row_extent, col_extent, ss$sheet_title))
+  } 
+}
+
+
+#' Modify a worksheet's title or size
+#' 
+#' @param ss a registered Google sheet
+#' @param ws_title character string for title of worksheet
+#' @param new_title character string for worksheet's new title
+#' @param new_dim list of length 2 specifying the row and column extent of the worksheet
+#'
+modify_ws <- function(ss, ws_title, new_title = NULL, new_dim = NULL) {
   
   ws_title_match <- match(ws_title, ss$ws$ws_title)
   
@@ -185,17 +243,37 @@ rename_ws <- function(ss, ws_title, new_title, verbose = TRUE) {
   }
   
   # dont want it to convert to a list, want to just update the xml response with 
-  # new title element and send it back in PUT request
-  req <- gsheets_GET(ss$ws$ws_id[ws_title_match], to_list = FALSE) 
-
-  the_body <- XML::toString.XMLNode(httr::content(req)) %>% 
-    stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)', new_title)
-                       
+  # new title or row/col element and send it back in PUT request
+  req <- gsheets_GET(ss$ws$ws_id[ws_title_match], to_list = FALSE)
+  contents <- XML::toString.XMLNode(httr::content(req))
+  
+  if(!is.null(new_title)) {
+    
+    new_title_match <- match(new_title, ss$ws$ws_title)
+    
+    if(!is.na(new_title_match)) {
+      stop(sprintf("A worksheet titled \"%s\" already exists in sheet \"%s\". Please choose another worksheet title.",
+                   new_title, ss$sheet_title))
+    }
+    
+    the_body <- contents %>% 
+      stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)', new_title)
+  }
+  
+  if(length(new_dim) != 0) {
+    # if row or col extent not specified, make it the same as before
+    if(any(is.null(new_dim$row_extent), is.null(new_dim$col_extent))) {
+      if(is.null(new_dim$row_extent)) {
+        new_dim$row_extent <- ss$ws$row_extent[ws_title_match]
+      } else {
+        new_dim$col_extent <- ss$ws$col_extent[ws_title_match]
+      }
+    }
+    the_body <- contents %>% 
+      stringr::str_replace('(?<=<gs:rowCount>)(.*)(?=</gs:rowCount>)', new_dim$row_extent) %>%
+      stringr::str_replace('(?<=<gs:colCount>)(.*)(?=</gs:colCount>)', new_dim$col_extent)         
+  }
+  
   gsheets_PUT(ss$ws$edit[ws_title_match], the_body)
   
-  if(verbose) {
-    message(sprintf("Worksheet \"%s\" renamed to \"%s\" from sheet \"%s\".",
-                    ws_title, new_title, ss$sheet_title))
-  }
 }
-

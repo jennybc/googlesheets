@@ -90,5 +90,21 @@ test_that("Worksheet is renamed", {
   rename_ws(ss, "Somewhere in Asia", "Asia")
 })
 
+test_that("Worksheet is resized", {
 
+  ss <- register(pts_title)
+  
+  ws_title_match <- match("for_resizing", ss$ws$ws_title)
+  
+  row <- sample(1:2000, 1)
+  col <- sample(1:35, 1)
+  
+  resize_ws(ss, "for_resizing", row_extent = row, col_extent = col)
+  
+  ss <- register(pts_title) # 'refresh'
+  
+  expect_equal(ss$ws$row_extent[ws_title_match], row)
+  expect_equal(ss$ws$col_extent[ws_title_match], col)
+  
+})
 
