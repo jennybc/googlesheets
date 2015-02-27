@@ -4,16 +4,18 @@
 \alias{modify_ws}
 \title{Modify a worksheet's title or size}
 \usage{
-modify_ws(ss, ws_title, new_title = NULL, new_dim = NULL)
+modify_ws(ss, from, to = NULL, new_dim = NULL)
 }
 \arguments{
 \item{ss}{a registered Google sheet}
 
-\item{ws_title}{character string for title of worksheet}
+\item{from}{character string for current title of worksheet}
 
-\item{new_title}{character string for worksheet's new title}
+\item{to}{character string for new title of worksheet}
 
-\item{new_dim}{list of length 2 specifying the row and column extent of the worksheet}
+\item{new_dim}{list of length 2 specifying the row and column extent of the
+worksheet
+why is this a list? can we use lazy eval here?}
 }
 \description{
 Modify a worksheet's title or size

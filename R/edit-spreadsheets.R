@@ -14,13 +14,16 @@ new_sheet <- function(title = "my_sheet", verbose = TRUE) {
   
   gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
   
+  ## TO DO: check sheet appears in list_sheets() and return it ... return the
+  ## key or title? register it and return spreadsheet object?
+  
   if(verbose) {
     message(sprintf("Sheet \"%s\" created in Google Drive.", title))
   }
   
 }
 
-#' Move a spreadsheet to trash
+#' Move a spreadsheet to trash on Google Drive
 #' 
 #' You must own the sheet in order to move it to the trash. If you try to delete
 #' a sheet you do not own, a 403 Forbidden HTTP status code will be returned;
@@ -44,6 +47,8 @@ delete_sheet <- function(x, verbose = TRUE) {
                     x_ss$sheet_key, "trash")
   
   gsheets_POST(the_url, the_body = NULL)
+  
+  ## TO DO: check sheet is absent from list_sheets()
   
   if(verbose) {
     message(sprintf("Sheet \"%s\" moved to trash in Google Drive.",
@@ -89,6 +94,8 @@ copy_sheet <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   
   gsheets_POST(the_url, the_body)
   
+  ## TO DO: check copy appears in list_sheets()
+  
   if(verbose) {
     message(sprintf("A copy of \"%s\" has been made in your Google Drive.",
                     from_ss$sheet_title))
@@ -110,6 +117,8 @@ copy_sheet <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' @export
 new_ws <- function(ss, ws_title, nrow = 1000, ncol = 26, verbose = TRUE) { 
   
+  ## TO DO: check that ss is a spreadsheet?
+  
   ws_title_exist <- match(ws_title, ss$ws[["ws_title"]])
   
   if(!is.na(ws_title_exist)) {
@@ -129,6 +138,8 @@ new_ws <- function(ss, ws_title, nrow = 1000, ncol = 26, verbose = TRUE) {
   
   gsheets_POST(ss$ws_feed, the_body)
   
+  ## TO DO: re-register sheet, check for new ws, return the ss
+  
   if(verbose) {
     message(sprintf("Worksheet \"%s\" added to sheet \"%s\"",
                     ws_title, ss$sheet_title))
@@ -147,6 +158,8 @@ new_ws <- function(ss, ws_title, nrow = 1000, ncol = 26, verbose = TRUE) {
 #' @export
 delete_ws <- function(ss, ws_title, verbose = TRUE) {
   
+  ## TO DO: check that ss is a spreadsheet?
+  
   ws_title_match <- match(ws_title, ss$ws$ws_title)
   
   if(is.na(ws_title_match)) {
@@ -154,7 +167,9 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
                  ws_title, ss$sheet_title))
   }
   
-  gsheets_DELETE(ss$ws$ws_id[ws_title_match]) 
+  gsheets_DELETE(ss$ws$ws_id[ws_title_match])
+  
+  ## TO DO: re-register sheet, check that ws is gone, return the ss
   
   if(verbose) {
     message(sprintf("Worksheet \"%s\" deleted from sheet \"%s\".",
@@ -163,29 +178,35 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 }
 
 
-#' Rename the title of a worksheet
+#' Rename a worksheet
 #' 
-#' Modify the title of a worksheet that is living in a spreadsheet. The new
-#' title must not be the same as any of the other existing worksheets' titles.
+#' Give a worksheet a new title that does not duplicate the title of any
+#' existing worksheet within the spreadsheet.
 #' 
 #' @param ss a registered Google sheet
-#' @param ws_title character string for title of worksheet
-#' @param new_title character string for worksheet's new title
+#' @param from character string for current title of worksheet
+#' @param to character string for new title of worksheet
 #' @param verbose logical; do you want informative message?
-#'
-#' @note Since the edit link is used in the PUT request, the version path in the 
-#'    url changes everytime changes are made to the worksheet, hence consecutive 
-#'    function calls using the same edit link from the same sheet object without 
-#'    'refreshing' it by re-registering results in a HTTP 409 Conflict.
-#'    
+#'   
+#' @note Since the edit link is used in the PUT request, the version path in the
+#'   url changes everytime changes are made to the worksheet, hence consecutive 
+#'   function calls using the same edit link from the same sheet object without 
+#'   'refreshing' it by re-registering results in a HTTP 409 Conflict.
+#'   
 #' @export
-rename_ws <- function(ss, ws_title, new_title, verbose = TRUE) {
+rename_ws <- function(ss, from, to, verbose = TRUE) {
   
-  modify_ws(ss, ws_title, new_title = new_title)
+  ## TO DO: check that ss is a spreadsheet?
+  
+  modify_ws(ss, from = from, to = to)
+  
+  ## TO DO: re-register the spreadsheet; consult it to confirm successful
+  ## rename; return it
+  ## BTW: this will eliminate the issue in the note above
   
   if(verbose) {
     message(sprintf("Worksheet \"%s\" renamed to \"%s\" from sheet \"%s\".",
-                    ws_title, new_title, ss$sheet_title))
+                    from, to, ss$sheet_title))
   }
 }
 
@@ -200,8 +221,8 @@ rename_ws <- function(ss, ws_title, new_title, verbose = TRUE) {
 #' 
 #' @param ss a registered Google sheet
 #' @param ws_title character string for title of worksheet
-#' @param row_extent \code{numeric} for new row extent
-#' @param col_extent \code{numeric} for new column extent
+#' @param row_extent integer for new row extent
+#' @param col_extent integer for new column extent
 #' @param verbose logical; do you want informative message?
 #' 
 #' @note Setting rows and columns to less than the current worksheet dimensions 
@@ -213,10 +234,17 @@ rename_ws <- function(ss, ws_title, new_title, verbose = TRUE) {
 #'    'refreshing' it by re-registering results in a HTTP 409 Conflict.
 #' 
 #' @export
-resize_ws <- function(ss, ws_title, row_extent = NULL, col_extent = NULL, verbose = TRUE) {
+resize_ws <- function(ss, ws_title,
+                      row_extent = NULL, col_extent = NULL, verbose = TRUE) {
+  
+  ## TO DO: check that ss is a spreadsheet?
   
   modify_ws(ss, ws_title, new_dim = list("row_extent" = row_extent, 
                                          "col_extent" = col_extent))
+  
+  ## TO DO: re-register the spreadsheet; consult it to confirm successful
+  ## rename; return it
+  ## BTW: this will eliminate the issue in the note above
   
   # wont print if either row_extent or col_extent is NULL
   if(verbose) {
@@ -229,17 +257,21 @@ resize_ws <- function(ss, ws_title, row_extent = NULL, col_extent = NULL, verbos
 #' Modify a worksheet's title or size
 #' 
 #' @param ss a registered Google sheet
-#' @param ws_title character string for title of worksheet
-#' @param new_title character string for worksheet's new title
-#' @param new_dim list of length 2 specifying the row and column extent of the worksheet
-#'
-modify_ws <- function(ss, ws_title, new_title = NULL, new_dim = NULL) {
+#' @param from character string for current title of worksheet
+#' @param to character string for new title of worksheet
+#' @param new_dim list of length 2 specifying the row and column extent of the
+#'   worksheet
+#'   why is this a list? can we use lazy eval here?
+#'   
+modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
   
-  ws_title_match <- match(ws_title, ss$ws$ws_title)
+  ## TO DO: check that ss is a spreadsheet?
+  
+  ws_title_match <- match(from, ss$ws$ws_title)
   
   if(is.na(ws_title_match)) {
     stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
-                 ws_title, ss$sheet_title))
+                 from, ss$sheet_title))
   }
   
   # dont want it to convert to a list, want to just update the xml response with 
@@ -247,20 +279,21 @@ modify_ws <- function(ss, ws_title, new_title = NULL, new_dim = NULL) {
   req <- gsheets_GET(ss$ws$ws_id[ws_title_match], to_list = FALSE)
   contents <- XML::toString.XMLNode(httr::content(req))
   
-  if(!is.null(new_title)) {
+  if(!is.null(to)) {
     
-    new_title_match <- match(new_title, ss$ws$ws_title)
+    new_title_match <- match(to, ss$ws$ws_title)
     
     if(!is.na(new_title_match)) {
       stop(sprintf("A worksheet titled \"%s\" already exists in sheet \"%s\". Please choose another worksheet title.",
-                   new_title, ss$sheet_title))
+                   to, ss$sheet_title))
     }
     
     the_body <- contents %>% 
-      stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)', new_title)
+      stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)',
+                           to)
   }
   
-  if(length(new_dim) != 0) {
+  if(length(new_dim) != 0) { # why is this not a !is.null()?
     # if row or col extent not specified, make it the same as before
     if(any(is.null(new_dim$row_extent), is.null(new_dim$col_extent))) {
       if(is.null(new_dim$row_extent)) {
@@ -270,10 +303,14 @@ modify_ws <- function(ss, ws_title, new_title = NULL, new_dim = NULL) {
       }
     }
     the_body <- contents %>% 
-      stringr::str_replace('(?<=<gs:rowCount>)(.*)(?=</gs:rowCount>)', new_dim$row_extent) %>%
-      stringr::str_replace('(?<=<gs:colCount>)(.*)(?=</gs:colCount>)', new_dim$col_extent)         
+      stringr::str_replace('(?<=<gs:rowCount>)(.*)(?=</gs:rowCount>)',
+                           new_dim$row_extent) %>%
+      stringr::str_replace('(?<=<gs:colCount>)(.*)(?=</gs:colCount>)',
+                           new_dim$col_extent)         
   }
   
   gsheets_PUT(ss$ws$edit[ws_title_match], the_body)
+  
+  ## TO DO: re-register and return the spreadsheet?
   
 }

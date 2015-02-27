@@ -2,27 +2,27 @@
 % Please edit documentation in R/edit-spreadsheets.R
 \name{rename_ws}
 \alias{rename_ws}
-\title{Rename the title of a worksheet}
+\title{Rename a worksheet}
 \usage{
-rename_ws(ss, ws_title, new_title, verbose = TRUE)
+rename_ws(ss, from, to, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google sheet}
 
-\item{ws_title}{character string for title of worksheet}
+\item{from}{character string for current title of worksheet}
 
-\item{new_title}{character string for worksheet's new title}
+\item{to}{character string for new title of worksheet}
 
 \item{verbose}{logical; do you want informative message?}
 }
 \description{
-Modify the title of a worksheet that is living in a spreadsheet. The new
-title must not be the same as any of the other existing worksheets' titles.
+Give a worksheet a new title that does not duplicate the title of any
+existing worksheet within the spreadsheet.
 }
 \note{
 Since the edit link is used in the PUT request, the version path in the
-   url changes everytime changes are made to the worksheet, hence consecutive
-   function calls using the same edit link from the same sheet object without
-   'refreshing' it by re-registering results in a HTTP 409 Conflict.
+  url changes everytime changes are made to the worksheet, hence consecutive
+  function calls using the same edit link from the same sheet object without
+  'refreshing' it by re-registering results in a HTTP 409 Conflict.
 }
 

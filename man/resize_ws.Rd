@@ -12,9 +12,9 @@ resize_ws(ss, ws_title, row_extent = NULL, col_extent = NULL,
 
 \item{ws_title}{character string for title of worksheet}
 
-\item{row_extent}{\code{numeric} for new row extent}
+\item{row_extent}{integer for new row extent}
 
-\item{col_extent}{\code{numeric} for new column extent}
+\item{col_extent}{integer for new column extent}
 
 \item{verbose}{logical; do you want informative message?}
 }

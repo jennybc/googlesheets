@@ -2,7 +2,7 @@
 % Please edit documentation in R/edit-spreadsheets.R
 \name{delete_sheet}
 \alias{delete_sheet}
-\title{Move a spreadsheet to trash}
+\title{Move a spreadsheet to trash on Google Drive}
 \usage{
 delete_sheet(x, verbose = TRUE)
 }
