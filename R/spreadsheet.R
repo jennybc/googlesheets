@@ -26,8 +26,8 @@ spreadsheet <- function() {
                  n_ws = integer(),
                  ws_feed = character(),
                  sheet_id = character(),
-                 updated = character(),
-                 get_date = character(), # initialize as posix whatever?
+                 updated = character() %>% as.POSIXct(),
+                 get_date = character() %>% as.POSIXct(),
                  visibility = character(),
                  author_name = character(),
                  author_email = character(),

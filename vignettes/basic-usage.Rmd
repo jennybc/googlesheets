@@ -85,7 +85,7 @@ If you don't have any Google Sheets yet, or if you just want to follow along ver
 
 ```{r copy-gapminder, eval = FALSE}
 gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
-copy_sheet(key = gap_key, to = "Gapminder")
+copy_ss(key = gap_key, to = "Gapminder")
 ```
 
 # List your spreadsheets
@@ -115,7 +115,7 @@ Before you can access a spreadsheet, you must first __register__ it. This return
 Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We can use `str()` to get an overview of the spreadsheet.
 
 ```{r}
-gap <- register("Gapminder")
+gap <- register_ss("Gapminder")
 str(gap)
 ```
 
@@ -129,7 +129,7 @@ Here's an example of using the sheet title to retrieve the key, then registering
 
 ```{r}
 (gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
-ss2 <- register(gap_key)
+ss2 <- register_ss(gap_key)
 str(ss2)
 ```
 
@@ -209,15 +209,15 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ### Add or delete spreadsheet
 
-To add or delete a spreadsheet in your Google Drive, use `new_sheet()` or `delete_sheet()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1". Recall we demonstrate the use of `copy_sheet()` at the start of this vignette.
+To add or delete a spreadsheet in your Google Drive, use `new_ss()` or `delete_ss()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1". Recall we demonstrate the use of `copy_ss()` at the start of this vignette.
 
 ```{r create and delete spreadsheet}
 # Create a new empty spreadsheet by title
-new_sheet("hi I am new here")
+new_ss("hi I am new here")
 list_sheets() %>% filter(sheet_title == "hi I am new here")
 
 # Move spreadsheet to trash
-delete_sheet("hi I am new here")
+delete_ss("hi I am new here")
 list_sheets() %>% filter(sheet_title == "hi I am new here")
 ```
 
@@ -226,14 +226,14 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. 
 
 ```{r new-sheet-new-ws-delete-ws}
-new_sheet("hi I am new here")
-x <- register("hi I am new here")
+new_ss("hi I am new here")
+x <- register_ss("hi I am new here")
 str(x)
-new_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
-x <- register("hi I am new here")
+add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
+x <- register_ss("hi I am new here")
 str(x)
 delete_ws(x, ws_title = "foo")
-x <- register("hi I am new here")
+x <- register_ss("hi I am new here")
 str(x)
 ```
 
@@ -247,7 +247,7 @@ rename_worksheet(ssheet, "Sheet1", "First Sheet")
 Tidy up by getting rid of the sheet we've playing with.
 
 ```{r delete-sheet}
-delete_sheet("hi I am new here")
+delete_ss("hi I am new here")
 ```
 
 # Worksheet Operations
@@ -326,3 +326,9 @@ Accessing spreadsheets that are or are not "published to the web" with visibilit
 # Appendix: Words about sheet identifiers
 
 For a user, it is natural to specify a Google sheet via the URL displayed in the browser or by its title. The primary identifier as far as Google Sheets and `gspread` are concerned is the sheet key. To access a sheet via the Google Sheets API, one must know the sheet's worksheets feed. The worksheets feed is simply a URL, but different from the one you see when visiting a spreadsheet in the browser!
+
+Stuff from roxygen comments for a function that no longer exists: Given a Google spreadsheet's URL, unique key, title, or worksheets feed, return its worksheets feed. The worksheets feed is simply a URL -- different from the one you see when visiting a spreadsheet in the browser! -- and is the very best way to specify a spreadsheet for API access. There's no simple way to capture a spreadsheet's worksheets feed, so this function helps you convert readily available information (spreadsheet title or URL) into the worksheets feed.
+
+Simple regexes are used to detect if the input is a worksheets feed or the URL one would see when visiting a spreadsheet in the browser. If it's a URL, we attempt to extract the spreadsheet's unique key, assuming the URL followsthe pattern characteristic of "new style" Google spreadsheets.
+
+Otherwise the input is assumed to be the spreadsheet's title or unique key. When we say title, we mean the name of the spreadsheet in, say, Google Drive or in the \code{sheet_title} variable of the data.frame returned by \code{\link{list_sheets}}. Spreadsheet title or key will be sought in the listing of spreadsheets visible to the authenticated user and, if a match is found, the associated worksheets feed is returned.

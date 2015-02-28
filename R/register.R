@@ -14,7 +14,7 @@
 #' available information, such as sheet title, and more obscure information you 
 #' might use in scripts, such as the sheet key. This sort of "table lookup" is 
 #' implemented in the \code{gspreadr} helper function 
-#' \code{\link{identify_sheet}}.
+#' \code{\link{identify_ss}}.
 #' 
 #' Which sheets show up here? Certainly those owned by the authorized user. But 
 #' also a subset of the sheets owned by others but visible to the authorized 
@@ -61,41 +61,121 @@ list_sheets <- function() {
 
 #' Retrieve the identifiers for a spreadsheet
 #' 
-#' Retrieve a list with all the identifying information for a specific 
-#' spreadsheet. It calls \code{\link{list_sheets}} and attempts to return the 
-#' row uniquely specified by input \code{x}. The listing provided by 
-#' \code{\link{list_sheets}} is only available to an authorized user, so 
-#' authorization will be required.
+#' Create a spreadsheet object that holds identifying information for a specific
+#' spreadsheet. Unless \code{verify = FALSE}, it calls \code{\link{list_sheets}}
+#' and attempts to return information from the row uniquely specified by input 
+#' \code{x}. The listing provided by \code{\link{list_sheets}} is only available
+#' to an authorized user, so authorization will be required. A spreadsheet 
+#' object contains much more information than that available via 
+#' \code{\link{list_sheets}}, so many components will not be populated until the
+#' sheet is registered via \code{\link{register_ss}}. If \code{verify = FALSE}, 
+#' then user must provide either sheet key, URL or a worksheets feed, as opposed
+#' to sheet title. In this case, the information will be taken at face value,
+#' i.e. no proactive verification or look-up on Google Drive.
 #' 
-#' @param x character vector of length one, with sheet-identifying 
-#'   information; it will be considered as URL, sheet title or key, until one of
-#'   those hopefully make sense and uniquely identifies sheet
+#' @param x sheet-identifying information, either a spreadsheet object or a 
+#'   character vector of length one, giving a URL, sheet title, key or 
+#'   worksheets feed
+#' @param method optional character string specifying the method of sheet 
+#'   identification; if given, must be one of: URL, key, title, ws_feed, or ss
+#' @param verify logical, default is TRUE, indicating if sheet should be looked 
+#'   up in the list of sheets obtained via \code{\link{list_sheets}}
+#' @param visibility character, default is "private", indicating whether to form
+#'   a worksheets feed that anticipates requests with authentication ("private")
+#'   or without ("public"); only consulted when \code{verify = FALSE}
 #' @param verbose logical
 #'   
-#' @return a list with information about the sheet
+#' @return a spreadsheet object
 #'   
 #' @export
-identify_sheet <- function(x, verbose = TRUE) {
+identify_ss <- function(x, method = NULL, verify = TRUE,
+                        visibility = "private", verbose = TRUE) {
   
-  if(!is.character(x)) {
-    stop("The information that specifies the sheet must be character, regardless of whether it is the URL, title, key or worksheets feed.")
-  } else {
-    if(length(x) != 1) {
-      stop("The character vector that specifies the sheet must be of length 1.")
-    }    
+  if(!inherits(x, "spreadsheet")) {
+    if(!is.character(x)) {
+      stop("The information that specifies the sheet must be character, regardless of whether it is the URL, title, key or worksheets feed.")
+    } else {
+      if(length(x) != 1) {
+        stop("The character vector that specifies the sheet must be of length 1.")
+      }    
+    }
   }
   
-  ## is x a URL?
-  ## look for https as start of string
-  if(x %>% stringr::str_detect("^https://")) {
+  method <-
+    match.arg(method,
+              choices = c('unknown', 'url', 'key', 'title', 'ws_feed', 'ss'))
+  
+  ## is x a spreadsheet object?
+  if(method == 'ss' || inherits(x, "spreadsheet")) {
+    if(verify) {
+      if(verbose) {
+        message("Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.")
+      }
+      x <- x$sheet_key
+      method <- 'key'
+    } else { ## it's a spreadsheet, no verification requested
+             ## so just pass it on through
+      return(x)
+    }
+  } ## if x was ss, x is now a key
+  
+  ## is x a URL but NOT a worksheets feed?
+  ws_feed_start <- "https://spreadsheets.google.com/feeds/worksheets"
+  if(method == 'url' ||
+     (x %>% stringr::str_detect("^https://") &&
+      !(x %>% stringr::str_detect(ws_feed_start))
+     )) {
     if(verbose) {
-      mess <- sprintf("Identifying info \"%s\" will be processed as a URL; gspreadr will attempt to extract sheet key from the URL.", x)
-      message(mess)
+      message("Identifying info will be processed as a URL.\ngspreadr will attempt to extract sheet key from the URL.")
     }
     x <- x %>% extract_key_from_url()
-  }
+    method <- 'key'
+    if(verbose) {
+      mess <- sprintf("Putative key: %s", x)
+      message(mess)
+    }
+  } ## if x was URL (but not ws_feed), x is now a key
   
-  ## assume x is a sheet title, key, or ws_feed from now on
+  ## x is now known or presumed to be key, title, or ws_feed
+  
+  if(!verify) {
+    
+    if(method == 'title') {
+      stop("Impossible to identify a sheet based on title when verify = FALSE. gspreadr must look up the title to obtain key or worksheets feed.")
+    }
+    
+    ## if method still unknown, make a guess between key or ws_feed
+    if(method == 'unknown') {
+      if(x %>% stringr::str_detect(ws_feed_start)) {
+        method <- 'ws_feed'
+      } else {
+        method <- 'key'
+      }
+    }
+    
+    if(verbose) {
+      message(sprintf("Identifying info will be handled as: %s.", method))
+    }
+    
+    ss <- spreadsheet()
+    
+    if(method == 'key') {
+      ss$sheet_key <- x
+      ss$ws_feed <- construct_ws_feed_from_key(x, visibility)
+    }
+    
+    if(method == 'ws_feed') {
+      ss$ws_feed <- x
+      ss$sheet_key <- x %>% extract_key_from_url()
+    }
+    
+    if(verbose) {
+      message(sprintf("Unverified sheet key: %s.", ss$sheet_key))
+      #message(sprintf("Unverified worksheets feed: %s.", ss$ws_feed))
+    }
+    
+    return(ss)
+  }
   
   ## we need listing of sheets visible to this user
   ssfeed_df <- list_sheets() %>%
@@ -130,11 +210,17 @@ identify_sheet <- function(x, verbose = TRUE) {
   x_ss <- ssfeed_df[the_match, ] %>% as.list()
   
   if(verbose) {
-    mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s\nws_feed: %s\n", x_ss$sheet_title, x_ss$sheet_key, x_ss$ws_feed)
+    #mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s\nws_feed: %s\n", x_ss$sheet_title, x_ss$sheet_key, x_ss$ws_feed)
+    mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s\n", x_ss$sheet_title, x_ss$sheet_key)
     message(mess)
   }
   
-  x_ss
+  ss <- spreadsheet()
+  ss$sheet_key <- x_ss$sheet_key
+  ss$sheet_title <- x_ss$sheet_title
+  ss$ws_feed <- x_ss$ws_feed
+  
+  ss
   
 }
 
@@ -157,6 +243,7 @@ identify_sheet <- function(x, verbose = TRUE) {
 #'   \code{key}
 #' @param visibility either "public" or "private"; used to specify visibility
 #'   when sheet identified via \code{key}
+#' @param verbose logical; do you want informative message?
 #'   
 #' @return Object of class spreadsheet.
 #'   
@@ -174,22 +261,19 @@ identify_sheet <- function(x, verbose = TRUE) {
 #'   Sheets file.
 #'   
 #' @export
-register <- function(x, key = NULL, ws_feed = NULL, visibility = "private") {
+register_ss <- function(x, key = NULL, ws_feed = NULL,
+                        visibility = "private", verbose = TRUE) {
   
   if(is.null(ws_feed)) {
-    if(is.null(key)) { # figure out the sheet from x
-      ws_feed <- x %>% identify_sheet() %>% `[[`("ws_feed")
+    if(is.null(key)) { # get ws_feed from x
+      ws_feed <- x %>%
+        identify_ss(visibility = TRUE, verbose = verbose) %>%
+        `[[`("ws_feed")
     } else {           # take key at face value
-      template <-
-        "https://spreadsheets.google.com/feeds/worksheets/key/visibility/full"
-      ws_feed <- template %>%
-        stringr::str_replace("key", key) %>% 
-        stringr::str_replace("visibility", visibility)
+      ws_feed <- construct_ws_feed_from_key(key, visibility)
     }
   }                    # else ... take ws_feed at face value
   
-  ws_feed <- get_ws_feed(ws_feed, visibility)
-
   req <- gsheets_GET(ws_feed)
   
   if(grepl("html", req$headers[["content-type"]])) {
@@ -201,10 +285,9 @@ register <- function(x, key = NULL, ws_feed = NULL, visibility = "private") {
   
   ss <- spreadsheet()
   
-  ss$sheet_key <- ws_feed %>%
-    stringr::str_replace("(https://spreadsheets.google.com/feeds/worksheets/)([^/]+)(.*)", "\\2")
+  ss$sheet_key <- ws_feed %>% extract_key_from_url()
   ss$sheet_title <- req$content[["title"]][["text"]]
-  ss$n_ws <- req$content[["totalResults"]] %>% as.integer
+  ss$n_ws <- req$content[["totalResults"]] %>% as.integer()
   
   ss$ws_feed <- req$url               # same as sheet_id ... pick one?
   ss$sheet_id <- req$content[["id"]]  # same as ws_feed ... pick one?
@@ -246,103 +329,4 @@ register <- function(x, key = NULL, ws_feed = NULL, visibility = "private") {
   
   ss$ws <- dplyr::bind_cols(ws_info, ws_links)
   ss
-}
-
-#' Obtain the worksheets feed for a spreadsheet
-#' 
-#' Given a Google spreadsheet's URL, unique key, title, or worksheets feed, 
-#' return its worksheets feed. The worksheets feed is simply a URL -- different 
-#' from the one you see when visiting a spreadsheet in the browser! -- and is 
-#' the very best way to specify a spreadsheet for API access. There's no simple 
-#' way to capture a spreadsheet's worksheets feed, so this function helps you 
-#' convert readily available information (spreadsheet title or URL) into the 
-#' worksheets feed.
-#' 
-#' Simple regexes are used to detect if the input is a worksheets feed or the 
-#' URL one would see when visiting a spreadsheet in the browser. If it's a URL, 
-#' we attempt to extract the spreadsheet's unique key, assuming the URL follows
-#' the pattern characteristic of "new style" Google spreadsheets.
-#' 
-#' Otherwise the input is assumed to be the spreadsheet's title or unique key. 
-#' When we say title, we mean the name of the spreadsheet in, say, Google Drive 
-#' or in the \code{sheet_title} variable of the data.frame returned by 
-#' \code{\link{list_sheets}}. Spreadsheet title or key will be sought in 
-#' the listing of spreadsheets visible to the authenticated user and, if a match
-#' is found, the associated worksheets feed is returned.
-#' 
-#' @param x character vector of length one, with spreadsheet-identifying 
-#'   information
-#' @param visibility either "public" or "private"
-#'   
-#' @return The worksheets feed for the specified spreadsheet
-#'   
-#' @export
-get_ws_feed <- function(x, visibility = "private") {
-  
-  is_key <- FALSE
-  
-  if(!is.character(x)) {
-    stop("The information that specifies the spreadsheet must be character, regardless of whether it is the URL, title, key or worksheets feed.")
-  } else {
-    if(length(x) != 1) {
-      stop("The character vector that specifies the spreadsheet must be of length 1.")
-    }    
-  }
-  
-  ## is x already worksheets feed? if so, we're done!
-  url_start <- "https://spreadsheets.google.com/feeds/worksheets"
-  if(x %>%
-       stringr::str_detect(stringr::fixed(url_start))) {
-    return(x)
-  }
-  
-  ## is x the URL from visiting sheet in browser? if so, try to get key
-  ## this is dodgy, definitely assumes "new style sheets"
-  url_start <- "https://docs.google.com/spreadsheets/d/"
-  if(x %>% stringr::str_detect(stringr::fixed(url_start))) {
-    x <- x %>% stringr::str_replace(url_start, '') %>%
-      stringr::str_split_fixed('/', n = 2) %>%
-      "["(1)
-    is_key <- TRUE
-  }
-  
-  ## assume x is a spreadsheet title or key
-  
-  ## we need listing of spreadsheets visible to this user
-  ssfeed_df <- list_sheets()
-  
-  if(!is_key) {
-    
-    ## is x a title?
-    title_index <- match(x, ssfeed_df$sheet_title)
-    
-    if(is.na(title_index)) { ## no, not a title ...
-      
-      ## is x a key?
-      key_index <- match(x, ssfeed_df$sheet_key)
-      
-      if(is.na(key_index)) { ## no, not a key ...
-        stop(sprintf("\nThis piece of identifying info:\n\"%s\"\ndoesn't match the title or key of a spreadsheet accessible by the current authenticated user.",
-                     x))
-      } else { ## yes, x is a key
-        x <- ssfeed_df$sheet_key[key_index]
-        is_key <- TRUE
-      }
-    } else { ## yes, x is a title
-      
-      x <- ssfeed_df$sheet_key[title_index]
-      is_key <- TRUE
-      
-    }  
-  }
-  
-  if(is_key) {
-    ## TO DO: set the visibility based on ownership reported in ssfeed_df?
-    req_url <- slaste("https://spreadsheets.google.com/feeds/worksheets", x, 
-                      visibility, "full")
-    return(req_url)
-  } else {
-    ## honestly, I don't think we should ever get to this point
-    stop("This spreadsheet specification seems to be none of these things: URL, title, unique key, or worksheets feed.")
-  }
 }

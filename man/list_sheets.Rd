@@ -25,7 +25,7 @@ access (why just partial? see below). It also gives a map between readily
 available information, such as sheet title, and more obscure information you
 might use in scripts, such as the sheet key. This sort of "table lookup" is
 implemented in the \code{gspreadr} helper function
-\code{\link{identify_sheet}}.
+\code{\link{identify_ss}}.
 
 Which sheets show up here? Certainly those owned by the authorized user. But
 also a subset of the sheets owned by others but visible to the authorized

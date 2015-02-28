@@ -27,7 +27,7 @@ gsheets_GET <- function(url, to_list = TRUE) {
   req$content <- httr::content(req, type = "text/xml")
   
   if(to_list) {
-  req$content <- XML::xmlToList(req$content)
+    req$content <- XML::xmlToList(req$content)
   }
   
   req
@@ -61,10 +61,21 @@ gsheets_POST <- function(url, the_body) {
       req <- httr::POST(url, config = c(token, 
                         httr::add_headers("Content-Type" = content_type)),
                         body = the_body)
+      req$content <- httr::content(req, type = "text/xml")
+      if(!is.null(req$content)) {
+        ## known example of this: POST request triggered by add_ws()
+        req$content <- XML::xmlToList(req$content)
+      }
+      
     } 
 
     httr::stop_for_status(req)
     
+    ## 2015-02-28 I want us to return req because useful info can be extracted
+    ## from it, for example the title of a newly created spreadsheet copy
+    ## there's tons of potentially useful info there ...
+    req
+
     ## TO DO: inform users of why client error (404) Not Found may arise when
     ## copying a spreadsheet
     #     message(paste("The spreadsheet can not be found.",
@@ -83,6 +94,9 @@ gsheets_POST <- function(url, the_body) {
 gsheets_DELETE <- function(url) {
   req <- httr::DELETE(url, get_google_token())
   httr::stop_for_status(req)
+  ## I haven't found any use yet for this return value, but adding for symmetry
+  ## with other http functions
+  req
 }
 
 
@@ -98,11 +112,22 @@ gsheets_PUT <- function(url, the_body) {
   
   if(is.null(token)) {
     stop("Must be authorized in order to perform request")
-  } else {
-    req <- httr::PUT(url, 
-               config = c(token, httr::add_headers("Content-Type" = "application/atom+xml")), 
-               body = the_body)
-    
-    httr::stop_for_status(req)
   }
+  
+  req <-
+    httr::PUT(url, 
+              config = c(token,
+                         httr::add_headers("Content-Type" = "application/atom+xml")), 
+              body = the_body)
+  
+  httr::stop_for_status(req)
+
+  req$content <- httr::content(req, type = "text/xml")
+  if(!is.null(req$content)) {
+    ## known example of this: POST request triggered by add_ws()
+    req$content <- XML::xmlToList(req$content)
+  }  
+  
+  req
+  
 }
