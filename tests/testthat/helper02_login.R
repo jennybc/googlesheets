@@ -21,6 +21,9 @@ if(length(HTTR_OAUTH) > 0) {
   Sys.setenv(OAUTH = "TRUE")
 }
 
+## uncomment to force username/password auth
+#Sys.setenv(OAUTH = "FALSE")
+
 ## we define environment variables on local machines in ~/.R/check.Renviron
 ## which contains:
 ## GSPREADR_USERNAME=blahblahblah <-- not actually consulted now
@@ -46,8 +49,14 @@ if(Sys.getenv("OAUTH") == "FALSE") {
 
 }
 
+## custom skipper to skip tests against Google Drive API when authenticating via
+## login/username, which it does not support
 check_oauth <- function() {
   if (Sys.getenv("OAUTH") == "FALSE") {
     skip("OAuth not in use; cannot test this function")
   }
 }
+
+## I DON"T KNOW WHY THIS WORKS / HELPS BUT IT DOES!
+## MORE RELIABLY FORCED AUTO-REFRESH OF STALE OAUTH TOKEN
+list_sheets()

@@ -100,30 +100,3 @@
 #   
 # })
 
-# test_that("Worksheet is resized", {
-#   new_vals <- head(iris)
-#   
-#   update_cells(wks, "A15:E21", new_vals)
-#   
-#   wks <- open_worksheet(sheet1, "Oceania")
-#   
-#   expect_equal(wks$row_extent, 21)
-#   
-#   resize_worksheet(wks, nrow = 7)
-#   
-#   wks_new <- open_worksheet(sheet1, "Oceania")
-#   
-#   expect_equal(wks_new$row_extent, 7)
-# })
-
-# test_that("Worksheet is renamed", {
-#   
-#   rename_worksheet(ss1, "Sheet1", "New Title")
-#   ss1 <- open_spreadsheet("Gapminder")
-# 
-#   expect_equal(list_worksheets(ss1), "New Title")
-#   
-#   rename_worksheet(ss1, "New Title", "Sheet1")
-# })
-# 
-# 

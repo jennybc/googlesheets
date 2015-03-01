@@ -125,3 +125,19 @@ extract_key_from_url <- function(url) {
     stringr::str_split_fixed('[/&#]', n = 2) %>%
     `[`(1)
 }
+
+#' Construct a worksheets feed from a key
+#' 
+#' @param key character, unique key for a spreadsheet
+#' @param visibility character, either "private" (default) or "public",
+#'   indicating whether further requests will be made with or without
+#'   authentication, respectively
+#'   
+#' @export
+construct_ws_feed_from_key <- function(key, visibility = "private") {
+  tmp <-
+    "https://spreadsheets.google.com/feeds/worksheets/KEY/VISIBILITY/full"
+  tmp %>%
+    stringr::str_replace('KEY', key) %>%
+    stringr::str_replace('VISIBILITY', visibility)
+}

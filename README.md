@@ -26,13 +26,13 @@ Basic Usage
 -----------
 
 ``` r
-library(gspreadr)
-suppressMessages(library(dplyr))
+library("gspreadr")
+suppressMessages(library("dplyr"))
 ```
 
 ``` r
 # See what spreadsheets you have
-# (expect to authenticate with Google interactively HERE)
+# (expect a prompt to authenticate with Google interactively HERE)
 (my_sheets <- list_sheets())
 #> Source: local data frame [21 x 6]
 #> 
@@ -57,18 +57,17 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "r", "rw", "rw", "r...
-#> $ last_updated (time) 2015-02-20 22:14:11, 2015-02-20 01:17:28, 2015-0...
+#> $ last_updated (time) 2015-03-01 01:00:49, 2015-02-20 01:17:28, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 
 # Hey let's look at the Gapminder data
-gap <- register("Gapminder")
+gap <- register_ss("Gapminder")
 #> Sheet identified!
 #> sheet_title: Gapminder
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
-#> ws_feed: https://spreadsheets.google.com/feeds/worksheets/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/private/full
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>      Date of gspreadr::register: 2015-02-20 14:20:46 PST
+#>   Date of gspreadr::register_ss: 2015-02-28 18:29:57 PST
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -80,24 +79,26 @@ str(gap)
 #> Oceania: 1000 x 26
 #> 
 #> Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
-#> Worksheets feed: https://spreadsheets.google.com/feeds/worksheets/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/private/full
 
-# Oh, you don't own it? Access it by key!
-gap <- register("1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE")
+# Need to access a sheet you do not own?
+## Access it by key if you know it!
+gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
+gap <- gap_key %>% register_ss
 #> Sheet identified!
 #> sheet_title: Gapminder
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
-#> ws_feed: https://spreadsheets.google.com/feeds/worksheets/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/private/full
 
-# Oh, you don't own it? Access it by browser URL!
-gap <- register("https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit")
-#> Identifying info "https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit" will be processed as a URL; gspreadr will attempt to extract sheet key from the URL.
+# gspreadr may be able to determine the key the browser URL
+gap_url <- "https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/"
+gap <- gap_url %>% register_ss
+#> Identifying info will be processed as a URL.
+#> gspreadr will attempt to extract sheet key from the URL.
+#> Putative key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 #> Sheet identified!
 #> sheet_title: Gapminder
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
-#> ws_feed: https://spreadsheets.google.com/feeds/worksheets/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/private/full
 
-# Get the data for Oceania: the fast tabular way ("list feed")
+# Get the data for worksheet "Oceania": the fast tabular way ("list feed")
 oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
 str(oceania_list_feed, give.attr = FALSE)
@@ -124,7 +125,7 @@ oceania_list_feed
 #> 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
 #> ..         ...       ...  ...     ...      ...       ...
 
-# Get the data for Oceania: the slower cell-by-cell way ("cell feed")
+# Get the data for worksheet "Oceania": the slower cell-by-cell way ("cell feed")
 oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
 str(oceania_cell_feed, give.attr = FALSE)

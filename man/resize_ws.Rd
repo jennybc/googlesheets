@@ -20,8 +20,8 @@ resize_ws(ss, ws_title, row_extent = NULL, col_extent = NULL,
 }
 \description{
 Set the number of rows and columns of a worksheet. This function is useful
-when you need to send a batch update request and the range of data exceeds
-the current worksheet dimensions.
+when you need to send a batch update request and the data would exceed
+the current worksheet extent.
 }
 \details{
 This function will probably only be called internally... exporting for now.
@@ -29,10 +29,5 @@ This function will probably only be called internally... exporting for now.
 \note{
 Setting rows and columns to less than the current worksheet dimensions
 will delete contents without warning.
-
-Since the edit link is used in the PUT request, the version path in the
-   url changes everytime changes are made to the worksheet, hence consecutive
-   function calls using the same edit link from the same sheet object without
-   'refreshing' it by re-registering results in a HTTP 409 Conflict.
 }
 

@@ -7,7 +7,7 @@
 \method{str}{spreadsheet}(object, ...)
 }
 \arguments{
-\item{object}{spreadsheet object returned by \code{register}}
+\item{object}{spreadsheet object returned by \code{register_ss}}
 
 \item{...}{potential further arguments (required for Method/Generic reasons)}
 }

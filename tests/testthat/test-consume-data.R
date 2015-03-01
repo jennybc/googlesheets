@@ -1,6 +1,6 @@
-context("data consumption")
+context("consume data")
 
-ss <- register(ws_feed = pts_ws_feed)
+ss <- register_ss(ws_feed = pts_ws_feed)
 
 test_that("We can get data from the list feed", {
   
