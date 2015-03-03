@@ -72,23 +72,12 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
   
   this_ws <- get_ws(ss, ws)
   
-  limits <- list(min_row = min_row, max_row = max_row,
-                 min_col = min_col, max_col = max_col)
+  limits <- list("min-row" = min_row, "max-row" = max_row,
+                 "min-col" = min_col, "max-col" = max_col)
   limits <- limits %>%
     validate_limits(this_ws$row_extent, this_ws$col_extent)
-  limits <- limits[!plyr::laply(limits, is.null)]
-  if(length(limits) > 0) {
-    query_string <- 
-      stringr::str_c(names(limits), unlist(limits),
-                     sep = "=", collapse = "&") %>%
-      stringr::str_replace("_", "-")
-  } else {
-    query_string <- NULL
-  }
-  
-  get_url <- this_ws$cellsfeed %>%
-    httr::modify_url(query = query_string)
-  req <- gsheets_GET(get_url)
+
+  req <- gsheets_GET(this_ws$cellsfeed, query = limits)
   
   x <- req$content %>% lfilt("entry") %>%
     lapply(FUN = function(x) {
@@ -136,11 +125,11 @@ reshape_cf <- function(x, header = TRUE) {
       dplyr::filter_(~ row == 1L)
     var_names <- ifelse(is.na(row_one$cell_text),
                         stringr::str_c("C", row_one$col),
-                        row_one$cell_text) %>% make.names
+                        row_one$cell_text) %>% make.names()
     x_augmented <- x_augmented %>%
       dplyr::filter_(~ row > 1)
   } else {
-    var_names <- limits$col_min:limits$col_max %>% make.names
+    var_names <- limits$col_min:limits$col_max %>% make.names()
   }
 
   x_augmented %>%
@@ -186,12 +175,12 @@ validate_limits <-
       }
     }
     
-    jfun(limits$min_row, limits$max_row)
-    jfun(limits$min_row, ws_row_extent)
-    jfun(limits$max_row, ws_row_extent)
-    jfun(limits$min_col, limits$max_col)
-    jfun(limits$min_col, ws_col_extent)
-    jfun(limits$max_col, ws_col_extent)
+    jfun(limits[["min-row"]], limits[["max-row"]])
+    jfun(limits[["min-row"]], ws_row_extent)
+    jfun(limits[["max-row"]], ws_row_extent)
+    jfun(limits[["min-col"]], limits[["max-col"]])
+    jfun(limits[["min-col"]], ws_col_extent)
+    jfun(limits[["max-col"]], ws_col_extent)
     
     limits
     

@@ -1,15 +1,18 @@
 #' Create GET request
-#'
+#' 
 #' Make GET request to Google Sheets API.
-#'
+#' 
 #' @param url URL for GET request
 #' @param to_list whether to convert response contents to list or not
-gsheets_GET <- function(url, to_list = TRUE) {
+#' @param ... optional; further named parameters, such as \code{query}, 
+#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
+#'   parameters will be combined with \code{\link[httr]{config}}.
+gsheets_GET <- function(url, to_list = TRUE, ...) {
 
   if(grepl("public", url)) {
-    req <- httr::GET(url)
+    req <- httr::GET(url, ...)
   } else { 
-    req <- httr::GET(url, get_google_token())
+    req <- httr::GET(url, get_google_token(), ...)
   }
   httr::stop_for_status(req)
   ## TO DO: interpret some common problems for user? for example, a well-formed

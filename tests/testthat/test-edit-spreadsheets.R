@@ -54,7 +54,7 @@ test_that("Add a new worksheet", {
   ss_new <- add_ws(ss_old, "Test Sheet")
   
   expect_is(ss_new, "spreadsheet")
-  
+
   new_ws_index <- ss_old$n_ws + 1
   
   expect_equal(new_ws_index, ss_new$n_ws)
@@ -74,7 +74,7 @@ test_that("Delete a worksheet", {
   ss_new <- delete_ws(ss_old, "Test Sheet")
   
   expect_is(ss_new, "spreadsheet")
-  
+
   expect_equal(ss_old$n_ws - 1, ss_new$n_ws)
   expect_false("Test Sheet" %in% ss_new$ws[["ws_title"]])
   
@@ -90,7 +90,7 @@ test_that("Worksheet is renamed", {
   expect_is(ss_new, "spreadsheet")
   expect_true("Somewhere in Asia" %in% ss_new$ws$ws_title)
   expect_false("Asia" %in% ss_new$ws$ws_title)
-  
+
   ss_final <- rename_ws(ss_new, "Somewhere in Asia", "Asia")
   expect_is(ss_final, "spreadsheet")
   expect_false("Somewhere in Asia" %in% ss_final$ws$ws_title)
@@ -111,7 +111,7 @@ test_that("Worksheet is resized", {
   col <- sample(1:35, 1)
   
   ss_new <- resize_ws(ss, "for_resizing", row_extent = row, col_extent = col)
-  
+
   expect_equal(ss_new$ws$row_extent[ws_title_pos], row)
   expect_equal(ss_new$ws$col_extent[ws_title_pos], col)
   

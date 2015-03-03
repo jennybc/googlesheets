@@ -37,13 +37,13 @@ suppressMessages(library("dplyr"))
 #> Source: local data frame [21 x 6]
 #> 
 #>                                     sheet_title
-#> 1                          Public Testing Sheet
-#> 2  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 3                                Testing helper
-#> 4                               Old Style Sheet
-#> 5                                    jenny-test
-#> 6                                   gas_mileage
-#> 7                                   Temperature
+#> 1                                   Temperature
+#> 2                          Public Testing Sheet
+#> 3                                   gas_mileage
+#> 4  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 5                                Testing helper
+#> 6                               Old Style Sheet
+#> 7                                    jenny-test
 #> 8                                     Gapminder
 #> 9                                    Gapminderx
 #> 10                                      Testing
@@ -53,11 +53,11 @@ suppressMessages(library("dplyr"))
 my_sheets %>% glimpse()
 #> Observations: 21
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "1F0iNuYW4v_oG69s7c5NzdoM...
-#> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
-#> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "r", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-01 01:00:49, 2015-02-20 01:17:28, 2015-0...
+#> $ sheet_title  (chr) "Temperature", "Public Testing Sheet", "gas_milea...
+#> $ sheet_key    (chr) "1Hkh20-IEQzKaBTqwWrQEYqoCaqDoyLjbgX8x4keACgE", "...
+#> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
+#> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
+#> $ last_updated (time) 2015-03-03 00:07:43, 2015-03-03 00:38:34, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 
 # Hey let's look at the Gapminder data
@@ -67,7 +67,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-02-28 18:29:57 PST
+#>   Date of gspreadr::register_ss: 2015-03-02 16:45:15 PST
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:

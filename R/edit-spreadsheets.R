@@ -55,7 +55,7 @@ delete_ss <- function(x, verbose = TRUE) {
   
   ## I set verbose = FALSE here mostly for symmetry with new_ss
   x_ss <- x %>% identify_ss(verbose = FALSE)
-  
+
   the_url <- slaste("https://www.googleapis.com/drive/v2/files",
                     x_ss$sheet_key, "trash")
   

@@ -1,4 +1,4 @@
-#' Get all values in a column.
+ #' Get all values in a column.
 #'
 #' @param ws worksheet object
 #' @param col column number or letter (case insensitive)
@@ -115,31 +115,6 @@ get_cell <- function(ws, cell)
   ## req$content$cell varies for cells that are populated vs. empty (and because
   ## I'm not using a list-oriented FP pkg yet)
   req$content$cell %>% unlist %>% `[`(grep("inputValue", names(.))) %>% unname
-}
-
-
-#' Get all values in a worksheet.
-#'
-#' Extract the entire worksheet and turn it into a data frame. This function
-#' uses the rightmost cell with a value as the maximum number of columns and 
-#' bottom-most cell as the maximum row.
-#'
-#' @param ws worksheet object 
-#' @param header \code{logical} to indicate if the first row should be taken as the
-#' header
-#' 
-#' @return A dataframe. 
-#' 
-#' This function calls on \code{\link{get_cols}} with \code{to} set as the 
-#' number of columns of the worksheet.
-#' @seealso \code{\link{read_region}}, \code{\link{read_range}}, 
-#' \code{\link{get_row}}, \code{\link{get_rows}}, \code{\link{get_col}}, 
-#' \code{\link{get_cols}}
-#' 
-#' @export
-read_all <- function(ws, header = TRUE) 
-{
-  get_cols(ws, 1, ws$ncol, header)
 }
 
 
