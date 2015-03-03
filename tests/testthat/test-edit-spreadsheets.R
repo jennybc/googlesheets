@@ -117,12 +117,34 @@ test_that("Worksheet is resized", {
   
 })
 
+
+test_that("Different file formats can be uploaded", {
+  
+  check_oauth()
+  
+  expect_error(upload_ss("I dont exist.csv"))
+  expect_error(upload_ss("test-register.R"))
+  
+  expect_message(upload_ss("gap-data.txt"), "uploaded")
+  expect_message(upload_ss("gap-data.tsv"), "uploaded")
+  expect_message(upload_ss("gap-data.csv"), "uploaded")
+  expect_message(upload_ss("gap-data.xlsx"), "uploaded")
+  expect_message(upload_ss("gap-data.ods"), "uploaded")
+  
+  expect_true(all(list.files(pattern = "gap-data") %in% 
+                    unlist(list_sheets()["sheet_title"])))
+  
+  ss <- register_ss("gap-data.xlsx")
+  expect_equal(ss$n_ws, 5)
+})
+
 ## delete any remaining sheets created here
 ## useful to tidy after failed tests
-my_patterns <- c("testing[0-9]{1}",
+my_patterns <- c("testing[0-9]{1}", "gap-data",
                  paste("Copy of", pts_title),
                  "eggplants are purple")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
 sheets_to_delete <- list_sheets() %>%
   dplyr::filter(stringr::str_detect(sheet_title, my_patterns))
 plyr::a_ply(sheets_to_delete$sheet_key, 1, delete_ss)
+

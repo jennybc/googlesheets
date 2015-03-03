@@ -412,3 +412,57 @@ modify_ws <-
   gsheets_PUT(ss$ws$edit[ws_title_position], the_body)
   
 }
+
+#' Upload a file and convert it to a Google Sheet
+#'
+#' Google supports the following file types to be converted to a Google 
+#' spreadsheet: .xls, .xlsx, .csv, .tsv, .txt, .tab, .xlsm, .xlt, .xltx, .xltm, 
+#' .ods. The newly uploaded file will appear in the top level of your Google 
+#' Sheets home screen. 
+#'
+#' @param file the file to upload, if it does not contain the absolute path, 
+#' then the file is relative to the current working directory
+#' @param sheet_title the title of the spreadsheet; optional, 
+#' if not specified then the name of the file will be used
+#' @param verbose logical; do you want informative message?
+#'
+#' @export
+upload_ss <- function(file, sheet_title, verbose = TRUE) {
+  
+  if(!file.exists(file)) {
+    stop(sprintf(" \"%s\" does not exist!", file))
+  }
+  
+  ext <- c(".xls", ".xlsx", ".csv", ".tsv", ".txt", ".tab", ".xlsm", ".xlt", 
+           ".xltx", ".xltm", ".ods")
+  
+  if(!stringr::str_extract(file, "\\.[^\\.]*$") %in% ext) {
+    stop("Cannot convert this file type to a Google Spreadsheet.")
+  }
+  
+  if(missing(sheet_title)) {
+    sheet_title <- basename(file)
+  }
+  
+  req <- gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", 
+                      the_body = list("title" = sheet_title, 
+                                      "mimeType" = "application/vnd.google-apps.spreadsheet"))
+  
+  new_sheet_key <- httr::content(req)$id
+  
+  # append sheet_key to put_url
+  put_url <- httr::modify_url("https://www.googleapis.com/",
+                              path = paste0("upload/drive/v2/files/", 
+                                            new_sheet_key))
+  
+  gsheets_PUT(put_url, the_body = file)
+  
+  success <- new_sheet_key %in% unlist(list_sheets()["sheet_key"])
+  
+  if(verbose & success) {
+    message(sprintf(" \"%s\" uploaded to Google Drive converted to a Google Sheet and named \"%s\"",
+                    basename(file), sheet_title))
+  } else {
+    stop(sprintf(" File did not upload successfully. Sheet can not be found in Google Sheets home screen."))
+  }
+}

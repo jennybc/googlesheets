@@ -117,20 +117,34 @@ gsheets_PUT <- function(url, the_body) {
     stop("Must be authorized in order to perform request")
   }
   
-  req <-
-    httr::PUT(url, 
-              config = c(token,
-                         httr::add_headers("Content-Type" = "application/atom+xml")), 
-              body = the_body)
-  
-  httr::stop_for_status(req)
-
-  req$content <- httr::content(req, type = "text/xml")
-  if(!is.null(req$content)) {
-    ## known example of this: POST request triggered by add_ws()
-    req$content <- XML::xmlToList(req$content)
-  }  
-  
-  req
-  
+  # look at the url to determine talking to "drive" or "spreadsheets" API
+  if(stringr::str_detect(stringr::fixed(url), "drive")) {
+    
+    req <- httr::PUT(url, 
+                     query = list(uploadType = "media", convert = "true"), 
+                     config = token, 
+                     body = httr::upload_file(the_body))
+    
+    httr::stop_for_status(req)
+    
+  } else {
+    # send xml to sheets api, only used in modify_ws()
+    content_type <- "application/atom+xml"
+    
+    req <- 
+      httr::PUT(url, 
+                config = c(token, 
+                           httr::add_headers("Content-Type" = content_type)),
+                body = the_body)
+    
+    httr::stop_for_status(req)
+    
+    req$content <- httr::content(req, type = "text/xml")
+    
+    if(!is.null(req$content)) {
+      ## known example of this: POST request triggered by add_ws()
+      req$content <- XML::xmlToList(req$content)
+    }
+  }
+  req   
 }
