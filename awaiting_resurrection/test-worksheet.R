@@ -4,58 +4,6 @@
 # 
 # wks <- open_worksheet(public_testing_sheet, "Oceania")
 # 
-# test_that("Get value of cell", {
-#   expect_equal(get_cell(wks, "A1"), "country")
-#   expect_equal(get_cell(wks, "R1C1"), "country")
-#   expect_equal(get_cell(wks, "H1"), "")
-#   expect_error(get_cell(wks, "A4R4T"))
-#  })
-# 
-# 
-# test_that("Get all values in 1 row", {
-#   expect_equal(length(get_row(wks, 1)), 7) # fails!
-#   expect_error(get_row(wks, 10000))
-# })
-# 
-# test_that("Get a range of rows", {
-#   expect_equal(nrow(get_rows(wks, 2, 3)), 2)  # fails!
-#   expect_equal(ncol(get_rows(wks, 2, 3)), 7) # fails
-# })
-# 
-# test_that("Get all values of 1 col", {
-#   expect_equal(length(get_col(wks, 1)), 7)
-# })
-# 
-# test_that("Get more than 1 col", {
-#   expect_equal(ncol(get_cols(wks, 1, 3)), 3)
-#   expect_equal(nrow(get_cols(wks, 1, 2)), 6)
-#   expect_equal(nrow(get_cols(wks, 1, 2, header = FALSE)), 7)
-# })
-# 
-# test_that("Get the entire worksheet", {
-#   
-#   my_data <- read_all(wks)
-#   my_data_nh <- read_all(wks, header = FALSE)
-#   
-#   expect_that(my_data, is_a("data.frame"))
-#   expect_equal(nrow(my_data), 6)
-#   expect_equal(ncol(my_data), 7)
-#   
-#   expect_equal(nrow(my_data_nh), 7)
-# })
-# 
-# test_that("Get region of worksheet", {
-#   
-#   expect_equal(dim(read_region(wks, 1, 2, 3, 5, header = FALSE)), c(2, 3))
-#   expect_equal(dim(read_region(wks, 1, 2, 3, 5,)), c(1, 3))
-# })
-# 
-# test_that("Get range of worksheet", {
-#   
-#   expect_equal(read_range(wks, "A1:B1"), read_region(wks, 1, 1, 1, 2))
-# })
-# 
-# 
 # test_that("Plotting spreadsheets", {
 #   
 #   expect_that(view_all(sheet1), is_a("ggplot"))

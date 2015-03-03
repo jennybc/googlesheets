@@ -6,7 +6,7 @@
 worksheet}
 \usage{
 get_via_cf(ss, ws = 1, min_row = NULL, max_row = NULL, min_col = NULL,
-  max_col = NULL)
+  max_col = NULL, limits = NULL)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet}
@@ -22,6 +22,9 @@ worksheet}
 \item{min_col}{positive integer, optional}
 
 \item{max_col}{positive integer, optional}
+
+\item{limits}{list, with named components holding the min and max for rows
+  and columns; intended primarily for internal use}
 }
 \description{
 No attempt to shape the returned data! Data.frame will have one row per cell.
@@ -37,5 +40,11 @@ worksheet.
 
 Empty cells, even if "embedded" in a rectangular region of populated cells,
 are not returned by the API and will not appear in the returned data.frame.
+}
+\seealso{
+Other data.consumption.functions: \code{\link{get_cells}};
+  \code{\link{get_col}}; \code{\link{get_row}};
+  \code{\link{get_via_lf}}; \code{\link{reshape_cf}};
+  \code{\link{simplify_cf}}
 }
 

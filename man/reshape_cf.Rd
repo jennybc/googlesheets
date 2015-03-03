@@ -15,4 +15,10 @@ reshape_cf(x, header = TRUE)
 \description{
 This will not be exported long-term. Will write wrappers. Temporary export.
 }
+\seealso{
+Other data.consumption.functions: \code{\link{get_cells}};
+  \code{\link{get_col}}; \code{\link{get_row}};
+  \code{\link{get_via_cf}}; \code{\link{get_via_lf}};
+  \code{\link{simplify_cf}}
+}
 
