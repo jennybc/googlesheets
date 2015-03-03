@@ -55,11 +55,12 @@ delete_ss <- function(x, verbose = TRUE) {
   
   ## I set verbose = FALSE here mostly for symmetry with new_ss
   x_ss <- x %>% identify_ss(verbose = FALSE)
-
-  the_url <- slaste("https://www.googleapis.com/drive/v2/files",
-                    x_ss$sheet_key, "trash")
   
-  gsheets_POST(the_url, the_body = NULL)
+  the_url <-
+    paste("https://www.googleapis.com/drive/v2/files",
+          x_ss$sheet_key, "trash", sep = "/")
+
+    gsheets_POST(the_url, the_body = NULL)
   
   ss <- try(identify_ss(x_ss, verbose = FALSE), silent = TRUE)
   
@@ -114,8 +115,9 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   }
   
   the_body <- list("title" = to)
-  
-  the_url <- slaste("https://www.googleapis.com/drive/v2/files", key, "copy")
+
+  the_url <-
+    paste("https://www.googleapis.com/drive/v2/files", key, "copy", sep = "/")
   
   req <- gsheets_POST(the_url, the_body)
   

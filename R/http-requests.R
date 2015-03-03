@@ -54,8 +54,7 @@ gsheets_POST <- function(url, the_body) {
     # must be either talking to "drive" or "spreadsheets" API
     if(stringr::str_detect(stringr::fixed(url), "drive")) {
       # send json to drive api
-      req <- httr::POST(url, config = get_google_token(),
-                        body = the_body, encode = "json")
+      req <- httr::POST(url, config = token, body = the_body, encode = "json")
       
     } else {
       # send xml to sheets api

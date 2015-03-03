@@ -1,10 +1,3 @@
-#' paste with separator set to slash
-#' 
-#' paste with separator set to slash, for use in building URLs 
-#' 
-#' @param ... one or more R objects, to be converted to character vectors
-slaste <- function(...) paste(..., sep = "/")
-
 #' Retrieve a worksheet-describing list from a spreadsheet
 #' 
 #' From a registered spreadsheet, retrieve a list (actually a row of a
