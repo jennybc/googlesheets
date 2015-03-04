@@ -16,7 +16,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
                    mimeType = "application/vnd.google-apps.spreadsheet")
   
   req <-
-    gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
+    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
   
   ## I set verbose = FALSE here because it seems weird to message "Spreadsheet
   ## identified!" in this context, esp. to do so *before* message confirming
@@ -59,7 +59,7 @@ delete_ss <- function(x, verbose = TRUE) {
   the_url <- slaste("https://www.googleapis.com/drive/v2/files",
                     x_ss$sheet_key, "trash")
   
-  gsheets_POST(the_url, the_body = NULL)
+  gdrive_POST(the_url, the_body = NULL)
   
   ss <- try(identify_ss(x_ss, verbose = FALSE), silent = TRUE)
   
@@ -117,7 +117,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   
   the_url <- slaste("https://www.googleapis.com/drive/v2/files", key, "copy")
   
-  req <- gsheets_POST(the_url, the_body)
+  req <- gdrive_POST(the_url, the_body)
   
   new_title <- httr::content(req)$title
   
@@ -444,7 +444,7 @@ upload_ss <- function(file, sheet_title, verbose = TRUE) {
     sheet_title <- basename(file)
   }
   
-  req <- gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", 
+  req <- gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", 
                       the_body = list("title" = sheet_title, 
                                       "mimeType" = "application/vnd.google-apps.spreadsheet"))
   
@@ -455,7 +455,7 @@ upload_ss <- function(file, sheet_title, verbose = TRUE) {
                               path = paste0("upload/drive/v2/files/", 
                                             new_sheet_key))
   
-  gsheets_PUT(put_url, the_body = file)
+  gdrive_PUT(put_url, the_body = file)
   
   success <- new_sheet_key %in% unlist(list_sheets()["sheet_key"])
   
