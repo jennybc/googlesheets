@@ -10,15 +10,15 @@ Sys.setenv(OAUTH = "FALSE")
 
 ## look for .httr-oauth in pwd (assuming pwd is gspreadr) or two levels up
 ## (assuming pwd is gspreadr/tests/testthat)
-pwd <- getwd()
-two_up <- pwd %>% dirname() %>% dirname()
-HTTR_OAUTH <- c(two_up, pwd) %>% file.path(".httr-oauth")
-HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
-
-if(length(HTTR_OAUTH) > 0) {
-  HTTR_OAUTH <- HTTR_OAUTH[1]
-  file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
+if(file.exists(".httr-oauth")) {
   Sys.setenv(OAUTH = "TRUE")
+} else {
+  two_up <- getwd() %>% dirname() %>% dirname()
+  HTTR_OAUTH <- two_up %>% file.path(".httr-oauth")
+  if(file.exists(HTTR_OAUTH)) {
+    file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
+    Sys.setenv(OAUTH = "TRUE")
+  }
 }
 
 ## uncomment to force username/password auth

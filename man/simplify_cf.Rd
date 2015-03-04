@@ -4,7 +4,8 @@
 \alias{simplify_cf}
 \title{Simplify data from the cell feed}
 \usage{
-simplify_cf(x, convert = TRUE, as.is = TRUE, notation = c("A1", "R1C1"))
+simplify_cf(x, convert = TRUE, as.is = TRUE, notation = c("A1", "R1C1"),
+  header = NULL)
 }
 \arguments{
 \item{x}{a data.frame returned by \code{get_via_cf()}}
@@ -20,6 +21,9 @@ if FALSE, result will be character}
 \item{notation}{character; the result vector will have names that reflect
   which cell the data came from; this argument controls notation style, i.e.
   "A1" vs. "R1C1"}
+
+\item{header}{logical indicating whether first row should be taken as
+  variable names}
 }
 \value{
 a named vector

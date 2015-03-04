@@ -136,7 +136,7 @@ get_row <- function(ss, ws = 1, row)
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more 
 #'   usable data.frame
 get_col <- function(ss, ws = 1, col)
-  get_via_cf(ss, ws, min_col = min(col), max_row = max(col))
+  get_via_cf(ss, ws, min_col = min(col), max_col = max(col))
 
 #' Get data from a cell or range of cells
 #' 
@@ -231,8 +231,23 @@ reshape_cf <- function(x, header = TRUE) {
 #'   
 #' @export
 simplify_cf <- function(x, convert = TRUE, as.is = TRUE,
-                        notation = c("A1", "R1C1")) {
+                        notation = c("A1", "R1C1"), header = NULL) {
+  
   notation <- match.arg(notation)
+  
+  if(is.null(header) &&
+     x$row %>% min() == 1 &&
+     x$col %>% dplyr::n_distinct() == 1) {
+      header <-  TRUE
+  } else {
+    header <- FALSE
+  }
+  
+  if(header) {
+    x <- x %>%
+      dplyr::filter_(~ row > min(row))
+  }
+  
   y <- x$cell_text
   names(y) <- switch(notation,
                      A1 = x$cell,

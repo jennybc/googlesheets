@@ -86,11 +86,20 @@ convert_range_to_limit_list <- function(range) {
       rep_len(x, 2)                      ## "C5" --> "C5", "" --> "C5", "C5"
     }
   
+  A1_regex <- "^[A-Za-z]{1,2}[0-9]+$"
+  R1C1_regex <- "^R([0-9]+)C([0-9]+$)"
+  valid_regex <- stringr::str_c(c(A1_regex, R1C1_regex), collapse = "|")
+  if(!all(tmp %>% stringr::str_detect(valid_regex))) {
+    mess <- sprintf("Trying to set cell limits, but requested range is invalid:\n %s\n", paste(tmp, collapse = ", "))
+    stop(mess)
+  }
+  
   ## convert addresses like "B4" to "R4C2"
   rcrc <- all(tmp %>% stringr::str_detect("^R[0-9]+C[0-9]+$"))
   if(!rcrc) {
     tmp <- tmp %>% label_to_coord()    ## "A1", "C5" --> "R1C1", "R5C4"
   }
+  
   
   ## complete conversion to a limits list
   tmp %>% 
