@@ -1,48 +1,4 @@
-#' Resize a worksheet
-#'
-#' @param ws worksheet object
-#' @param nrow \code{numeric} for new row dimension
-#' @param ncol \code{numeric} for new column dimension
-#' 
-#' @note Setting rows and columns to less than the current worksheet dimensions 
-#' will delete contents without warning.
-#' 
-#' @export
-resize_worksheet <- function(ws, nrow = NULL, ncol = NULL)
-{
-  #   index <- match(ws_title, names(ss$worksheets))
-  #   
-  #   if(is.na(index))
-  #     stop("Worksheet not found.")
-  #   
-  #   ws <- ss$worksheets[[index]]
-  
-  req_url <- build_req_url("worksheets", key = ws$sheet_id, ws_id = ws$ws_id)
-  req <- gsheets_GET(req_url)
-  feed <- gsheets_parse(req)
-  new_feed <- toString.XMLNode(feed)
-  
-  if(!is.null(ncol)) {
-    new_feed <- 
-      sub("<gs:colCount>([0-9]+)</gs:colCount>", 
-          paste0("<gs:colCount>", ncol, "</gs:colCount>"), new_feed)
-  }
-  
-  if(!is.null(nrow)) {
-    new_feed <- 
-      sub("<gs:rowCount>([0-9]+)</gs:rowCount>", 
-          paste0("<gs:rowCount>", nrow, "</gs:rowCount>"), new_feed)
-  }
-  
-  edit_url <- unlist(getNodeSet(feed, '//ns:link[@rel="edit"]', 
-                                c("ns" = default_ns),
-                                function(x) xmlGetAttr(x, "href")))
-  
-  gsheets_PUT(edit_url, new_feed)
-}
-
-
-#' Add rows to a worksheet
+##' Add rows to a worksheet
 #'
 #' @param ws worksheet object
 #' @param n \code{numeric} the number of rows to add

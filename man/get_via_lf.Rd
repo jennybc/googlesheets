@@ -10,15 +10,18 @@ get_via_lf(ss, ws = 1)
 \item{ss}{a registered Google spreadsheet}
 
 \item{ws}{positive integer or character string specifying index or title,
-  respectively, of the worksheet to consume
-
-  Gets data via the listfeed, which assumes populated cells form a neat
-  rectangle. First row regarded as header row of variable or column names. If
-  data is neatly rectangular and you want all of it, this is the fastest way
-  to get it. Anecdotally, ~3x faster than using methods based on the
-  cellfeed.}
+  respectively, of the worksheet to consume}
 }
 \description{
-Get data from a rectangular worksheet as a tbl_df
+Gets data via the listfeed, which assumes populated cells form a neat
+rectangle. First row regarded as header row of variable or column names. If
+data is neatly rectangular and you want all of it, this is the fastest way to
+get it. Anecdotally, ~3x faster than using methods based on the cellfeed.
+}
+\seealso{
+Other data.consumption.functions: \code{\link{get_cells}};
+  \code{\link{get_col}}; \code{\link{get_row}};
+  \code{\link{get_via_cf}}; \code{\link{reshape_cf}};
+  \code{\link{simplify_cf}}
 }
 
