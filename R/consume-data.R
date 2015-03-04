@@ -17,7 +17,7 @@ get_via_lf <- function(ss, ws = 1) {
   this_ws <- get_ws(ss, ws)
   req <- gsheets_GET(this_ws$listfeed)
   row_data <- req$content %>% lfilt("entry")
-  component_names <- row_data[[1]] %>% names
+  component_names <- row_data[[1]] %>% names()
   boilerplate_names <- ## what if spreadsheet header row contains these names??
     ## safer to get via ... numeric index? or by parsing entry$title and
     ## entry$content$text?
@@ -120,6 +120,8 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
 #' @family data consumption functions
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more 
 #'   usable data.frame
+#'   
+#' @export
 get_row <- function(ss, ws = 1, row)
   get_via_cf(ss, ws, min_row = min(row), max_row = max(row))
 
@@ -135,6 +137,8 @@ get_row <- function(ss, ws = 1, row)
 #' @family data consumption functions
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more 
 #'   usable data.frame
+#'   
+#' @export
 get_col <- function(ss, ws = 1, col)
   get_via_cf(ss, ws, min_col = min(col), max_col = max(col))
 
@@ -151,6 +155,8 @@ get_col <- function(ss, ws = 1, col)
 #' @family data consumption functions
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more 
 #'   usable data.frame
+#'   
+#' @export
 get_cells <- function(ss, ws = 1, range) {
   
   limits <- convert_range_to_limit_list(range) 
@@ -184,6 +190,15 @@ reshape_cf <- function(x, header = TRUE) {
   )
   
   if(header) {
+    
+    if(x_augmented$row %>% dplyr::n_distinct() < 2) {
+      message("No data to reshape!")
+      if(header) {
+        message("Perhaps retry with `header = FALSE`?")
+      }
+      return(NULL)
+    }
+
     row_one <- x_augmented %>% 
       dplyr::filter_(~ row == min(row))
     var_names <- ifelse(is.na(row_one$cell_text),

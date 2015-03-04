@@ -126,6 +126,15 @@ test_that("We can reshape data from the cell feed", {
 
 })
 
+test_that("We decline to reshape data if there is none", {
+  
+  foo <- ss %>% get_row(ws = "Africa", row = 1)
+  expect_message(tmp <- foo %>% reshape_cf(), "No data to reshape!")
+  expect_null(tmp)
+  
+})
+
+
 test_that("We can simplify data from the cell feed", {
   
   foo <- ss %>% get_row(ws = "Africa", row = 2:3)

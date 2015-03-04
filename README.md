@@ -34,11 +34,12 @@ suppressMessages(library("dplyr"))
 # See what spreadsheets you have
 # (expect a prompt to authenticate with Google interactively HERE)
 (my_sheets <- list_sheets())
+#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [21 x 6]
 #> 
 #>                                     sheet_title
-#> 1                                   Temperature
-#> 2                          Public Testing Sheet
+#> 1                          Public Testing Sheet
+#> 2                                   Temperature
 #> 3                                   gas_mileage
 #> 4  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
 #> 5                                Testing helper
@@ -53,11 +54,11 @@ suppressMessages(library("dplyr"))
 my_sheets %>% glimpse()
 #> Observations: 21
 #> Variables:
-#> $ sheet_title  (chr) "Temperature", "Public Testing Sheet", "gas_milea...
-#> $ sheet_key    (chr) "1Hkh20-IEQzKaBTqwWrQEYqoCaqDoyLjbgX8x4keACgE", "...
+#> $ sheet_title  (chr) "Public Testing Sheet", "Temperature", "gas_milea...
+#> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-03 00:07:43, 2015-03-03 00:38:34, 2015-0...
+#> $ last_updated (time) 2015-03-04 18:06:51, 2015-03-03 00:07:43, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 
 # Hey let's look at the Gapminder data
@@ -67,7 +68,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-02 16:45:15 PST
+#>   Date of gspreadr::register_ss: 2015-03-04 10:12:46 PST
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -88,7 +89,7 @@ gap <- gap_key %>% register_ss
 #> sheet_title: Gapminder
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 
-# gspreadr may be able to determine the key the browser URL
+# gspreadr may be able to determine the key from the browser URL
 gap_url <- "https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/"
 gap <- gap_url %>% register_ss
 #> Identifying info will be processed as a URL.
@@ -170,6 +171,100 @@ head(oceania_reshaped, 10)
 #> 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
 #> 9    Australia   Oceania 1987  76.320 16257249  21888.89
 #> 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
+
+# Limit data retrieval to certain cells
+
+# Example: first 3 rows
+gap_3rows <- gap %>% get_row("Europe", row = 1:3)
+#> Accessing worksheet titled "Europe"
+gap_3rows %>% head()
+#> Source: local data frame [6 x 5]
+#> 
+#>   cell cell_alt row col cell_text
+#> 1   A1     R1C1   1   1   country
+#> 2   B1     R1C2   1   2 continent
+#> 3   C1     R1C3   1   3      year
+#> 4   D1     R1C4   1   4   lifeExp
+#> 5   E1     R1C5   1   5       pop
+#> 6   F1     R1C6   1   6 gdpPercap
+
+# convert to a data.frame (first row treated as header by default)
+gap_3rows %>% reshape_cf()
+#>   country continent year lifeExp     pop gdpPercap
+#> 1 Albania    Europe 2007  76.423 3600523  5937.029
+#> 2 Austria    Europe 2007  79.829 8199783 36126.493
+
+# Example: first row only
+gap_1row <- gap %>% get_row("Europe", row = 1)
+#> Accessing worksheet titled "Europe"
+gap_1row
+#> Source: local data frame [6 x 5]
+#> 
+#>   cell cell_alt row col cell_text
+#> 1   A1     R1C1   1   1   country
+#> 2   B1     R1C2   1   2 continent
+#> 3   C1     R1C3   1   3      year
+#> 4   D1     R1C4   1   4   lifeExp
+#> 5   E1     R1C5   1   5       pop
+#> 6   F1     R1C6   1   6 gdpPercap
+
+# convert to a named character vector
+gap_1row %>% simplify_cf()
+#>          A1          B1          C1          D1          E1          F1 
+#>   "country" "continent"      "year"   "lifeExp"       "pop" "gdpPercap"
+
+# just 2 columns, converted to data.frame
+gap %>%
+  get_col("Oceania", col = 3:4) %>%
+  reshape_cf()
+#> Accessing worksheet titled "Oceania"
+#>    year lifeExp
+#> 1  2007  81.235
+#> 2  2007  80.204
+#> 3  2002  80.370
+#> 4  2002  79.110
+#> 5  1997  78.830
+#> 6  1997  77.550
+#> 7  1992  77.560
+#> 8  1992  76.330
+#> 9  1987  76.320
+#> 10 1987  74.320
+#> 11 1982  74.740
+#> 12 1982  73.840
+#> 13 1977  73.490
+#> 14 1977  72.220
+#> 15 1972  71.930
+#> 16 1972  71.890
+#> 17 1967  71.100
+#> 18 1967  71.520
+#> 19 1962  70.930
+#> 20 1962  71.240
+#> 21 1957  70.330
+#> 22 1957  70.260
+#> 23 1952  69.120
+#> 24 1952  69.390
+
+# arbitrary cell range
+gap %>%
+  get_cells("Oceania", range = "D12:F15") %>%
+  reshape_cf(header = FALSE)
+#> Accessing worksheet titled "Oceania"
+#>      X4       X5       X6
+#> 1 74.74 15184200 19477.01
+#> 2 73.84  3210650 17632.41
+#> 3 73.49 14074100 18334.20
+#> 4 72.22  3164900 16233.72
+
+# arbitrary cell range, alternative specification
+gap %>%
+  get_via_cf("Oceania", max_row = 5, min_col = 1, max_col = 3) %>%
+  reshape_cf()
+#> Accessing worksheet titled "Oceania"
+#>       country continent year
+#> 1   Australia   Oceania 2007
+#> 2 New Zealand   Oceania 2007
+#> 3   Australia   Oceania 2002
+#> 4 New Zealand   Oceania 2002
 ```
 
 Authorization
@@ -191,7 +286,6 @@ login("my_email", "password")
 Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 ---------------------------------------------------------------------------------------------
 
--   convenience wrappers for the cell feed, i.e. row(s), column(s), range
 -   edit cells
 -   visual overview of which cells are populated
 -   finding a cell ?will we even do this?
