@@ -81,35 +81,35 @@ convert_range_to_limit_list <- function(range) {
   tmp <- range %>%
     stringr::str_split_fixed(":", 2) %>% ## A1:C5 --> "A1", "D5" as 1-row matrix
     drop() %>%                           ## 1-row matrix --> vector
-    {                                    ## handle case of single cell input
-      x <- .[. != ""]                    ## replicate the single address
-      rep_len(x, 2)                      ## "C5" --> "C5", "" --> "C5", "C5"
-    }
-  
-  A1_regex <- "^[A-Za-z]{1,2}[0-9]+$"
-  R1C1_regex <- "^R([0-9]+)C([0-9]+$)"
-  valid_regex <- stringr::str_c(c(A1_regex, R1C1_regex), collapse = "|")
-  if(!all(tmp %>% stringr::str_detect(valid_regex))) {
-    mess <- sprintf("Trying to set cell limits, but requested range is invalid:\n %s\n", paste(tmp, collapse = ", "))
-    stop(mess)
-  }
-  
-  ## convert addresses like "B4" to "R4C2"
-  rcrc <- all(tmp %>% stringr::str_detect("^R[0-9]+C[0-9]+$"))
-  if(!rcrc) {
-    tmp <- tmp %>% label_to_coord()    ## "A1", "C5" --> "R1C1", "R5C4"
-  }
-  
-  
-  ## complete conversion to a limits list
-  tmp %>% 
-    ## "R1C1", "R5C4" --> matrix w/ 2 rows, one per cell
-    ## 3 columns: full address, the row part, the column part
-    stringr::str_match("^R([0-9]+)C([0-9]+$)") %>%
-    `[`( , -1) %>%                       ## drop the column holding full address
-    as.integer() %>%                     ## convert character to integer
-    as.list() %>%                        ## convert to a list
-    setNames(c("min-row", "max-row", "min-col", "max-col")) ## names matter!
+{                                    ## handle case of single cell input
+  x <- .[. != ""]                    ## replicate the single address
+  rep_len(x, 2)                      ## "C5" --> "C5", "" --> "C5", "C5"
+}
+
+A1_regex <- "^[A-Za-z]{1,2}[0-9]+$"
+R1C1_regex <- "^R([0-9]+)C([0-9]+$)"
+valid_regex <- stringr::str_c(c(A1_regex, R1C1_regex), collapse = "|")
+if(!all(tmp %>% stringr::str_detect(valid_regex))) {
+  mess <- sprintf("Trying to set cell limits, but requested range is invalid:\n %s\n", paste(tmp, collapse = ", "))
+  stop(mess)
+}
+
+## convert addresses like "B4" to "R4C2"
+rcrc <- all(tmp %>% stringr::str_detect("^R[0-9]+C[0-9]+$"))
+if(!rcrc) {
+  tmp <- tmp %>% label_to_coord()    ## "A1", "C5" --> "R1C1", "R5C4"
+}
+
+
+## complete conversion to a limits list
+tmp %>% 
+  ## "R1C1", "R5C4" --> matrix w/ 2 rows, one per cell
+  ## 3 columns: full address, the row part, the column part
+  stringr::str_match("^R([0-9]+)C([0-9]+$)") %>%
+  `[`( , -1) %>%                       ## drop the column holding full address
+  as.integer() %>%                     ## convert character to integer
+  as.list() %>%                        ## convert to a list
+  setNames(c("min-row", "max-row", "min-col", "max-col")) ## names matter!
 
 }
 
@@ -174,4 +174,35 @@ construct_ws_feed_from_key <- function(key, visibility = "private") {
   tmp %>%
     stringr::str_replace('KEY', key) %>%
     stringr::str_replace('VISIBILITY', visibility)
+}
+
+
+
+#' Determine the range occupied by a vector/data frame
+#'
+#' @param limits from convert_range_limit_list
+#' @param input either a vector of a data frame
+#'
+#' @return character string for the range taken up by a vector or data frame
+build_range <- function(limits, input) {
+  
+  if(!is.data.frame(input)) {
+    # input is a vector
+    rows_to_add  <- 0
+    cols_to_add <- length(input) - 1
+  } else {
+    # input is a data frame
+    cols_to_add <- ncol(input) - 1
+    rows_to_add <- nrow(input)
+  }
+  
+  left_bound_row <- limits[["max-row"]]
+  left_bound_col <- limits[["max-col"]] 
+
+  right_bound_row <- sum(left_bound_row, rows_to_add) 
+  right_bound_col <- sum(left_bound_col, cols_to_add) %>% num_to_letter()
+  
+  left_bound_col <- left_bound_col %>% num_to_letter()
+  
+  paste0(left_bound_col, left_bound_row, ":", right_bound_col, right_bound_row)
 }

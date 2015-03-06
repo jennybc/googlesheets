@@ -81,3 +81,19 @@ test_that("We can a extract a key from a URL", {
   expect_equal(extract_key_from_url(pts_ws_feed), pts_key)
   
 })
+
+
+test_that("The range occupied by a df/vector is built given a ref cell", {
+  
+  small_df <- data.frame("a" = 1:3, "b" = 1:3)
+  v <- c(1:10)
+  
+  lim1 <- convert_range_to_limit_list("B2")
+  lim2 <- convert_range_to_limit_list("R2C2")
+
+  expect_equal(build_range(lim1, small_df), "B2:C5")
+  expect_equal(build_range(lim2, small_df), "B2:C5")
+
+  expect_equal(build_range(lim1, v), "B2:K2")
+  expect_equal(build_range(lim2, v), "B2:K2")
+})
