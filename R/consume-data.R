@@ -68,12 +68,16 @@ get_via_lf <- function(ss, ws = 1) {
 #' @param max_col positive integer, optional
 #' @param limits list, with named components holding the min and max for rows
 #'   and columns; intended primarily for internal use
+#' @param return_empty boolean whether to return empty cells in feed, default 
+#' is FALSE since if no query params are set then all cells in the worksheet 
+#' (default: 1000 x 26) will be returned! 
 #'   
 #' @family data consumption functions
 #'   
 #' @export
 get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
-                       min_col = NULL, max_col = NULL, limits = NULL) {
+                       min_col = NULL, max_col = NULL, limits = NULL,
+                       return_empty = FALSE) {
   
   this_ws <- get_ws(ss, ws)
   
@@ -87,23 +91,61 @@ get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
   }
   limits <- limits %>%
     validate_limits(this_ws$row_extent, this_ws$col_extent)
-
-  req <- gsheets_GET(this_ws$cellsfeed, query = limits)
   
-  x <- req$content %>% lfilt("entry") %>%
-    lapply(FUN = function(x) {
-      dplyr::data_frame(cell = x$title$text,
-                        cell_alt = x$id %>% basename,
-                        row = x$cell$.attrs["row"] %>% as.integer,
-                        col = x$cell$.attr["col"] %>% as.integer,
-                        # see issue #19 about all the places cell data is
-                        # (mostly redundantly) stored in the XML
-                        #content_text = x$content$text,
-                        #cell_inputValue = x$cell$.attrs["inputValue"],
-                        #cell_numericValue = x$cell$.attrs["numericValue"],
-                        cell_text = x$cell$text)
-    }) %>%
-    dplyr::bind_rows()
+  if(return_empty) {
+    req <- gsheets_GET(this_ws$cellsfeed, 
+                       query = c(limits, list("return-empty" = "true")))
+    
+    x <- req$content %>% lfilt("entry") %>%
+      lapply(FUN = function(x) {
+        
+        # filled cells: "row" "col" "inputValue" stored in x$cell$.attr 
+        # empty cells:  "row" "col" "inputValue" stored in x$cell
+        if(is.null(x$cell["row"] %>% unlist %>% unname)) {
+          # cell is not empty
+          row_num <- x$cell$.attrs["row"]
+          col_num <- x$cell$.attrs["col"]
+          text <- x$cell$text
+        } else {
+          # cell is empty
+          row_num <- x$cell["row"]
+          col_num <- x$cell["col"]
+          text <- x$cell["inputValue"]
+        }
+        
+        dplyr::data_frame(cell = x$title$text,
+                          cell_alt = x$id %>% basename,
+                          row = row_num %>% as.integer(),
+                          col = col_num %>% as.integer(),
+                          # see issue #19 about all the places cell data is
+                          # (mostly redundantly) stored in the XML
+                          #content_text = x$content$text,
+                          #cell_inputValue = x$cell$.attrs["inputValue"],
+                          #cell_numericValue = x$cell$.attrs["numericValue"],
+                          cell_text = text,
+                          edit_link = x %>% `[`(names(.) == "link") %>% `[[`(2) %>% 
+                            `[`("href"), # link containing full path to cell's id: "path/R1C1/version"
+                          cell_id = x$id) # full URL to cell to be updated
+      }) %>%
+      dplyr::bind_rows()
+  } else {
+    req <- gsheets_GET(this_ws$cellsfeed, query = limits)
+    
+    x <- req$content %>% lfilt("entry") %>%
+      lapply(FUN = function(x) {
+        dplyr::data_frame(cell = x$title$text,
+                          cell_alt = x$id %>% basename,
+                          row = x$cell$.attrs["row"] %>% as.integer,
+                          col = x$cell$.attr["col"] %>% as.integer,
+                          # see issue #19 about all the places cell data is
+                          # (mostly redundantly) stored in the XML
+                          #content_text = x$content$text,
+                          #cell_inputValue = x$cell$.attrs["inputValue"],
+                          #cell_numericValue = x$cell$.attrs["numericValue"],
+                          cell_text = x$cell$text)
+      }) %>%
+      dplyr::bind_rows()
+  }
   attr(x, "ws_title") <- this_ws$ws_title
   x
 }
@@ -198,7 +240,7 @@ reshape_cf <- function(x, header = TRUE) {
       }
       return(NULL)
     }
-
+    
     row_one <- x_augmented %>% 
       dplyr::filter_(~ row == min(row))
     var_names <- ifelse(is.na(row_one$cell_text),
@@ -251,9 +293,9 @@ simplify_cf <- function(x, convert = TRUE, as.is = TRUE,
   notation <- match.arg(notation)
   
   if(is.null(header) &&
-     x$row %>% min() == 1 &&
-     x$col %>% dplyr::n_distinct() == 1) {
-      header <-  TRUE
+       x$row %>% min() == 1 &&
+       x$col %>% dplyr::n_distinct() == 1) {
+    header <-  TRUE
   } else {
     header <- FALSE
   }
@@ -357,3 +399,5 @@ affirm_positive <- function(x) {
     NA
   }
 }
+
+

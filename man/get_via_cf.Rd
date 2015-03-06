@@ -6,7 +6,7 @@
 worksheet}
 \usage{
 get_via_cf(ss, ws = 1, min_row = NULL, max_row = NULL, min_col = NULL,
-  max_col = NULL, limits = NULL)
+  max_col = NULL, limits = NULL, return_empty = FALSE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet}
@@ -24,7 +24,11 @@ worksheet}
 \item{max_col}{positive integer, optional}
 
 \item{limits}{list, with named components holding the min and max for rows
-  and columns; intended primarily for internal use}
+and columns; intended primarily for internal use}
+
+\item{return_empty}{boolean whether to return empty cells in feed, default
+is FALSE since if no query params are set then all cells in the worksheet
+(default: 1000 x 26) will be returned!}
 }
 \description{
 No attempt to shape the returned data! Data.frame will have one row per cell.
