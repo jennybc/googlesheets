@@ -1,30 +1,23 @@
-# Sample .travis.yml for R projects from https://github.com/craigcitro/r-travis
-
 language: c
-
 before_install:
-  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-  - chmod 755 ./travis-tool.sh
-  - ./travis-tool.sh bootstrap
-
+- openssl aes-256-cbc -K $encrypted_93b7ad8c3b57_key -iv $encrypted_93b7ad8c3b57_iv
+  -in token_file.rds.enc -out tests/testthat/token_file.rds -d
+- curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+- chmod 755 ./travis-tool.sh
+- ./travis-tool.sh bootstrap
 install:
-  - ./travis-tool.sh install_deps
-  - ./travis-tool.sh github_package hadley/stringr
-  - ./travis-tool.sh github_package hadley/testthat
-  - ./travis-tool.sh github_package smbache/magrittr
-
+- ./travis-tool.sh install_deps
+- ./travis-tool.sh github_package hadley/stringr
+- ./travis-tool.sh github_package hadley/testthat
+- ./travis-tool.sh github_package smbache/magrittr
 script: ./travis-tool.sh run_tests
-
 after_script:
-  - ./travis-tool.sh dump_sysinfo
-
+- ./travis-tool.sh dump_sysinfo
 on_failure:
-  - ./travis-tool.sh dump_logs
-
+- ./travis-tool.sh dump_logs
 notifications:
   email:
     on_success: change
     on_failure: change
-
 env:
-  - secure: "KG+szfdd5qhWb5C/kz05BND8wkEreqSOlZOWc9o2XXH2wFoabNUbA90mK2WeSR99gzoPqeydphrGwco+UPfoXcAwowhk3PzVOAZPhMlEX3G2znpeq8d17k4cQ/KoqpO1upKiADYqmxHkMaxjxb8JDOmeCqhhW5HYcOvTNUHdH2I="
+- secure: KG+szfdd5qhWb5C/kz05BND8wkEreqSOlZOWc9o2XXH2wFoabNUbA90mK2WeSR99gzoPqeydphrGwco+UPfoXcAwowhk3PzVOAZPhMlEX3G2znpeq8d17k4cQ/KoqpO1upKiADYqmxHkMaxjxb8JDOmeCqhhW5HYcOvTNUHdH2I=
