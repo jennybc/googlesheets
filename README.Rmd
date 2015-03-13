@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 [![Project Status: Wip - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/0.1.0/wip.svg)](http://www.repostatus.org/#wip)
 
-**Not quite ready for showtime but release coming very soon!**
+**If the feature's here, then it works. More features and release coming soon.**
 
 ---
 
@@ -33,8 +33,6 @@ Features:
   - Access a spreadsheet by its title, key or URL.
   - Extract data or edit data.
   - Add | delete | rename | copy spreadsheets and worksheets.
-
-![gspreadr](README-gspreadr.png)
 
 Basic Usage
 ---
@@ -71,6 +69,8 @@ oceania_list_feed
 oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
 str(oceania_cell_feed, give.attr = FALSE)
 head(oceania_cell_feed, 10)
+
+# Reshape: instead of one row per cell, make a nice rectangular data.frame
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
 str(oceania_reshaped, give.attr = FALSE)
 head(oceania_reshaped, 10)
@@ -124,7 +124,5 @@ login("my_email", "password")
 Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 ---
 
-  * edit cells
+  * edit cells (see #42)
   * visual overview of which cells are populated
-  * finding a cell ?will we even do this?
-  
