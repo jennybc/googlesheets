@@ -1,3 +1,5 @@
+`%>%` <- magrittr::`%>%`
+
 ## Gapminder
 gap_url <- "https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/"
 gap_title <- "Gapminder"

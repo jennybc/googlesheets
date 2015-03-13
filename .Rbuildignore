@@ -9,3 +9,4 @@ vignettes/basic-usage.Rmd
 ^README-.*\.png$
 ^jenny-tmp.R$
 ^awaiting-resurrection$
+tests/testthat/token_file.rds.enc
