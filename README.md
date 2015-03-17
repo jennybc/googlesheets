@@ -1,7 +1,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Project Status: Wip - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/0.1.0/wip.svg)](http://www.repostatus.org/#wip)
 
-**Not quite ready for showtime but release coming very soon!**
+**If the feature's here, then it works. More features and release coming soon.**
 
 ------------------------------------------------------------------------
 
@@ -20,8 +20,6 @@ Features:
 -   Extract data or edit data.
 -   Add | delete | rename | copy spreadsheets and worksheets.
 
-![gspreadr](README-gspreadr.png)
-
 Basic Usage
 -----------
 
@@ -34,13 +32,12 @@ suppressMessages(library("dplyr"))
 # See what spreadsheets you have
 # (expect a prompt to authenticate with Google interactively HERE)
 (my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
-#> Source: local data frame [21 x 6]
+#> Source: local data frame [20 x 6]
 #> 
 #>                                     sheet_title
 #> 1                          Public Testing Sheet
-#> 2                                   Temperature
-#> 3                                   gas_mileage
+#> 2                                   gas_mileage
+#> 3                                   Temperature
 #> 4  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
 #> 5                                Testing helper
 #> 6                               Old Style Sheet
@@ -48,17 +45,26 @@ suppressMessages(library("dplyr"))
 #> 8                                     Gapminder
 #> 9                                    Gapminderx
 #> 10                                      Testing
-#> ..                                          ...
+#> 11                                Gapminder Raw
+#> 12                     Gapminder 2007 Can Write
+#> 13                       Gapminder by Continent
+#> 14                     Gapminder 2007 View Only
+#> 15                     Gapminder by Continent R
+#> 16                                  basic-usage
+#> 17                 Caffeine craver? (Responses)
+#> 18                        Private Sheet Example
+#> 19                     Gapminder by Continent 2
+#> 20                                  Code Sample
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
 my_sheets %>% glimpse()
-#> Observations: 21
+#> Observations: 20
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "Temperature", "gas_milea...
+#> $ sheet_title  (chr) "Public Testing Sheet", "gas_mileage", "Temperatu...
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
-#> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-04 18:06:51, 2015-03-03 00:07:43, 2015-0...
+#> $ owner        (chr) "gspreadr", "woo.kara", "gspreadr", "gspreadr", "...
+#> $ perm         (chr) "rw", "r", "rw", "rw", "rw", "rw", "rw", "rw", "r...
+#> $ last_updated (time) 2015-03-12 23:23:03, 2015-03-12 01:01:33, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 
 # Hey let's look at the Gapminder data
@@ -68,7 +74,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-04 10:12:46 PST
+#>   Date of gspreadr::register_ss: 2015-03-12 23:28:00 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -150,6 +156,8 @@ head(oceania_cell_feed, 10)
 #> 8    B2     R2C2   2   2   Oceania
 #> 9    C2     R2C3   2   3      2007
 #> 10   D2     R2C4   2   4    81.235
+
+# Reshape: instead of one row per cell, make a nice rectangular data.frame
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
 str(oceania_reshaped, give.attr = FALSE)
 #> 'data.frame':    24 obs. of  6 variables:
@@ -286,6 +294,5 @@ login("my_email", "password")
 Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 ---------------------------------------------------------------------------------------------
 
--   edit cells
+-   edit cells (see \#42)
 -   visual overview of which cells are populated
--   finding a cell ?will we even do this?
