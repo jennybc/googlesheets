@@ -27,7 +27,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
     message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
   }
   
-  ss
+  ss %>% invisible()
   
 }
 
@@ -76,7 +76,7 @@ delete_ss <- function(x, verbose = TRUE) {
     }
   }
   
-  invisible(cannot_find_sheet)
+  cannot_find_sheet %>% invisible()
   
 }
 
@@ -140,7 +140,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   if(cannot_find_sheet) {
     invisible(NULL)
   } else {
-    new_ss
+    new_ss %>% invisible()
   }
 }
 
@@ -198,7 +198,7 @@ add_ws <- function(ss, ws_title, nrow = 1000, ncol = 26, verbose = TRUE) {
   }
   
   if(ws_title_exist) {
-    ss_refresh
+    ss_refresh %>% invisible()
   } else {
     NULL
   }
@@ -245,7 +245,7 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
   if(ws_title_exist) {
     NULL
   } else {
-    ss_refresh
+    ss_refresh %>% invisible()
   }
 
 }
@@ -297,7 +297,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
   }
   
   if(from_is_gone && to_is_there) {
-    ss_refresh
+    ss_refresh %>% invisible()
   } else {
     NULL
   }
@@ -359,7 +359,7 @@ resize_ws <- function(ss, ws_title,
   }
   
   if(success) {
-    ss %>% register_ss()
+    ss %>% register_ss() %>% invisible()
   } else{
     NULL
   }

@@ -35,6 +35,27 @@ test_that("R1C1 notation converts to A1 notation", {
   
 })
 
+
+test_that("Cell range is converted to a limit list and vice versa", {
+  
+  rgA1 <- "A1:C4"
+  rgRC <- "R1C1:R4C3"
+  rgLL <- list(`min-row` = 1, `max-row` = 4, `min-col` = 1, `max-col` = 3)
+  expect_equal(convert_range_to_limit_list(rgA1), rgLL)
+  expect_equal(convert_limit_list_to_range(rgLL, pn = "A1"), rgA1)
+  expect_equal(convert_limit_list_to_range(rgLL, pn = "R1C1"), rgRC)
+
+  rgA1 <- "E7"
+  rgA1A1 <- "E7:E7"
+  rgRC <- "R7C5"
+  rgRCRC <- "R7C5:R7C5"
+  rgLL <- list(`min-row` = 7, `max-row` = 7, `min-col` = 5, `max-col` = 5)
+  expect_equal(convert_range_to_limit_list(rgA1), rgLL)
+  expect_equal(convert_limit_list_to_range(rgLL, pn = "A1"), rgA1A1)
+  expect_equal(convert_limit_list_to_range(rgLL, pn = "R1C1"), rgRCRC)
+  
+})
+
 ss <- register_ss(ws_feed = pts_ws_feed)
 
 test_that("We can get list of worksheets in a spreadsheet", {
@@ -88,18 +109,3 @@ test_that("We can a extract a key from a URL", {
   
 })
 
-
-test_that("The range occupied by a df/vector is built given a ref cell", {
-  
-  small_df <- data.frame("a" = 1:3, "b" = 1:3)
-  v <- c(1:10)
-  
-  lim1 <- convert_range_to_limit_list("B2")
-  lim2 <- convert_range_to_limit_list("R2C2")
-
-  expect_equal(build_range(lim1, small_df), "B2:C5")
-  expect_equal(build_range(lim2, small_df), "B2:C5")
-
-  expect_equal(build_range(lim1, v), "B2:K2")
-  expect_equal(build_range(lim2, v), "B2:K2")
-})

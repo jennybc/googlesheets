@@ -6,7 +6,7 @@
 worksheet}
 \usage{
 get_via_cf(ss, ws = 1, min_row = NULL, max_row = NULL, min_col = NULL,
-  max_col = NULL, limits = NULL, return_empty = FALSE)
+  max_col = NULL, limits = NULL, return_empty = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet}
@@ -29,6 +29,8 @@ and columns; intended primarily for internal use}
 \item{return_empty}{boolean whether to return empty cells in feed, default
 is FALSE since if no query params are set then all cells in the worksheet
 (default: 1000 x 26) will be returned!}
+
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 No attempt to shape the returned data! Data.frame will have one row per cell.

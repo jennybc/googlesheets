@@ -43,7 +43,6 @@ list_ws <- function(ss) {
 
 }
 
-
 #' Convert column IDs from letter representation to numeric
 #'
 #' @param x character vector of letter-style column IDs (case insensitive)
@@ -56,7 +55,6 @@ letter_to_num <- function(x) {
     unname()
 }
 
-
 #' Convert column IDs from numeric to letter representation
 #'
 #' @param x vector of numeric column IDs
@@ -66,22 +64,17 @@ num_to_letter <- function(x) {
          LETTERS[((x - 1) %% 26) + 1], sep = "")
 }
 
-#' Convert label (A1) notation to coordinate (R1C1) notation
+#' Convert A1 positioning notation to R1C1 notation
 #'
-#' A1 and R1C1 are equivalent addresses for position of cells.
-#'
-#' @param x label notation for position of cell
+#' @param x cell position in A1 notation
 label_to_coord <- function(x) {
   paste0("R", stringr::str_extract(x, "[[:digit:]]*$") %>% as.integer(),
          "C", stringr::str_extract(x, "^[[:alpha:]]*") %>% letter_to_num())
 }
 
-
-#' Convert coordinate (R1C1) notation to label (A1) notation
+#' Convert R1C1 positioning notation to A1 notation
 #'
-#' A1 and R1C1 are equivalent addresses for position of cells.
-#'
-#' @param x coord notation for position of cell
+#' @param x cell position in R1C1 notation
 coord_to_label <- function(x) {
   paste0(sub("^R[0-9]+C([0-9]+)$", "\\1", x) %>%
            as.integer() %>% num_to_letter(),
@@ -127,6 +120,26 @@ convert_range_to_limit_list <- function(range) {
   
 }
 
+#' Convert a limits list to a cell range 
+#'
+#' @param limits limits list
+#' @param pn positioning notation
+convert_limit_list_to_range <- function(limits, pn = c('R1C1', 'A1')) {
+
+  pn <- match.arg(pn)
+  
+  range <- c(paste0("R", limits$`min-row`, "C", limits$`min-col`),
+             paste0("R", limits$`max-row`, "C", limits$`max-col`))
+  
+  if(pn == 'A1') {
+    range <- range %>% coord_to_label()
+  }
+  
+  paste(range, collapse = ":")
+
+}
+
+
 ## functions for annoying book-keeping tasks with lists
 ## probably more naturally done via rlist or purrr
 ## see #12 for plan re: getting outside help for FP w/ lists
@@ -149,8 +162,8 @@ lfilt <- function(x, name, ...) {
 llpluck <- function(x, xpath) {
   x %>% plyr::llply("[[", xpath) %>% plyr::llply(unname)
 }
-lapluck <- function(x, xpath) {
-  x %>% plyr::laply("[[", xpath) %>% unname()
+lapluck <- function(x, xpath, .drop = TRUE) {
+  x %>% plyr::laply("[[", xpath, .drop = .drop) %>% unname()
 }
 
 # OMG this is just here to use during development, i.e. after
@@ -188,35 +201,4 @@ construct_ws_feed_from_key <- function(key, visibility = "private") {
   tmp %>%
     stringr::str_replace('KEY', key) %>%
     stringr::str_replace('VISIBILITY', visibility)
-}
-
-
-
-#' Determine the cell range spanned by vector, data.frame, or matrix
-#'
-#' @param limits from convert_range_limit_list
-#' @param input a vector, data.frame, or matrix
-#'
-#' @return character string for the range spanned by the input
-build_range <- function(limits, input) {
-  
-  if(!is.data.frame(input)) {
-    # input is a vector
-    rows_to_add  <- 0
-    cols_to_add <- length(input) - 1
-  } else {
-    # input is a data frame
-    cols_to_add <- ncol(input) - 1
-    rows_to_add <- nrow(input)
-  }
-  
-  left_bound_row <- limits[["max-row"]]
-  left_bound_col <- limits[["max-col"]] 
-
-  right_bound_row <- sum(left_bound_row, rows_to_add) 
-  right_bound_col <- sum(left_bound_col, cols_to_add) %>% num_to_letter()
-  
-  left_bound_col <- left_bound_col %>% num_to_letter()
-  
-  paste0(left_bound_col, left_bound_row, ":", right_bound_col, right_bound_row)
 }

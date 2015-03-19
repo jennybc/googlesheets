@@ -70,16 +70,20 @@ get_via_lf <- function(ss, ws = 1) {
 #'   and columns; intended primarily for internal use
 #' @param return_empty boolean whether to return empty cells in feed, default 
 #' is FALSE since if no query params are set then all cells in the worksheet 
-#' (default: 1000 x 26) will be returned! 
+#' (default: 1000 x 26) will be returned!
+#' @param verbose logical; do you want informative messages?
 #'   
 #' @family data consumption functions
 #'   
 #' @export
+#' 
+## TO DO: add argument to control whether edit_link and cell_id are returned
+## TO DO: can I improve what joanna did when she generalized this?
 get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
                        min_col = NULL, max_col = NULL, limits = NULL,
-                       return_empty = FALSE) {
+                       return_empty = FALSE, verbose = TRUE) {
   
-  this_ws <- get_ws(ss, ws)
+  this_ws <- get_ws(ss, ws, verbose)
   
   if(is.null(limits)) {
     limits <- list("min-row" = min_row, "max-row" = max_row,

@@ -2,14 +2,14 @@
 % Please edit documentation in R/utils.R
 \name{label_to_coord}
 \alias{label_to_coord}
-\title{Convert label (A1) notation to coordinate (R1C1) notation}
+\title{Convert A1 positioning notation to R1C1 notation}
 \usage{
 label_to_coord(x)
 }
 \arguments{
-\item{x}{label notation for position of cell}
+\item{x}{cell position in A1 notation}
 }
 \description{
-A1 and R1C1 are equivalent addresses for position of cells.
+Convert A1 positioning notation to R1C1 notation
 }
 

@@ -1,40 +1,88 @@
 context("updating cell values")
 
-test_that("Cells are updated", {
-  
-  ss <- register_ss(pts_title)
-  
-  ws_title <- "for_updating"
-  small_df1 <- data.frame("Apples" = 1, "Oranges" = 2)
-  small_df2 <- data.frame("a" = 98:100, "b" = 98:100, "c" = 98:100)
-  
-  # Bad input
-  expect_error(update_cells(ss, ws_title, "A1:A5", c(1,2,3)), "does not match")
-  
-  # update 1 cell
-  expect_message(update_cells(ss, ws_title, "A1", "Bananas"), 
-                 "successfully updated") 
-  
-  # update >1 cell, ref cell given
-  expect_message(update_cells(ss, ws_title, "B1", small_df1), 
-                 "successfully updated")
-  
-  # update >1 cell, range given
-  expect_message(update_cells(ss, ws_title, "A2:C3", 1:6),
-                 "successfully updated")
-  
-  expect_message(update_cells(ss, ws_title, "R4C1:R7C3", small_df2),
-                 "successfully updated")
-  
-  expect_true(all(c("Bananas", "Apples", "Oranges", 1:6, "a", "b", "c", 98:100) %in% 
-                get_cells(ss, ws = ws_title, "A1:C7")$cell_text))
+ss <- register_ss(pts_title, verbose = FALSE)
+ws <- "for_updating"
 
-  # update with empty strings to "clear" cells -> cells wont be returned in cf
-  ss <- update_cells(ss, ws_title, "A4:C7", rep("", 12))
-  expect_equal(get_via_cf(ss, ws_title) %>% nrow, 9)
+test_that("Input converts to character vector (or not)", {
   
-  expect_message(ss <- update_cells(ss, ws_title, "AA1", "Way out there!"), 
+  expect_ok_as_input <- function(x) {
+    expect_is(x %>% as_character_vector(), "character")
+  }
+  
+  expect_ok_as_input(-3:3)
+  expect_ok_as_input(rnorm(5))
+  expect_ok_as_input(LETTERS[1:5])
+  expect_ok_as_input(LETTERS[1:5] %>% factor())
+  expect_ok_as_input(c(TRUE, FALSE, TRUE))
+  expect_ok_as_input(Sys.Date())
+  expect_ok_as_input(Sys.time())
+  
+  expect_ok_as_input(matrix(1:6, nrow = 2))
+  
+  tmp <- iris %>% head()
+  expect_ok_as_input(tmp)
+  tmp2 <- tmp %>% as_character_vector()
+  expect_equivalent(tmp2[seq_len(ncol(iris))], iris[1, ] %>% t() %>% drop())
+  tmp3 <- tmp %>% as_character_vector(header = TRUE)
+  expect_identical(tmp3[seq_len(ncol(iris))], names(iris))
+  
+  expect_error(rnorm %>% as_character_vector(), "not suitable as input")
+  expect_error(ss %>% as_character_vector(), "not suitable as input")
+  expect_error(array(1:9, dim = rep(3,3)) %>% as_character_vector(),
+               "Input has more than 2 dimensions")
+})
+
+test_that("Single cells can be updated", {
+
+  expect_message(ss <- edit_cells(ss, ws, "A1", "eggplant"), 
+                 "successfully updated")
+  tmp <- ss %>% get_cells(ws, "A1") %>% simplify_cf(header = FALSE)
+  expect_identical(tmp, c(A1 = "eggplant"))
+  
+  # force worksheet extent to be increased
+  expect_message(ss <- edit_cells(ss, ws, "R1C30", "Way out there!"), 
                  "dimensions changed")
+  expect_equal(ss %>% get_ws(ws) %>% `[[`("col_extent"), 30)
+  
   # clean up
-  resize_ws(ss, ws_title, 1000, 26)
+  resize_ws(ss, ws, 1000, 26)
+})
+
+iris_ish <- iris %>% head(3)
+iris_ish$Species <- iris_ish$Species %>% as.character()
+
+test_that("2-dimensional things can be uploaded", {
+
+  # update with empty strings to "clear" cells
+  tmp <- ss %>% get_via_cf(ws)
+  input <- matrix("", nrow = max(tmp$row), ncol = max(tmp$col))
+  ss <- ss %>% edit_cells(ws, "A1", input)
+  tmp <- ss %>% get_via_cf(ws)
+  expect_equal(dim(tmp), c(0, 0))
+  
+  # update w/ a data.frame, header = FALSE
+  ss <- ss %>% edit_cells(ws, input = iris_ish)
+  tmp <- ss %>% get_via_cf(ws) %>% reshape_cf(header = FALSE)
+  expect_equivalent(tmp, iris_ish)
+  
+  # update w/ a data.frame, header = TRUE
+  ss <- ss %>% edit_cells(ws, input = iris_ish, header = TRUE)
+  tmp <- ss %>% get_via_cf(ws) %>% reshape_cf()
+  expect_identical(tmp, iris_ish)
+  
+})
+
+test_that("Vectors can be uploaded", {
+  
+  # by_row = FALSE
+  ss <- ss %>% edit_cells(ws, anchor = "A8", input = LETTERS[1:5])
+  tmp <- ss %>% get_via_cf(ws, min_row = 7) %>% simplify_cf()
+  expect_equivalent(tmp, LETTERS[1:5])
+  
+  # by_row = TRUE
+  ss <- ss %>% edit_cells(ws, anchor = "A15",
+                          input = LETTERS[5:1], by_row = TRUE)
+  tmp <- ss %>% get_via_cf(ws, min_row = 15) %>% simplify_cf()
+  expect_equivalent(tmp, LETTERS[5:1])
+  
 })
