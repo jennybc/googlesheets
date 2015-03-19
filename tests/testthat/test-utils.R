@@ -37,6 +37,12 @@ test_that("R1C1 notation converts to A1 notation", {
 
 ss <- register_ss(ws_feed = pts_ws_feed)
 
+test_that("We can get list of worksheets in a spreadsheet", {
+  ws_listing <- ss %>% list_ws()
+  expect_true(all(c('Asia', 'Africa', 'Americas', 'Europe', 'Oceania') %in%
+                    ws_listing))
+})
+
 test_that("We can obtain worksheet info from a registered spreadsheet", {
 
   ## retrieve by worksheet title
