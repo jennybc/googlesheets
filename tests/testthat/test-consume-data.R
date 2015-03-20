@@ -47,11 +47,12 @@ test_that("Bad cell ranges throw error", {
 
 test_that("We can get data from specific cells", {
   
-  foo <- ss %>% get_via_cf(ws = "Africa", min_row = 2, min_col = 4, max_col = 4)
+  foo <- ss %>%
+    get_via_cf(ws = "Africa", min_row = 2, min_col = 4, max_col = 4)
   expect_equal(foo$cell, paste0("D", 2:7))
   
-  foo <- ss %>% get_via_cf(ws = 2,
-                           min_row = 3, max_row = 5, min_col = 1, max_col = 3)
+  foo <- ss %>%
+    get_via_cf(ws = 2, min_row = 3, max_row = 5, min_col = 1, max_col = 3)
   expect_equal(foo$cell, paste0(LETTERS[1:3], rep(3:5, each = 3)))
 
   foo2 <- ss %>%

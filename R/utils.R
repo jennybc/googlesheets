@@ -1,11 +1,11 @@
 #' Retrieve a worksheet-describing list from a spreadsheet
 #' 
-#' From a registered spreadsheet, retrieve a list (actually a row of a
+#' From a registered spreadsheet, retrieve a list (actually a row of a 
 #' data.frame) giving everything we know about a specific worksheet.
 #' 
-#' @param ss a registered spreadsheet
-#' @param ws a positive integer or character string specifying which worksheet
-#' @param verbose logical, indicating whether to give a message re: title of the worksheet being accessed
+#' @inheritParams get_via_lf
+#' @param verbose logical, indicating whether to give a message re: title of the
+#'   worksheet being accessed
 get_ws <- function(ss, ws, verbose = TRUE) {
   
   stopifnot(inherits(ss, "spreadsheet"),
@@ -29,6 +29,20 @@ get_ws <- function(ss, ws, verbose = TRUE) {
   ss$ws[ws, ]
 }
 
+#' List the worksheets in a spreadsheet
+#' 
+#' Retrieve the titles of all the worksheets in registered spreadsheet.
+#' 
+#' @inheritParams get_via_lf
+#' @export
+list_ws <- function(ss) {
+  
+  stopifnot(inherits(ss, "spreadsheet"))
+  
+  ss$ws$ws_title
+
+}
+
 #' Convert column IDs from letter representation to numeric
 #'
 #' @param x character vector of letter-style column IDs (case insensitive)
@@ -41,7 +55,6 @@ letter_to_num <- function(x) {
     unname()
 }
 
-
 #' Convert column IDs from numeric to letter representation
 #'
 #' @param x vector of numeric column IDs
@@ -51,22 +64,17 @@ num_to_letter <- function(x) {
          LETTERS[((x - 1) %% 26) + 1], sep = "")
 }
 
-#' Convert label (A1) notation to coordinate (R1C1) notation
+#' Convert A1 positioning notation to R1C1 notation
 #'
-#' A1 and R1C1 are equivalent addresses for position of cells.
-#'
-#' @param x label notation for position of cell
+#' @param x cell position in A1 notation
 label_to_coord <- function(x) {
   paste0("R", stringr::str_extract(x, "[[:digit:]]*$") %>% as.integer(),
          "C", stringr::str_extract(x, "^[[:alpha:]]*") %>% letter_to_num())
 }
 
-
-#' Convert coordinate (R1C1) notation to label (A1) notation
+#' Convert R1C1 positioning notation to A1 notation
 #'
-#' A1 and R1C1 are equivalent addresses for position of cells.
-#'
-#' @param x coord notation for position of cell
+#' @param x cell position in R1C1 notation
 coord_to_label <- function(x) {
   paste0(sub("^R[0-9]+C([0-9]+)$", "\\1", x) %>%
            as.integer() %>% num_to_letter(),
@@ -100,7 +108,6 @@ convert_range_to_limit_list <- function(range) {
     tmp <- tmp %>% label_to_coord()    ## "A1", "C5" --> "R1C1", "R5C4"
   }
   
-  
   ## complete conversion to a limits list
   tmp %>% 
     ## "R1C1", "R5C4" --> matrix w/ 2 rows, one per cell
@@ -110,8 +117,28 @@ convert_range_to_limit_list <- function(range) {
     as.integer() %>%                     ## convert character to integer
     as.list() %>%                        ## convert to a list
     setNames(c("min-row", "max-row", "min-col", "max-col")) ## names matter!
+  
+}
+
+#' Convert a limits list to a cell range 
+#'
+#' @param limits limits list
+#' @param pn positioning notation
+convert_limit_list_to_range <- function(limits, pn = c('R1C1', 'A1')) {
+
+  pn <- match.arg(pn)
+  
+  range <- c(paste0("R", limits$`min-row`, "C", limits$`min-col`),
+             paste0("R", limits$`max-row`, "C", limits$`max-col`))
+  
+  if(pn == 'A1') {
+    range <- range %>% coord_to_label()
+  }
+  
+  paste(range, collapse = ":")
 
 }
+
 
 ## functions for annoying book-keeping tasks with lists
 ## probably more naturally done via rlist or purrr
@@ -135,8 +162,8 @@ lfilt <- function(x, name, ...) {
 llpluck <- function(x, xpath) {
   x %>% plyr::llply("[[", xpath) %>% plyr::llply(unname)
 }
-lapluck <- function(x, xpath) {
-  x %>% plyr::laply("[[", xpath) %>% unname()
+lapluck <- function(x, xpath, .drop = TRUE) {
+  x %>% plyr::laply("[[", xpath, .drop = .drop) %>% unname()
 }
 
 # OMG this is just here to use during development, i.e. after
