@@ -427,3 +427,40 @@ affirm_positive <- function(x) {
     NA
   }
 }
+
+
+#' Get all data from a worksheet as a tbl_df or data.frame
+#' 
+#' This function consumes data using the exportcsv links found in the worksheets 
+#' feed. Unlike using the list feed, this method does not assume populated cells form 
+#' a neat rectangle, all cells within the data rectangle (max row and 
+#' column with data) are returned. Also, capitals and underscores 
+#' are preserved in the header. Empty cells will be assigned 
+#' NA. If you want all of your data, this is the fastest way to get it. 
+#' This is faster than methods based on the listfeed and cellfeed.
+#' 
+#' 
+#' @param ss a registered Google spreadsheet
+#' @param ws positive integer or character string specifying index or title, 
+#'   respectively, of the worksheet to consume
+#' @param ... further arguments to be passed to read.csv, read.table
+#'   
+#'   
+#' @export
+get_via_csv <- function(ss, ws = 1, ...) {
+  this_ws <- get_ws(ss, ws)
+  
+  # since gsheets_GET expects xml back, just using GET for now
+  req <- 
+    httr::GET(this_ws$exportcsv, get_google_token())
+  
+  if(is.null(httr::content(req))) {
+    stop("Worksheet is empty. There are no cells that contain data.")
+  }
+  
+  # content() will call on read.csv 
+  # for empty cells, numeric columns returned as NA vs "" for chr columns
+  # so set all "" to NA
+  dat <- req %>% httr::content(na.strings = c("", "NA"), ...) %>% 
+    dplyr::as_data_frame() 
+}
