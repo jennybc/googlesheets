@@ -27,7 +27,7 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
   ## TO DO: eventually we will depend on xml2 instead of XML and then we should
   ## use it to parse the XML instead of httr:content()
   ## see https://github.com/hadley/httr/issues/189
-  req$content <- httr::content(req, type = "text/xml")
+  req$content <- httr::content(req, type = "text/xml", encoding = "UTF-8")
   
   if(to_list) {
     req$content <- XML::xmlToList(req$content)

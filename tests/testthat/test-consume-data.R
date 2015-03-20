@@ -179,3 +179,11 @@ test_that("Validation is in force for row / columns limits in the cell feed", {
   expect_error(get_via_cf(ss, max_col = 27), "less than or equal to")
   
 })
+
+
+test_that("Special Characters can be imported correctly", {
+  
+  expect_equal_to_reference(get_via_lf(ss, ws = "special_chars"), 
+                            "pts_special_chars.rds")
+})
+
