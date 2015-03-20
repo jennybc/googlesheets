@@ -35,40 +35,32 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Source: local data frame [20 x 6]
+#> Auto-refreshing stale OAuth token.
+#> Source: local data frame [21 x 6]
 #> 
 #>                                     sheet_title
 #> 1                          Public Testing Sheet
-#> 2                                   gas_mileage
-#> 3                                   Temperature
-#> 4  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 5                                Testing helper
-#> 6                               Old Style Sheet
-#> 7                                    jenny-test
-#> 8                                     Gapminder
-#> 9                                    Gapminderx
-#> 10                                      Testing
-#> 11                                Gapminder Raw
-#> 12                     Gapminder 2007 Can Write
-#> 13                       Gapminder by Continent
-#> 14                     Gapminder 2007 View Only
-#> 15                     Gapminder by Continent R
-#> 16                                  basic-usage
-#> 17                 Caffeine craver? (Responses)
-#> 18                        Private Sheet Example
-#> 19                     Gapminder by Continent 2
-#> 20                                  Code Sample
+#> 2                                       scoring
+#> 3                                   gas_mileage
+#> 4                                   Temperature
+#> 5  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 6                                Testing helper
+#> 7                               Old Style Sheet
+#> 8                                    jenny-test
+#> 9                                     Gapminder
+#> 10                                   Gapminderx
+#> ..                                          ...
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 20
+#> Observations: 21
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "gas_mileage", "Temperatu...
+#> $ sheet_title  (chr) "Public Testing Sheet", "scoring", "gas_mileage",...
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
-#> $ owner        (chr) "gspreadr", "woo.kara", "gspreadr", "gspreadr", "...
-#> $ perm         (chr) "rw", "r", "rw", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-20 20:28:20, 2015-03-12 01:01:33, 2015-0...
+#> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
+#> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
+#> $ last_updated (time) 2015-03-20 23:14:48, 2015-03-20 22:32:48, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -84,7 +76,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-20 13:40:38 PDT
+#>   Date of gspreadr::register_ss: 2015-03-20 16:35:05 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -307,17 +299,17 @@ foo <- new_ss("foo")
 #> Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1YmldeCYfzAKKfLG8pZVfAO4dm53QaosWTcbJiY69D-Q
+#> sheet_key: 1-4Zl924nBZkO9UPgIloUTNf6a50afQCi5b1JGt1CkP0
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-20 13:40:46 PDT
-#> Date of last spreadsheet update: 2015-03-20 20:40:44 UTC
+#>   Date of gspreadr::register_ss: 2015-03-20 16:35:16 PDT
+#> Date of last spreadsheet update: 2015-03-20 23:35:12 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1YmldeCYfzAKKfLG8pZVfAO4dm53QaosWTcbJiY69D-Q
+#> Key: 1-4Zl924nBZkO9UPgIloUTNf6a50afQCi5b1JGt1CkP0
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -370,15 +362,6 @@ delete_ss("foo")
 authorize() 
 ```
 
-#### Alternate authorization: login with your Google account
-
-*This is being shudown by Google very very soon, in favor of OAuth, and we're about to just delete this functionlity from `gspreadr`.*
-
-``` r
-login("my_email", "password")
-```
-
-Stuff we are in the process of bringing back online after the Great Refactor of February 2015
----------------------------------------------------------------------------------------------
+##### Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 
 -   visual overview of which cells are populated

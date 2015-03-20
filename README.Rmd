@@ -176,15 +176,6 @@ delete_ss("foo")
 authorize() 
 ```
 
-#### Alternate authorization: login with your Google account
-
-*This is being shudown by Google very very soon, in favor of OAuth, and we're about to just delete this functionlity from `gspreadr`.*
-
-```{r login, eval = FALSE}
-login("my_email", "password")
-```
-  
-Stuff we are in the process of bringing back online after the Great Refactor of February 2015
----
+##### Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 
   * visual overview of which cells are populated
