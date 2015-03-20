@@ -20,12 +20,7 @@ This vignette shows the basic functionality of `gspreadr`.
 
 # User Authentication
 
-In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. There are 2 ways to do this in `gspreadr`. 
-
-1.  `login("email", "password")` (if you really want to...)
-2.  `authorize()` (recommended)
-
-Many `gspreadr` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
+In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `gspreadr` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
 
 The `authorize()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `gspreadr` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
 
@@ -34,8 +29,6 @@ If you want to switch to a different Google account, run `authorize(new_user = T
 *In a hidden chunk, we are logging into Google as a user associated with this package, so we can work with some Google spreadsheets later in this vignette.*
 
 ```{r authorize, include = FALSE}
-## assume the worst
-Sys.setenv(OAUTH = "FALSE")
 
 ## look for .httr-oauth in pwd (assuming pwd is gspreadr) or two levels up
 ## (assuming pwd is gspreadr/tests/testthat)
@@ -48,33 +41,8 @@ HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
 if(length(HTTR_OAUTH) > 0) {
   HTTR_OAUTH <- HTTR_OAUTH[1]
   file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
-  Sys.setenv(OAUTH = "TRUE")
 }
 
-## we define environment variables on local machines in ~/.R/check.Renviron
-## which contains:
-## GSPREADR_USERNAME=blahblahblah <-- not actually consulted now
-## GSPREADR_PASSWORD=blahblahblah
-## this approach works for R CMD check
-
-## for other testing approaches, we might just read that file explicitly
-## example: RStudio > Build > Test package (if no .httr-oauth had been found)
-
-## finally, login approach works on Travis because did this:
-## http://docs.travis-ci.com/user/environment-variables/
-## http://docs.travis-ci.com/user/encryption-keys/
-
-if(Sys.getenv("OAUTH") == "FALSE") {
-  
-  if(Sys.getenv("GSPREADR_PASSWORD") == "") {
-    gspreadr_credentials <- read.table(file.path("~", ".R", "check.Renviron"),
-                                       sep = "=", stringsAsFactors = FALSE)
-    login("gspreadr@gmail.com", gspreadr_credentials$V2[2])
-  } else {
-    login("gspreadr@gmail.com", Sys.getenv("GSPREADR_PASSWORD"))
-  }
-
-}
 ```
 
 # Get a Google spreadsheet to practice with

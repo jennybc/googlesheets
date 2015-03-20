@@ -107,20 +107,14 @@ gap %>%
   reshape_cf()
 ```
 
-Authorization
+Authorization using OAuth2 (recommended and auto-triggered in many cases)
 ---
-##### Authorization using OAuth2 (recommended and auto-triggered in many cases)
+
 ```{r authorize, eval = FALSE}
 # Give gspreadr permission to access your spreadsheets and google drive
 authorize() 
 ```
 
-##### Alternate authorization: login with your Google account
-
-```{r login, eval = FALSE}
-login("my_email", "password")
-```
-  
 Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 ---
 

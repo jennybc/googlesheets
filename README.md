@@ -64,7 +64,7 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "woo.kara", "gspreadr", "gspreadr", "...
 #> $ perm         (chr) "rw", "r", "rw", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-12 23:23:03, 2015-03-12 01:01:33, 2015-0...
+#> $ last_updated (time) 2015-03-20 19:43:25, 2015-03-12 01:01:33, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 
 # Hey let's look at the Gapminder data
@@ -74,7 +74,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-12 23:28:00 PDT
+#>   Date of gspreadr::register_ss: 2015-03-20 12:52:08 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -275,20 +275,12 @@ gap %>%
 #> 4 New Zealand   Oceania 2002
 ```
 
-Authorization
--------------
-
-##### Authorization using OAuth2 (recommended and auto-triggered in many cases)
+Authorization using OAuth2 (recommended and auto-triggered in many cases)
+-------------------------------------------------------------------------
 
 ``` r
 # Give gspreadr permission to access your spreadsheets and google drive
 authorize() 
-```
-
-##### Alternate authorization: login with your Google account
-
-``` r
-login("my_email", "password")
 ```
 
 Stuff we are in the process of bringing back online after the Great Refactor of February 2015
