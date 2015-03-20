@@ -9,11 +9,11 @@
 #' from the anchor across a row or down a column.
 #' 
 #' @inheritParams get_via_lf
-#' @param anchor single character string specifying the upper left cell of the 
-#'   cell range to edit; positioning notation can be either "A1" or "R1C1"
 #' @param input new cell values, as an object that can be coerced into a 
 #'   character vector, presumably an atomic vector, a factor, a matrix or a 
 #'   data.frame
+#' @param anchor single character string specifying the upper left cell of the 
+#'   cell range to edit; positioning notation can be either "A1" or "R1C1"
 #' @param by_row logical; should we fill cells across a row (\code{by_row = 
 #'   TRUE}) or down a column (\code{by_row = FALSE}, default); consulted only 
 #'   when \code{input} is a vector, i.e. \code{dim(input)} is \code{NULL}
@@ -24,7 +24,7 @@
 #' @param verbose logical; do you want informative message?
 #'   
 #' @export
-edit_cells <- function(ss, ws, anchor = 'A1', input = '',
+edit_cells <- function(ss, ws, input = '', anchor = 'A1',
                        by_row = FALSE, header = FALSE, verbose = TRUE) {
   
   catch_hopeless_input(input)
@@ -65,8 +65,9 @@ edit_cells <- function(ss, ws, anchor = 'A1', input = '',
   
   input <- input %>% as_character_vector(header = header)
 
-  cells_df <- ss %>% get_via_cf(ws, limits = limits, return_empty = TRUE,
-                                verbose = FALSE) %>%
+  cells_df <- ss %>%
+    get_via_cf(ws, limits = limits,
+               return_empty = TRUE, return_links = TRUE, verbose = FALSE) %>%
     dplyr::mutate_(update_value = ~ input)
   
   update_entries <- 

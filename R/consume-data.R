@@ -1,10 +1,19 @@
-#' Get data from a rectangular worksheet as a tbl_df
+#' Get data from a rectangular worksheet as a tbl_df or data.frame
 #' 
-#' Gets data via the listfeed, which assumes populated cells form a neat 
-#' rectangle. First row regarded as header row of variable or column names. If 
-#' data is neatly rectangular and you want all of it, this is the fastest way to
-#' get it. Anecdotally, ~3x faster than using methods based on the cellfeed.
+#' Gets data via the list feed, which assumes populated cells form a neat 
+#' rectangle. The list feed consumes data row by row. First row regarded as
+#' header row of variable or column names. If data is neatly rectangular and you
+#' want all of it, this is the fastest way to get it. Anecdotally, ~3x faster
+#' than using methods based on the cellfeed.
 #' 
+#' @note When you use the listfeed, the Sheets API transforms the variable or 
+#'   column names like so: 'The column names are the header values of the 
+#'   worksheet lowercased and with all non-alpha-numeric characters removed. For
+#'   example, if the cell A1 contains the value "Time 2 Eat!" the column name 
+#'   would be "time2eat".' If this is intolerable to you, consume the data via 
+#'   the cell feed or csv download. Or, at least, consume the first row via the 
+#'   cell feed and manually restore the variable names post hoc.
+#'   
 #' @param ss a registered Google spreadsheet
 #' @param ws positive integer or character string specifying index or title, 
 #'   respectively, of the worksheet to consume
@@ -45,7 +54,11 @@ get_via_lf <- function(ss, ws = 1) {
 #' Create a data.frame of the non-empty cells in a rectangular region of a 
 #' worksheet
 #' 
-#' No attempt to shape the returned data! Data.frame will have one row per cell.
+#' This function consumes data via the cell feed, which, as the name suggests, 
+#' retrieves data cell by cell. No attempt is made here to shape the returned 
+#' data, but you can do that with \code{\link{reshape_cf}} and 
+#' \code{\link{simplify_cf}}). The output data.frame of \code{get_via_cf} will 
+#' have one row per cell.
 #' 
 #' Use the limits, e.g. min_row or max_col, to delineate the rectangular region 
 #' of interest. You can specify any subset of the limits or none at all. If 
@@ -56,102 +69,115 @@ get_via_lf <- function(ss, ws = 1) {
 #' worksheet.
 #' 
 #' Empty cells, even if "embedded" in a rectangular region of populated cells, 
-#' are not returned by the API and will not appear in the returned data.frame.
+#' are not normally returned by the cell feed This function won't return them
+#' either when \code{return_empty = FALSE} (default), but will if you set 
+#' \code{return_empty = TRUE}. If you don't specify any limits AND you set 
+#' \code{return_empty = TRUE}, you could be in for several minutes wait, as the 
+#' feed will return all cells, which defaults to 1000 rows and 26 columns.
 #' 
-#' @param ss a registered Google spreadsheet
-#' @param ws positive integer or character specifying index or title, 
-#'   respectively, of the worksheet to consume; defaults to 1, i.e. the first 
-#'   worksheet
+#' @inheritParams get_via_lf
 #' @param min_row positive integer, optional
 #' @param max_row positive integer, optional
 #' @param min_col positive integer, optional
 #' @param max_col positive integer, optional
-#' @param limits list, with named components holding the min and max for rows
+#' @param limits list, with named components holding the min and max for rows 
 #'   and columns; intended primarily for internal use
-#' @param return_empty boolean whether to return empty cells in feed, default 
-#' is FALSE since if no query params are set then all cells in the worksheet 
-#' (default: 1000 x 26) will be returned!
+#' @param return_empty logical; indicates whether to return empty cells
+#' @param return_links logical; indicates whether to return the edit and self 
+#'   links (used internally in cell editing workflow)
 #' @param verbose logical; do you want informative messages?
 #'   
 #' @family data consumption functions
 #'   
 #' @export
-#' 
-## TO DO: add argument to control whether edit_link and cell_id are returned
-## TO DO: can I improve what joanna did when she generalized this?
-get_via_cf <- function(ss, ws = 1, min_row = NULL, max_row = NULL,
-                       min_col = NULL, max_col = NULL, limits = NULL,
-                       return_empty = FALSE, verbose = TRUE) {
-  
+get_via_cf <-
+  function(ss, ws = 1,
+           min_row = NULL, max_row = NULL, min_col = NULL, max_col = NULL,
+           limits = NULL, return_empty = FALSE, return_links = FALSE,
+           verbose = TRUE) {
+    
   this_ws <- get_ws(ss, ws, verbose)
   
   if(is.null(limits)) {
     limits <- list("min-row" = min_row, "max-row" = max_row,
                    "min-col" = min_col, "max-col" = max_col)
   } else{
-    ## since direct input of limits is mostly for internal use, I'm not doing
-    ## much validity checking here ...
     names(limits) <- names(limits) %>% stringr::str_replace("_", "-")
   }
   limits <- limits %>%
     validate_limits(this_ws$row_extent, this_ws$col_extent)
   
+  query <- limits
   if(return_empty) {
-    req <- gsheets_GET(this_ws$cellsfeed, 
-                       query = c(limits, list("return-empty" = "true")))
-    
-    x <- req$content %>% lfilt("entry") %>%
-      lapply(FUN = function(x) {
-        
-        # filled cells: "row" "col" "inputValue" stored in x$cell$.attr 
-        # empty cells:  "row" "col" "inputValue" stored in x$cell
-        if(is.null(x$cell["row"] %>% unlist %>% unname)) {
-          # cell is not empty
-          row_num <- x$cell$.attrs["row"]
-          col_num <- x$cell$.attrs["col"]
-          text <- x$cell$text
-        } else {
-          # cell is empty
-          row_num <- x$cell["row"]
-          col_num <- x$cell["col"]
-          text <- x$cell["inputValue"]
-        }
-        
-        dplyr::data_frame(cell = x$title$text,
-                          cell_alt = x$id %>% basename,
-                          row = row_num %>% as.integer(),
-                          col = col_num %>% as.integer(),
-                          # see issue #19 about all the places cell data is
-                          # (mostly redundantly) stored in the XML
-                          #content_text = x$content$text,
-                          #cell_inputValue = x$cell$.attrs["inputValue"],
-                          #cell_numericValue = x$cell$.attrs["numericValue"],
-                          cell_text = text,
-                          edit_link = x %>% `[`(names(.) == "link") %>% `[[`(2) %>% 
-                            `[`("href"), # link containing full path to cell's id: "path/R1C1/version"
-                          cell_id = x$id) # full URL to cell to be updated
-      }) %>%
-      dplyr::bind_rows()
-  } else {
-    req <- gsheets_GET(this_ws$cellsfeed, query = limits)
-    
-    x <- req$content %>% lfilt("entry") %>%
-      lapply(FUN = function(x) {
-        dplyr::data_frame(cell = x$title$text,
-                          cell_alt = x$id %>% basename,
-                          row = x$cell$.attrs["row"] %>% as.integer,
-                          col = x$cell$.attr["col"] %>% as.integer,
-                          # see issue #19 about all the places cell data is
-                          # (mostly redundantly) stored in the XML
-                          #content_text = x$content$text,
-                          #cell_inputValue = x$cell$.attrs["inputValue"],
-                          #cell_numericValue = x$cell$.attrs["numericValue"],
-                          cell_text = x$cell$text)
-      }) %>%
-      dplyr::bind_rows()
+    ## the return-empty parameter is not documented in current sheets API, but 
+    ## is discussed in older internet threads re: the older gdata API; so if
+    ## this stops working, consider that they finally stopped supporting this
+    ## query parameter
+    query <- query %>% c(list("return-empty" = "true"))
   }
+  req <- gsheets_GET(this_ws$cellsfeed, query = query)
+  x <- req$content %>% lfilt("entry") %>%
+    lapply(FUN = function(x) {
+        
+      # filled cells: "row" "col" "inputValue" stored in x$cell$.attr 
+      # empty cells:  "row" "col" "inputValue" stored in x$cell
+      # revisit this when/if we switch to xml2 ... these gymnastics may just be
+      # an unsavory consequence of our use of XML::xmlToList
+      if(is.null(x$cell[["row"]])) { # cell is not empty
+        row_num <- x$cell$.attrs["row"]
+        col_num <- x$cell$.attrs["col"]
+        text <- x$cell$text
+      } else { # cell is empty
+        row_num <- x$cell["row"]
+        col_num <- x$cell["col"]
+        text <- x$cell["inputValue"]
+      }
+      
+      links <- x %>% lfilt("^link$") %>% do.call("rbind", .) %>%
+        `rownames<-`(NULL) %>%
+        as.data.frame(stringsAsFactors = FALSE)
+      # edit link looks like so: "path/R1C1/version"
+      edit_link <- links$href[grepl("edit", links$rel)]
+      
+      dplyr::data_frame(cell = x$title$text,
+                        cell_alt = x$id %>% basename,
+                        row = row_num %>% as.integer(),
+                        col = col_num %>% as.integer(),
+                        cell_text = text,
+                        edit_link = edit_link,
+                        cell_id = x$id) # full URL to cell to be updated
+    }) %>%
+    dplyr::bind_rows()
+
   attr(x, "ws_title") <- this_ws$ws_title
-  x
+  
+  # the pros outweighed the cons re: setting up a zero row data.frame that, at
+  # least, has the correct variables
+  if(nrow(x) == 0L) {
+    x <- dplyr::data_frame(cell = character(),
+                           cell_alt = character(),
+                           row = integer(),
+                           col = integer(),
+                           cell_text = character(),
+                           edit_link = character(),
+                           cell_id = character())
+  }
+  
+  if(return_links) {
+    x
+  } else {
+    x %>%
+      dplyr::select_(~ -edit_link, ~ -cell_id)
+  }
+  
+  # see issue #19 about all the places cell data is (mostly redundantly) stored
+  # in the XML, such as:
+  # content_text = x$content$text,
+  # cell_inputValue = x$cell$.attrs["inputValue"],
+  # cell_numericValue = x$cell$.attrs["numericValue"],
+  # when/if we think about formulas explicitly, we will want to come back and
+  # distinguish between inputValue and numericValue
+  
 }
 
 #' Get data from a row or range of rows
@@ -212,8 +238,6 @@ get_cells <- function(ss, ws = 1, range) {
 
 #' Reshape cell-level data and convert to data.frame
 #' 
-#' This will not be exported long-term. Will write wrappers. Temporary export.
-#' 
 #' @param x a data.frame returned by \code{get_via_cf()}
 #' @param header logical indicating whether first row should be taken as
 #'   variable names
@@ -230,10 +254,10 @@ reshape_cf <- function(x, header = TRUE) {
          expand.grid(row = row_min:row_max, col = col_min:col_max))
   suppressMessages(
     x_augmented <- all_possible_cells %>% dplyr::left_join(x)
-    ## tidyr::spread(), used below, could do something similar as this join, but
-    ## it would handle completely missing rows and columns differently; still
-    ## thinking about this
   )
+  ## tidyr::spread(), used below, could do something similar as this join, but
+  ## it would handle completely missing rows and columns differently; still
+  ## thinking about this
   
   if(header) {
     
@@ -403,5 +427,3 @@ affirm_positive <- function(x) {
     NA
   }
 }
-
-

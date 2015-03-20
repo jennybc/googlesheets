@@ -359,7 +359,7 @@ resize_ws <- function(ss, ws_title,
   }
   
   if(success) {
-    ss %>% register_ss() %>% invisible()
+    ss %>% register_ss(verbose = FALSE) %>% invisible()
   } else{
     NULL
   }

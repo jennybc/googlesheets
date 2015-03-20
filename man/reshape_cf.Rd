@@ -13,7 +13,7 @@ reshape_cf(x, header = TRUE)
   variable names}
 }
 \description{
-This will not be exported long-term. Will write wrappers. Temporary export.
+Reshape cell-level data and convert to data.frame
 }
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};

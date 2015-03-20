@@ -4,7 +4,7 @@
 \alias{edit_cells}
 \title{Edit cells}
 \usage{
-edit_cells(ss, ws, anchor = "A1", input = "", by_row = FALSE,
+edit_cells(ss, ws, input = "", anchor = "A1", by_row = FALSE,
   header = FALSE, verbose = TRUE)
 }
 \arguments{
@@ -13,12 +13,12 @@ edit_cells(ss, ws, anchor = "A1", input = "", by_row = FALSE,
 \item{ws}{positive integer or character string specifying index or title,
   respectively, of the worksheet to consume}
 
-\item{anchor}{single character string specifying the upper left cell of the
-cell range to edit; positioning notation can be either "A1" or "R1C1"}
-
 \item{input}{new cell values, as an object that can be coerced into a
 character vector, presumably an atomic vector, a factor, a matrix or a
 data.frame}
+
+\item{anchor}{single character string specifying the upper left cell of the
+cell range to edit; positioning notation can be either "A1" or "R1C1"}
 
 \item{by_row}{logical; should we fill cells across a row (\code{by_row =
 TRUE}) or down a column (\code{by_row = FALSE}, default); consulted only

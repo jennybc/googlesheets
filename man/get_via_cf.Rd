@@ -6,14 +6,14 @@
 worksheet}
 \usage{
 get_via_cf(ss, ws = 1, min_row = NULL, max_row = NULL, min_col = NULL,
-  max_col = NULL, limits = NULL, return_empty = FALSE, verbose = TRUE)
+  max_col = NULL, limits = NULL, return_empty = FALSE,
+  return_links = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet}
 
-\item{ws}{positive integer or character specifying index or title,
-respectively, of the worksheet to consume; defaults to 1, i.e. the first
-worksheet}
+\item{ws}{positive integer or character string specifying index or title,
+  respectively, of the worksheet to consume}
 
 \item{min_row}{positive integer, optional}
 
@@ -26,14 +26,19 @@ worksheet}
 \item{limits}{list, with named components holding the min and max for rows
 and columns; intended primarily for internal use}
 
-\item{return_empty}{boolean whether to return empty cells in feed, default
-is FALSE since if no query params are set then all cells in the worksheet
-(default: 1000 x 26) will be returned!}
+\item{return_empty}{logical; indicates whether to return empty cells}
+
+\item{return_links}{logical; indicates whether to return the edit and self
+links (used internally in cell editing workflow)}
 
 \item{verbose}{logical; do you want informative messages?}
 }
 \description{
-No attempt to shape the returned data! Data.frame will have one row per cell.
+This function consumes data via the cell feed, which, as the name suggests,
+retrieves data cell by cell. No attempt is made here to shape the returned
+data, but you can do that with \code{\link{reshape_cf}} and
+\code{\link{simplify_cf}}). The output data.frame of \code{get_via_cf} will
+have one row per cell.
 }
 \details{
 Use the limits, e.g. min_row or max_col, to delineate the rectangular region
@@ -45,7 +50,11 @@ feed is potentially a much faster to consume data from a rectangular
 worksheet.
 
 Empty cells, even if "embedded" in a rectangular region of populated cells,
-are not returned by the API and will not appear in the returned data.frame.
+are not normally returned by the cell feed This function won't return them
+either when \code{return_empty = FALSE} (default), but will if you set
+\code{return_empty = TRUE}. If you don't specify any limits AND you set
+\code{return_empty = TRUE}, you could be in for several minutes wait, as the
+feed will return all cells, which defaults to 1000 rows and 26 columns.
 }
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};
