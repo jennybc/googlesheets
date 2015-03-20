@@ -20,17 +20,20 @@ Features:
 -   Extract data or edit data.
 -   Add | delete | rename | copy spreadsheets and worksheets.
 
-Basic Usage
------------
+### Load gpsreadr
+
+`gspreadr` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. But rest assured, neither is strictly necessary to use `gspreadr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R.
 
 ``` r
 library("gspreadr")
 suppressMessages(library("dplyr"))
 ```
 
+### See some spreadsheets you can access
+
+The `list_sheets()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+
 ``` r
-# See what spreadsheets you have
-# (expect a prompt to authenticate with Google interactively HERE)
 (my_sheets <- list_sheets())
 #> Source: local data frame [20 x 6]
 #> 
@@ -57,6 +60,7 @@ suppressMessages(library("dplyr"))
 #> 20                                  Code Sample
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
+# (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
 #> Observations: 20
 #> Variables:
@@ -64,9 +68,15 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "woo.kara", "gspreadr", "gspreadr", "...
 #> $ perm         (chr) "rw", "r", "rw", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-12 23:23:03, 2015-03-12 01:01:33, 2015-0...
+#> $ last_updated (time) 2015-03-20 20:28:20, 2015-03-12 01:01:33, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
+```
 
+### Register a spreadsheet
+
+If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `gspreadr` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can get some basic info about the sheet via `str()`.
+
+``` r
 # Hey let's look at the Gapminder data
 gap <- register_ss("Gapminder")
 #> Sheet identified!
@@ -74,7 +84,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-12 23:28:00 PDT
+#>   Date of gspreadr::register_ss: 2015-03-20 13:40:38 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -104,7 +114,13 @@ gap <- gap_url %>% register_ss
 #> Sheet identified!
 #> sheet_title: Gapminder
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+```
 
+### Consume data
+
+There are two ways to consume data from a worksheet within a Google spreadsheet: the cell feed and the list feed. The cell feed gets data cell-by-cell. The list feed gets data by row. Read the function-level docs for more details about when to use which function.
+
+``` r
 # Get the data for worksheet "Oceania": the fast tabular way ("list feed")
 oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
@@ -156,7 +172,13 @@ head(oceania_cell_feed, 10)
 #> 8    B2     R2C2   2   2   Oceania
 #> 9    C2     R2C3   2   3      2007
 #> 10   D2     R2C4   2   4    81.235
+```
 
+#### Convenience wrappers and post-processing the data
+
+There are a few ways to limit the data you're consuming. You can put direct limits into `get_via_cf()`, but there are also convenience functions to get a row (`get_row()`), a column (`get_col()`), or a range (`get_cells()`). Also, when you consume data via the cell feed (which these wrappers are doing under the hood), you will often want to reshape it or simplify it (`reshape_cf()` and `simplify_cf()`).
+
+``` r
 # Reshape: instead of one row per cell, make a nice rectangular data.frame
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
 str(oceania_reshaped, give.attr = FALSE)
@@ -275,17 +297,82 @@ gap %>%
 #> 4 New Zealand   Oceania 2002
 ```
 
-Authorization
--------------
+### Create sheets
 
-##### Authorization using OAuth2 (recommended and auto-triggered in many cases)
+You can use `gspreadr` to create new spreadsheets.
+
+``` r
+foo <- new_ss("foo")
+#> Sheet "foo" created in Google Drive.
+#> Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+#> Sheet identified!
+#> sheet_title: foo
+#> sheet_key: 1YmldeCYfzAKKfLG8pZVfAO4dm53QaosWTcbJiY69D-Q
+foo %>% str
+#>               Spreadsheet title: foo
+#>   Date of gspreadr::register_ss: 2015-03-20 13:40:46 PDT
+#> Date of last spreadsheet update: 2015-03-20 20:40:44 UTC
+#> 
+#> Contains 1 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> Sheet1: 1000 x 26
+#> 
+#> Key: 1YmldeCYfzAKKfLG8pZVfAO4dm53QaosWTcbJiY69D-Q
+```
+
+By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
+
+### Edit cells
+
+You can modify the data in sheet cells via `edit_cells()`.
+
+``` r
+foo <- foo %>% edit_cells(input = head(iris), header = TRUE)
+#> Range affected by the update: "A1:E7"
+#> Worksheet "Sheet1" successfully updated with 35 new value(s).
+```
+
+Go to [your spreadsheets home page](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by consuming `foo` via the list feed.
+
+Note that we always store the returned value from `edit-cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
+
+``` r
+foo %>% get_via_lf() %>% print
+#> Accessing worksheet titled "Sheet1"
+#> Source: local data frame [6 x 5]
+#> 
+#>   sepal.length sepal.width petal.length petal.width species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> 3          4.7         3.2          1.3         0.2  setosa
+#> 4          4.6         3.1          1.5         0.2  setosa
+#> 5          5.0         3.6          1.4         0.2  setosa
+#> 6          5.4         3.9          1.7         0.4  setosa
+```
+
+Read the function documentation for `edit_cells()` for ways to specify where the data goes and in which direction.
+
+### Delete sheets
+
+Let's clean up by deleting the `foo` spreadsheet we've been playing with.
+
+``` r
+delete_ss("foo")
+#> Sheet "foo" moved to trash in Google Drive.
+```
+
+### Authorization
+
+#### Authorization using OAuth2 (recommended and auto-triggered in many cases)
 
 ``` r
 # Give gspreadr permission to access your spreadsheets and google drive
 authorize() 
 ```
 
-##### Alternate authorization: login with your Google account
+#### Alternate authorization: login with your Google account
+
+*This is being shudown by Google very very soon, in favor of OAuth, and we're about to just delete this functionlity from `gspreadr`.*
 
 ``` r
 login("my_email", "password")
@@ -294,5 +381,4 @@ login("my_email", "password")
 Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 ---------------------------------------------------------------------------------------------
 
--   edit cells (see \#42)
 -   visual overview of which cells are populated

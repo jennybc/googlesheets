@@ -24,7 +24,7 @@
 #' @param verbose logical; do you want informative message?
 #'   
 #' @export
-edit_cells <- function(ss, ws, input = '', anchor = 'A1',
+edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                        by_row = FALSE, header = FALSE, verbose = TRUE) {
   
   catch_hopeless_input(input)

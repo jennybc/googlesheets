@@ -4,7 +4,7 @@
 \alias{edit_cells}
 \title{Edit cells}
 \usage{
-edit_cells(ss, ws, input = "", anchor = "A1", by_row = FALSE,
+edit_cells(ss, ws = 1, input = "", anchor = "A1", by_row = FALSE,
   header = FALSE, verbose = TRUE)
 }
 \arguments{

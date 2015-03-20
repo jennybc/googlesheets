@@ -27,7 +27,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
     message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
   }
   
-  ss %>% invisible()
+  ss %>% register_ss() %>% invisible()
   
 }
 
@@ -160,7 +160,8 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #'   spreadsheet after adding the new worksheet
 #'   
 #' @export
-add_ws <- function(ss, ws_title, nrow = 1000, ncol = 26, verbose = TRUE) { 
+add_ws <- function(ss, ws_title = "Sheet1",
+                   nrow = 1000, ncol = 26, verbose = TRUE) { 
   
   stopifnot(ss %>% inherits("spreadsheet"))
   
