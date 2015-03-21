@@ -17,7 +17,7 @@ authorize <- function(new_user = FALSE) {
   
   if(new_user & file.exists(".httr-oauth")) {
     message("Removing old credentials ...")
-    system("rm .httr-oauth")
+    file.remove(".httr-oauth")
   }
   
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
@@ -33,7 +33,7 @@ authorize <- function(new_user = FALSE) {
                          scope = scope_list, cache = TRUE)
   
   # check for validity so error is found before making requests
-  # shouldn't happen if id and secret doesnt change
+  # shouldn't happen if id and secret don't change
   if("invalid_client" %in% unlist(google_token$credentials))
     message("Authorization error. Please check client_id and client_secret.")
   

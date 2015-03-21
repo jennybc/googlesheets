@@ -165,14 +165,16 @@ Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 delete_ss("foo")
 ```
 
-### Authorization
-
-#### Authorization using OAuth2 (recommended and auto-triggered in many cases)
-
-```{r authorize, eval = FALSE}
-# Give gspreadr permission to access your spreadsheets and google drive
-authorize() 
-```
+### Authorization using OAuth2
+ 
+If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
+ 
+ ```{r authorize, eval = FALSE}
+ # Give gspreadr permission to access your spreadsheets and google drive
+ authorize() 
+ ```
+ 
+Use `authorize(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
 
 ##### Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 
