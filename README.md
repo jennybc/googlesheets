@@ -8,7 +8,7 @@
 Google Sheets R API
 -------------------
 
-[![Build Status](https://travis-ci.org/jennybc/gspreadr.png?branch=master)](https://travis-ci.org/jennybc/gspreadr)
+[![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr)
 
 Manage your spreadsheets with *gspreadr* in R.
 
