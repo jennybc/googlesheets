@@ -16,7 +16,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
                    mimeType = "application/vnd.google-apps.spreadsheet")
   
   req <-
-    gsheets_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
+    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
   
   ## I set verbose = FALSE here because it seems weird to message "Spreadsheet
   ## identified!" in this context, esp. to do so *before* message confirming
@@ -56,12 +56,11 @@ delete_ss <- function(x, verbose = TRUE) {
   ## I set verbose = FALSE here mostly for symmetry with new_ss
   x_ss <- x %>% identify_ss(verbose = FALSE)
   
-  the_url <-
-    paste("https://www.googleapis.com/drive/v2/files",
-          x_ss$sheet_key, "trash", sep = "/")
-
-    gsheets_POST(the_url, the_body = NULL)
+  the_url <- paste("https://www.googleapis.com/drive/v2/files",
+                    x_ss$sheet_key, "trash", sep = "/")
   
+  gdrive_POST(the_url, the_body = NULL)
+
   ss <- try(identify_ss(x_ss, verbose = FALSE), silent = TRUE)
   
   cannot_find_sheet <- inherits(ss, "try-error")
@@ -119,7 +118,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   the_url <-
     paste("https://www.googleapis.com/drive/v2/files", key, "copy", sep = "/")
   
-  req <- gsheets_POST(the_url, the_body)
+  req <- gdrive_POST(the_url, the_body)
   
   new_title <- httr::content(req)$title
   
@@ -413,5 +412,66 @@ modify_ws <-
     }
   
   gsheets_PUT(ss$ws$edit[ws_title_position], the_body)
+  
+}
+
+#' Upload a file and convert it to a Google Sheet
+#'
+#' Google supports the following file types to be converted to a Google 
+#' spreadsheet: .xls, .xlsx, .csv, .tsv, .txt, .tab, .xlsm, .xlt, .xltx, .xltm, 
+#' .ods. The newly uploaded file will appear in the top level of your Google 
+#' Sheets home screen. 
+#'
+#' @param file the file to upload, if it does not contain the absolute path, 
+#' then the file is relative to the current working directory
+#' @param sheet_title the title of the spreadsheet; optional, 
+#' if not specified then the name of the file will be used
+#' @param verbose logical; do you want informative message?
+#'
+#' @export
+upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
+  
+  if(!file.exists(file)) {
+    stop(sprintf("\"%s\" does not exist!", file))
+  }
+  
+  ext <- c("xls", "xlsx", "csv", "tsv", "txt", "tab", "xlsm", "xlt", 
+           "xltx", "xltm", "ods")
+  
+  if(!(tools::file_ext(file) %in% ext)) {
+    stop(sprintf("Cannot convert file with this extension to a Google Spreadsheet: %s",
+                 tools::file_ext(file)))
+  }
+  
+  if(is.null(sheet_title)) {
+    sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
+  }
+  
+  req <- gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", 
+                     the_body = list(title = sheet_title, 
+                                     mimeType = "application/vnd.google-apps.spreadsheet"))
+  
+  new_sheet_key <- httr::content(req)$id
+  
+  # append sheet_key to put_url
+  put_url <- httr::modify_url("https://www.googleapis.com/",
+                              path = paste0("upload/drive/v2/files/", 
+                                            new_sheet_key))
+  
+  gdrive_PUT(put_url, the_body = file)
+  
+  ss_df <- list_sheets()
+  success <- new_sheet_key %in% ss_df$sheet_key
+  
+  if(success) {
+    if(verbose) {
+      message(sprintf("\"%s\" uploaded to Google Drive and converted to a Google Sheet named \"%s\"",
+                      basename(file), sheet_title))
+    }
+  } else {
+    stop(sprintf("Cannot confirm the file upload :("))
+  }
+  
+  new_sheet_key %>%  register_ss(verbose = FALSE) %>% invisible()
   
 }

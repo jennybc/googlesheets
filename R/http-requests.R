@@ -8,7 +8,7 @@
 #'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
 #'   parameters will be combined with \code{\link[httr]{config}}.
 gsheets_GET <- function(url, to_list = TRUE, ...) {
-
+  
   if(grepl("public", url)) {
     req <- httr::GET(url, ...)
   } else { 
@@ -24,9 +24,16 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
                  "application/atom+xml; charset=UTF-8",
                  req$headers[["content-type"]]))
   }
+  # usually when the content-type is unexpectedly binary, it means we need to 
+  # refresh the token ... we should have a better message or do something
+  # constructive when this happens ... sort of waiting til I can review all the
+  # auth stuff
+  
   ## TO DO: eventually we will depend on xml2 instead of XML and then we should
   ## use it to parse the XML instead of httr:content()
   ## see https://github.com/hadley/httr/issues/189
+  ## Hadley: Yeah, I think you should be parsing this yourself, with e.g.,
+  ## xml2::xml(context(r, "raw"))
   req$content <- httr::content(req, type = "text/xml", encoding = "UTF-8")
   
   if(to_list) {
@@ -34,11 +41,12 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
   }
   
   req
+
 }
 
 #' Create POST request
 #'
-#' Make POST request to Google Sheets/Drive API.
+#' Make POST request to Google Sheets API.
 #'
 #' @param url URL for POST request
 #' @param the_body body of POST request
@@ -49,44 +57,26 @@ gsheets_POST <- function(url, the_body) {
   if(is.null(token)) {
     stop("Must be authorized user in order to perform request")
   } else {
+    # send xml to sheets api
+    content_type <- "application/atom+xml"
     
-    # first look at the url to determine contents, 
-    # must be either talking to "drive" or "spreadsheets" API
-    if(stringr::str_detect(stringr::fixed(url), "drive")) {
-      # send json to drive api
-      req <- httr::POST(url, config = token, body = the_body, encode = "json")
-      
-    } else {
-      # send xml to sheets api
-      content_type <- "application/atom+xml"
-      
-      req <- httr::POST(url, config = c(token, 
-                        httr::add_headers("Content-Type" = content_type)),
-                        body = the_body)
-      req$content <- httr::content(req, type = "text/xml")
-      if(!is.null(req$content)) {
-        ## known example of this: POST request triggered by add_ws()
-        req$content <- XML::xmlToList(req$content)
-      }
-      
-    } 
-
+    req <- 
+      httr::POST(url, 
+                 config = c(token, 
+                            httr::add_headers("Content-Type" = content_type)),
+                 body = the_body)
+    req$content <- httr::content(req, type = "text/xml")
+    if(!is.null(req$content)) {
+      ## known example of this: POST request triggered by add_ws()
+      req$content <- XML::xmlToList(req$content)
+    }
+    
     httr::stop_for_status(req)
     
-    ## 2015-02-28 I want us to return req because useful info can be extracted
-    ## from it, for example the title of a newly created spreadsheet copy
-    ## there's tons of potentially useful info there ...
     req
-
-    ## TO DO: inform users of why client error (404) Not Found may arise when
-    ## copying a spreadsheet
-    #     message(paste("The spreadsheet can not be found.",
-    #                   "Please make sure that the spreadsheet exists and that you have permission to access it.",
-    #                   'A "published to the web" spreadsheet does not necessarily mean you have permission for access.',
-    #                   "Permission for access is set in the sharing dialog of a sheets file."))
+    
   }
 }
-
 
 #' Create DELETE request
 #'
@@ -100,7 +90,6 @@ gsheets_DELETE <- function(url) {
   ## with other http functions
   req
 }
-
 
 #' Create PUT request
 #'
@@ -123,12 +112,65 @@ gsheets_PUT <- function(url, the_body) {
               body = the_body)
   
   httr::stop_for_status(req)
-
+  
   req$content <- httr::content(req, type = "text/xml")
   if(!is.null(req$content)) {
     ## known example of this: POST request triggered by add_ws()
     req$content <- XML::xmlToList(req$content)
   }  
+  
+  req
+  
+}
+
+
+#' Make POST request to Google Drive API
+#'
+#' Used in new_ss(), delete_ss(), copy_ss()
+#' 
+#' @param url URL for POST request
+#' @param the_body body of POST request
+gdrive_POST <- function(url, the_body) {
+  
+  token <- get_google_token()
+  
+  if(is.null(token)) {
+    stop("Must be authorized user in order to perform request")
+  } else {
+    
+    req <- httr::POST(url, config = token, body = the_body, encode = "json")
+    httr::stop_for_status(req)
+    req
+    
+    ## TO DO: inform users of why client error (404) Not Found may arise when
+    ## copying a spreadsheet
+    #     message(paste("The spreadsheet can not be found.",
+    #                   "Please make sure that the spreadsheet exists and that you have permission to access it.",
+    #                   'A "published to the web" spreadsheet does not necessarily mean you have permission for access.',
+    #                   "Permission for access is set in the sharing dialog of a sheets file."))
+  }
+}
+
+#' Make PUT request to Google Drive API
+#'
+#' Used in upload_ss() 
+#'
+#' @param url URL for PUT request
+#' @param the_body body of PUT request 
+gdrive_PUT <- function(url, the_body) {
+  
+  token <- get_google_token()
+  
+  if(is.null(token)) {
+    stop("Must be authorized in order to perform request")
+  } else {
+    
+    req <- httr::PUT(url, query = list(uploadType = "media", convert = "true"), 
+                     config = token, 
+                     body = httr::upload_file(the_body))
+  }
+  
+  httr::stop_for_status(req)
   
   req
   
