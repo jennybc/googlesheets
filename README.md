@@ -1,14 +1,10 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Project Status: Wip - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/0.1.0/wip.svg)](http://www.repostatus.org/#wip)
-
-**If the feature's here, then it works. More features and release coming soon.**
+[![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr) [![Project Status: Wip - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/0.1.0/wip.svg)](http://www.repostatus.org/#wip)
 
 ------------------------------------------------------------------------
 
 Google Sheets R API
 -------------------
-
-[![Build Status](https://travis-ci.org/jennybc/gspreadr.png?branch=master)](https://travis-ci.org/jennybc/gspreadr)
 
 Manage your spreadsheets with *gspreadr* in R.
 
@@ -35,7 +31,6 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [21 x 6]
 #> 
 #>                                     sheet_title
@@ -60,7 +55,7 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-20 23:14:48, 2015-03-20 22:32:48, 2015-0...
+#> $ last_updated (time) 2015-03-21 03:17:35, 2015-03-20 22:32:48, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -76,7 +71,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-20 16:35:05 PDT
+#>   Date of gspreadr::register_ss: 2015-03-20 20:22:10 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -299,17 +294,17 @@ foo <- new_ss("foo")
 #> Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1-4Zl924nBZkO9UPgIloUTNf6a50afQCi5b1JGt1CkP0
+#> sheet_key: 1EANBNthCxiZuzCSyHYvxIhqyGoLTj1cqeqRfAkiBk_g
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-20 16:35:16 PDT
-#> Date of last spreadsheet update: 2015-03-20 23:35:12 UTC
+#>   Date of gspreadr::register_ss: 2015-03-20 20:22:17 PDT
+#> Date of last spreadsheet update: 2015-03-21 03:22:15 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1-4Zl924nBZkO9UPgIloUTNf6a50afQCi5b1JGt1CkP0
+#> Key: 1EANBNthCxiZuzCSyHYvxIhqyGoLTj1cqeqRfAkiBk_g
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -353,14 +348,13 @@ delete_ss("foo")
 #> Sheet "foo" moved to trash in Google Drive.
 ```
 
-### Authorization
+### Authorization using OAuth2
 
-#### Authorization using OAuth2 (recommended and auto-triggered in many cases)
+If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
 
-``` r
-# Give gspreadr permission to access your spreadsheets and google drive
-authorize() 
-```
+`r  # Give gspreadr permission to access your spreadsheets and google drive  authorize()`
+
+Use `authorize(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
 
 ##### Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 
