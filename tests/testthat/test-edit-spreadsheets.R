@@ -2,8 +2,6 @@ context("edit spreadsheets")
 
 test_that("Spreadsheet can be created and deleted", {
   
-  #check_oauth()
-  
   x <- sample(9, 1)
   sheet_title <- stringr::str_c("testing", x) 
   
@@ -19,8 +17,6 @@ test_that("Spreadsheet can be created and deleted", {
 })
 
 test_that("Spreadsheet can be copied", {
-  
-  #check_oauth()
   
   copy_ss <- copy_ss(pts_title)
   expect_is(copy_ss, "spreadsheet")
@@ -39,8 +35,6 @@ test_that("Spreadsheet can be copied", {
 })
 
 test_that("Nonexistent spreadsheet can NOT be deleted or copied", {
-  
-  #check_oauth()
   
   expect_error(delete_ss("flyingpig"), "doesn't match")
   expect_error(copy_ss("flyingpig"),  "doesn't match")
@@ -119,8 +113,6 @@ test_that("Worksheet is resized", {
 
 
 test_that("Different file formats can be uploaded", {
-  
-  check_oauth()
   
   expect_error(upload_ss("I dont exist.csv"))
   expect_error(upload_ss("test-register.R"))
