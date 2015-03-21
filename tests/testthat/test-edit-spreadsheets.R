@@ -2,7 +2,7 @@ context("edit spreadsheets")
 
 test_that("Spreadsheet can be created and deleted", {
   
-  check_oauth()
+  #check_oauth()
   
   x <- sample(9, 1)
   sheet_title <- stringr::str_c("testing", x) 
@@ -20,7 +20,7 @@ test_that("Spreadsheet can be created and deleted", {
 
 test_that("Spreadsheet can be copied", {
   
-  check_oauth()
+  #check_oauth()
   
   copy_ss <- copy_ss(pts_title)
   expect_is(copy_ss, "spreadsheet")
@@ -40,7 +40,7 @@ test_that("Spreadsheet can be copied", {
 
 test_that("Nonexistent spreadsheet can NOT be deleted or copied", {
   
-  check_oauth()
+  #check_oauth()
   
   expect_error(delete_ss("flyingpig"), "doesn't match")
   expect_error(copy_ss("flyingpig"),  "doesn't match")

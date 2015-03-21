@@ -7,11 +7,13 @@
 get_ws(ss, ws, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered spreadsheet}
+\item{ss}{a registered Google spreadsheet}
 
-\item{ws}{a positive integer or character string specifying which worksheet}
+\item{ws}{positive integer or character string specifying index or title,
+  respectively, of the worksheet to consume}
 
-\item{verbose}{logical, indicating whether to give a message re: title of the worksheet being accessed}
+\item{verbose}{logical, indicating whether to give a message re: title of the
+worksheet being accessed}
 }
 \description{
 From a registered spreadsheet, retrieve a list (actually a row of a

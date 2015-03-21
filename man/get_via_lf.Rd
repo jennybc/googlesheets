@@ -2,7 +2,7 @@
 % Please edit documentation in R/consume-data.R
 \name{get_via_lf}
 \alias{get_via_lf}
-\title{Get data from a rectangular worksheet as a tbl_df}
+\title{Get data from a rectangular worksheet as a tbl_df or data.frame}
 \usage{
 get_via_lf(ss, ws = 1)
 }
@@ -10,15 +10,28 @@ get_via_lf(ss, ws = 1)
 \item{ss}{a registered Google spreadsheet}
 
 \item{ws}{positive integer or character string specifying index or title,
-  respectively, of the worksheet to consume
-
-  Gets data via the listfeed, which assumes populated cells form a neat
-  rectangle. First row regarded as header row of variable or column names. If
-  data is neatly rectangular and you want all of it, this is the fastest way
-  to get it. Anecdotally, ~3x faster than using methods based on the
-  cellfeed.}
+  respectively, of the worksheet to consume}
 }
 \description{
-Get data from a rectangular worksheet as a tbl_df
+Gets data via the list feed, which assumes populated cells form a neat
+rectangle. The list feed consumes data row by row. First row regarded as
+header row of variable or column names. If data is neatly rectangular and you
+want all of it, this is the fastest way to get it. Anecdotally, ~3x faster
+than using methods based on the cellfeed.
+}
+\note{
+When you use the listfeed, the Sheets API transforms the variable or
+  column names like so: 'The column names are the header values of the
+  worksheet lowercased and with all non-alpha-numeric characters removed. For
+  example, if the cell A1 contains the value "Time 2 Eat!" the column name
+  would be "time2eat".' If this is intolerable to you, consume the data via
+  the cell feed or csv download. Or, at least, consume the first row via the
+  cell feed and manually restore the variable names post hoc.
+}
+\seealso{
+Other data.consumption.functions: \code{\link{get_cells}};
+  \code{\link{get_col}}; \code{\link{get_row}};
+  \code{\link{get_via_cf}}; \code{\link{reshape_cf}};
+  \code{\link{simplify_cf}}
 }
 

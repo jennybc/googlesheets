@@ -4,7 +4,7 @@
 \alias{add_ws}
 \title{Add a new (empty) worksheet to spreadsheet}
 \usage{
-add_ws(ss, ws_title, nrow = 1000, ncol = 26, verbose = TRUE)
+add_ws(ss, ws_title = "Sheet1", nrow = 1000, ncol = 26, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google sheet}

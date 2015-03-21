@@ -1,44 +1,6 @@
 # environment to store credentials
 .state <- new.env(parent = emptyenv())
 
-#' Authorize user using ClientLogin
-#'
-#' Authorize user using email and password.
-#'
-#' @param email User's email.
-#' @param passwd User's password.
-#'
-#' This method is using API as described at:
-#' \url{https://developers.google.com/accounts/docs/AuthForInstalledApps}
-#'
-#' @export
-login <- function(email, passwd) {
-  service <- "wise"
-  account_type <- "HOSTED_OR_GOOGLE"
-  the_url <- "https://www.google.com/accounts/ClientLogin"
-  
-  req <- httr::POST(the_url, body = list("accountType" = account_type,
-                                         "Email" = email,
-                                         "Passwd" = passwd,
-                                         "service" = service))
-  
-  # Check status of http response
-  # Google returns status 200 (success) or 403 (failure), show error msg if 403.
-  if(httr::status_code(req) == 403) {
-    if(grepl("BadAuthentication", httr::content(req)))
-      stop("Incorrect username or password.")
-    else
-      stop("Unable to authenticate")
-  }
-  
-  # SID, LSID not active, extract auth token
-  token <- sub(".*Auth=", "", httr::content(req))
-  token <- sub("\n", "", token)
-  auth_header <- paste0("GoogleLogin auth=", token)
-  
-  .state$token <- auth_header
-}
-
 #' Authorize user using Oauth2.0 Credentials
 #'
 #' User will be directed to web browser and asked to sign into their Google
@@ -75,7 +37,10 @@ authorize <- function(new_user = FALSE) {
   if("invalid_client" %in% unlist(google_token$credentials))
     message("Authorization error. Please check client_id and client_secret.")
   
+  stopifnot(inherits(google_token, "Token2.0"))
+  
   .state$token <- google_token
+  
 }
 
 
@@ -88,14 +53,7 @@ get_google_token <- function() {
   if(is.null(.state$token)) {  
     authorize()
   }
-  # check if token is obtained from login or oauth2.0 and format it for 
-  # making request
   
-  if(inherits(.state$token, "Token2.0")) {
-    # token from oauth2.0
-    formatted_token <- httr::config(token = .state$token)
-  } else {
-    # token from login
-    formatted_token <- httr::add_headers('Authorization' = .state$token)
-  }
+  token <- httr::config(token = .state$token)
+  
 }

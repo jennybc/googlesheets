@@ -24,16 +24,24 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
                  "application/atom+xml; charset=UTF-8",
                  req$headers[["content-type"]]))
   }
+  # usually when the content-type is unexpectedly binary, it means we need to 
+  # refresh the token ... we should have a better message or do something
+  # constructive when this happens ... sort of waiting til I can review all the
+  # auth stuff
+  
   ## TO DO: eventually we will depend on xml2 instead of XML and then we should
   ## use it to parse the XML instead of httr:content()
   ## see https://github.com/hadley/httr/issues/189
-  req$content <- httr::content(req, type = "text/xml")
+  ## Hadley: Yeah, I think you should be parsing this yourself, with e.g.,
+  ## xml2::xml(context(r, "raw"))
+  req$content <- httr::content(req, type = "text/xml", encoding = "UTF-8")
   
   if(to_list) {
     req$content <- XML::xmlToList(req$content)
   }
   
   req
+
 }
 
 #' Create POST request
@@ -65,10 +73,8 @@ gsheets_POST <- function(url, the_body) {
     
     httr::stop_for_status(req)
     
-    ## 2015-02-28 I want us to return req because useful info can be extracted
-    ## from it, for example the title of a newly created spreadsheet copy
-    ## there's tons of potentially useful info there ...
     req
+    
   }
 }
 
@@ -84,7 +90,6 @@ gsheets_DELETE <- function(url) {
   ## with other http functions
   req
 }
-
 
 #' Create PUT request
 #'
