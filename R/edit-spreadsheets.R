@@ -429,26 +429,27 @@ modify_ws <-
 #' @param verbose logical; do you want informative message?
 #'
 #' @export
-upload_ss <- function(file, sheet_title, verbose = TRUE) {
+upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
   
   if(!file.exists(file)) {
-    stop(sprintf(" \"%s\" does not exist!", file))
+    stop(sprintf("\"%s\" does not exist!", file))
   }
   
-  ext <- c(".xls", ".xlsx", ".csv", ".tsv", ".txt", ".tab", ".xlsm", ".xlt", 
-           ".xltx", ".xltm", ".ods")
+  ext <- c("xls", "xlsx", "csv", "tsv", "txt", "tab", "xlsm", "xlt", 
+           "xltx", "xltm", "ods")
   
-  if(!stringr::str_extract(file, "\\.[^\\.]*$") %in% ext) {
-    stop("Cannot convert this file type to a Google Spreadsheet.")
+  if(!(tools::file_ext(file) %in% ext)) {
+    stop(sprintf("Cannot convert file with this extension to a Google Spreadsheet: %s",
+                 tools::file_ext(file)))
   }
   
-  if(missing(sheet_title)) {
-    sheet_title <- basename(file)
+  if(is.null(sheet_title)) {
+    sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
   }
   
   req <- gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", 
-                      the_body = list("title" = sheet_title, 
-                                      "mimeType" = "application/vnd.google-apps.spreadsheet"))
+                     the_body = list(title = sheet_title, 
+                                     mimeType = "application/vnd.google-apps.spreadsheet"))
   
   new_sheet_key <- httr::content(req)$id
   
@@ -459,12 +460,18 @@ upload_ss <- function(file, sheet_title, verbose = TRUE) {
   
   gdrive_PUT(put_url, the_body = file)
   
-  success <- new_sheet_key %in% unlist(list_sheets()["sheet_key"])
+  ss_df <- list_sheets()
+  success <- new_sheet_key %in% ss_df$sheet_key
   
-  if(verbose & success) {
-    message(sprintf(" \"%s\" uploaded to Google Drive converted to a Google Sheet and named \"%s\"",
-                    basename(file), sheet_title))
+  if(success) {
+    if(verbose) {
+      message(sprintf("\"%s\" uploaded to Google Drive and converted to a Google Sheet named \"%s\"",
+                      basename(file), sheet_title))
+    }
   } else {
-    stop(sprintf(" File did not upload successfully. Sheet can not be found in Google Sheets home screen."))
+    stop(sprintf("Cannot confirm the file upload :("))
   }
+  
+  new_sheet_key %>%  register_ss(verbose = FALSE) %>% invisible()
+  
 }

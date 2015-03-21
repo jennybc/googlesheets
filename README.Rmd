@@ -30,7 +30,7 @@ Features:
 
   - Access a spreadsheet by its title, key or URL.
   - Extract data or edit data.
-  - Add | delete | rename | copy spreadsheets and worksheets.
+  - Create | delete | rename | copy spreadsheets and worksheets.
 
 ### Load gpsreadr
 
@@ -141,7 +141,7 @@ By default, there will be an empty worksheet called "Sheet1". You can also add, 
 
 ### Edit cells
 
-You can modify the data in sheet cells via `edit_cells()`. 
+You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`.
 
 ```{r edit-cells}
 foo <- foo %>% edit_cells(input = head(iris), header = TRUE)
@@ -152,27 +152,55 @@ Go to [your spreadsheets home page](https://docs.google.com/spreadsheets/u/0/), 
 Note that we always store the returned value from `edit-cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
 ```{r consume-edited-cells}
-foo %>% get_via_lf() %>% print
+foo %>% get_via_lf() %>% print()
 ```
 
 Read the function documentation for `edit_cells()` for ways to specify where the data goes and in which direction.
 
 ### Delete sheets
 
-Let's clean up by deleting the `foo` spreadsheet we've been playing with.
+Let's clean up by deleting the `foo` spreadsheets we've been playing with.
 
 ```{r delete-sheet}
 delete_ss("foo")
+```
+
+### Upload delimited files or Excel workbooks cells
+
+Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
+
+```{r new-sheet-from-file}
+iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
+iris_ss <- upload_ss("iris.csv")
+iris_ss %>% str()
+iris_ss %>% get_via_lf() %>% print()
+file.remove("iris.csv")
+```
+
+Now we'll upload a multi-sheet Excel workbook.
+
+```{r new-sheet-from-xlsx}
+upload_ss("tests/testthat/gap-data.xlsx")
+gap_xlsx <- register_ss("gap-data")
+gap_xlsx %>% str()
+gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
+```
+
+And we clean up after ourselves on Google Drive.
+
+```{r delete-moar-sheets}
+delete_ss("iris")
+delete_ss("gap-data")
 ```
 
 ### Authorization using OAuth2
  
 If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
  
- ```{r authorize, eval = FALSE}
- # Give gspreadr permission to access your spreadsheets and google drive
- authorize() 
- ```
+```{r authorize, eval = FALSE}
+# Give gspreadr permission to access your spreadsheets and google drive
+authorize() 
+```
  
 Use `authorize(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
 

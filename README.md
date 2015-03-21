@@ -14,7 +14,7 @@ Features:
 
 -   Access a spreadsheet by its title, key or URL.
 -   Extract data or edit data.
--   Add | delete | rename | copy spreadsheets and worksheets.
+-   Create | delete | rename | copy spreadsheets and worksheets.
 
 ### Load gpsreadr
 
@@ -71,7 +71,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-20 20:22:10 PDT
+#>   Date of gspreadr::register_ss: 2015-03-20 21:26:18 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -294,24 +294,24 @@ foo <- new_ss("foo")
 #> Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1EANBNthCxiZuzCSyHYvxIhqyGoLTj1cqeqRfAkiBk_g
+#> sheet_key: 1PuVig2OV7E9NhtALH8jpq4nKlizYkQ1xkR_OsYulFFc
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-20 20:22:17 PDT
-#> Date of last spreadsheet update: 2015-03-21 03:22:15 UTC
+#>   Date of gspreadr::register_ss: 2015-03-20 21:26:28 PDT
+#> Date of last spreadsheet update: 2015-03-21 04:26:26 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1EANBNthCxiZuzCSyHYvxIhqyGoLTj1cqeqRfAkiBk_g
+#> Key: 1PuVig2OV7E9NhtALH8jpq4nKlizYkQ1xkR_OsYulFFc
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
 
 ### Edit cells
 
-You can modify the data in sheet cells via `edit_cells()`.
+You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`.
 
 ``` r
 foo <- foo %>% edit_cells(input = head(iris), header = TRUE)
@@ -324,7 +324,7 @@ Go to [your spreadsheets home page](https://docs.google.com/spreadsheets/u/0/), 
 Note that we always store the returned value from `edit-cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
 ``` r
-foo %>% get_via_lf() %>% print
+foo %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "Sheet1"
 #> Source: local data frame [6 x 5]
 #> 
@@ -341,18 +341,103 @@ Read the function documentation for `edit_cells()` for ways to specify where the
 
 ### Delete sheets
 
-Let's clean up by deleting the `foo` spreadsheet we've been playing with.
+Let's clean up by deleting the `foo` spreadsheets we've been playing with.
 
 ``` r
 delete_ss("foo")
 #> Sheet "foo" moved to trash in Google Drive.
 ```
 
+### Upload delimited files or Excel workbooks cells
+
+Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
+
+``` r
+iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
+iris_ss <- upload_ss("iris.csv")
+#> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
+iris_ss %>% str()
+#>               Spreadsheet title: iris
+#>   Date of gspreadr::register_ss: 2015-03-20 21:26:37 PDT
+#> Date of last spreadsheet update: 2015-03-21 04:26:36 UTC
+#> 
+#> Contains 1 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> iris: 6 x 5
+#> 
+#> Key: 1R2kjcvgDaKk1VXjsA5okntBCZP4Yh1OqJn3kTOUx4Yw
+iris_ss %>% get_via_lf() %>% print()
+#> Accessing worksheet titled "iris"
+#> Source: local data frame [5 x 5]
+#> 
+#>   sepal.length sepal.width petal.length petal.width species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> 3          4.7         3.2          1.3         0.2  setosa
+#> 4          4.6         3.1          1.5         0.2  setosa
+#> 5          5.0         3.6          1.4         0.2  setosa
+file.remove("iris.csv")
+#> [1] TRUE
+```
+
+Now we'll upload a multi-sheet Excel workbook.
+
+``` r
+upload_ss("tests/testthat/gap-data.xlsx")
+#> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
+gap_xlsx <- register_ss("gap-data")
+#> Sheet identified!
+#> sheet_title: gap-data
+#> sheet_key: 15bmQMJaXiL6hrQflPR9Y6axRPLE9dHvgjvw17JdOSVg
+gap_xlsx %>% str()
+#>               Spreadsheet title: gap-data
+#>   Date of gspreadr::register_ss: 2015-03-20 21:27:40 PDT
+#> Date of last spreadsheet update: 2015-03-21 04:26:40 UTC
+#> 
+#> Contains 5 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> Africa: 619 x 6
+#> Americas: 301 x 6
+#> Asia: 397 x 6
+#> Europe: 361 x 6
+#> Oceania: 25 x 6
+#> 
+#> Key: 15bmQMJaXiL6hrQflPR9Y6axRPLE9dHvgjvw17JdOSVg
+gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
+#> Accessing worksheet titled "Oceania"
+#> Source: local data frame [24 x 6]
+#> 
+#>        country continent year lifeexp      pop gdppercap
+#> 1    Australia   Oceania 2007  81.235 20434176  34435.37
+#> 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
+#> 3    Australia   Oceania 2002  80.370 19546792  30687.75
+#> 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
+#> 5    Australia   Oceania 1997  78.830 18565243  26997.94
+#> 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
+#> 7    Australia   Oceania 1992  77.560 17481977  23424.77
+#> 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
+#> 9    Australia   Oceania 1987  76.320 16257249  21888.89
+#> 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
+#> ..         ...       ...  ...     ...      ...       ...
+```
+
+And we clean up after ourselves on Google Drive.
+
+``` r
+delete_ss("iris")
+#> Sheet "iris" moved to trash in Google Drive.
+delete_ss("gap-data")
+#> Sheet "gap-data" moved to trash in Google Drive.
+```
+
 ### Authorization using OAuth2
 
 If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
 
-`r  # Give gspreadr permission to access your spreadsheets and google drive  authorize()`
+``` r
+# Give gspreadr permission to access your spreadsheets and google drive
+authorize() 
+```
 
 Use `authorize(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
 

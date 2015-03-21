@@ -114,20 +114,23 @@ test_that("Worksheet is resized", {
 
 test_that("Different file formats can be uploaded", {
   
-  expect_error(upload_ss("I dont exist.csv"))
-  expect_error(upload_ss("test-register.R"))
+  expect_error(upload_ss("I dont exist.csv"), "does not exist")
+  expect_error(upload_ss("test-register.R"),
+               "Cannot convert file with this extension")
   
-  expect_message(upload_ss("gap-data.txt"), "uploaded")
+  expect_message(upload_ss("gap-data.xlsx"), "uploaded")
+  ss <- register_ss("gap-data")
+  expect_equal(ss$n_ws, 5)
+  
   expect_message(upload_ss("gap-data.tsv"), "uploaded")
   expect_message(upload_ss("gap-data.csv"), "uploaded")
-  expect_message(upload_ss("gap-data.xlsx"), "uploaded")
+  expect_message(upload_ss("gap-data.txt"), "uploaded")
   expect_message(upload_ss("gap-data.ods"), "uploaded")
   
-  expect_true(all(list.files(pattern = "gap-data") %in% 
-                    unlist(list_sheets()["sheet_title"])))
+  ss_df <- list_sheets()
+  gap_matches <- grepl("gap-data", ss_df$sheet_title)
+  expect_equal(gap_matches %>% sum(), 5)
   
-  ss <- register_ss("gap-data.xlsx")
-  expect_equal(ss$n_ws, 5)
 })
 
 ## delete any remaining sheets created here
@@ -138,5 +141,4 @@ my_patterns <- c("testing[0-9]{1}", "gap-data",
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
 sheets_to_delete <- list_sheets() %>%
   dplyr::filter(stringr::str_detect(sheet_title, my_patterns))
-plyr::a_ply(sheets_to_delete$sheet_key, 1, delete_ss)
-
+sapply(sheets_to_delete$sheet_key, delete_ss, verbose = FALSE)

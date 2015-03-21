@@ -4,7 +4,7 @@
 \alias{upload_ss}
 \title{Upload a file and convert it to a Google Sheet}
 \usage{
-upload_ss(file, sheet_title, verbose = TRUE)
+upload_ss(file, sheet_title = NULL, verbose = TRUE)
 }
 \arguments{
 \item{file}{the file to upload, if it does not contain the absolute path,
