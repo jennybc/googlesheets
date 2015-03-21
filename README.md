@@ -16,7 +16,13 @@ Features:
 -   Extract data or edit data.
 -   Create | delete | rename | copy spreadsheets and worksheets.
 
-### Load gpsreadr
+### Install gspreadr
+
+``` r
+devtools::install_github("jennybc/gspreadr")
+```
+
+### Load gspreadr
 
 `gspreadr` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. But rest assured, neither is strictly necessary to use `gspreadr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R.
 
@@ -31,6 +37,7 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
+#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [21 x 6]
 #> 
 #>                                     sheet_title
@@ -55,7 +62,7 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-21 03:17:35, 2015-03-20 22:32:48, 2015-0...
+#> $ last_updated (time) 2015-03-21 05:33:45, 2015-03-20 22:32:48, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -71,7 +78,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-20 21:26:18 PDT
+#>   Date of gspreadr::register_ss: 2015-03-20 22:49:27 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -101,6 +108,24 @@ gap <- gap_url %>% register_ss
 #> Sheet identified!
 #> sheet_title: Gapminder
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+```
+
+### Get a Google spreadsheet to practice with
+
+If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+
+``` r
+gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
+copy_ss(key = gap_key, to = "Gapminder")
+```
+
+If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `list_sheets()` again and make sure the Gapminder sheet is listed.
+
+Now register your copy of the Gapminder sheet and you can follow along:
+
+``` r
+gap <- register_ss("Gapminder")
+str(gap)
 ```
 
 ### Consume data
@@ -294,17 +319,17 @@ foo <- new_ss("foo")
 #> Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1PuVig2OV7E9NhtALH8jpq4nKlizYkQ1xkR_OsYulFFc
+#> sheet_key: 1yYkFP5e7V0OCWzLtmLcmU56utJD6RXlFy1HCI1mesFA
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-20 21:26:28 PDT
-#> Date of last spreadsheet update: 2015-03-21 04:26:26 UTC
+#>   Date of gspreadr::register_ss: 2015-03-20 22:49:33 PDT
+#> Date of last spreadsheet update: 2015-03-21 05:49:31 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1PuVig2OV7E9NhtALH8jpq4nKlizYkQ1xkR_OsYulFFc
+#> Key: 1yYkFP5e7V0OCWzLtmLcmU56utJD6RXlFy1HCI1mesFA
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -358,14 +383,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss %>% str()
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-20 21:26:37 PDT
-#> Date of last spreadsheet update: 2015-03-21 04:26:36 UTC
+#>   Date of gspreadr::register_ss: 2015-03-20 22:49:40 PDT
+#> Date of last spreadsheet update: 2015-03-21 05:49:39 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1R2kjcvgDaKk1VXjsA5okntBCZP4Yh1OqJn3kTOUx4Yw
+#> Key: 1Z8JGYlRHhs9rVlqGzE7TI2YpP2NZU_1gQxnwIlMPNtw
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -388,11 +413,11 @@ upload_ss("tests/testthat/gap-data.xlsx")
 gap_xlsx <- register_ss("gap-data")
 #> Sheet identified!
 #> sheet_title: gap-data
-#> sheet_key: 15bmQMJaXiL6hrQflPR9Y6axRPLE9dHvgjvw17JdOSVg
+#> sheet_key: 1JM-SBhoSSHT-i3dBk5G3zvbStzZxapJejiO2mcHYYgo
 gap_xlsx %>% str()
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-20 21:27:40 PDT
-#> Date of last spreadsheet update: 2015-03-21 04:26:40 UTC
+#>   Date of gspreadr::register_ss: 2015-03-20 22:49:45 PDT
+#> Date of last spreadsheet update: 2015-03-21 05:49:43 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -402,7 +427,7 @@ gap_xlsx %>% str()
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 15bmQMJaXiL6hrQflPR9Y6axRPLE9dHvgjvw17JdOSVg
+#> Key: 1JM-SBhoSSHT-i3dBk5G3zvbStzZxapJejiO2mcHYYgo
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
