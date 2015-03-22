@@ -6,8 +6,7 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr)
-[![Project Status: Wip - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/0.1.0/wip.svg)](http://www.repostatus.org/#wip)
+[![Project Status: Wip - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/0.1.0/wip.svg)](http://www.repostatus.org/#wip)[![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr)[![Coverage Status](https://coveralls.io/repos/jennybc/gspreadr/badge.svg)](https://coveralls.io/r/jennybc/gspreadr)
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -31,8 +30,14 @@ Features:
   - Access a spreadsheet by its title, key or URL.
   - Extract data or edit data.
   - Create | delete | rename | copy spreadsheets and worksheets.
+  
+### Install gspreadr
 
-### Load gpsreadr
+```{r eval = FALSE}
+devtools::install_github("jennybc/gspreadr")
+```
+
+### Load gspreadr
 
 `gspreadr` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. But rest assured, neither is strictly necessary to use `gspreadr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R.
 
@@ -68,6 +73,24 @@ gap <- gap_key %>% register_ss
 # gspreadr may be able to determine the key from the browser URL
 gap_url <- "https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/"
 gap <- gap_url %>% register_ss
+```
+
+### Get a Google spreadsheet to practice with
+
+If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+
+```{r copy-gapminder, eval = FALSE}
+gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
+copy_ss(key = gap_key, to = "Gapminder")
+```
+
+If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `list_sheets()` again and make sure the Gapminder sheet is listed.
+
+Now register your copy of the Gapminder sheet and you can follow along:
+
+```{r register-gapminder, eval = FALSE}
+gap <- register_ss("Gapminder")
+str(gap)
 ```
 
 ### Consume data
