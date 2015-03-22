@@ -8,7 +8,7 @@ identify_ss(x, method = NULL, verify = TRUE, visibility = "private",
   verbose = TRUE)
 }
 \arguments{
-\item{x}{sheet-identifying information, either a spreadsheet object or a
+\item{x}{sheet-identifying information, either a gspreadsheet object or a
 character vector of length one, giving a URL, sheet title, key or
 worksheets feed}
 
@@ -25,19 +25,20 @@ or without ("public"); only consulted when \code{verify = FALSE}}
 \item{verbose}{logical}
 }
 \value{
-a spreadsheet object
+a gspreadsheet object
 }
 \description{
-Create a spreadsheet object that holds identifying information for a specific
-spreadsheet. Unless \code{verify = FALSE}, it calls \code{\link{list_sheets}}
-and attempts to return information from the row uniquely specified by input
-\code{x}. The listing provided by \code{\link{list_sheets}} is only available
-to an authorized user, so authorization will be required. A spreadsheet
-object contains much more information than that available via
-\code{\link{list_sheets}}, so many components will not be populated until the
-sheet is registered via \code{\link{register_ss}}. If \code{verify = FALSE},
-then user must provide either sheet key, URL or a worksheets feed, as opposed
-to sheet title. In this case, the information will be taken at face value,
-i.e. no proactive verification or look-up on Google Drive.
+Create a gspreadsheet object that holds identifying information for a
+specific spreadsheet. Unless \code{verify = FALSE}, it calls
+\code{\link{list_sheets}} and attempts to return information from the row
+uniquely specified by input \code{x}. The listing provided by
+\code{\link{list_sheets}} is only available to an authorized user, so
+authorization will be required. A gspreadsheet object contains much more
+information than that available via \code{\link{list_sheets}}, so many
+components will not be populated until the sheet is registered via
+\code{\link{register_ss}}. If \code{verify = FALSE}, then user must provide
+either sheet key, URL or a worksheets feed, as opposed to sheet title. In
+this case, the information will be taken at face value, i.e. no proactive
+verification or look-up on Google Drive.
 }
 

@@ -6,7 +6,7 @@ test_that("Spreadsheet can be created and deleted", {
   sheet_title <- stringr::str_c("testing", x) 
   
   expect_message(new_ss <- new_ss(sheet_title), "created")
-  expect_is(new_ss, "spreadsheet")
+  expect_is(new_ss, "gspreadsheet")
   ss_df <- list_sheets()
   expect_true(sheet_title %in% ss_df$sheet_title)
   expect_message(tmp <- delete_ss(sheet_title), "moved to trash")
@@ -19,10 +19,10 @@ test_that("Spreadsheet can be created and deleted", {
 test_that("Spreadsheet can be copied", {
   
   copy_ss <- copy_ss(pts_title)
-  expect_is(copy_ss, "spreadsheet")
+  expect_is(copy_ss, "gspreadsheet")
   
   copy_ss_2 <- copy_ss(pts_title, to = "eggplants are purple")
-  expect_is(copy_ss_2, "spreadsheet")
+  expect_is(copy_ss_2, "gspreadsheet")
   
   ss_df <- list_sheets()
   
@@ -47,7 +47,7 @@ test_that("Add a new worksheet", {
   
   ss_new <- add_ws(ss_old, "Test Sheet")
   
-  expect_is(ss_new, "spreadsheet")
+  expect_is(ss_new, "gspreadsheet")
 
   new_ws_index <- ss_old$n_ws + 1
   
@@ -67,7 +67,7 @@ test_that("Delete a worksheet", {
   
   ss_new <- delete_ws(ss_old, "Test Sheet")
   
-  expect_is(ss_new, "spreadsheet")
+  expect_is(ss_new, "gspreadsheet")
 
   expect_equal(ss_old$n_ws - 1, ss_new$n_ws)
   expect_false("Test Sheet" %in% ss_new$ws[["ws_title"]])
@@ -81,12 +81,12 @@ test_that("Worksheet is renamed", {
   ss <- register_ss(pts_title)
   ss_new <- rename_ws(ss, "Asia", "Somewhere in Asia")
   
-  expect_is(ss_new, "spreadsheet")
+  expect_is(ss_new, "gspreadsheet")
   expect_true("Somewhere in Asia" %in% ss_new$ws$ws_title)
   expect_false("Asia" %in% ss_new$ws$ws_title)
 
   ss_final <- rename_ws(ss_new, "Somewhere in Asia", "Asia")
-  expect_is(ss_final, "spreadsheet")
+  expect_is(ss_final, "gspreadsheet")
   expect_false("Somewhere in Asia" %in% ss_final$ws$ws_title)
   expect_true("Asia" %in% ss_final$ws$ws_title)
   

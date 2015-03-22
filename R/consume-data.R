@@ -23,7 +23,7 @@
 #' @export
 get_via_lf <- function(ss, ws = 1) {
   
-  stopifnot(ss %>% inherits("spreadsheet"))
+  stopifnot(ss %>% inherits("gspreadsheet"))
   
   this_ws <- get_ws(ss, ws)
   req <- gsheets_GET(this_ws$listfeed)
@@ -107,7 +107,7 @@ get_via_cf <-
            limits = NULL, return_empty = FALSE, return_links = FALSE,
            verbose = TRUE) {
     
-  stopifnot(ss %>% inherits("spreadsheet"))
+  stopifnot(ss %>% inherits("gspreadsheet"))
     
   this_ws <- get_ws(ss, ws, verbose)
   

@@ -1,6 +1,6 @@
-#' The spreadsheet object
+#' The gspreadsheet object
 #' 
-#' The spreadsheet object stores information about a spreadsheet. It includes
+#' The gspreadsheet object stores information about a spreadsheet. It includes
 #' the fields:
 #' 
 #' \itemize{
@@ -19,8 +19,8 @@
 #' self-explanatory and this isn't really needed. Or this needs to get beefed
 #' up.
 #' 
-#' @name spreadsheet
-spreadsheet <- function() {
+#' @name gspreadsheet
+gspreadsheet <- function() {
   structure(list(sheet_key = character(),
                  sheet_title = character(),
                  n_ws = integer(),
@@ -33,6 +33,6 @@ spreadsheet <- function() {
                  author_email = character(),
                  links = character(), # initialize as data.frame?
                  ws = list()),
-            class = c("spreadsheet", "list"))
+            class = c("gspreadsheet", "list"))
   
 }

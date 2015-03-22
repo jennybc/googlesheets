@@ -4,11 +4,11 @@
 #' \code{gspreadr}: the title of the spreadsheet, the number of worksheets 
 #' contained and the corresponding worksheet dimensions.
 #' 
-#' @param object spreadsheet object returned by \code{register_ss}
+#' @param object gspreadsheet object returned by \code{register_ss}
 #' @param ... potential further arguments (required for Method/Generic reasons)
 #'   
 #' @export
-str.spreadsheet <- function(object, ...) {  
+str.gspreadsheet <- function(object, ...) {  
   
   sprintf("              Spreadsheet title: %s\n", object$sheet_title) %>% cat
   sprintf("  Date of gspreadr::register_ss: %s\n",

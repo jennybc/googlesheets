@@ -72,10 +72,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul></li>
 <li><a href="#worksheet-operations">Worksheet Operations</a><ul>
 <li><a href="#view-worksheet">View worksheet</a></li>
-<li><a href="#update-cells">Update cells</a><ul>
-<li><a href="#update-a-single-cell">Update a single cell</a></li>
-<li><a href="#update-cells-in-batch">Update cells in batch</a></li>
-</ul></li>
+<li><a href="#update-cells">Update cells</a></li>
 </ul></li>
 <li><a href="#appendix-visibility-table">Appendix: Visibility table</a></li>
 <li><a href="#appendix-words-about-sheet-identifiers">Appendix: Words about sheet identifiers</a></li>
@@ -95,7 +92,6 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="get-a-google-spreadsheet-to-practice-with" class="section level1">
 <h1>Get a Google spreadsheet to practice with</h1>
-<p><em>Maybe kick off w/ some code just to copy/paste that will copy the Gapminder spreadsheet into the authenticated user’s Google Drive. So they can follow along?</em></p>
 <p>If you don’t have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the <code>gspreadr</code> Google user into your Drive. The sheet holds some of the <a href="https://github.com/jennybc/gapminder">Gapminder data</a>.</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap_key &lt;-<span class="st"> &quot;1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE&quot;</span>
 <span class="kw">copy_ss</span>(<span class="dt">key =</span> gap_key, <span class="dt">to =</span> <span class="st">&quot;Gapminder&quot;</span>)</code></pre>
@@ -104,12 +100,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <h1>List your spreadsheets</h1>
 <p>As an authenticated user, you can get a (partial) listing of accessible sheets. If you have not yet authenticated, you will be prompted to do so. If it’s been a while since you authenticated, you’ll see a message about refreshing a stale OAuth token.</p>
 <pre class="sourceCode r"><code class="sourceCode r">my_sheets &lt;-<span class="st"> </span><span class="kw">list_sheets</span>()</code></pre>
-<pre><code>## Auto-refreshing stale OAuth token.</code></pre>
 <p>Explore the <code>my_sheets</code> object. Here’s a look at the top of ours, where we’ve truncated the variables <code>sheet_title</code> and <code>sheet_key</code> and suppressed the variable <code>ws_id</code> for readability.</p>
 <pre><code>## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-22 20:58:27
+## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-22 22:31:20
 ## 2     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
 ## 3  gas_mileag 1WH65aJ... woo.kara    r 2015-03-12 01:01:33
 ## 4  Temperatur 1Hkh20-... gspreadr   rw 2015-03-03 00:07:43
@@ -127,7 +122,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gap)</code></pre>
 <pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:08 PDT
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:17 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -154,7 +149,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(ss2)</code></pre>
 <pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:08 PDT
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:17 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -178,7 +173,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Example of getting nice tabular data from the “list feed”:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gap)</code></pre>
 <pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:08 PDT
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:17 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -263,7 +258,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 9    Australia   Oceania 1987  76.320 16257249  21888.89
 ## 10 New Zealand   Oceania 1987  74.320  3317166  19007.19</code></pre>
 <p>Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function <code>reshape_cf()</code> to reshape this data into something tabular.</p>
-<p><em>To add, using row and column limits on the cell feed.</em></p>
+<p><em>To add, using row and column limits on the cell feed. All covered in the README.</em></p>
 <p><em>Stuff below partialy redundant with above</em></p>
 <p>Eventually, you may want to read parts of the <a href="https://developers.google.com/google-apps/spreadsheets/">Google Sheets API version 3.0 documentation</a>. The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the <code>gspreadr</code> package. The Sheets API uses the term “feed” much like other APIs will refer to an “endpoint”.</p>
 <p>There are two basic modes of consuming data stored in a worksheet (quotes taken from the <a href="https://developers.google.com/google-apps/spreadsheets/">API docs</a>:</p>
@@ -277,7 +272,6 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>“cell: Single piece of data in a worksheet.”</li>
 </ul></li>
 </ul>
-<p><em>note: current cell feed function doesn’t support what we say above but it’s still being brought back online; revise above when dust has settled.</em></p>
 <p><em>show how to iterate across worksheets, i.e. get cell D4 from all worksheets</em></p>
 <div id="visibility-stuff" class="section level3">
 <h3>Visibility stuff</h3>
@@ -298,22 +292,22 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="add-delete-rename-spreadsheets-and-worksheets" class="section level1">
 <h1>Add, delete, rename spreadsheets and worksheets</h1>
-<p><em>needs updating</em></p>
+<p><em>needs updating; lots of this already in README</em></p>
 <div id="add-or-delete-spreadsheet" class="section level3">
 <h3>Add or delete spreadsheet</h3>
 <p>To add or delete a spreadsheet in your Google Drive, use <code>new_ss()</code> or <code>delete_ss()</code> and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled “Sheet1”. Recall we demonstrate the use of <code>copy_ss()</code> at the start of this vignette.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create a new empty spreadsheet by title</span>
 <span class="kw">new_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet &quot;hi I am new here&quot; created in Google Drive.
-## Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1AO1WyxHdnReJfh9q-xMZTjJbVrGHUxddxknh2AxbNDg</code></pre>
+## sheet_key: 12yp3IhuC2IRSC3g0s9WNUyIh6hyP3GMuGaG4BmeBylU</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list_sheets</span>() %&gt;%<span class="st"> </span><span class="kw">filter</span>(sheet_title ==<span class="st"> &quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1AO1WyxHdnReJfh9q-xMZTjJbVrGHUxddxknh2AxbNDg gspreadr
+## 1 hi I am new here 12yp3IhuC2IRSC3g0s9WNUyIh6hyP3GMuGaG4BmeBylU gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Move spreadsheet to trash</span>
 <span class="kw">delete_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
@@ -326,63 +320,59 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="add-delete-or-rename-a-worksheet" class="section level3">
 <h3>Add, delete, or rename a worksheet</h3>
-<p>To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets.</p>
+<p>To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to <code>x</code> after adding the worksheet. This is because adding a worksheet changes the information associate with a registered sheet and, within editing function like <code>add_ws()</code>, we re-register the sheet and return the current sheet info.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">new_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet &quot;hi I am new here&quot; created in Google Drive.
-## Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8</code></pre>
+## sheet_key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8</code></pre>
+## sheet_key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(x)</code></pre>
 <pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:18 PDT
-## Date of last spreadsheet update: 2015-03-22 21:03:17 UTC
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:27 PDT
+## Date of last spreadsheet update: 2015-03-22 22:32:25 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">add_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</code></pre>
+## Key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">add_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; added to sheet &quot;hi I am new here&quot;.</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
-<pre><code>## Sheet identified!
-## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(x)</code></pre>
 <pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:20 PDT
-## Date of last spreadsheet update: 2015-03-22 21:03:20 UTC
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:28 PDT
+## Date of last spreadsheet update: 2015-03-22 22:32:28 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8</code></pre>
+## Key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">delete_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; deleted from sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8</code></pre>
+## sheet_key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(x)</code></pre>
 <pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:21 PDT
-## Date of last spreadsheet update: 2015-03-22 21:03:21 UTC
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:30 PDT
+## Date of last spreadsheet update: 2015-03-22 22:32:29 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8</code></pre>
+## Key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA</code></pre>
 <p>To rename a worksheet, pass in the spreadsheet object, the worksheet’s current name and the new name you want it to be.</p>
-<pre class="sourceCode r"><code class="sourceCode r">## oops this function not resurrected yet!
-<span class="kw">rename_worksheet</span>(ssheet, <span class="st">&quot;Sheet1&quot;</span>, <span class="st">&quot;First Sheet&quot;</span>)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rename_ws</span>(x, <span class="st">&quot;Sheet1&quot;</span>, <span class="st">&quot;First Sheet&quot;</span>)</code></pre>
+<pre><code>## Worksheet &quot;Sheet1&quot; renamed to &quot;First Sheet&quot;.</code></pre>
 <p>Tidy up by getting rid of the sheet we’ve playing with.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">delete_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet &quot;hi I am new here&quot; moved to trash in Google Drive.</code></pre>
@@ -400,29 +390,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 <div id="update-cells" class="section level2">
 <h2>Update cells</h2>
-<p><em>this functionality has not been resurrected yet</em></p>
-<div id="update-a-single-cell" class="section level3">
-<h3>Update a single cell</h3>
-<p>You can update a cell’s value by specifying the cell’s position, either in <code>A1</code> or <code>R1C1</code> notation, and the new value. The new value may be a formula followed by a <code>=</code>, ie. <code>=A1+B1</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">update_cell</span>(ws, <span class="st">&quot;A1&quot;</span>, <span class="st">&quot;Oops&quot;</span>)
-
-<span class="kw">get_cell</span>(ws, <span class="st">&quot;A1&quot;</span>)
-
-<span class="kw">update_cell</span>(ws, <span class="st">&quot;R1C1&quot;</span>, <span class="st">&quot;country&quot;</span>)
-
-<span class="kw">get_cell</span>(ws, <span class="st">&quot;R1C1&quot;</span>)</code></pre>
-</div>
-<div id="update-cells-in-batch" class="section level3">
-<h3>Update cells in batch</h3>
-<p>You can update a batch of cells by specifying the range (ie. “A1:A4”). Alternatively, if you just want to dump an entire dataframe or vector into a worksheet, you can specify an anchor cell as the reference cell position and the range will be calculated for you. You can pass in a vector of new values or an entire data frame.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">update_cells</span>(ws, <span class="st">&quot;C1:E1&quot;</span>, <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>))
-
-<span class="kw">read_range</span>(ws, <span class="st">&quot;A1:F3&quot;</span>)
-
-<span class="kw">update_cells</span>(ws, <span class="st">&quot;G1&quot;</span>, <span class="kw">head</span>(iris))
-
-<span class="kw">read_range</span>(ws, <span class="st">&quot;G1:K7&quot;</span>)</code></pre>
-</div>
+<p><em>documented only in README right now</em></p>
 </div>
 </div>
 <div id="appendix-visibility-table" class="section level1">

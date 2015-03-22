@@ -48,9 +48,18 @@ if(length(HTTR_OAUTH) > 0) {
 
 ```
 
-# Get a Google spreadsheet to practice with
+```{r pre-clean, include = FALSE}
+## if a previous compilation of this document leaves anything behind, i.e. if it
+## aborts, clean up Google Drive first
+my_patterns <- c("hi I am new here")
+my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
+sheets_to_delete <- list_sheets() %>%
+  dplyr::filter(stringr::str_detect(sheet_title, my_patterns))
+sapply(sheets_to_delete$sheet_key, delete_ss, verbose = FALSE)
+```
 
-*Maybe kick off w/ some code just to copy/paste that will copy the Gapminder spreadsheet into the authenticated user's Google Drive. So they can follow along?*
+
+# Get a Google spreadsheet to practice with
 
 If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
@@ -137,7 +146,7 @@ head(oceania_reshaped, 10)
 
 Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `reshape_cf()` to reshape this data into something tabular.
 
-*To add, using row and column limits on the cell feed.*
+*To add, using row and column limits on the cell feed. All covered in the README.*
 
 *Stuff below partialy redundant with above*
 
@@ -149,8 +158,6 @@ There are two basic modes of consuming data stored in a worksheet (quotes taken 
     - "list row: Row of cells in a worksheet, represented as a key-value pair, where each key is a column name, and each value is the cell value. The first row of a worksheet is always considered the header row when using the API, and therefore is the row that defines the keys represented in each row."
   * the __cell feed__: unconstrained access to individual non-empty cells specified in either Excel-like notation, e.g. cell D9, or in row-number-column-number notation, e.g. R9C4
     - "cell: Single piece of data in a worksheet."
-
-*note: current cell feed function doesn't support what we say above but it's still being brought back online; revise above when dust has settled.*
 
 *show how to iterate across worksheets, i.e. get cell D4 from all worksheets*
 
@@ -176,7 +183,7 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 # Add, delete, rename spreadsheets and worksheets
 
-*needs updating*
+*needs updating; lots of this already in README*
 
 ### Add or delete spreadsheet
 
@@ -194,14 +201,13 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 
 ### Add, delete, or rename a worksheet
 
-To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. 
+To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to `x` after adding the worksheet. This is because adding a worksheet changes the information associate with a registered sheet and, within editing function like `add_ws()`, we re-register the sheet and return the current sheet info.
 
 ```{r new-sheet-new-ws-delete-ws}
 new_ss("hi I am new here")
 x <- register_ss("hi I am new here")
 str(x)
-add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
-x <- register_ss("hi I am new here")
+x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
 str(x)
 delete_ws(x, ws_title = "foo")
 x <- register_ss("hi I am new here")
@@ -210,9 +216,8 @@ str(x)
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
 
-```{r new-ws-rename-ws-delete-ws, eval = FALSE}
-## oops this function not resurrected yet!
-rename_worksheet(ssheet, "Sheet1", "First Sheet")
+```{r new-ws-rename-ws-delete-ws}
+rename_ws(x, "Sheet1", "First Sheet")
 ```
 
 Tidy up by getting rid of the sheet we've playing with.
@@ -239,44 +244,7 @@ view_all(ssheet)
 
 ## Update cells
 
-*this functionality has not been resurrected yet*
-
-### Update a single cell
-
-You can update a cell's value by specifying the cell's position, either in `A1` or `R1C1` notation, and the new value. The new value may be a formula followed by a `=`, ie. `=A1+B1`. 
-
-```{r update cell, eval = FALSE}
-
-update_cell(ws, "A1", "Oops")
-
-get_cell(ws, "A1")
-
-update_cell(ws, "R1C1", "country")
-
-get_cell(ws, "R1C1")
-
-```
-
-### Update cells in batch
-
-You can update a batch of cells by specifying the range (ie. "A1:A4"). Alternatively, if you just want to dump an entire dataframe or vector into a worksheet, you can specify an anchor cell as the reference cell position and the range will be calculated for you. You can pass in a vector of new values or an entire data frame.
-
-```{r update cells, eval = FALSE}
-
-update_cells(ws, "C1:E1", c("A", "B", "C"))
-
-read_range(ws, "A1:F3")
-
-update_cells(ws, "G1", head(iris))
-
-read_range(ws, "G1:K7")
-```
-
-```{r return to orig, include = FALSE, eval = FALSE, eval = FALSE}
-
-update_cells(ws, "C1:E1", c("pop", "continent", "lifeExp"))
-update_cells(ws, "G1:K7", ncol(head(iris) * (nrow(iris) + 1)))
-```
+*documented only in README right now*
 
 # Appendix: Visibility table
 

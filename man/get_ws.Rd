@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_ws}
 \alias{get_ws}
-\title{Retrieve a worksheet-describing list from a spreadsheet}
+\title{Retrieve a worksheet-describing list from a gspreadsheet}
 \usage{
 get_ws(ss, ws, verbose = TRUE)
 }
@@ -16,7 +16,7 @@ get_ws(ss, ws, verbose = TRUE)
 worksheet being accessed}
 }
 \description{
-From a registered spreadsheet, retrieve a list (actually a row of a
-data.frame) giving everything we know about a specific worksheet.
+From a gspreadsheet, retrieve a list (actually a row of a data.frame) giving
+everything we know about a specific worksheet.
 }
 

@@ -12,8 +12,8 @@ new_ss(title = "my_sheet", verbose = TRUE)
 \item{verbose}{logical; do you want informative message?}
 }
 \value{
-a partially populated spreadsheet object, giving sheet title, key,
-  and worksheets feed
+a partially populated Google spreadsheet object, giving sheet title,
+  key, and worksheets feed
 }
 \description{
 Create a new (empty) spreadsheet in your Google Drive. The new sheet will

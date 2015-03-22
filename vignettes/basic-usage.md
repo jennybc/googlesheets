@@ -24,9 +24,10 @@ If you want to switch to a different Google account, run `authorize(new_user = T
 
 
 
-# Get a Google spreadsheet to practice with
 
-*Maybe kick off w/ some code just to copy/paste that will copy the Gapminder spreadsheet into the authenticated user's Google Drive. So they can follow along?*
+
+
+# Get a Google spreadsheet to practice with
 
 If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
@@ -45,10 +46,6 @@ As an authenticated user, you can get a (partial) listing of accessible sheets. 
 my_sheets <- list_sheets()
 ```
 
-```
-## Auto-refreshing stale OAuth token.
-```
-
 Explore the `my_sheets` object. Here's a look at the top of ours, where we've truncated the variables `sheet_title` and `sheet_key` and suppressed the variable `ws_id` for readability.
 
 
@@ -56,7 +53,7 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-22 20:58:27
+## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-22 22:31:20
 ## 2     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
 ## 3  gas_mileag 1WH65aJ... woo.kara    r 2015-03-12 01:01:33
 ## 4  Temperatur 1Hkh20-... gspreadr   rw 2015-03-03 00:07:43
@@ -89,7 +86,7 @@ str(gap)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:08 PDT
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:17 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -136,7 +133,7 @@ str(ss2)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:08 PDT
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:17 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -168,7 +165,7 @@ str(gap)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:08 PDT
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:17 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -307,7 +304,7 @@ head(oceania_reshaped, 10)
 
 Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `reshape_cf()` to reshape this data into something tabular.
 
-*To add, using row and column limits on the cell feed.*
+*To add, using row and column limits on the cell feed. All covered in the README.*
 
 *Stuff below partialy redundant with above*
 
@@ -319,8 +316,6 @@ There are two basic modes of consuming data stored in a worksheet (quotes taken 
     - "list row: Row of cells in a worksheet, represented as a key-value pair, where each key is a column name, and each value is the cell value. The first row of a worksheet is always considered the header row when using the API, and therefore is the row that defines the keys represented in each row."
   * the __cell feed__: unconstrained access to individual non-empty cells specified in either Excel-like notation, e.g. cell D9, or in row-number-column-number notation, e.g. R9C4
     - "cell: Single piece of data in a worksheet."
-
-*note: current cell feed function doesn't support what we say above but it's still being brought back online; revise above when dust has settled.*
 
 *show how to iterate across worksheets, i.e. get cell D4 from all worksheets*
 
@@ -346,7 +341,7 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 # Add, delete, rename spreadsheets and worksheets
 
-*needs updating*
+*needs updating; lots of this already in README*
 
 ### Add or delete spreadsheet
 
@@ -360,10 +355,10 @@ new_ss("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
-## Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1AO1WyxHdnReJfh9q-xMZTjJbVrGHUxddxknh2AxbNDg
+## sheet_key: 12yp3IhuC2IRSC3g0s9WNUyIh6hyP3GMuGaG4BmeBylU
 ```
 
 ```r
@@ -374,7 +369,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1AO1WyxHdnReJfh9q-xMZTjJbVrGHUxddxknh2AxbNDg gspreadr
+## 1 hi I am new here 12yp3IhuC2IRSC3g0s9WNUyIh6hyP3GMuGaG4BmeBylU gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
 ```
 
@@ -400,7 +395,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 
 ### Add, delete, or rename a worksheet
 
-To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. 
+To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to `x` after adding the worksheet. This is because adding a worksheet changes the information associate with a registered sheet and, within editing function like `add_ws()`, we re-register the sheet and return the current sheet info.
 
 
 ```r
@@ -409,10 +404,10 @@ new_ss("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
-## Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8
+## sheet_key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA
 ```
 
 ```r
@@ -422,7 +417,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8
+## sheet_key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA
 ```
 
 ```r
@@ -431,18 +426,18 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:18 PDT
-## Date of last spreadsheet update: 2015-03-22 21:03:17 UTC
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:27 PDT
+## Date of last spreadsheet update: 2015-03-22 22:32:25 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8
+## Key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA
 ```
 
 ```r
-add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
+x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
 ```
 
 ```
@@ -450,30 +445,20 @@ add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
 ```
 
 ```r
-x <- register_ss("hi I am new here")
-```
-
-```
-## Sheet identified!
-## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8
-```
-
-```r
 str(x)
 ```
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:20 PDT
-## Date of last spreadsheet update: 2015-03-22 21:03:20 UTC
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:28 PDT
+## Date of last spreadsheet update: 2015-03-22 22:32:28 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8
+## Key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA
 ```
 
 ```r
@@ -491,7 +476,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8
+## sheet_key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA
 ```
 
 ```r
@@ -500,22 +485,25 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 14:03:21 PDT
-## Date of last spreadsheet update: 2015-03-22 21:03:21 UTC
+##   Date of gspreadr::register_ss: 2015-03-22 15:32:30 PDT
+## Date of last spreadsheet update: 2015-03-22 22:32:29 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1TDCSaosJl_O6pn8Phxk_W6JoP6SCTYPpGr3TTiuHFR8
+## Key: 1ZOFza-OY2nyWPS8bdr_r4ZQx271f_g0mu5a59EvMbRA
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
 
 
 ```r
-## oops this function not resurrected yet!
-rename_worksheet(ssheet, "Sheet1", "First Sheet")
+rename_ws(x, "Sheet1", "First Sheet")
+```
+
+```
+## Worksheet "Sheet1" renamed to "First Sheet".
 ```
 
 Tidy up by getting rid of the sheet we've playing with.
@@ -547,39 +535,7 @@ view_all(ssheet)
 
 ## Update cells
 
-*this functionality has not been resurrected yet*
-
-### Update a single cell
-
-You can update a cell's value by specifying the cell's position, either in `A1` or `R1C1` notation, and the new value. The new value may be a formula followed by a `=`, ie. `=A1+B1`. 
-
-
-```r
-update_cell(ws, "A1", "Oops")
-
-get_cell(ws, "A1")
-
-update_cell(ws, "R1C1", "country")
-
-get_cell(ws, "R1C1")
-```
-
-### Update cells in batch
-
-You can update a batch of cells by specifying the range (ie. "A1:A4"). Alternatively, if you just want to dump an entire dataframe or vector into a worksheet, you can specify an anchor cell as the reference cell position and the range will be calculated for you. You can pass in a vector of new values or an entire data frame.
-
-
-```r
-update_cells(ws, "C1:E1", c("A", "B", "C"))
-
-read_range(ws, "A1:F3")
-
-update_cells(ws, "G1", head(iris))
-
-read_range(ws, "G1:K7")
-```
-
-
+*documented only in README right now*
 
 # Appendix: Visibility table
 

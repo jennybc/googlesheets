@@ -18,6 +18,15 @@ if(length(HTTR_OAUTH) > 0) {
 }
 
 
+## ----pre-clean, include = FALSE------------------------------------------
+## if a previous compilation of this document leaves anything behind, i.e. if it
+## aborts, clean up Google Drive first
+my_patterns <- c("hi I am new here")
+my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
+sheets_to_delete <- list_sheets() %>%
+  dplyr::filter(stringr::str_detect(sheet_title, my_patterns))
+sapply(sheets_to_delete$sheet_key, delete_ss, verbose = FALSE)
+
 ## ----copy-gapminder, eval = FALSE----------------------------------------
 #  gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
 #  copy_ss(key = gap_key, to = "Gapminder")
@@ -68,16 +77,14 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 new_ss("hi I am new here")
 x <- register_ss("hi I am new here")
 str(x)
-add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
-x <- register_ss("hi I am new here")
+x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
 str(x)
 delete_ws(x, ws_title = "foo")
 x <- register_ss("hi I am new here")
 str(x)
 
-## ----new-ws-rename-ws-delete-ws, eval = FALSE----------------------------
-#  ## oops this function not resurrected yet!
-#  rename_worksheet(ssheet, "Sheet1", "First Sheet")
+## ----new-ws-rename-ws-delete-ws------------------------------------------
+rename_ws(x, "Sheet1", "First Sheet")
 
 ## ----delete-sheet--------------------------------------------------------
 delete_ss("hi I am new here")
@@ -87,30 +94,4 @@ delete_ss("hi I am new here")
 #  view(ws)
 #  
 #  view_all(ssheet)
-
-## ----update cell, eval = FALSE-------------------------------------------
-#  
-#  update_cell(ws, "A1", "Oops")
-#  
-#  get_cell(ws, "A1")
-#  
-#  update_cell(ws, "R1C1", "country")
-#  
-#  get_cell(ws, "R1C1")
-#  
-
-## ----update cells, eval = FALSE------------------------------------------
-#  
-#  update_cells(ws, "C1:E1", c("A", "B", "C"))
-#  
-#  read_range(ws, "A1:F3")
-#  
-#  update_cells(ws, "G1", head(iris))
-#  
-#  read_range(ws, "G1:K7")
-
-## ----return to orig, include = FALSE, eval = FALSE, eval = FALSE---------
-#  
-#  update_cells(ws, "C1:E1", c("pop", "continent", "lifeExp"))
-#  update_cells(ws, "G1:K7", ncol(head(iris) * (nrow(iris) + 1)))
 
