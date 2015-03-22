@@ -41,7 +41,6 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [21 x 6]
 #> 
 #>                                     sheet_title
@@ -66,7 +65,7 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-22 20:58:27, 2015-03-20 22:32:48, 2015-0...
+#> $ last_updated (time) 2015-03-22 21:37:23, 2015-03-20 22:32:48, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -82,7 +81,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-22 14:16:34 PDT
+#>   Date of gspreadr::register_ss: 2015-03-22 14:45:00 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -324,17 +323,17 @@ foo <- new_ss("foo")
 #> Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1pzJa8VK71jYzSx47nhI41m3K_0K9CFnZBmZmvtY51cg
+#> sheet_key: 1naUvzuye5BONTymk6vAXnw2r9cxFMGNdbzQyHP8_a7g
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-22 14:16:41 PDT
-#> Date of last spreadsheet update: 2015-03-22 21:16:40 UTC
+#>   Date of gspreadr::register_ss: 2015-03-22 14:46:27 PDT
+#> Date of last spreadsheet update: 2015-03-22 21:46:26 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1pzJa8VK71jYzSx47nhI41m3K_0K9CFnZBmZmvtY51cg
+#> Key: 1naUvzuye5BONTymk6vAXnw2r9cxFMGNdbzQyHP8_a7g
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -388,14 +387,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss %>% str()
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-22 14:16:51 PDT
-#> Date of last spreadsheet update: 2015-03-22 21:16:50 UTC
+#>   Date of gspreadr::register_ss: 2015-03-22 14:46:36 PDT
+#> Date of last spreadsheet update: 2015-03-22 21:46:35 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1PFh5wjC9_dj2u0djqZHDJM1vRnysHxbz7sCUBYnrwpA
+#> Key: 1PVEMPUtawxt8bTyBMLsff7_T1EJtrZWZnBejniM5G2U
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -418,11 +417,11 @@ upload_ss("tests/testthat/gap-data.xlsx")
 gap_xlsx <- register_ss("gap-data")
 #> Sheet identified!
 #> sheet_title: gap-data
-#> sheet_key: 1HWHt3iveENWQZeGZZ3-y0kXPxJlxeDGcqBDFzvKUR9s
+#> sheet_key: 1bTCwRjuYf6MGB2P8kVdloUSwqxPOwtj0aay9xvDsDqE
 gap_xlsx %>% str()
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-22 14:16:56 PDT
-#> Date of last spreadsheet update: 2015-03-22 21:16:55 UTC
+#>   Date of gspreadr::register_ss: 2015-03-22 14:46:42 PDT
+#> Date of last spreadsheet update: 2015-03-22 21:46:40 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -432,7 +431,7 @@ gap_xlsx %>% str()
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1HWHt3iveENWQZeGZZ3-y0kXPxJlxeDGcqBDFzvKUR9s
+#> Key: 1bTCwRjuYf6MGB2P8kVdloUSwqxPOwtj0aay9xvDsDqE
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]

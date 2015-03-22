@@ -48,7 +48,7 @@ list_ws <- function(ss) {
 #' @param x character vector of letter-style column IDs (case insensitive)
 letter_to_num <- function(x) {
   x %>%
-    stringr::str_to_upper() %>%
+    toupper() %>%
     stringr::str_split('') %>% 
     plyr::llply(match, table = LETTERS) %>%
     plyr::laply(function(z) sum(26 ^ rev(seq_along(z) - 1) * z)) %>%
