@@ -23,6 +23,8 @@
 #' @export
 get_via_lf <- function(ss, ws = 1) {
   
+  stopifnot(ss %>% inherits("spreadsheet"))
+  
   this_ws <- get_ws(ss, ws)
   req <- gsheets_GET(this_ws$listfeed)
   row_data <- req$content %>% lfilt("entry")
@@ -46,6 +48,15 @@ get_via_lf <- function(ss, ws = 1) {
     `rownames<-`(NULL) %>%
     ## convert to integer, numeric, etc. but w/ stringsAsFactors = FALSE
     plyr::alply(2, type.convert, as.is = TRUE, .dims = TRUE) %>%
+    ## get rid of attributes that are non-standard for tbl_dfs or data.frames 
+    ## and that are an artefact of the above (specifically, I think, the use of
+    ## alply?); if I don't do this, the output is fugly when you str() it
+    `attr<-`("split_type", NULL) %>%
+    `attr<-`("split_labels", NULL) %>% 
+    `attr<-`("dim", NULL) %>%
+    ## for some reason removing the non-standard dim attributes clobbers the
+    ## variable names, so those must be restored
+    `names<-`(var_names) %>% 
     ## convert to data.frame (tbl_df, actually)
     dplyr::as_data_frame()
   
@@ -95,6 +106,8 @@ get_via_cf <-
            min_row = NULL, max_row = NULL, min_col = NULL, max_col = NULL,
            limits = NULL, return_empty = FALSE, return_links = FALSE,
            verbose = TRUE) {
+    
+  stopifnot(ss %>% inherits("spreadsheet"))
     
   this_ws <- get_ws(ss, ws, verbose)
   
@@ -293,22 +306,24 @@ reshape_cf <- function(x, header = TRUE) {
 #' In some cases, you might not want to convert the data retrieved from the cell
 #' feed into a data.frame via \code{\link{reshape_cf}}. You might prefer it as 
 #' an atomic vector. That's what this function does. Note that, unlike 
-#' \code{\link{reshape_cf}}, empty cells will NOT appear in this result. The API
-#' does not transmit data for these cells; \code{gspreadr} inserts these cells 
-#' in \code{\link{reshape_cf}} because it is necessary to give the data 
-#' rectangular shape. But it is not necessary when returning the data as a 
-#' vector and therefore it is not done by \code{simplify_cf}.
+#' \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this 
+#' result. By default, the API does not transmit data for these cells; 
+#' \code{gspreadr} inserts these cells in \code{\link{reshape_cf}} because it is
+#' necessary to give the data rectangular shape. In contrast, empty cells will 
+#' only appear in the output of \code{simplify_cf} if they were already present 
+#' in the data from the cell feed, i.e. if the original call to 
+#' \code{\link{get_via_cf}} had argument \code{return_empty} set to \code{TRUE}.
 #' 
 #' @inheritParams reshape_cf
-#' @param convert logical, indicating whether to attempt to convert the result
-#'   vector from character to something more appropriate, such as logical,
+#' @param convert logical, indicating whether to attempt to convert the result 
+#'   vector from character to something more appropriate, such as logical, 
 #'   integer, or numeric; if TRUE, result is passed through \code{type.convert};
 #'   if FALSE, result will be character
 #' @param as.is logical, passed through to the \code{as.is} argument of 
 #'   \code{type.convert}
 #' @param notation character; the result vector will have names that reflect 
-#'   which cell the data came from; this argument controls notation style, i.e. 
-#'   "A1" vs. "R1C1"
+#'   which cell the data came from; this argument selects the positioning
+#'   notation, i.e. "A1" vs. "R1C1"
 #'   
 #' @return a named vector
 #'   
@@ -317,6 +332,9 @@ reshape_cf <- function(x, header = TRUE) {
 #' @export
 simplify_cf <- function(x, convert = TRUE, as.is = TRUE,
                         notation = c("A1", "R1C1"), header = NULL) {
+  
+  ## TO DO: If the input contains empty cells, maybe this function should have a
+  ## way to request that cell entry "" be converted to NA?
   
   notation <- match.arg(notation)
   

@@ -19,8 +19,8 @@ if FALSE, result will be character}
 \code{type.convert}}
 
 \item{notation}{character; the result vector will have names that reflect
-  which cell the data came from; this argument controls notation style, i.e.
-  "A1" vs. "R1C1"}
+  which cell the data came from; this argument selects the positioning
+  notation, i.e. "A1" vs. "R1C1"}
 
 \item{header}{logical indicating whether first row should be taken as
   variable names}
@@ -32,11 +32,13 @@ a named vector
 In some cases, you might not want to convert the data retrieved from the cell
 feed into a data.frame via \code{\link{reshape_cf}}. You might prefer it as
 an atomic vector. That's what this function does. Note that, unlike
-\code{\link{reshape_cf}}, empty cells will NOT appear in this result. The API
-does not transmit data for these cells; \code{gspreadr} inserts these cells
-in \code{\link{reshape_cf}} because it is necessary to give the data
-rectangular shape. But it is not necessary when returning the data as a
-vector and therefore it is not done by \code{simplify_cf}.
+\code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this
+result. By default, the API does not transmit data for these cells;
+\code{gspreadr} inserts these cells in \code{\link{reshape_cf}} because it is
+necessary to give the data rectangular shape. In contrast, empty cells will
+only appear in the output of \code{simplify_cf} if they were already present
+in the data from the cell feed, i.e. if the original call to
+\code{\link{get_via_cf}} had argument \code{return_empty} set to \code{TRUE}.
 }
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};

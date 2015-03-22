@@ -37,7 +37,6 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [21 x 6]
 #> 
 #>                                     sheet_title
@@ -62,7 +61,7 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-21 21:24:25, 2015-03-20 22:32:48, 2015-0...
+#> $ last_updated (time) 2015-03-22 20:21:17, 2015-03-20 22:32:48, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -78,7 +77,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-21 16:37:10 PDT
+#>   Date of gspreadr::register_ss: 2015-03-22 13:34:32 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -136,7 +135,7 @@ There are two ways to consume data from a worksheet within a Google spreadsheet:
 # Get the data for worksheet "Oceania": the fast tabular way ("list feed")
 oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
-str(oceania_list_feed, give.attr = FALSE)
+str(oceania_list_feed)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:
 #>  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
 #>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
@@ -163,13 +162,14 @@ oceania_list_feed
 # Get the data for worksheet "Oceania": the slower cell-by-cell way ("cell feed")
 oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
-str(oceania_cell_feed, give.attr = FALSE)
+str(oceania_cell_feed)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    150 obs. of  5 variables:
 #>  $ cell     : chr  "A1" "B1" "C1" "D1" ...
 #>  $ cell_alt : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
 #>  $ row      : int  1 1 1 1 1 1 2 2 2 2 ...
 #>  $ col      : int  1 2 3 4 5 6 1 2 3 4 ...
 #>  $ cell_text: chr  "country" "continent" "year" "lifeExp" ...
+#>  - attr(*, "ws_title")= chr "Oceania"
 head(oceania_cell_feed, 10)
 #> Source: local data frame [10 x 5]
 #> 
@@ -193,7 +193,7 @@ There are a few ways to limit the data you're consuming. You can put direct limi
 ``` r
 # Reshape: instead of one row per cell, make a nice rectangular data.frame
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
-str(oceania_reshaped, give.attr = FALSE)
+str(oceania_reshaped)
 #> 'data.frame':    24 obs. of  6 variables:
 #>  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
 #>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
@@ -319,17 +319,17 @@ foo <- new_ss("foo")
 #> Identifying info is a spreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 18PfI6gnGoO59bC-SjMZdRnDNVWUVZ-nSFj9AsMaV-J4
+#> sheet_key: 1HY6QF9331CHBqWNJltXvsS2eeGHnJ_P1Cy5CUsUa0qE
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-21 16:37:16 PDT
-#> Date of last spreadsheet update: 2015-03-21 23:37:15 UTC
+#>   Date of gspreadr::register_ss: 2015-03-22 13:34:40 PDT
+#> Date of last spreadsheet update: 2015-03-22 20:34:39 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 18PfI6gnGoO59bC-SjMZdRnDNVWUVZ-nSFj9AsMaV-J4
+#> Key: 1HY6QF9331CHBqWNJltXvsS2eeGHnJ_P1Cy5CUsUa0qE
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -383,14 +383,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss %>% str()
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-21 16:37:23 PDT
-#> Date of last spreadsheet update: 2015-03-21 23:37:22 UTC
+#>   Date of gspreadr::register_ss: 2015-03-22 13:34:49 PDT
+#> Date of last spreadsheet update: 2015-03-22 20:34:48 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1j_ZYyG5nji2MnZK7th0K_ar56Ab4Kzpdyv9jrhslN7s
+#> Key: 10HFiLsQLXW6lxikxmvLNEJEy6XR8ntMhmBkmlohmPUQ
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -413,11 +413,11 @@ upload_ss("tests/testthat/gap-data.xlsx")
 gap_xlsx <- register_ss("gap-data")
 #> Sheet identified!
 #> sheet_title: gap-data
-#> sheet_key: 1jleacTjO8JqQImP1Uq1wutGPtwYOu8HLYW4-w5NYq-M
+#> sheet_key: 1cOWpovWS0LmHiFO1JVqavKmZjav_AUYs3V6UQX2CyWk
 gap_xlsx %>% str()
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-21 16:37:27 PDT
-#> Date of last spreadsheet update: 2015-03-21 23:37:25 UTC
+#>   Date of gspreadr::register_ss: 2015-03-22 13:34:56 PDT
+#> Date of last spreadsheet update: 2015-03-22 20:34:54 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -427,7 +427,7 @@ gap_xlsx %>% str()
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1jleacTjO8JqQImP1Uq1wutGPtwYOu8HLYW4-w5NYq-M
+#> Key: 1cOWpovWS0LmHiFO1JVqavKmZjav_AUYs3V6UQX2CyWk
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]

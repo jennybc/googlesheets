@@ -100,12 +100,12 @@ There are two ways to consume data from a worksheet within a Google spreadsheet:
 ```{r list-and-cell-feed}
 # Get the data for worksheet "Oceania": the fast tabular way ("list feed")
 oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
-str(oceania_list_feed, give.attr = FALSE)
+str(oceania_list_feed)
 oceania_list_feed
 
 # Get the data for worksheet "Oceania": the slower cell-by-cell way ("cell feed")
 oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
-str(oceania_cell_feed, give.attr = FALSE)
+str(oceania_cell_feed)
 head(oceania_cell_feed, 10)
 ```
 
@@ -116,7 +116,7 @@ There are a few ways to limit the data you're consuming. You can put direct limi
 ```{r wrappers-and-post-processing}
 # Reshape: instead of one row per cell, make a nice rectangular data.frame
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
-str(oceania_reshaped, give.attr = FALSE)
+str(oceania_reshaped)
 head(oceania_reshaped, 10)
 
 # Limit data retrieval to certain cells

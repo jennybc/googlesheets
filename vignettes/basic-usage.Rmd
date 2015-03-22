@@ -9,7 +9,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-__NOTE__: We are in the midst of updating, subsequent to the Great Refactor of Febrary 2015. Stuff here is not written in stone.
+__NOTE__: The vignette is still under development. Stuff here is not written in stone.
 
 ```{r load package}
 library(gspreadr)
@@ -115,7 +115,7 @@ Example of getting nice tabular data from the "list feed":
 ```{r}
 str(gap)
 oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
-str(oceania_list_feed, give.attr = FALSE)
+str(oceania_list_feed)
 oceania_list_feed
 ```
 
@@ -125,10 +125,10 @@ Example of getting the same data from the "cell feed".
 
 ```{r}
 oceania_cell_feed <- get_via_cf(gap, ws = "Oceania") 
-str(oceania_cell_feed, give.attr = FALSE)
+str(oceania_cell_feed)
 head(oceania_cell_feed, 10)
 oceania_reshaped <- reshape_cf(oceania_cell_feed)
-str(oceania_reshaped, give.attr = FALSE)
+str(oceania_reshaped)
 head(oceania_reshaped, 10)
 ```
 

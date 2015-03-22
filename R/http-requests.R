@@ -20,9 +20,23 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
   ## Bad Request" ... can we confidently say what the problem is?
   if(!grepl("application/atom+xml; charset=UTF-8",
             req$headers[["content-type"]], fixed = TRUE)) {
-    stop(sprintf("Was expecting content-type to be:\n%s\nbut instead it's:\n%s\n",
-                 "application/atom+xml; charset=UTF-8",
-                 req$headers[["content-type"]]))
+    
+    # DIAGNOSTIC EXPERIMENT: If I always call list_sheets() here, which seems to
+    # trigger token refresh more reliably when needed (vs register_ss), does 
+    # this problem go away? If so, I'll put that info to good use with a less
+    # stupid fix.
+    if(grepl("public", url)) {
+      req <- httr::GET(url, ...)
+    } else { 
+      req <- httr::GET(url, get_google_token(), ...)
+    }
+    httr::stop_for_status(req)
+    if(!grepl("application/atom+xml; charset=UTF-8",
+              req$headers[["content-type"]], fixed = TRUE)) {
+      stop(sprintf("Was expecting content-type to be:\n%s\nbut instead it's:\n%s\n",
+                   "application/atom+xml; charset=UTF-8",
+                   req$headers[["content-type"]]))
+    }
   }
   # usually when the content-type is unexpectedly binary, it means we need to 
   # refresh the token ... we should have a better message or do something
