@@ -12,6 +12,9 @@ get_via_lf(ss, ws = 1)
 \item{ws}{positive integer or character string specifying index or title,
   respectively, of the worksheet to consume}
 }
+\value{
+a tbl_df
+}
 \description{
 Gets data via the list feed, which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. First row regarded as
