@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{list_ws}
 \alias{list_ws}
-\title{List the worksheets in a spreadsheet}
+\title{List the worksheets in a gspreadsheet}
 \usage{
 list_ws(ss)
 }
@@ -10,6 +10,6 @@ list_ws(ss)
 \item{ss}{a registered Google spreadsheet}
 }
 \description{
-Retrieve the titles of all the worksheets in registered spreadsheet.
+Retrieve the titles of all the worksheets in a gpreadsheet.
 }
 

@@ -37,6 +37,10 @@ Features:
 devtools::install_github("jennybc/gspreadr")
 ```
 
+### Take a look at the vignette
+
+This README is arguably as or more useful as the vignette and both are still under development. But feel free to [check out the current state of the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/gspreadr/master/vignettes/basic-usage.html).
+
 ### Load gspreadr
 
 `gspreadr` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. But rest assured, neither is strictly necessary to use `gspreadr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R.
@@ -100,12 +104,12 @@ There are two ways to consume data from a worksheet within a Google spreadsheet:
 ```{r list-and-cell-feed}
 # Get the data for worksheet "Oceania": the fast tabular way ("list feed")
 oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
-str(oceania_list_feed, give.attr = FALSE)
+str(oceania_list_feed)
 oceania_list_feed
 
 # Get the data for worksheet "Oceania": the slower cell-by-cell way ("cell feed")
 oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
-str(oceania_cell_feed, give.attr = FALSE)
+str(oceania_cell_feed)
 head(oceania_cell_feed, 10)
 ```
 
@@ -116,7 +120,7 @@ There are a few ways to limit the data you're consuming. You can put direct limi
 ```{r wrappers-and-post-processing}
 # Reshape: instead of one row per cell, make a nice rectangular data.frame
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
-str(oceania_reshaped, give.attr = FALSE)
+str(oceania_reshaped)
 head(oceania_reshaped, 10)
 
 # Limit data retrieval to certain cells

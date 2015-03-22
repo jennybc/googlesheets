@@ -7,7 +7,7 @@
 delete_ss(x, verbose = TRUE)
 }
 \arguments{
-\item{x}{sheet-identifying information, either a spreadsheet object or a
+\item{x}{sheet-identifying information, either a gspreadsheet object or a
 character vector of length one, giving a URL, sheet title, key or
 worksheets feed}
 

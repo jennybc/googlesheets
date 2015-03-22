@@ -6,8 +6,8 @@
 #' @param title the title for the new sheet
 #' @param verbose logical; do you want informative message?
 #'   
-#' @return a partially populated spreadsheet object, giving sheet title, key,
-#'   and worksheets feed
+#' @return a partially populated Google spreadsheet object, giving sheet title,
+#'   key, and worksheets feed
 #'   
 #' @export
 new_ss <- function(title = "my_sheet", verbose = TRUE) {
@@ -39,7 +39,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #' browser. If you trash a spreadsheet that is shared with others, it will no 
 #' longer appear in any of their Google Drives.
 #' 
-#' @param x sheet-identifying information, either a spreadsheet object or a 
+#' @param x sheet-identifying information, either a gspreadsheet object or a 
 #'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed
 #' @param verbose logical; do you want informative message?
@@ -88,7 +88,7 @@ delete_ss <- function(x, verbose = TRUE) {
 #' spreadsheet-identifying methods). Otherwise, you'll have to explicitly
 #' specify it by key.
 #' 
-#' @param from sheet-identifying information, either a spreadsheet object or a 
+#' @param from sheet-identifying information, either a gspreadsheet object or a 
 #'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed
 #' @param key character string guaranteed to provide unique key of the sheet; 
@@ -155,14 +155,14 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' @param ncol number of columns (default is 26)
 #' @param verbose logical; do you want informative message?
 #'   
-#' @return a spreadsheet object, resulting from re-registering the host
+#' @return a gspreadsheet object, resulting from re-registering the host
 #'   spreadsheet after adding the new worksheet
 #'   
 #' @export
 add_ws <- function(ss, ws_title = "Sheet1",
                    nrow = 1000, ncol = 26, verbose = TRUE) { 
   
-  stopifnot(ss %>% inherits("spreadsheet"))
+  stopifnot(ss %>% inherits("gspreadsheet"))
   
   ws_title_exist <- !(match(ws_title, ss$ws[["ws_title"]]) %>% is.na())
 
@@ -217,7 +217,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' @export
 delete_ws <- function(ss, ws_title, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("spreadsheet"))
+  stopifnot(ss %>% inherits("gspreadsheet"))
   
   ws_title_position <- match(ws_title, ss$ws$ws_title)
   
@@ -269,7 +269,7 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #' @export
 rename_ws <- function(ss, from, to, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("spreadsheet"))
+  stopifnot(ss %>% inherits("gspreadsheet"))
   
   ws_title_position <- match(from, ss$ws$ws_title)
   
@@ -326,7 +326,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 resize_ws <- function(ss, ws_title,
                       row_extent = NULL, col_extent = NULL, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("spreadsheet"))
+  stopifnot(ss %>% inherits("gspreadsheet"))
   
   ws_title_position <- match(ws_title, ss$ws$ws_title)
   
@@ -379,7 +379,7 @@ resize_ws <- function(ss, ws_title,
 modify_ws <-
   function(ss, from, to = NULL, new_dim = NULL) {
 
-    stopifnot(ss %>% inherits("spreadsheet"))
+    stopifnot(ss %>% inherits("gspreadsheet"))
     
     ws_title_position <- match(from, ss$ws$ws_title)
     

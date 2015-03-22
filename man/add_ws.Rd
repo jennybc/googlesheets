@@ -18,7 +18,7 @@ add_ws(ss, ws_title = "Sheet1", nrow = 1000, ncol = 26, verbose = TRUE)
 \item{verbose}{logical; do you want informative message?}
 }
 \value{
-a spreadsheet object, resulting from re-registering the host
+a gspreadsheet object, resulting from re-registering the host
   spreadsheet after adding the new worksheet
 }
 \description{

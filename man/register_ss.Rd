@@ -24,12 +24,12 @@ when sheet identified via \code{key}}
 \item{verbose}{logical; do you want informative message?}
 }
 \value{
-Object of class spreadsheet.
+Object of class gspreadsheet.
 }
 \description{
 Specify a Google spreadsheet via its URL, unique key, title, or worksheets
 feed and register it for further use. This function returns an object of
-class \code{spreadsheet}, which contains all the information other
+class \code{gspreadsheet}, which contains all the information other
 \code{gspreadr} functions will need to consume data from the sheet or
 to edit the sheet. This object also contains sheet information
 that may be of interest to the user, such as the time of last update, the
