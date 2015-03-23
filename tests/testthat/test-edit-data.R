@@ -86,3 +86,12 @@ test_that("Vectors can be uploaded", {
   expect_equivalent(tmp, LETTERS[5:1])
   
 })
+
+test_that("We can trim worksheet extent to fit uploaded data", {
+  
+  ws <- "for_resizing"
+  ss <- ss %>% edit_cells(ws, iris_ish, trim = TRUE)
+  expect_equal(nrow(iris_ish), ss$ws$row_extent[ss$ws$ws_title == ws])
+  expect_equal(ncol(iris_ish), ss$ws$col_extent[ss$ws$ws_title == ws])
+  
+})

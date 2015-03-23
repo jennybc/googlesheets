@@ -1,11 +1,11 @@
 #' Edit cells
 #' 
 #' Modify the contents of one or more cells. The cells to be edited are 
-#' specified implicitly by a single anchor cell, which will be the upper left
+#' specified implicitly by a single anchor cell, which will be the upper left 
 #' corner of the edited cell region, and the size and shape of the input. If the
-#' input has rectangular shape, i.e. is a data.frame or matrix, then a simiarly
-#' shaped range of cells will be updated. If the input has no dimension, i.e.
-#' it's a vector, then \code{by_row} controls whether edited cells will extend
+#' input has rectangular shape, i.e. is a data.frame or matrix, then a simiarly 
+#' shaped range of cells will be updated. If the input has no dimension, i.e. 
+#' it's a vector, then \code{by_row} controls whether edited cells will extend 
 #' from the anchor across a row or down a column.
 #' 
 #' @inheritParams get_via_lf
@@ -21,11 +21,14 @@
 #'   included in the edit, i.e. prepended to the input; consulted only when 
 #'   \code{length(dim(input))} equals 2, i.e. \code{input} is a matrix or 
 #'   data.frame
+#' @param trim logical; do you want the worksheet extent to be modified to
+#'   correspond exactly to the cells being edited?
 #' @param verbose logical; do you want informative message?
 #'   
 #' @export
 edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
-                       by_row = FALSE, header = FALSE, verbose = TRUE) {
+                       by_row = FALSE, header = FALSE, trim = FALSE,
+                       verbose = TRUE) {
   
   catch_hopeless_input(input)
   this_ws <- get_ws(ss, ws, verbose = FALSE)
@@ -116,6 +119,16 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
               cell_status[ , 2] %>% unique() %>% paste(sep = ",")) %>%
         message()
     }
+  }
+  
+  if(trim) {
+    
+    ss <- ss %>%
+      resize_ws(this_ws$ws_title,
+                min(this_ws$row_extent, limits$`max-row`),
+                min(this_ws$col_extent, limits$`max-col`),
+                verbose)
+    
   }
   
   ss <- ss %>% register_ss(verbose = FALSE)

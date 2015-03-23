@@ -5,7 +5,7 @@
 \title{Edit cells}
 \usage{
 edit_cells(ss, ws = 1, input = "", anchor = "A1", by_row = FALSE,
-  header = FALSE, verbose = TRUE)
+  header = FALSE, trim = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet}
@@ -28,6 +28,9 @@ when \code{input} is a vector, i.e. \code{dim(input)} is \code{NULL}}
 included in the edit, i.e. prepended to the input; consulted only when
 \code{length(dim(input))} equals 2, i.e. \code{input} is a matrix or
 data.frame}
+
+\item{trim}{logical; do you want the worksheet extent to be modified to
+correspond exactly to the cells being edited?}
 
 \item{verbose}{logical; do you want informative message?}
 }
