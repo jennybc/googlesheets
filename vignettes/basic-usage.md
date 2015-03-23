@@ -53,12 +53,12 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-23 20:01:02
-## 2  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 19:59:34
-## 3  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
-## 4     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
-## 5  gas_mileag 1WH65aJ... woo.kara    r 2015-03-12 01:01:33
-## 6  Temperatur 1Hkh20-... gspreadr   rw 2015-03-03 00:07:43
+## 1      tomcat 1W2bspT... gspreadr   rw 2015-03-23 22:51:36
+## 2   catherine 1zeBJ8s... gspreadr   rw 2015-03-23 22:51:34
+## 3  Public Tes 1hff6Az... gspreadr   rw 2015-03-23 22:01:53
+## 4   Gapminder 1HT5B8S... gspreadr   rw 2015-03-23 20:59:10
+## 5  Gapminder  1SDA_Gu... gspreadr   rw 2015-03-23 20:23:09
+## 6  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 20:23:06
 ```
 
 This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
@@ -77,7 +77,7 @@ gap <- register_ss("Gapminder")
 ```
 ## Sheet identified!
 ## sheet_title: Gapminder
-## sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 ```
 
 ```r
@@ -86,18 +86,18 @@ str(gap)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
-## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 16:01:13 PDT
+## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 1000 x 26
-## Americas: 1000 x 26
-## Asia: 1000 x 26
-## Europe: 1000 x 26
-## Oceania: 1000 x 26
+## Africa: 625 x 6
+## Americas: 301 x 6
+## Asia: 397 x 6
+## Europe: 361 x 6
+## Oceania: 25 x 6
 ## 
-## Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 ```
 
 Besides using the spreadsheet title, you can also specify a spreadsheet in three other ways:
@@ -114,7 +114,7 @@ Here's an example of using the sheet title to retrieve the key, then registering
 ```
 
 ```
-## [1] "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
+## [1] "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 ```
 
 ```r
@@ -124,7 +124,7 @@ ss2 <- register_ss(gap_key)
 ```
 ## Sheet identified!
 ## sheet_title: Gapminder
-## sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 ```
 
 ```r
@@ -133,18 +133,18 @@ str(ss2)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
-## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 16:01:14 PDT
+## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 1000 x 26
-## Americas: 1000 x 26
-## Asia: 1000 x 26
-## Europe: 1000 x 26
-## Oceania: 1000 x 26
+## Africa: 625 x 6
+## Americas: 301 x 6
+## Asia: 397 x 6
+## Europe: 361 x 6
+## Oceania: 25 x 6
 ## 
-## Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 ```
 
 # Consuming data from a worksheet
@@ -165,18 +165,18 @@ str(gap)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
-## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 16:01:13 PDT
+## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 1000 x 26
-## Americas: 1000 x 26
-## Asia: 1000 x 26
-## Europe: 1000 x 26
-## Oceania: 1000 x 26
+## Africa: 625 x 6
+## Americas: 301 x 6
+## Asia: 397 x 6
+## Europe: 361 x 6
+## Oceania: 25 x 6
 ## 
-## Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 ```
 
 ```r
@@ -193,12 +193,12 @@ str(oceania_list_feed)
 
 ```
 ## Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
-##  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
+##  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 ##  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
-##  $ year     : int  2007 2007 2002 2002 1997 1997 1992 1992 1987 1987 ...
-##  $ lifeexp  : num  81.2 80.2 80.4 79.1 78.8 ...
-##  $ pop      : int  20434176 4115771 19546792 3908037 18565243 3676187 17481977 3437674 16257249 3317166 ...
-##  $ gdppercap: num  34435 25185 30688 23190 26998 ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ lifeexp  : num  69.1 70.3 70.9 71.1 71.9 ...
+##  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+##  $ gdppercap: num  10040 10950 12217 14526 16789 ...
 ```
 
 ```r
@@ -208,18 +208,18 @@ oceania_list_feed
 ```
 ## Source: local data frame [24 x 6]
 ## 
-##        country continent year lifeexp      pop gdppercap
-## 1    Australia   Oceania 2007  81.235 20434176  34435.37
-## 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
-## 3    Australia   Oceania 2002  80.370 19546792  30687.75
-## 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
-## 5    Australia   Oceania 1997  78.830 18565243  26997.94
-## 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
-## 7    Australia   Oceania 1992  77.560 17481977  23424.77
-## 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
-## 9    Australia   Oceania 1987  76.320 16257249  21888.89
-## 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
-## ..         ...       ...  ...     ...      ...       ...
+##      country continent year lifeexp      pop gdppercap
+## 1  Australia   Oceania 1952   69.12  8691212  10039.60
+## 2  Australia   Oceania 1957   70.33  9712569  10949.65
+## 3  Australia   Oceania 1962   70.93 10794968  12217.23
+## 4  Australia   Oceania 1967   71.10 11872264  14526.12
+## 5  Australia   Oceania 1972   71.93 13177000  16788.63
+## 6  Australia   Oceania 1977   73.49 14074100  18334.20
+## 7  Australia   Oceania 1982   74.74 15184200  19477.01
+## 8  Australia   Oceania 1987   76.32 16257249  21888.89
+## 9  Australia   Oceania 1992   77.56 17481977  23424.77
+## 10 Australia   Oceania 1997   78.83 18565243  26997.94
+## ..       ...       ...  ...     ...      ...       ...
 ```
 
 If you wish, go look at the [Oceania worksheet from the Gapminder spreadsheet](https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit#gid=431684907) for comparison.
@@ -265,8 +265,8 @@ head(oceania_cell_feed, 10)
 ## 6    F1     R1C6   1   6 gdpPercap
 ## 7    A2     R2C1   2   1 Australia
 ## 8    B2     R2C2   2   2   Oceania
-## 9    C2     R2C3   2   3      2007
-## 10   D2     R2C4   2   4    81.235
+## 9    C2     R2C3   2   3      1952
+## 10   D2     R2C4   2   4     69.12
 ```
 
 ```r
@@ -276,12 +276,12 @@ str(oceania_reshaped)
 
 ```
 ## 'data.frame':	24 obs. of  6 variables:
-##  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
+##  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 ##  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
-##  $ year     : int  2007 2007 2002 2002 1997 1997 1992 1992 1987 1987 ...
-##  $ lifeExp  : num  81.2 80.2 80.4 79.1 78.8 ...
-##  $ pop      : int  20434176 4115771 19546792 3908037 18565243 3676187 17481977 3437674 16257249 3317166 ...
-##  $ gdpPercap: num  34435 25185 30688 23190 26998 ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
+##  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+##  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
 ```
 
 ```r
@@ -289,17 +289,17 @@ head(oceania_reshaped, 10)
 ```
 
 ```
-##        country continent year lifeExp      pop gdpPercap
-## 1    Australia   Oceania 2007  81.235 20434176  34435.37
-## 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
-## 3    Australia   Oceania 2002  80.370 19546792  30687.75
-## 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
-## 5    Australia   Oceania 1997  78.830 18565243  26997.94
-## 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
-## 7    Australia   Oceania 1992  77.560 17481977  23424.77
-## 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
-## 9    Australia   Oceania 1987  76.320 16257249  21888.89
-## 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
+##      country continent year lifeExp      pop gdpPercap
+## 1  Australia   Oceania 1952   69.12  8691212  10039.60
+## 2  Australia   Oceania 1957   70.33  9712569  10949.65
+## 3  Australia   Oceania 1962   70.93 10794968  12217.23
+## 4  Australia   Oceania 1967   71.10 11872264  14526.12
+## 5  Australia   Oceania 1972   71.93 13177000  16788.63
+## 6  Australia   Oceania 1977   73.49 14074100  18334.20
+## 7  Australia   Oceania 1982   74.74 15184200  19477.01
+## 8  Australia   Oceania 1987   76.32 16257249  21888.89
+## 9  Australia   Oceania 1992   77.56 17481977  23424.77
+## 10 Australia   Oceania 1997   78.83 18565243  26997.94
 ```
 
 Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `reshape_cf()` to reshape this data into something tabular.
@@ -358,7 +358,7 @@ new_ss("hi I am new here")
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1M59cya4gnhCNQfeyCxdBAfWSudbE30QO8Uc7szvC7ro
+## sheet_key: 1eyVVkoX27frV4W5P1iyb3BkmYFa8o9SYzUZNHRiEfHI
 ```
 
 ```r
@@ -369,7 +369,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1M59cya4gnhCNQfeyCxdBAfWSudbE30QO8Uc7szvC7ro gspreadr
+## 1 hi I am new here 1eyVVkoX27frV4W5P1iyb3BkmYFa8o9SYzUZNHRiEfHI gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
 ```
 
@@ -409,7 +409,7 @@ new_ss("hi I am new here")
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
+## sheet_key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
 ```
 
 ```r
@@ -419,7 +419,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
+## sheet_key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
 ```
 
 ```r
@@ -428,14 +428,14 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:50 PDT
-## Date of last spreadsheet update: 2015-03-23 20:10:47 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 16:01:22 PDT
+## Date of last spreadsheet update: 2015-03-23 23:01:19 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
+## Key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
 ```
 
 ```r
@@ -452,15 +452,15 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:50 PDT
-## Date of last spreadsheet update: 2015-03-23 20:10:50 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 16:01:23 PDT
+## Date of last spreadsheet update: 2015-03-23 23:01:22 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
+## Key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
 ```
 
 ```r
@@ -478,7 +478,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
+## sheet_key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
 ```
 
 ```r
@@ -487,14 +487,14 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:52 PDT
-## Date of last spreadsheet update: 2015-03-23 20:10:50 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 16:01:25 PDT
+## Date of last spreadsheet update: 2015-03-23 23:01:23 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
+## Key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

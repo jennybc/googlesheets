@@ -4,27 +4,38 @@
 \alias{delete_ss}
 \title{Move spreadsheets to trash on Google Drive}
 \usage{
-delete_ss(x, verbose = TRUE, ...)
+delete_ss(x = NULL, regex = NULL, verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{a regular expression; spreadsheets whose titles match will be moved
-to trash}
+\item{x}{sheet-identifying information, either a gspreadsheet object or a
+character vector of length one, giving a URL, sheet title, key or
+worksheets feed; if \code{x} is specified, the \code{regex} argument will
+be ignored}
+
+\item{regex}{character; a regular expression; sheets whose titles match will
+be deleted}
 
 \item{verbose}{logical; do you want informative message?}
 
-\item{...}{optional arguments to be passed to \code{\link{grepl}}}
+\item{...}{optional arguments to be passed to \code{\link{grepl}} when
+matching \code{regex} to sheet titles}
 }
 \value{
-tbl_df with one row per matching sheet, a variable holding
-  spreadsheet titles, a logical vector indicating deletion success
+tbl_df with one row per specified or matching sheet, a variable
+  holding spreadsheet titles, a logical vector indicating deletion success
 }
 \description{
 You must own a sheet in order to move it to the trash. If you try to delete a
 sheet you do not own, a 403 Forbidden HTTP status code will be returned; such
 shared spreadsheets can only be moved to the trash manually in the web
 browser. If you trash a spreadsheet that is shared with others, it will no
-longer appear in any of their Google Drives. If you delete something my
-mistake, visit the \href{https://drive.google.com/drive/#trash}{trash in
-Google Drive}, find the sheet and restore it.
+longer appear in any of their Google Drives. If you delete something by
+mistake, remain calm, and visit the
+\href{https://drive.google.com/drive/#trash}{trash in Google Drive}, find the
+sheet, and restore it.
+}
+\note{
+If there are multiple sheets with the same name and you don't want to
+  delete them all, identify the sheet to be deleted via key.
 }
 
