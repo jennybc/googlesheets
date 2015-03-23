@@ -12,7 +12,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone.
+__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/gspreadr) on GitHub has gotten alot more love recently, so you might want to read that instead or in addition to this (2015-03-23).
 
 ```{r load package}
 library(gspreadr)

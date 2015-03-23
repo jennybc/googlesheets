@@ -2,7 +2,7 @@
 Joanna Zhao, Jenny Bryan  
 `r Sys.Date()`  
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone.
+__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/gspreadr) on GitHub has gotten alot more love recently, so you might want to read that instead or in addition to this (2015-03-23).
 
 
 ```r
@@ -53,12 +53,12 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-23 04:27:03
-## 2  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
-## 3     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
-## 4  gas_mileag 1WH65aJ... woo.kara    r 2015-03-12 01:01:33
-## 5  Temperatur 1Hkh20-... gspreadr   rw 2015-03-03 00:07:43
-## 6  1F0iNuYW4v 1upHM4K... gspreadr   rw 2015-02-20 01:17:28
+## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-23 20:01:02
+## 2  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 19:59:34
+## 3  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
+## 4     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
+## 5  gas_mileag 1WH65aJ... woo.kara    r 2015-03-12 01:01:33
+## 6  Temperatur 1Hkh20-... gspreadr   rw 2015-03-03 00:07:43
 ```
 
 This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
@@ -86,7 +86,7 @@ str(gap)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 21:30:32 PDT
+##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -133,7 +133,7 @@ str(ss2)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 21:30:33 PDT
+##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -165,7 +165,7 @@ str(gap)
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-22 21:30:32 PDT
+##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
 ## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 ## 
 ## Contains 5 worksheets:
@@ -358,7 +358,7 @@ new_ss("hi I am new here")
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1E7BsG2qYdt1nY_W1oYkTan0wMsQquECKYCNSDr--bfc
+## sheet_key: 1M59cya4gnhCNQfeyCxdBAfWSudbE30QO8Uc7szvC7ro
 ```
 
 ```r
@@ -369,7 +369,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1E7BsG2qYdt1nY_W1oYkTan0wMsQquECKYCNSDr--bfc gspreadr
+## 1 hi I am new here 1M59cya4gnhCNQfeyCxdBAfWSudbE30QO8Uc7szvC7ro gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
 ```
 
@@ -409,7 +409,7 @@ new_ss("hi I am new here")
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1V_Neb6-JAoENyND8NKPwwJJZU9SbHPeSTVtRtgFZ29k
+## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
 ```
 
 ```r
@@ -419,7 +419,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1V_Neb6-JAoENyND8NKPwwJJZU9SbHPeSTVtRtgFZ29k
+## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
 ```
 
 ```r
@@ -428,14 +428,14 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 21:30:43 PDT
-## Date of last spreadsheet update: 2015-03-23 04:30:41 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 13:10:50 PDT
+## Date of last spreadsheet update: 2015-03-23 20:10:47 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1V_Neb6-JAoENyND8NKPwwJJZU9SbHPeSTVtRtgFZ29k
+## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
 ```
 
 ```r
@@ -452,15 +452,15 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 21:30:44 PDT
-## Date of last spreadsheet update: 2015-03-23 04:30:44 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 13:10:50 PDT
+## Date of last spreadsheet update: 2015-03-23 20:10:50 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1V_Neb6-JAoENyND8NKPwwJJZU9SbHPeSTVtRtgFZ29k
+## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
 ```
 
 ```r
@@ -478,7 +478,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1V_Neb6-JAoENyND8NKPwwJJZU9SbHPeSTVtRtgFZ29k
+## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
 ```
 
 ```r
@@ -487,14 +487,14 @@ str(x)
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-22 21:32:44 PDT
-## Date of last spreadsheet update: 2015-03-23 04:30:46 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 13:10:52 PDT
+## Date of last spreadsheet update: 2015-03-23 20:10:50 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1V_Neb6-JAoENyND8NKPwwJJZU9SbHPeSTVtRtgFZ29k
+## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
