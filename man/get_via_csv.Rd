@@ -2,7 +2,7 @@
 % Please edit documentation in R/consume-data.R
 \name{get_via_csv}
 \alias{get_via_csv}
-\title{Get all data from a worksheet as a tbl_df or data.frame}
+\title{Get all data from a rectangular worksheet as a tbl_df or data.frame}
 \usage{
 get_via_csv(ss, ws = 1, ...)
 }
@@ -10,17 +10,32 @@ get_via_csv(ss, ws = 1, ...)
 \item{ss}{a registered Google spreadsheet}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+  respectively, of the worksheet to consume}
 
-\item{...}{further arguments to be passed to read.csv, read.table}
+\item{...}{further arguments to be passed to \code{\link{read.csv}} or,
+  ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is
+  called with \code{stringsAsFactors = FALSE}, which is the blanket policy
+  within \code{gspreadr} re: NOT converting character data to factor}
+}
+\value{
+a tbl_df
 }
 \description{
-This function consumes data using the exportcsv links found in the worksheets
-feed. Unlike using the list feed, this method does not assume populated cells form
-a neat rectangle, all cells within the data rectangle (max row and
-column with data) are returned. Also, capitals and special characters
-(non alphanumeric) are preserved in the header. Empty cells will be assigned
-NA. If you want all of your data, this is the fastest way to get it.
-This is faster than methods based on the listfeed and cellfeed.
+This function consumes data using the \code{exportcsv} links found in the
+worksheets feed. Don't be spooked by the "csv" thing -- the data is NOT
+actually written to file during this process. In fact, this is much, much
+faster than consumption via the list feed. Unlike using the list feed, this
+method does not assume that the populated cells form a neat rectangle. All
+cells within the "data rectangle", i.e. spanned by the maximal row and column
+extent of the data, are returned. Empty cells will be assigned NA. Also, the
+header row, potentially containing column or variable names, is not
+transformed/mangled, as it is via the list feed. If you want all of your
+data, this is the fastest way to get it.
+}
+\seealso{
+Other data.consumption.functions: \code{\link{get_cells}};
+  \code{\link{get_col}}; \code{\link{get_row}};
+  \code{\link{get_via_cf}}; \code{\link{get_via_lf}};
+  \code{\link{reshape_cf}}; \code{\link{simplify_cf}}
 }
 

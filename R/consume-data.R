@@ -17,6 +17,8 @@
 #'   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
 #'   within \code{gspreadr} re: NOT converting character data to factor
 #'   
+#' @family data consumption functions
+#' 
 #' @return a tbl_df
 #'   
 #' @export

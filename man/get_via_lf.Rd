@@ -34,7 +34,7 @@ When you use the listfeed, the Sheets API transforms the variable or
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};
   \code{\link{get_col}}; \code{\link{get_row}};
-  \code{\link{get_via_cf}}; \code{\link{reshape_cf}};
-  \code{\link{simplify_cf}}
+  \code{\link{get_via_cf}}; \code{\link{get_via_csv}};
+  \code{\link{reshape_cf}}; \code{\link{simplify_cf}}
 }
 
