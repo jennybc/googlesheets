@@ -10,9 +10,29 @@ test_that("Spreadsheet can be created and deleted", {
   ss_df <- list_sheets()
   expect_true(sheet_title %in% ss_df$sheet_title)
   expect_message(tmp <- delete_ss(sheet_title), "moved to trash")
-  expect_true(tmp)
   ss_df <- list_sheets()
   expect_false(sheet_title %in% ss_df$sheet_title)
+  
+})
+
+test_that("Regexes work for deleting multiple sheets", {
+  
+  sheet_title <- c("cat", "catherine", "tomCAT", "abdicate", "FLYCATCHER")
+  sapply(sheet_title, new_ss)
+  
+  delete_ss("^cat$")
+  ss_df <- list_sheets()
+  expect_false("cat" %in% ss_df$sheet_title)
+  expect_true(all(sheet_title[-1] %in% ss_df$sheet_title))
+  
+  delete_ss("cat")
+  ss_df <- list_sheets()
+  expect_false(any(c("catherine", "abdicate") %in% ss_df$sheet_title))
+  expect_true(all(c("tomCAT", "FLYCATCHER") %in% ss_df$sheet_title))
+  
+  delete_ss("cat", ignore.case = TRUE)
+  ss_df <- list_sheets()
+  expect_false(any(sheet_title %in% ss_df$sheet_title))
   
 })
 
@@ -36,7 +56,7 @@ test_that("Spreadsheet can be copied", {
 
 test_that("Nonexistent spreadsheet can NOT be deleted or copied", {
   
-  expect_error(delete_ss("flyingpig"), "doesn't match")
+  expect_message(delete_ss("flyingpig"), "No matching")
   expect_error(copy_ss("flyingpig"),  "doesn't match")
   
 })
@@ -139,6 +159,5 @@ my_patterns <- c("testing[0-9]{1}", "gap-data",
                  paste("Copy of", pts_title),
                  "eggplants are purple")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
-sheets_to_delete <- list_sheets() %>%
-  dplyr::filter(stringr::str_detect(sheet_title, my_patterns))
-sapply(sheets_to_delete$sheet_key, delete_ss, verbose = FALSE)
+delete_ss(my_patterns, verbose = FALSE)
+

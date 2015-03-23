@@ -23,9 +23,7 @@ if(length(HTTR_OAUTH) > 0) {
 ## aborts, clean up Google Drive first
 my_patterns <- c("hi I am new here")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
-sheets_to_delete <- list_sheets() %>%
-  dplyr::filter(stringr::str_detect(sheet_title, my_patterns))
-sapply(sheets_to_delete$sheet_key, delete_ss, verbose = FALSE)
+delete_ss(my_patterns, verbose = FALSE)
 
 ## ----copy-gapminder, eval = FALSE----------------------------------------
 #  gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
