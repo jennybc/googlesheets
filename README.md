@@ -28,7 +28,7 @@ This README is arguably as or more useful as the vignette and both are still und
 
 ### Load gspreadr
 
-`gspreadr` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. But rest assured, neither is strictly necessary to use `gspreadr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R.
+`gspreadr` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R. `gspreadr` uses `dplyr` internally but does not require the user to do so.
 
 ``` r
 library("gspreadr")
@@ -41,32 +41,39 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
-#> Source: local data frame [21 x 6]
+#> Source: local data frame [19 x 6]
 #> 
 #>                                     sheet_title
-#> 1                          Public Testing Sheet
-#> 2                                 Gapminder_new
-#> 3                                Testing helper
-#> 4                                       scoring
-#> 5                                   gas_mileage
-#> 6                                   Temperature
-#> 7  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 8                               Old Style Sheet
-#> 9                                    jenny-test
-#> 10                                    Gapminder
-#> ..                                          ...
+#> 1                                     Gapminder
+#> 2                      Gapminder 2007 Can Write
+#> 3                                 Gapminder_old
+#> 4                          Public Testing Sheet
+#> 5                                Testing helper
+#> 6                                       scoring
+#> 7                                   gas_mileage
+#> 8                                   Temperature
+#> 9  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 10                              Old Style Sheet
+#> 11                                   jenny-test
+#> 12                       Gapminder by Continent
+#> 13                     Gapminder 2007 View Only
+#> 14                     Gapminder by Continent R
+#> 15                                  basic-usage
+#> 16                 Caffeine craver? (Responses)
+#> 17                        Private Sheet Example
+#> 18                     Gapminder by Continent 2
+#> 19                                  Code Sample
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 21
+#> Observations: 19
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "Gapminder_new", "Testing...
-#> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
+#> $ sheet_title  (chr) "Gapminder", "Gapminder 2007 Can Write", "Gapmind...
+#> $ sheet_key    (chr) "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "rw", "rw", "r", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-23 17:34:32, 2015-03-23 17:31:36, 2015-0...
+#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "r", "rw", "r...
+#> $ last_updated (time) 2015-03-23 20:34:09, 2015-03-23 20:23:09, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -79,39 +86,40 @@ If you plan to consume data from a sheet or edit it, you must first register it.
 gap <- register_ss("Gapminder")
 #> Sheet identified!
 #> sheet_title: Gapminder
-#> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-23 12:11:03 PDT
-#> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 13:46:34 PDT
+#> Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
-#> Africa: 1000 x 26
-#> Americas: 1000 x 26
-#> Asia: 1000 x 26
-#> Europe: 1000 x 26
-#> Oceania: 1000 x 26
+#> Africa: 625 x 6
+#> Americas: 301 x 6
+#> Asia: 397 x 6
+#> Europe: 361 x 6
+#> Oceania: 25 x 6
 #> 
-#> Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 
 # Need to access a sheet you do not own?
-## Access it by key if you know it!
-gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
+# Access it by key if you know it!
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 gap <- gap_key %>% register_ss
 #> Sheet identified!
 #> sheet_title: Gapminder
-#> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 
 # gspreadr may be able to determine the key from the browser URL
-gap_url <- "https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/"
+# may not work (yet) for old sheets ... open an issue if have problem
+gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
 gap <- gap_url %>% register_ss
 #> Identifying info will be processed as a URL.
 #> gspreadr will attempt to extract sheet key from the URL.
-#> Putative key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> Putative key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 #> Sheet identified!
 #> sheet_title: Gapminder
-#> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
+#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 ```
 
 ### Get a Google spreadsheet to practice with
@@ -119,7 +127,7 @@ gap <- gap_url %>% register_ss
 If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
 ``` r
-gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 copy_ss(key = gap_key, to = "Gapminder")
 ```
 
@@ -137,7 +145,7 @@ str(gap)
 There are three ways to consume data from a worksheet within a Google spreadsheet. The order goes from fastest-but-more-limited to slowest-but-most-flexible:
 
 -   `get_via_csv()`: Don't let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the "exportcsv" link. For cases where `get_via_csv()` and `get_via_lf()` both work, we see that `get_via_csv()` is around **50 times faster**. Use this when your data occupies a nice rectangle in the sheet and you're willing to consume all of it. You will get a `tbl_df` back, which is basically just a `data.frame`.
--   `get_via_lf()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `get_via_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support in the near future (\#17).
+-   `get_via_lf()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `get_via_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support in the near future (\#17).
 -   `get_via_cf()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It works great for small amounts of data but can be rather slow otherwise. `get_via_cf()` returns a `tbl_df` with **one row per cell**. You can specify cell limits directly in `get_via_cf()` or use convenience wrappers `get_row()`, `get_col()` or `get_cells()` for some common special cases. See below for demos of `reshape_cf()` and `simplify_cf()` which help with post-processing.
 
 ``` r
@@ -146,54 +154,54 @@ oceania_csv <- gap %>% get_via_csv(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 str(oceania_csv)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:
-#>  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
+#>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 #>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
-#>  $ year     : int  2007 2007 2002 2002 1997 1997 1992 1992 1987 1987 ...
-#>  $ lifeExp  : num  81.2 80.2 80.4 79.1 78.8 ...
-#>  $ pop      : int  20434176 4115771 19546792 3908037 18565243 3676187 17481977 3437674 16257249 3317166 ...
-#>  $ gdpPercap: num  34435 25185 30688 23190 26998 ...
+#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+#>  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+#>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
 oceania_csv
 #> Source: local data frame [24 x 6]
 #> 
-#>        country continent year lifeExp      pop gdpPercap
-#> 1    Australia   Oceania 2007  81.235 20434176  34435.37
-#> 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
-#> 3    Australia   Oceania 2002  80.370 19546792  30687.75
-#> 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
-#> 5    Australia   Oceania 1997  78.830 18565243  26997.94
-#> 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
-#> 7    Australia   Oceania 1992  77.560 17481977  23424.77
-#> 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
-#> 9    Australia   Oceania 1987  76.320 16257249  21888.89
-#> 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
-#> ..         ...       ...  ...     ...      ...       ...
+#>      country continent year lifeExp      pop gdpPercap
+#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
+#> ..       ...       ...  ...     ...      ...       ...
 
 # Get the data for worksheet "Oceania": the fast tabular way ("list feed")
 oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
 #> Accessing worksheet titled "Oceania"
 str(oceania_list_feed)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:
-#>  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
+#>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 #>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
-#>  $ year     : int  2007 2007 2002 2002 1997 1997 1992 1992 1987 1987 ...
-#>  $ lifeexp  : num  81.2 80.2 80.4 79.1 78.8 ...
-#>  $ pop      : int  20434176 4115771 19546792 3908037 18565243 3676187 17481977 3437674 16257249 3317166 ...
-#>  $ gdppercap: num  34435 25185 30688 23190 26998 ...
+#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+#>  $ lifeexp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+#>  $ gdppercap: num  10040 10950 12217 14526 16789 ...
 oceania_list_feed
 #> Source: local data frame [24 x 6]
 #> 
-#>        country continent year lifeexp      pop gdppercap
-#> 1    Australia   Oceania 2007  81.235 20434176  34435.37
-#> 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
-#> 3    Australia   Oceania 2002  80.370 19546792  30687.75
-#> 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
-#> 5    Australia   Oceania 1997  78.830 18565243  26997.94
-#> 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
-#> 7    Australia   Oceania 1992  77.560 17481977  23424.77
-#> 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
-#> 9    Australia   Oceania 1987  76.320 16257249  21888.89
-#> 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
-#> ..         ...       ...  ...     ...      ...       ...
+#>      country continent year lifeexp      pop gdppercap
+#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
+#> ..       ...       ...  ...     ...      ...       ...
 
 # Get the data for worksheet "Oceania": the slower cell-by-cell way ("cell feed")
 oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
@@ -218,8 +226,8 @@ head(oceania_cell_feed, 10)
 #> 6    F1     R1C6   1   6 gdpPercap
 #> 7    A2     R2C1   2   1 Australia
 #> 8    B2     R2C2   2   2   Oceania
-#> 9    C2     R2C3   2   3      2007
-#> 10   D2     R2C4   2   4    81.235
+#> 9    C2     R2C3   2   3      1952
+#> 10   D2     R2C4   2   4     69.12
 ```
 
 #### Convenience wrappers and post-processing the data
@@ -231,24 +239,24 @@ There are a few ways to limit the data you're consuming. You can put direct limi
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
 str(oceania_reshaped)
 #> 'data.frame':    24 obs. of  6 variables:
-#>  $ country  : chr  "Australia" "New Zealand" "Australia" "New Zealand" ...
+#>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 #>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
-#>  $ year     : int  2007 2007 2002 2002 1997 1997 1992 1992 1987 1987 ...
-#>  $ lifeExp  : num  81.2 80.2 80.4 79.1 78.8 ...
-#>  $ pop      : int  20434176 4115771 19546792 3908037 18565243 3676187 17481977 3437674 16257249 3317166 ...
-#>  $ gdpPercap: num  34435 25185 30688 23190 26998 ...
+#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+#>  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+#>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
 head(oceania_reshaped, 10)
-#>        country continent year lifeExp      pop gdpPercap
-#> 1    Australia   Oceania 2007  81.235 20434176  34435.37
-#> 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
-#> 3    Australia   Oceania 2002  80.370 19546792  30687.75
-#> 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
-#> 5    Australia   Oceania 1997  78.830 18565243  26997.94
-#> 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
-#> 7    Australia   Oceania 1992  77.560 17481977  23424.77
-#> 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
-#> 9    Australia   Oceania 1987  76.320 16257249  21888.89
-#> 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
+#>      country continent year lifeExp      pop gdpPercap
+#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
 
 # Limit data retrieval to certain cells
 
@@ -269,8 +277,8 @@ gap_3rows %>% head()
 # convert to a data.frame (first row treated as header by default)
 gap_3rows %>% reshape_cf()
 #>   country continent year lifeExp     pop gdpPercap
-#> 1 Albania    Europe 2007  76.423 3600523  5937.029
-#> 2 Austria    Europe 2007  79.829 8199783 36126.493
+#> 1 Albania    Europe 1952   55.23 1282697  1601.056
+#> 2 Albania    Europe 1957   59.28 1476505  1942.284
 
 # Example: first row only
 gap_1row <- gap %>% get_row("Europe", row = 1)
@@ -297,52 +305,52 @@ gap %>%
   reshape_cf()
 #> Accessing worksheet titled "Oceania"
 #>    year lifeExp
-#> 1  2007  81.235
-#> 2  2007  80.204
-#> 3  2002  80.370
-#> 4  2002  79.110
-#> 5  1997  78.830
-#> 6  1997  77.550
-#> 7  1992  77.560
-#> 8  1992  76.330
-#> 9  1987  76.320
-#> 10 1987  74.320
-#> 11 1982  74.740
-#> 12 1982  73.840
-#> 13 1977  73.490
-#> 14 1977  72.220
-#> 15 1972  71.930
-#> 16 1972  71.890
-#> 17 1967  71.100
-#> 18 1967  71.520
-#> 19 1962  70.930
-#> 20 1962  71.240
-#> 21 1957  70.330
-#> 22 1957  70.260
-#> 23 1952  69.120
-#> 24 1952  69.390
+#> 1  1952  69.120
+#> 2  1957  70.330
+#> 3  1962  70.930
+#> 4  1967  71.100
+#> 5  1972  71.930
+#> 6  1977  73.490
+#> 7  1982  74.740
+#> 8  1987  76.320
+#> 9  1992  77.560
+#> 10 1997  78.830
+#> 11 2002  80.370
+#> 12 2007  81.235
+#> 13 1952  69.390
+#> 14 1957  70.260
+#> 15 1962  71.240
+#> 16 1967  71.520
+#> 17 1972  71.890
+#> 18 1977  72.220
+#> 19 1982  73.840
+#> 20 1987  74.320
+#> 21 1992  76.330
+#> 22 1997  77.550
+#> 23 2002  79.110
+#> 24 2007  80.204
 
 # arbitrary cell range
 gap %>%
   get_cells("Oceania", range = "D12:F15") %>%
   reshape_cf(header = FALSE)
 #> Accessing worksheet titled "Oceania"
-#>      X4       X5       X6
-#> 1 74.74 15184200 19477.01
-#> 2 73.84  3210650 17632.41
-#> 3 73.49 14074100 18334.20
-#> 4 72.22  3164900 16233.72
+#>       X4       X5       X6
+#> 1 80.370 19546792 30687.75
+#> 2 81.235 20434176 34435.37
+#> 3 69.390  1994794 10556.58
+#> 4 70.260  2229407 12247.40
 
 # arbitrary cell range, alternative specification
 gap %>%
   get_via_cf("Oceania", max_row = 5, min_col = 1, max_col = 3) %>%
   reshape_cf()
 #> Accessing worksheet titled "Oceania"
-#>       country continent year
-#> 1   Australia   Oceania 2007
-#> 2 New Zealand   Oceania 2007
-#> 3   Australia   Oceania 2002
-#> 4 New Zealand   Oceania 2002
+#>     country continent year
+#> 1 Australia   Oceania 1952
+#> 2 Australia   Oceania 1957
+#> 3 Australia   Oceania 1962
+#> 4 Australia   Oceania 1967
 ```
 
 ### Create sheets
@@ -355,17 +363,17 @@ foo <- new_ss("foo")
 #> Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1sXQ13xlPBeNZNNGFdBcflrZ5X6_3zZJcWblx4PzsA3Y
+#> sheet_key: 1JJ3qchqpPFBUVfQeuB8soDK-9Y78znq7DnOediYEisI
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-23 12:11:16 PDT
-#> Date of last spreadsheet update: 2015-03-23 19:11:14 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 13:46:41 PDT
+#> Date of last spreadsheet update: 2015-03-23 20:46:39 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1sXQ13xlPBeNZNNGFdBcflrZ5X6_3zZJcWblx4PzsA3Y
+#> Key: 1JJ3qchqpPFBUVfQeuB8soDK-9Y78znq7DnOediYEisI
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -422,14 +430,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss %>% str()
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-23 12:11:38 PDT
-#> Date of last spreadsheet update: 2015-03-23 19:11:37 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 13:46:53 PDT
+#> Date of last spreadsheet update: 2015-03-23 20:46:52 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1G5zZnzQ2ptm7PlMipqAU0qouXS5OhLWekhKa_1H-MQA
+#> Key: 15TRG1guoVFo5-Fp2jFZ4tDHgbPCl6HUA6wwX6S8OcCQ
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -444,19 +452,15 @@ file.remove("iris.csv")
 #> [1] TRUE
 ```
 
-Now we'll upload a multi-sheet Excel workbook.
+Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ``` r
-upload_ss("tests/testthat/gap-data.xlsx")
+gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
-gap_xlsx <- register_ss("gap-data")
-#> Sheet identified!
-#> sheet_title: gap-data
-#> sheet_key: 1QMvLhM5o6ljgTJJsDrWF_Q7iU3Nnh-oXaKj3HydaQV0
 gap_xlsx %>% str()
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-23 12:11:43 PDT
-#> Date of last spreadsheet update: 2015-03-23 19:11:40 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 13:46:56 PDT
+#> Date of last spreadsheet update: 2015-03-23 20:46:55 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -466,7 +470,7 @@ gap_xlsx %>% str()
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1QMvLhM5o6ljgTJJsDrWF_Q7iU3Nnh-oXaKj3HydaQV0
+#> Key: 1dEwRzPh9-BffF0dfm5bUIE5x83enYZ8rLA-VerQpmZ8
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
