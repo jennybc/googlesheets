@@ -40,7 +40,7 @@ get_via_csv <- function(ss, ws = 1, ...) {
   ## "text/csv"
   ## for empty cells, numeric columns returned as NA vs "" for chr
   #columns so set all "" to NA
-  dat <- req %>% httr::content(na.strings = c("", "NA"), ...) %>% 
+  req %>% httr::content(na.strings = c("", "NA"), ...) %>% 
     dplyr::as_data_frame()
   
 }
@@ -88,7 +88,7 @@ get_via_lf <- function(ss, ws = 1) {
     ## https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds
     c("id", "updated", "category", "title", "content", "link")
   var_names <- component_names %>% dplyr::setdiff(boilerplate_names)
-  dat <- row_data %>%
+  row_data %>%
     ## get just the data, as named character vector
     plyr::llply(function(x) x[var_names] %>% unlist) %>%
     ## rowbind to produce character matrix
