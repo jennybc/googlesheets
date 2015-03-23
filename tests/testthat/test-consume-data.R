@@ -14,6 +14,20 @@ test_that("We can get all data from the cell feed", {
   
 })
 
+test_that("We can get all data from the exportcsv link", {
+  
+  dat1 <- get_via_csv(ss)
+  names(dat1) <-  dat1 %>% names() %>% tolower()
+  
+  expect_equal_to_reference(dat1, "pts_sheet1_get_via_lf.rds")
+  
+  dat2 <- get_via_csv(ss, ws = "embedded_empty_cells")
+  expect_equal(nrow(dat2), 6)
+  expect_equal(ncol(dat2), 6)
+  expect_true(is.na(dat2$country[3])) # chr col
+  expect_true(is.na(dat2$gdpPercap[4])) # numeric col
+})
+
 test_that("Cell ranges can be converted to a cell limit list", {
   
   jfun <- function(x) x %>%

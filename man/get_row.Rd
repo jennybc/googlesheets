@@ -25,7 +25,7 @@ Get data via the cell feed for one row or for a range of rows.
 
 Other data.consumption.functions: \code{\link{get_cells}};
   \code{\link{get_col}}; \code{\link{get_via_cf}};
-  \code{\link{get_via_lf}}; \code{\link{reshape_cf}};
-  \code{\link{simplify_cf}}
+  \code{\link{get_via_csv}}; \code{\link{get_via_lf}};
+  \code{\link{reshape_cf}}; \code{\link{simplify_cf}}
 }
 

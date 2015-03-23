@@ -1,3 +1,50 @@
+#' Get all data from a rectangular worksheet as a tbl_df or data.frame
+#' 
+#' This function consumes data using the \code{exportcsv} links found in the 
+#' worksheets feed. Don't be spooked by the "csv" thing -- the data is NOT 
+#' actually written to file during this process. In fact, this is much, much 
+#' faster than consumption via the list feed. Unlike using the list feed, this 
+#' method does not assume that the populated cells form a neat rectangle. All 
+#' cells within the "data rectangle", i.e. spanned by the maximal row and column
+#' extent of the data, are returned. Empty cells will be assigned NA. Also, the 
+#' header row, potentially containing column or variable names, is not 
+#' transformed/mangled, as it is via the list feed. If you want all of your 
+#' data, this is the fastest way to get it.
+#' 
+#' @inheritParams get_via_lf
+#' @param ... further arguments to be passed to \code{\link{read.csv}} or, 
+#'   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is 
+#'   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
+#'   within \code{gspreadr} re: NOT converting character data to factor
+#'   
+#' @family data consumption functions
+#' 
+#' @return a tbl_df
+#'   
+#' @export
+get_via_csv <- function(ss, ws = 1, ...) {
+
+  stopifnot(ss %>% inherits("gspreadsheet"))
+  
+  this_ws <- get_ws(ss, ws)
+  
+  ## since gsheets_GET expects xml back, just using GET for now
+  req <- 
+    httr::GET(this_ws$exportcsv, get_google_token())
+  
+  if(is.null(httr::content(req))) {
+    stop("Worksheet is empty. There are no cells that contain data.")
+  }
+  
+  ## content() will process with read.csv, because req$headers$content-type is
+  ## "text/csv"
+  ## for empty cells, numeric columns returned as NA vs "" for chr
+  #columns so set all "" to NA
+  dat <- req %>% httr::content(na.strings = c("", "NA"), ...) %>% 
+    dplyr::as_data_frame()
+  
+}
+
 #' Get data from a rectangular worksheet as a tbl_df or data.frame
 #' 
 #' Gets data via the list feed, which assumes populated cells form a neat 
@@ -19,6 +66,8 @@
 #'   respectively, of the worksheet to consume
 #'   
 #' @family data consumption functions
+#' 
+#' @return a tbl_df
 #'   
 #' @export
 get_via_lf <- function(ss, ws = 1) {
@@ -445,3 +494,4 @@ affirm_positive <- function(x) {
     NA
   }
 }
+

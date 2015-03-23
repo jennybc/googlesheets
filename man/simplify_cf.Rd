@@ -43,7 +43,7 @@ in the data from the cell feed, i.e. if the original call to
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};
   \code{\link{get_col}}; \code{\link{get_row}};
-  \code{\link{get_via_cf}}; \code{\link{get_via_lf}};
-  \code{\link{reshape_cf}}
+  \code{\link{get_via_cf}}; \code{\link{get_via_csv}};
+  \code{\link{get_via_lf}}; \code{\link{reshape_cf}}
 }
 

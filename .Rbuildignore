@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.httr-oauth$
+^vignettes/\.httr-oauth$
 ^tests/testthat/\.httr-oauth$
 vignettes/basic-usage.Rmd
 ^\.travis\.yml$
@@ -8,5 +9,5 @@ vignettes/basic-usage.Rmd
 ^README\.Rmd$
 ^README-.*\.png$
 ^jenny-tmp.R$
-^awaiting-resurrection$
+^awaiting-resurrection/.*$
 tests/testthat/token_file.rds.enc

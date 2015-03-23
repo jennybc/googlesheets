@@ -12,6 +12,9 @@ get_via_lf(ss, ws = 1)
 \item{ws}{positive integer or character string specifying index or title,
   respectively, of the worksheet to consume}
 }
+\value{
+a tbl_df
+}
 \description{
 Gets data via the list feed, which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. First row regarded as
@@ -31,7 +34,7 @@ When you use the listfeed, the Sheets API transforms the variable or
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};
   \code{\link{get_col}}; \code{\link{get_row}};
-  \code{\link{get_via_cf}}; \code{\link{reshape_cf}};
-  \code{\link{simplify_cf}}
+  \code{\link{get_via_cf}}; \code{\link{get_via_csv}};
+  \code{\link{reshape_cf}}; \code{\link{simplify_cf}}
 }
 
