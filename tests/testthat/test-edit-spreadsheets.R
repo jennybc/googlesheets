@@ -160,4 +160,3 @@ my_patterns <- c("testing[0-9]{1}", "gap-data",
                  "eggplants are purple")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
 delete_ss(my_patterns, verbose = FALSE)
-

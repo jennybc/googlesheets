@@ -200,4 +200,3 @@ test_that("Special Characters can be imported correctly", {
   expect_equal_to_reference(get_via_lf(ss, ws = "special_chars"), 
                             "pts_special_chars.rds")
 })
-

@@ -41,31 +41,41 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Source: local data frame [21 x 6]
+#> Auto-refreshing stale OAuth token.
+#> Source: local data frame [20 x 6]
 #> 
 #>                                     sheet_title
 #> 1                          Public Testing Sheet
-#> 2                                       scoring
-#> 3                                   gas_mileage
-#> 4                                   Temperature
-#> 5  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 6                                Testing helper
+#> 2                                Testing helper
+#> 3                                       scoring
+#> 4                                   gas_mileage
+#> 5                                   Temperature
+#> 6  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
 #> 7                               Old Style Sheet
 #> 8                                    jenny-test
 #> 9                                     Gapminder
 #> 10                                   Gapminderx
-#> ..                                          ...
+#> 11                                Gapminder Raw
+#> 12                     Gapminder 2007 Can Write
+#> 13                       Gapminder by Continent
+#> 14                     Gapminder 2007 View Only
+#> 15                     Gapminder by Continent R
+#> 16                                  basic-usage
+#> 17                 Caffeine craver? (Responses)
+#> 18                        Private Sheet Example
+#> 19                     Gapminder by Continent 2
+#> 20                                  Code Sample
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 21
+#> Observations: 20
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "scoring", "gas_mileage",...
+#> $ sheet_title  (chr) "Public Testing Sheet", "Testing helper", "scorin...
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
-#> $ owner        (chr) "gspreadr", "gspreadr", "woo.kara", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-23 00:27:40, 2015-03-20 22:32:48, 2015-0...
+#> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "woo.kara", "...
+#> $ perm         (chr) "rw", "rw", "rw", "r", "rw", "rw", "rw", "rw", "r...
+#> $ last_updated (time) 2015-03-23 05:13:07, 2015-03-23 03:30:29, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -81,7 +91,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE
 str(gap)
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-22 17:29:48 PDT
+#>   Date of gspreadr::register_ss: 2015-03-23 07:11:39 PDT
 #> Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
 #> 
 #> Contains 5 worksheets:
@@ -137,7 +147,7 @@ There are three ways to consume data from a worksheet within a Google spreadshee
 
 -   `get_via_csv()`: Don't let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the "exportcsv" link. For cases where `get_via_csv()` and `get_via_lf()` both work, we see that `get_via_csv()` is around **50 times faster**. Use this when your data occupies a nice rectangle in the sheet. You will get a `tbl_df` back, which is basically just a `data.frame`.
 -   `get_via_lf()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `get_via_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support in the near future (\#17).
--   `get_via-cf()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It works great for small amounts of data but can be rather slow otherwise. `get_via-cf()` returns a `tbl_df` with **one row per cell**. You can specify cell limits directly in `get_via-cf()` or use convenience wrappers `get_row()`, `get_col()` or `get_cells()` for some common special cases. See below for demos of `reshape_cf()` and `simplify_cf()` which help with post-processing.
+-   `get_via_cf()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It works great for small amounts of data but can be rather slow otherwise. `get_via_cf()` returns a `tbl_df` with **one row per cell**. You can specify cell limits directly in `get_via_cf()` or use convenience wrappers `get_row()`, `get_col()` or `get_cells()` for some common special cases. See below for demos of `reshape_cf()` and `simplify_cf()` which help with post-processing.
 
 ``` r
 # Get the data for worksheet "Oceania": the super-fast csv way
@@ -354,17 +364,17 @@ foo <- new_ss("foo")
 #> Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 17mcY4iseOTSiOTwuoJJqHVc-5IEbA72f-dJi6SFYiJ4
+#> sheet_key: 1r5o0K0qTxy4XVXJ_aMC5H_V30U-mh2f4DSQJ4HURVNY
 foo %>% str
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-22 17:29:56 PDT
-#> Date of last spreadsheet update: 2015-03-23 00:29:54 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 07:11:47 PDT
+#> Date of last spreadsheet update: 2015-03-23 14:11:44 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 17mcY4iseOTSiOTwuoJJqHVc-5IEbA72f-dJi6SFYiJ4
+#> Key: 1r5o0K0qTxy4XVXJ_aMC5H_V30U-mh2f4DSQJ4HURVNY
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -418,14 +428,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss %>% str()
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-22 17:30:05 PDT
-#> Date of last spreadsheet update: 2015-03-23 00:30:03 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 07:11:56 PDT
+#> Date of last spreadsheet update: 2015-03-23 14:11:54 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1mju9tPJbifiHYPTih6NYFo2SfYo1TW750AyIfrIcwZQ
+#> Key: 1fSMX35eu3Hryf2PsmUSKINpS3QwnYQdXBunS6D546jI
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -448,11 +458,11 @@ upload_ss("tests/testthat/gap-data.xlsx")
 gap_xlsx <- register_ss("gap-data")
 #> Sheet identified!
 #> sheet_title: gap-data
-#> sheet_key: 1vodt3ypQT4GP5AwjwqtipVyD9lgKvaNqmdgmUwDjh4o
+#> sheet_key: 1Q-zYUBMuykgw2mo6qvTxZm8tnkBGkWwaYonz1KRR1-o
 gap_xlsx %>% str()
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-22 17:30:10 PDT
-#> Date of last spreadsheet update: 2015-03-23 00:30:08 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 07:12:02 PDT
+#> Date of last spreadsheet update: 2015-03-23 14:11:59 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -462,7 +472,7 @@ gap_xlsx %>% str()
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1vodt3ypQT4GP5AwjwqtipVyD9lgKvaNqmdgmUwDjh4o
+#> Key: 1Q-zYUBMuykgw2mo6qvTxZm8tnkBGkWwaYonz1KRR1-o
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]

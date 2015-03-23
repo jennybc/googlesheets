@@ -494,4 +494,3 @@ affirm_positive <- function(x) {
     NA
   }
 }
-

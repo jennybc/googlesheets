@@ -108,4 +108,3 @@ test_that("We can a extract a key from a URL", {
   expect_equal(extract_key_from_url(pts_ws_feed), pts_key)
   
 })
-
