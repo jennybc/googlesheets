@@ -31,51 +31,67 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
   
 }
 
-#' Move a spreadsheet to trash on Google Drive
+#' Move spreadsheets to trash on Google Drive
 #' 
-#' You must own the sheet in order to move it to the trash. If you try to delete
-#' a sheet you do not own, a 403 Forbidden HTTP status code will be returned; 
-#' such shared spreadsheets can only be moved to the trash manually in the web 
+#' You must own a sheet in order to move it to the trash. If you try to delete a
+#' sheet you do not own, a 403 Forbidden HTTP status code will be returned; such
+#' shared spreadsheets can only be moved to the trash manually in the web 
 #' browser. If you trash a spreadsheet that is shared with others, it will no 
-#' longer appear in any of their Google Drives.
+#' longer appear in any of their Google Drives. If you delete something my
+#' mistake, visit the \href{https://drive.google.com/drive/#trash}{trash in
+#' Google Drive}, find the sheet and restore it.
 #' 
-#' @param x sheet-identifying information, either a gspreadsheet object or a 
-#'   character vector of length one, giving a URL, sheet title, key or 
-#'   worksheets feed
+#' @param x a regular expression; spreadsheets whose titles match will be moved
+#'   to trash
 #' @param verbose logical; do you want informative message?
+#' @param ... optional arguments to be passed to \code{\link{grepl}}
 #'   
-#' @return logical, TRUE if deletion has been explicitly confirmed, FALSE
-#'   otherwise
-#'   
-#' @note Use the key when there are multiple sheets with the same name, since 
-#'   the default will just send the most recent sheet to the trash.
+#' @return tbl_df with one row per matching sheet, a variable holding
+#'   spreadsheet titles, a logical vector indicating deletion success
 #'   
 #' @export
-delete_ss <- function(x, verbose = TRUE) {
+delete_ss <- function(x, verbose = TRUE, ...) {
   
-  ## I set verbose = FALSE here mostly for symmetry with new_ss
-  x_ss <- x %>% identify_ss(verbose = FALSE)
+  ss_df <- list_sheets()
+  delete_me <- grepl(x, ss_df$sheet_title, ...)
+  keys_to_delete <- ss_df$sheet_key[delete_me]
+  titles_to_delete <- ss_df$sheet_title[delete_me]
   
-  the_url <- paste("https://www.googleapis.com/drive/v2/files",
-                    x_ss$sheet_key, "trash", sep = "/")
-  
-  gdrive_POST(the_url, the_body = NULL)
-
-  ss <- try(identify_ss(x_ss, verbose = FALSE), silent = TRUE)
-  
-  cannot_find_sheet <- inherits(ss, "try-error")
+  if(length(keys_to_delete) == 0L) {
+    if(verbose) {
+      sprintf("No matching sheets found.") %>%
+        message()
+    }
+    return(invisible(NULL))
+  }
   
   if(verbose) {
-    if(cannot_find_sheet) {
-      message(sprintf("Sheet \"%s\" moved to trash in Google Drive.",
-                      x_ss$sheet_title))
+    sprintf("Sheets found and slated for deletion:\n%s",
+            titles_to_delete %>%paste(collapse = "\n")) %>%
+      message()
+  }
+
+  the_url <- paste("https://www.googleapis.com/drive/v2/files",
+                   keys_to_delete, "trash", sep = "/")
+  
+  post <- lapply(the_url, gdrive_POST, the_body = NULL)
+  statii <- post %>% lapluck("status_code")
+  sitrep <-
+    dplyr::data_frame_(list(ss_title = ~ titles_to_delete,
+                            deleted = ~(statii == 200)))
+
+  if(verbose) {
+    if(all(sitrep$deleted)) {
+      message("Success. All moved to trash in Google Drive.")
     } else {
-      message(sprintf("Cannot verify whether sheet \"%s\" was moved to trash in Google Drive.",
-                      x_ss$sheet_title))
+      sprintf("Oops. These sheets were NOT deleted:\n%s",
+              sitrep$ss_title[!sitrep$deleted]
+              %>% paste(collapse = "\n")) %>%
+        message()
     }
   }
   
-  cannot_find_sheet %>% invisible()
+  sitrep %>% invisible()
   
 }
 
@@ -122,7 +138,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   
   new_title <- httr::content(req)$title
   
-  ## see new_ss() and delete_ss() for why I set verbose = FALSE here
+  ## see new_ss() for why I set verbose = FALSE here
   new_ss <- try(new_title %>% identify_ss(verbose = FALSE), silent = TRUE)
   
   cannot_find_sheet <- inherits(new_ss, "try-error")

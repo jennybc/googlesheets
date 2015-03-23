@@ -2,30 +2,29 @@
 % Please edit documentation in R/edit-spreadsheets.R
 \name{delete_ss}
 \alias{delete_ss}
-\title{Move a spreadsheet to trash on Google Drive}
+\title{Move spreadsheets to trash on Google Drive}
 \usage{
-delete_ss(x, verbose = TRUE)
+delete_ss(x, verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{sheet-identifying information, either a gspreadsheet object or a
-character vector of length one, giving a URL, sheet title, key or
-worksheets feed}
+\item{x}{a regular expression; spreadsheets whose titles match will be moved
+to trash}
 
 \item{verbose}{logical; do you want informative message?}
+
+\item{...}{optional arguments to be passed to \code{\link{grepl}}}
 }
 \value{
-logical, TRUE if deletion has been explicitly confirmed, FALSE
-  otherwise
+tbl_df with one row per matching sheet, a variable holding
+  spreadsheet titles, a logical vector indicating deletion success
 }
 \description{
-You must own the sheet in order to move it to the trash. If you try to delete
-a sheet you do not own, a 403 Forbidden HTTP status code will be returned;
-such shared spreadsheets can only be moved to the trash manually in the web
+You must own a sheet in order to move it to the trash. If you try to delete a
+sheet you do not own, a 403 Forbidden HTTP status code will be returned; such
+shared spreadsheets can only be moved to the trash manually in the web
 browser. If you trash a spreadsheet that is shared with others, it will no
-longer appear in any of their Google Drives.
-}
-\note{
-Use the key when there are multiple sheets with the same name, since
-  the default will just send the most recent sheet to the trash.
+longer appear in any of their Google Drives. If you delete something my
+mistake, visit the \href{https://drive.google.com/drive/#trash}{trash in
+Google Drive}, find the sheet and restore it.
 }
 
