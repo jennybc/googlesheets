@@ -189,7 +189,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   if(cannot_find_sheet) {
     invisible(NULL)
   } else {
-    new_ss %>% invisible()
+    new_ss %>% register_ss() %>% invisible()
   }
 }
 

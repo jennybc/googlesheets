@@ -53,12 +53,12 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1      tomcat 1W2bspT... gspreadr   rw 2015-03-23 22:51:36
-## 2   catherine 1zeBJ8s... gspreadr   rw 2015-03-23 22:51:34
-## 3  Public Tes 1hff6Az... gspreadr   rw 2015-03-23 22:01:53
-## 4   Gapminder 1HT5B8S... gspreadr   rw 2015-03-23 20:59:10
-## 5  Gapminder  1SDA_Gu... gspreadr   rw 2015-03-23 20:23:09
-## 6  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 20:23:06
+## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-24 02:58:22
+## 2  My_Gapmind 1R2prV3... gspreadr   rw 2015-03-24 02:39:20
+## 3   Gapminder 1HT5B8S... gspreadr   rw 2015-03-23 20:59:10
+## 4  Gapminder  1SDA_Gu... gspreadr   rw 2015-03-23 20:23:09
+## 5  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 20:23:06
+## 6  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
 ```
 
 This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
@@ -81,12 +81,12 @@ gap <- register_ss("Gapminder")
 ```
 
 ```r
-str(gap)
+gap
 ```
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 16:01:13 PDT
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
 ## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
@@ -128,12 +128,12 @@ ss2 <- register_ss(gap_key)
 ```
 
 ```r
-str(ss2)
+ss2
 ```
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 16:01:14 PDT
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
 ## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
@@ -160,12 +160,12 @@ Example of getting nice tabular data from the "list feed":
 
 
 ```r
-str(gap)
+gap
 ```
 
 ```
 ##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 16:01:13 PDT
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
 ## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
@@ -358,7 +358,7 @@ new_ss("hi I am new here")
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1eyVVkoX27frV4W5P1iyb3BkmYFa8o9SYzUZNHRiEfHI
+## sheet_key: 14M2GD4MttdExbkgbu4zKu_dr-pTcia_PzBLZmerRMN0
 ```
 
 ```r
@@ -369,7 +369,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1eyVVkoX27frV4W5P1iyb3BkmYFa8o9SYzUZNHRiEfHI gspreadr
+## 1 hi I am new here 14M2GD4MttdExbkgbu4zKu_dr-pTcia_PzBLZmerRMN0 gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
 ```
 
@@ -409,7 +409,7 @@ new_ss("hi I am new here")
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
+## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
 ```
 
 ```r
@@ -419,23 +419,23 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
+## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
 ```
 
 ```r
-str(x)
+x
 ```
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 16:01:22 PDT
-## Date of last spreadsheet update: 2015-03-23 23:01:19 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:37 PDT
+## Date of last spreadsheet update: 2015-03-24 03:07:34 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
+## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
 ```
 
 ```r
@@ -447,20 +447,20 @@ x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
 ```
 
 ```r
-str(x)
+x
 ```
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 16:01:23 PDT
-## Date of last spreadsheet update: 2015-03-23 23:01:22 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:38 PDT
+## Date of last spreadsheet update: 2015-03-24 03:07:37 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
+## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
 ```
 
 ```r
@@ -478,23 +478,23 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
+## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
 ```
 
 ```r
-str(x)
+x
 ```
 
 ```
 ##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 16:01:25 PDT
-## Date of last spreadsheet update: 2015-03-23 23:01:23 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:39 PDT
+## Date of last spreadsheet update: 2015-03-24 03:07:38 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1Cewhn3M77Q7N-PaI7CLaMtYuCl82eXXnHtVB9LsXMnY
+## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
