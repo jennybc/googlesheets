@@ -189,3 +189,30 @@ gdrive_PUT <- function(url, the_body) {
   req
   
 }
+
+
+#' Make GET request to Google Drive API
+#'
+#' Used in download_ss() 
+#'
+#' @param url URL for GET request
+#' @param ... optional; further named parameters, such as \code{query}, 
+#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
+#'   parameters will be combined with \code{\link[httr]{config}}.
+gdrive_GET <- function(url, ...) {
+  
+  token <- get_google_token()
+  
+  if(is.null(token)) {
+    stop("Must be authorized in order to perform request")
+  } else {
+    req <- httr::GET(url, config = token, ...)
+  }
+  
+  httr::stop_for_status(req)
+  
+  req$content <- httr::content(req)
+  
+  req
+  
+}
