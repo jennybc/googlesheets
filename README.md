@@ -41,39 +41,40 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Source: local data frame [19 x 6]
+#> Source: local data frame [20 x 6]
 #> 
 #>                                     sheet_title
-#> 1                                     Gapminder
-#> 2                      Gapminder 2007 Can Write
-#> 3                                 Gapminder_old
-#> 4                          Public Testing Sheet
-#> 5                                Testing helper
-#> 6                                       scoring
-#> 7                                   gas_mileage
-#> 8                                   Temperature
-#> 9  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 10                              Old Style Sheet
-#> 11                                   jenny-test
-#> 12                       Gapminder by Continent
-#> 13                     Gapminder 2007 View Only
-#> 14                     Gapminder by Continent R
-#> 15                                  basic-usage
-#> 16                 Caffeine craver? (Responses)
-#> 17                        Private Sheet Example
-#> 18                     Gapminder by Continent 2
-#> 19                                  Code Sample
+#> 1                          Public Testing Sheet
+#> 2                                  My_Gapminder
+#> 3                                     Gapminder
+#> 4                      Gapminder 2007 Can Write
+#> 5                                 Gapminder_old
+#> 6                                Testing helper
+#> 7                                       scoring
+#> 8                                   gas_mileage
+#> 9                                   Temperature
+#> 10 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 11                              Old Style Sheet
+#> 12                                   jenny-test
+#> 13                       Gapminder by Continent
+#> 14                     Gapminder 2007 View Only
+#> 15                     Gapminder by Continent R
+#> 16                                  basic-usage
+#> 17                 Caffeine craver? (Responses)
+#> 18                        Private Sheet Example
+#> 19                     Gapminder by Continent 2
+#> 20                                  Code Sample
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 19
+#> Observations: 20
 #> Variables:
-#> $ sheet_title  (chr) "Gapminder", "Gapminder 2007 Can Write", "Gapmind...
-#> $ sheet_key    (chr) "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA", "...
+#> $ sheet_title  (chr) "Public Testing Sheet", "My_Gapminder", "Gapminde...
+#> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "r", "rw", "r...
-#> $ last_updated (time) 2015-03-23 20:34:09, 2015-03-23 20:23:09, 2015-0...
+#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "rw", "r", "r...
+#> $ last_updated (time) 2015-03-24 02:58:22, 2015-03-24 02:39:20, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -87,9 +88,9 @@ gap <- register_ss("Gapminder")
 #> Sheet identified!
 #> sheet_title: Gapminder
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-str(gap)
+gap
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-23 13:46:34 PDT
+#>   Date of gspreadr::register_ss: 2015-03-23 20:06:32 PDT
 #> Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #> 
 #> Contains 5 worksheets:
@@ -137,7 +138,7 @@ Now register your copy of the Gapminder sheet and you can follow along:
 
 ``` r
 gap <- register_ss("Gapminder")
-str(gap)
+gap
 ```
 
 ### Consume data
@@ -363,17 +364,17 @@ foo <- new_ss("foo")
 #> Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1JJ3qchqpPFBUVfQeuB8soDK-9Y78znq7DnOediYEisI
-foo %>% str
+#> sheet_key: 1AmjLJC59EJFDmSzJ_JsIavchTO0Kb8KM-h5_v5Cq9mo
+foo
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-23 13:46:41 PDT
-#> Date of last spreadsheet update: 2015-03-23 20:46:39 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 20:06:40 PDT
+#> Date of last spreadsheet update: 2015-03-24 03:06:37 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1JJ3qchqpPFBUVfQeuB8soDK-9Y78znq7DnOediYEisI
+#> Key: 1AmjLJC59EJFDmSzJ_JsIavchTO0Kb8KM-h5_v5Cq9mo
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -428,16 +429,16 @@ Here's how we can create a new spreadsheet from a suitable local file. First, we
 iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
 iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
-iris_ss %>% str()
+iris_ss
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-23 13:46:53 PDT
-#> Date of last spreadsheet update: 2015-03-23 20:46:52 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 20:06:49 PDT
+#> Date of last spreadsheet update: 2015-03-24 03:06:47 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 15TRG1guoVFo5-Fp2jFZ4tDHgbPCl6HUA6wwX6S8OcCQ
+#> Key: 1OjWIgTSs8lDKBPWqPrgOVbnJRYDhammzyCYnnXteBSw
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -457,10 +458,10 @@ Now we'll upload a multi-sheet Excel workbook. Slowly.
 ``` r
 gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
-gap_xlsx %>% str()
+gap_xlsx
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-23 13:46:56 PDT
-#> Date of last spreadsheet update: 2015-03-23 20:46:55 UTC
+#>   Date of gspreadr::register_ss: 2015-03-23 20:06:53 PDT
+#> Date of last spreadsheet update: 2015-03-24 03:06:51 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -470,7 +471,7 @@ gap_xlsx %>% str()
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1dEwRzPh9-BffF0dfm5bUIE5x83enYZ8rLA-VerQpmZ8
+#> Key: 1sBh7XnaxXSWypq8gTxRVNMD9MUpr05nlX5Ugwo_xr94
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]

@@ -104,12 +104,12 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre><code>## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-23 20:01:02
-## 2  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 19:59:34
-## 3  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
-## 4     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
-## 5  gas_mileag 1WH65aJ... woo.kara    r 2015-03-12 01:01:33
-## 6  Temperatur 1Hkh20-... gspreadr   rw 2015-03-03 00:07:43</code></pre>
+## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-24 02:58:22
+## 2  My_Gapmind 1R2prV3... gspreadr   rw 2015-03-24 02:39:20
+## 3   Gapminder 1HT5B8S... gspreadr   rw 2015-03-23 20:59:10
+## 4  Gapminder  1SDA_Gu... gspreadr   rw 2015-03-23 20:23:09
+## 5  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 20:23:06
+## 6  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29</code></pre>
 <p>This provides a nice overview of the spreadsheets you can access and is useful for looking up the <strong>key</strong> of a spreadsheet (see below).</p>
 </div>
 <div id="register-a-spreadsheet" class="section level1">
@@ -119,21 +119,21 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre class="sourceCode r"><code class="sourceCode r">gap &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;Gapminder&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: Gapminder
-## sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gap)</code></pre>
+## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
 <pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
-## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
+## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 1000 x 26
-## Americas: 1000 x 26
-## Asia: 1000 x 26
-## Europe: 1000 x 26
-## Oceania: 1000 x 26
+## Africa: 625 x 6
+## Americas: 301 x 6
+## Asia: 397 x 6
+## Europe: 361 x 6
+## Oceania: 25 x 6
 ## 
-## Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE</code></pre>
+## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <p>Besides using the spreadsheet title, you can also specify a spreadsheet in three other ways:</p>
 <ul>
 <li>By key: this unfriendly but unique string is probably the best long-term strategy.</li>
@@ -142,25 +142,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 <p>Here’s an example of using the sheet title to retrieve the key, then registering the sheet by key. While registration by title is handy for interactive use, registration by key is preferred for scripts.</p>
 <pre class="sourceCode r"><code class="sourceCode r">(gap_key &lt;-<span class="st"> </span>my_sheets$sheet_key[my_sheets$sheet_title ==<span class="st"> &quot;Gapminder&quot;</span>])</code></pre>
-<pre><code>## [1] &quot;1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE&quot;</code></pre>
+<pre><code>## [1] &quot;1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">ss2 &lt;-<span class="st"> </span><span class="kw">register_ss</span>(gap_key)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: Gapminder
-## sheet_key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(ss2)</code></pre>
+## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">ss2</code></pre>
 <pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
-## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
+## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 1000 x 26
-## Americas: 1000 x 26
-## Asia: 1000 x 26
-## Europe: 1000 x 26
-## Oceania: 1000 x 26
+## Africa: 625 x 6
+## Americas: 301 x 6
+## Asia: 397 x 6
+## Europe: 361 x 6
+## Oceania: 25 x 6
 ## 
-## Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE</code></pre>
+## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 </div>
 <div id="consuming-data-from-a-worksheet" class="section level1">
 <h1>Consuming data from a worksheet</h1>
@@ -171,45 +171,45 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>The “cell feed”: for everything else. Of course, you can get well-behaved tabular data with the cell feed but it’s up to 3x slower and will require post-processing (reshaping and coercion).</li>
 </ul>
 <p>Example of getting nice tabular data from the “list feed”:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(gap)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
 <pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:42 PDT
-## Date of last spreadsheet update: 2015-01-21 18:42:42 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
+## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 1000 x 26
-## Americas: 1000 x 26
-## Asia: 1000 x 26
-## Europe: 1000 x 26
-## Oceania: 1000 x 26
+## Africa: 625 x 6
+## Americas: 301 x 6
+## Asia: 397 x 6
+## Europe: 361 x 6
+## Oceania: 25 x 6
 ## 
-## Key: 1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE</code></pre>
+## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">oceania_list_feed &lt;-<span class="st"> </span><span class="kw">get_via_lf</span>(gap, <span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>) </code></pre>
 <pre><code>## Accessing worksheet titled &quot;Oceania&quot;</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(oceania_list_feed)</code></pre>
 <pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:
-##  $ country  : chr  &quot;Australia&quot; &quot;New Zealand&quot; &quot;Australia&quot; &quot;New Zealand&quot; ...
+##  $ country  : chr  &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; ...
 ##  $ continent: chr  &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; ...
-##  $ year     : int  2007 2007 2002 2002 1997 1997 1992 1992 1987 1987 ...
-##  $ lifeexp  : num  81.2 80.2 80.4 79.1 78.8 ...
-##  $ pop      : int  20434176 4115771 19546792 3908037 18565243 3676187 17481977 3437674 16257249 3317166 ...
-##  $ gdppercap: num  34435 25185 30688 23190 26998 ...</code></pre>
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ lifeexp  : num  69.1 70.3 70.9 71.1 71.9 ...
+##  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+##  $ gdppercap: num  10040 10950 12217 14526 16789 ...</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">oceania_list_feed</code></pre>
 <pre><code>## Source: local data frame [24 x 6]
 ## 
-##        country continent year lifeexp      pop gdppercap
-## 1    Australia   Oceania 2007  81.235 20434176  34435.37
-## 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
-## 3    Australia   Oceania 2002  80.370 19546792  30687.75
-## 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
-## 5    Australia   Oceania 1997  78.830 18565243  26997.94
-## 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
-## 7    Australia   Oceania 1992  77.560 17481977  23424.77
-## 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
-## 9    Australia   Oceania 1987  76.320 16257249  21888.89
-## 10 New Zealand   Oceania 1987  74.320  3317166  19007.19
-## ..         ...       ...  ...     ...      ...       ...</code></pre>
+##      country continent year lifeexp      pop gdppercap
+## 1  Australia   Oceania 1952   69.12  8691212  10039.60
+## 2  Australia   Oceania 1957   70.33  9712569  10949.65
+## 3  Australia   Oceania 1962   70.93 10794968  12217.23
+## 4  Australia   Oceania 1967   71.10 11872264  14526.12
+## 5  Australia   Oceania 1972   71.93 13177000  16788.63
+## 6  Australia   Oceania 1977   73.49 14074100  18334.20
+## 7  Australia   Oceania 1982   74.74 15184200  19477.01
+## 8  Australia   Oceania 1987   76.32 16257249  21888.89
+## 9  Australia   Oceania 1992   77.56 17481977  23424.77
+## 10 Australia   Oceania 1997   78.83 18565243  26997.94
+## ..       ...       ...  ...     ...      ...       ...</code></pre>
 <p>If you wish, go look at the <a href="https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit#gid=431684907">Oceania worksheet from the Gapminder spreadsheet</a> for comparison.</p>
 <p>Example of getting the same data from the “cell feed”.</p>
 <pre class="sourceCode r"><code class="sourceCode r">oceania_cell_feed &lt;-<span class="st"> </span><span class="kw">get_via_cf</span>(gap, <span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>) </code></pre>
@@ -234,29 +234,29 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 6    F1     R1C6   1   6 gdpPercap
 ## 7    A2     R2C1   2   1 Australia
 ## 8    B2     R2C2   2   2   Oceania
-## 9    C2     R2C3   2   3      2007
-## 10   D2     R2C4   2   4    81.235</code></pre>
+## 9    C2     R2C3   2   3      1952
+## 10   D2     R2C4   2   4     69.12</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">oceania_reshaped &lt;-<span class="st"> </span><span class="kw">reshape_cf</span>(oceania_cell_feed)
 <span class="kw">str</span>(oceania_reshaped)</code></pre>
 <pre><code>## 'data.frame':    24 obs. of  6 variables:
-##  $ country  : chr  &quot;Australia&quot; &quot;New Zealand&quot; &quot;Australia&quot; &quot;New Zealand&quot; ...
+##  $ country  : chr  &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; ...
 ##  $ continent: chr  &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; ...
-##  $ year     : int  2007 2007 2002 2002 1997 1997 1992 1992 1987 1987 ...
-##  $ lifeExp  : num  81.2 80.2 80.4 79.1 78.8 ...
-##  $ pop      : int  20434176 4115771 19546792 3908037 18565243 3676187 17481977 3437674 16257249 3317166 ...
-##  $ gdpPercap: num  34435 25185 30688 23190 26998 ...</code></pre>
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
+##  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+##  $ gdpPercap: num  10040 10950 12217 14526 16789 ...</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(oceania_reshaped, <span class="dv">10</span>)</code></pre>
-<pre><code>##        country continent year lifeExp      pop gdpPercap
-## 1    Australia   Oceania 2007  81.235 20434176  34435.37
-## 2  New Zealand   Oceania 2007  80.204  4115771  25185.01
-## 3    Australia   Oceania 2002  80.370 19546792  30687.75
-## 4  New Zealand   Oceania 2002  79.110  3908037  23189.80
-## 5    Australia   Oceania 1997  78.830 18565243  26997.94
-## 6  New Zealand   Oceania 1997  77.550  3676187  21050.41
-## 7    Australia   Oceania 1992  77.560 17481977  23424.77
-## 8  New Zealand   Oceania 1992  76.330  3437674  18363.32
-## 9    Australia   Oceania 1987  76.320 16257249  21888.89
-## 10 New Zealand   Oceania 1987  74.320  3317166  19007.19</code></pre>
+<pre><code>##      country continent year lifeExp      pop gdpPercap
+## 1  Australia   Oceania 1952   69.12  8691212  10039.60
+## 2  Australia   Oceania 1957   70.33  9712569  10949.65
+## 3  Australia   Oceania 1962   70.93 10794968  12217.23
+## 4  Australia   Oceania 1967   71.10 11872264  14526.12
+## 5  Australia   Oceania 1972   71.93 13177000  16788.63
+## 6  Australia   Oceania 1977   73.49 14074100  18334.20
+## 7  Australia   Oceania 1982   74.74 15184200  19477.01
+## 8  Australia   Oceania 1987   76.32 16257249  21888.89
+## 9  Australia   Oceania 1992   77.56 17481977  23424.77
+## 10 Australia   Oceania 1997   78.83 18565243  26997.94</code></pre>
 <p>Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function <code>reshape_cf()</code> to reshape this data into something tabular.</p>
 <p><em>To add, using row and column limits on the cell feed. All covered in the README.</em></p>
 <p><em>Stuff below partialy redundant with above</em></p>
@@ -302,12 +302,12 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1M59cya4gnhCNQfeyCxdBAfWSudbE30QO8Uc7szvC7ro</code></pre>
+## sheet_key: 14M2GD4MttdExbkgbu4zKu_dr-pTcia_PzBLZmerRMN0</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list_sheets</span>() %&gt;%<span class="st"> </span><span class="kw">filter</span>(sheet_title ==<span class="st"> &quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1M59cya4gnhCNQfeyCxdBAfWSudbE30QO8Uc7szvC7ro gspreadr
+## 1 hi I am new here 14M2GD4MttdExbkgbu4zKu_dr-pTcia_PzBLZmerRMN0 gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Move spreadsheet to trash</span>
 <span class="kw">delete_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
@@ -328,50 +328,50 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY</code></pre>
+## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(x)</code></pre>
+## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:50 PDT
-## Date of last spreadsheet update: 2015-03-23 20:10:47 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:37 PDT
+## Date of last spreadsheet update: 2015-03-24 03:07:34 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY</code></pre>
+## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">add_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; added to sheet &quot;hi I am new here&quot;.</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(x)</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:50 PDT
-## Date of last spreadsheet update: 2015-03-23 20:10:50 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:38 PDT
+## Date of last spreadsheet update: 2015-03-24 03:07:37 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY</code></pre>
+## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">delete_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; deleted from sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(x)</code></pre>
+## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 13:10:52 PDT
-## Date of last spreadsheet update: 2015-03-23 20:10:50 UTC
+##   Date of gspreadr::register_ss: 2015-03-23 20:07:39 PDT
+## Date of last spreadsheet update: 2015-03-24 03:07:38 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1CTlRlHdX7D_G_14heJZCQsSeXvH28XRApA810CgcObY</code></pre>
+## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q</code></pre>
 <p>To rename a worksheet, pass in the spreadsheet object, the worksheet’s current name and the new name you want it to be.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rename_ws</span>(x, <span class="st">&quot;Sheet1&quot;</span>, <span class="st">&quot;First Sheet&quot;</span>)</code></pre>
 <pre><code>## Worksheet &quot;Sheet1&quot; renamed to &quot;First Sheet&quot;.</code></pre>

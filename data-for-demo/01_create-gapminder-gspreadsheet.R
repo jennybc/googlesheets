@@ -14,14 +14,14 @@ if (getwd() %>% basename == "data-for-demo") {
 }
 
 ## "make clean"
-delete_ss("^Gapminder$")
+delete_ss(regex = "^Gapminder$")
 
 gap_ss <- new_ss("Gapminder")
 
 l_ply(levels(gapminder$continent), add_ws, ss = gap_ss)
 
 gap_ss <- gap_ss %>% delete_ws("Sheet1")
-str(gap_ss)
+gap_ss
 
 upload_times <- llply(levels(gapminder$continent), function(ct) {
   gap_ss %>%
@@ -44,4 +44,4 @@ slow
 sum(slow$time)
 
 gap_ss <- gap_ss %>% register_ss()
-str(gap_ss)
+gap_ss
