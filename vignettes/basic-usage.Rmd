@@ -94,7 +94,7 @@ Let's register the Gapminder spreadsheet we spied in the list above and that you
 
 ```{r}
 gap <- register_ss("Gapminder")
-str(gap)
+gap
 ```
 
 Besides using the spreadsheet title, you can also specify a spreadsheet in three other ways:
@@ -108,7 +108,7 @@ Here's an example of using the sheet title to retrieve the key, then registering
 ```{r}
 (gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
 ss2 <- register_ss(gap_key)
-str(ss2)
+ss2
 ```
 
 # Consuming data from a worksheet
@@ -123,7 +123,7 @@ There are two ways to consume data.
 Example of getting nice tabular data from the "list feed":
 
 ```{r}
-str(gap)
+gap
 oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
 str(oceania_list_feed)
 oceania_list_feed
@@ -204,12 +204,12 @@ To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of ne
 ```{r new-sheet-new-ws-delete-ws}
 new_ss("hi I am new here")
 x <- register_ss("hi I am new here")
-str(x)
+x
 x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
-str(x)
+x
 delete_ws(x, ws_title = "foo")
 x <- register_ss("hi I am new here")
-str(x)
+x
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

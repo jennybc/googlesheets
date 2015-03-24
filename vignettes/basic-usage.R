@@ -41,15 +41,15 @@ my_sheets %>%
 
 ## ------------------------------------------------------------------------
 gap <- register_ss("Gapminder")
-str(gap)
+gap
 
 ## ------------------------------------------------------------------------
 (gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
 ss2 <- register_ss(gap_key)
-str(ss2)
+ss2
 
 ## ------------------------------------------------------------------------
-str(gap)
+gap
 oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
 str(oceania_list_feed)
 oceania_list_feed
@@ -74,12 +74,12 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## ----new-sheet-new-ws-delete-ws------------------------------------------
 new_ss("hi I am new here")
 x <- register_ss("hi I am new here")
-str(x)
+x
 x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
-str(x)
+x
 delete_ws(x, ws_title = "foo")
 x <- register_ss("hi I am new here")
-str(x)
+x
 
 ## ----new-ws-rename-ws-delete-ws------------------------------------------
 rename_ws(x, "Sheet1", "First Sheet")

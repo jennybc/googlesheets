@@ -67,7 +67,7 @@ If you plan to consume data from a sheet or edit it, you must first register it.
 ```{r register-sheet}
 # Hey let's look at the Gapminder data
 gap <- register_ss("Gapminder")
-str(gap)
+gap
 
 # Need to access a sheet you do not own?
 # Access it by key if you know it!
@@ -95,7 +95,7 @@ Now register your copy of the Gapminder sheet and you can follow along:
 
 ```{r register-gapminder, eval = FALSE}
 gap <- register_ss("Gapminder")
-str(gap)
+gap
 ```
 
 ### Consume data
@@ -172,7 +172,7 @@ You can use `gspreadr` to create new spreadsheets.
 
 ```{r new-sheet}
 foo <- new_ss("foo")
-foo %>% str
+foo
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -210,7 +210,7 @@ Here's how we can create a new spreadsheet from a suitable local file. First, we
 ```{r new-sheet-from-file}
 iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
 iris_ss <- upload_ss("iris.csv")
-iris_ss %>% str()
+iris_ss
 iris_ss %>% get_via_lf() %>% print()
 file.remove("iris.csv")
 ```
@@ -219,7 +219,7 @@ Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ```{r new-sheet-from-xlsx}
 gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
-gap_xlsx %>% str()
+gap_xlsx
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 ```
 
