@@ -14,7 +14,7 @@ if (getwd() %>% basename == "data-for-demo") {
 }
 
 ## "make clean"
-delete_ss("^Gapminder$")
+delete_ss(regex = "^Gapminder$")
 
 gap_ss <- new_ss("Gapminder")
 

@@ -37,32 +37,65 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #' sheet you do not own, a 403 Forbidden HTTP status code will be returned; such
 #' shared spreadsheets can only be moved to the trash manually in the web 
 #' browser. If you trash a spreadsheet that is shared with others, it will no 
-#' longer appear in any of their Google Drives. If you delete something my
-#' mistake, visit the \href{https://drive.google.com/drive/#trash}{trash in
-#' Google Drive}, find the sheet and restore it.
+#' longer appear in any of their Google Drives. If you delete something by 
+#' mistake, remain calm, and visit the 
+#' \href{https://drive.google.com/drive/#trash}{trash in Google Drive}, find the
+#' sheet, and restore it.
 #' 
-#' @param x a regular expression; spreadsheets whose titles match will be moved
-#'   to trash
+#' @param x sheet-identifying information, either a gspreadsheet object or a 
+#'   character vector of length one, giving a URL, sheet title, key or 
+#'   worksheets feed; if \code{x} is specified, the \code{regex} argument will 
+#'   be ignored
+#' @param regex character; a regular expression; sheets whose titles match will 
+#'   be deleted
+#' @param ... optional arguments to be passed to \code{\link{grepl}} when 
+#'   matching \code{regex} to sheet titles
 #' @param verbose logical; do you want informative message?
-#' @param ... optional arguments to be passed to \code{\link{grepl}}
 #'   
-#' @return tbl_df with one row per matching sheet, a variable holding
-#'   spreadsheet titles, a logical vector indicating deletion success
+#' @return tbl_df with one row per specified or matching sheet, a variable 
+#'   holding spreadsheet titles, a logical vector indicating deletion success
+#'   
+#' @note If there are multiple sheets with the same name and you don't want to
+#'   delete them all, identify the sheet to be deleted via key.
 #'   
 #' @export
-delete_ss <- function(x, verbose = TRUE, ...) {
+delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
   
-  ss_df <- list_sheets()
-  delete_me <- grepl(x, ss_df$sheet_title, ...)
-  keys_to_delete <- ss_df$sheet_key[delete_me]
-  titles_to_delete <- ss_df$sheet_title[delete_me]
+  ## this can be cleaned up once identify_ss() becomes less rigid
   
-  if(length(keys_to_delete) == 0L) {
-    if(verbose) {
-      sprintf("No matching sheets found.") %>%
-        message()
+  if(!is.null(x)) {
+    
+    ## I set verbose = FALSE here mostly for symmetry with new_ss
+    x_ss <- x %>% identify_ss(verbose = FALSE)
+    # this will throw error if no sheet is uniquely identified; tolerate for 
+    # now, but once identify_ss() is revised, add something here to test whether
+    # we've successfully identified at least one sheet for deletion; to delete
+    # multiple sheets or avoid error in case of no sheets, current workaround is
+    # to use the regex argument
+    keys_to_delete <- x_ss$sheet_key
+    titles_to_delete <- x_ss$sheet_title
+    
+  } else {
+    
+    if(is.null(regex)) {
+      
+      stop("You must specify which sheet(s) to delete.")
+      
+    } else {
+      
+      ss_df <- list_sheets()
+      delete_me <- grepl(regex, ss_df$sheet_title, ...)
+      keys_to_delete <- ss_df$sheet_key[delete_me]
+      titles_to_delete <- ss_df$sheet_title[delete_me]
+      
+      if(length(keys_to_delete) == 0L) {
+        if(verbose) {
+          sprintf("No matching sheets found.") %>%
+            message()
+        }
+        return(invisible(NULL))
+      }
     }
-    return(invisible(NULL))
   }
   
   if(verbose) {
@@ -79,21 +112,22 @@ delete_ss <- function(x, verbose = TRUE, ...) {
   sitrep <-
     dplyr::data_frame_(list(ss_title = ~ titles_to_delete,
                             deleted = ~(statii == 200)))
-
+  
   if(verbose) {
     if(all(sitrep$deleted)) {
       message("Success. All moved to trash in Google Drive.")
     } else {
       sprintf("Oops. These sheets were NOT deleted:\n%s",
-              sitrep$ss_title[!sitrep$deleted]
-              %>% paste(collapse = "\n")) %>%
+              sitrep$ss_title[!sitrep$deleted] %>%
+                paste(collapse = "\n")) %>%
         message()
     }
   }
   
   sitrep %>% invisible()
-  
+
 }
+
 
 #' Make a copy of an existing spreadsheet
 #' 

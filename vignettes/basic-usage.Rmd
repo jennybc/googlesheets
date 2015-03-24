@@ -53,7 +53,7 @@ if(length(HTTR_OAUTH) > 0) {
 ## aborts, clean up Google Drive first
 my_patterns <- c("hi I am new here")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
-delete_ss(my_patterns, verbose = FALSE)
+delete_ss(regex = my_patterns, verbose = FALSE)
 ```
 
 

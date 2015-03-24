@@ -20,17 +20,17 @@ test_that("Regexes work for deleting multiple sheets", {
   sheet_title <- c("cat", "catherine", "tomCAT", "abdicate", "FLYCATCHER")
   sapply(sheet_title, new_ss)
   
-  delete_ss("^cat$")
+  delete_ss("cat")
   ss_df <- list_sheets()
   expect_false("cat" %in% ss_df$sheet_title)
   expect_true(all(sheet_title[-1] %in% ss_df$sheet_title))
   
-  delete_ss("cat")
+  delete_ss(regex = "cat")
   ss_df <- list_sheets()
   expect_false(any(c("catherine", "abdicate") %in% ss_df$sheet_title))
   expect_true(all(c("tomCAT", "FLYCATCHER") %in% ss_df$sheet_title))
   
-  delete_ss("cat", ignore.case = TRUE)
+  delete_ss(regex = "cat", ignore.case = TRUE)
   ss_df <- list_sheets()
   expect_false(any(sheet_title %in% ss_df$sheet_title))
   
@@ -56,7 +56,7 @@ test_that("Spreadsheet can be copied", {
 
 test_that("Nonexistent spreadsheet can NOT be deleted or copied", {
   
-  expect_message(delete_ss("flyingpig"), "No matching")
+  expect_error(delete_ss("flyingpig"), "doesn't match")
   expect_error(copy_ss("flyingpig"),  "doesn't match")
   
 })
@@ -159,4 +159,4 @@ my_patterns <- c("testing[0-9]{1}", "gap-data",
                  paste("Copy of", pts_title),
                  "eggplants are purple")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
-delete_ss(my_patterns, verbose = FALSE)
+delete_ss(regex = my_patterns, verbose = FALSE)
