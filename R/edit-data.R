@@ -124,11 +124,8 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   if(trim) {
     
     ss <- ss %>%
-      resize_ws(this_ws$ws_title,
-                min(this_ws$row_extent, limits$`max-row`),
-                min(this_ws$col_extent, limits$`max-col`),
-                verbose)
-    
+      resize_ws(this_ws$ws_title, limits$`max-row`, limits$`max-col`, verbose)
+
   }
   
   ss <- ss %>% register_ss(verbose = FALSE)
