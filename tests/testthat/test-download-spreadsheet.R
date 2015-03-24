@@ -13,8 +13,5 @@ test_that("Spreadsheet can be exported", {
   expect_true(file.exists("pts.pdf"))
   expect_true(file.exists("pts.csv"))
   
-  system("rm pts.xlsx")
-  system("rm pts.pdf")
-  system("rm pts.csv")
-  
+  expect_true(all(file.remove(c("pts.xlsx", "pts.pdf", "pts.csv"))))
 })
