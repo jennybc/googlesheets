@@ -9,6 +9,6 @@
 Google spreadsheets R API
 }
 \details{
-Package summary
+See the \href{https://github.com/jennybc/gspreadr}{README} on GitHub
 }
 

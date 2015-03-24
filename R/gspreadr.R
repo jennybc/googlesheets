@@ -2,7 +2,7 @@
 #' 
 #' Google spreadsheets R API
 #' 
-#' Package summary
+#' See the \href{https://github.com/jennybc/gspreadr}{README} on GitHub
 #' 
 #' @docType package
 #' @name gspreadr

@@ -12,4 +12,5 @@ convert_range_to_limit_list(range)
 \description{
 Convert a cell range into a limits list
 }
+\keyword{internal}
 

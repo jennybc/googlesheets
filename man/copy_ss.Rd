@@ -31,6 +31,13 @@ specify it by key.
 if two sheets with the same name exist in your Google drive then sheet
   with the most recent "last updated" timestamp will be copied.
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "Gapminder_copy")
+gap_ss
+}
+}
 \seealso{
 \code{\link{identify_ss}}, \code{\link{extract_key_from_url}}
 }

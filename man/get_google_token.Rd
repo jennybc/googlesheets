@@ -9,4 +9,5 @@ get_google_token()
 \description{
 Get token if it's previously stored, else prompt user to get one.
 }
+\keyword{internal}
 

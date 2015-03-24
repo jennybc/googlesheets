@@ -19,15 +19,26 @@ resize_ws(ss, ws_title, row_extent = NULL, col_extent = NULL,
 \item{verbose}{logical; do you want informative message?}
 }
 \description{
-Set the number of rows and columns of a worksheet. This function is useful
-when you need to send a batch update request and the data would exceed
-the current worksheet extent.
+Set the number of rows and columns of a worksheet. We use this function
+internally during cell updates, if the data would exceed the current
+worksheet extent. It is possible a user might want to use this directly?
 }
 \details{
-This function will probably only be called internally... exporting for now.
+This function will soon get a better ws argument, i.e. that takes integer or
+title, with sensible defaults.
 }
 \note{
 Setting rows and columns to less than the current worksheet dimensions
-will delete contents without warning.
+  will delete contents without warning!
 }
+\examples{
+\dontrun{
+yo <- new_ss("yo")
+yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+get_via_csv(yo)
+yo <- resize_ws(yo, ws_title = "Sheet1", row_extent = 3, col_extent = 2)
+get_via_csv(yo)
+}
+}
+\keyword{internal}
 

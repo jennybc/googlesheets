@@ -18,4 +18,11 @@ Display information about a Google spreadsheet that has been registered with
 date-time of last update (at time of registration), the number of worksheets
 contained, worksheet titles and extent, and sheet key.
 }
+\examples{
+\dontrun{
+foo <- new_ss("foo")
+foo
+print(foo)
+}
+}
 

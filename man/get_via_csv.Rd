@@ -32,6 +32,15 @@ header row, potentially containing column or variable names, is not
 transformed/mangled, as it is via the list feed. If you want all of your
 data, this is the fastest way to get it.
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
+str(oceania_csv)
+oceania_csv
+}
+}
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};
   \code{\link{get_col}}; \code{\link{get_row}};

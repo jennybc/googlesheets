@@ -6,6 +6,8 @@
 #' @inheritParams get_via_lf
 #' @param verbose logical, indicating whether to give a message re: title of the
 #'   worksheet being accessed
+#'   
+#' @keywords internal
 get_ws <- function(ss, ws, verbose = TRUE) {
   
   stopifnot(inherits(ss, "gspreadsheet"),
@@ -34,6 +36,13 @@ get_ws <- function(ss, ws, verbose = TRUE) {
 #' Retrieve the titles of all the worksheets in a gpreadsheet.
 #' 
 #' @inheritParams get_via_lf
+#' 
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- register_ss(gap_key)
+#' list_ws(gap_ss)
+#' }
 #' @export
 list_ws <- function(ss) {
   
@@ -46,6 +55,8 @@ list_ws <- function(ss) {
 #' Convert column IDs from letter representation to numeric
 #'
 #' @param x character vector of letter-style column IDs (case insensitive)
+#' 
+#' @keywords internal
 letter_to_num <- function(x) {
   x %>%
     toupper() %>%
@@ -58,6 +69,8 @@ letter_to_num <- function(x) {
 #' Convert column IDs from numeric to letter representation
 #'
 #' @param x vector of numeric column IDs
+#' 
+#' @keywords internal
 num_to_letter <- function(x) {
   stopifnot(x <= letter_to_num('ZZ')) # Google spreadsheets have 300 columns max
   paste0(c("", LETTERS)[((x - 1) %/% 26) + 1],
@@ -67,6 +80,8 @@ num_to_letter <- function(x) {
 #' Convert A1 positioning notation to R1C1 notation
 #'
 #' @param x cell position in A1 notation
+#' 
+#' @keywords internal
 label_to_coord <- function(x) {
   paste0("R", stringr::str_extract(x, "[[:digit:]]*$") %>% as.integer(),
          "C", stringr::str_extract(x, "^[[:alpha:]]*") %>% letter_to_num())
@@ -75,6 +90,8 @@ label_to_coord <- function(x) {
 #' Convert R1C1 positioning notation to A1 notation
 #'
 #' @param x cell position in R1C1 notation
+#' 
+#' @keywords internal
 coord_to_label <- function(x) {
   paste0(sub("^R[0-9]+C([0-9]+)$", "\\1", x) %>%
            as.integer() %>% num_to_letter(),
@@ -84,6 +101,8 @@ coord_to_label <- function(x) {
 #' Convert a cell range into a limits list
 #'
 #' @param range character vector, length one, such as "A1:D7"
+#' 
+#' @keywords internal
 convert_range_to_limit_list <- function(range) {
   
   tmp <- range %>%
@@ -124,6 +143,8 @@ convert_range_to_limit_list <- function(range) {
 #'
 #' @param limits limits list
 #' @param pn positioning notation
+#' 
+#' @keywords internal
 convert_limit_list_to_range <- function(limits, pn = c('R1C1', 'A1')) {
 
   pn <- match.arg(pn)
@@ -149,6 +170,8 @@ convert_limit_list_to_range <- function(limits, pn = c('R1C1', 'A1')) {
 #' @param x a list
 #' @param name a regular expression
 #' @param ... other parameters you might want to pass to grep
+#' 
+#' @keywords internal
 lfilt <- function(x, name, ...) {
   x[grep(name, names(x), ...)]
 }
@@ -158,7 +181,7 @@ lfilt <- function(x, name, ...) {
 #' @param x a list
 #' @param xpath a string giving the name of the component you want, XPath style
 #' 
-#' Examples: ...
+#' @keywords internal
 llpluck <- function(x, xpath) {
   x %>% plyr::llply("[[", xpath) %>% plyr::llply(unname)
 }
@@ -168,11 +191,20 @@ lapluck <- function(x, xpath, .drop = TRUE) {
 
 # OMG this is just here to use during development, i.e. after
 # devtools::load_all(), when inspecting big hairy lists
+#' @keywords internal
 str1 <- function(...) str(..., max.level = 1)
 
 #' Extract sheet key from its browser URL
 #' 
 #' @param url URL seen in the browser when visiting the sheet
+#' 
+#' @examples
+#' \dontrun{
+#' gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
+#' gap_key <- extract_key_from_url(gap_url)
+#' gap_ss <- register_ss(gap_key)
+#' gap_ss
+#' }
 #' 
 #' @export
 extract_key_from_url <- function(url) {
@@ -194,7 +226,7 @@ extract_key_from_url <- function(url) {
 #'   indicating whether further requests will be made with or without
 #'   authentication, respectively
 #'   
-#' @export
+#' @keywords internal
 construct_ws_feed_from_key <- function(key, visibility = "private") {
   tmp <-
     "https://spreadsheets.google.com/feeds/worksheets/KEY/VISIBILITY/full"

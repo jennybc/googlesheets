@@ -21,4 +21,14 @@ spreadsheet: .xls, .xlsx, .csv, .tsv, .txt, .tab, .xlsm, .xlt, .xltx, .xltm,
 .ods. The newly uploaded file will appear in the top level of your Google
 Sheets home screen.
 }
+\examples{
+\dontrun{
+write.csv(head(iris, 5), "iris.csv", row.names = FALSE)
+iris_ss <- upload_ss("iris.csv")
+iris_ss
+get_via_lf(iris_ss)
+file.remove("iris.csv")
+delete_ss(iris_ss)
+}
+}
 

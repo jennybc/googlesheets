@@ -10,10 +10,11 @@ gdrive_GET(url, ...)
 \item{url}{URL for GET request}
 
 \item{...}{optional; further named parameters, such as \code{query},
-\code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
-parameters will be combined with \code{\link[httr]{config}}.}
+  \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
+  parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
 Used in download_ss()
 }
+\keyword{internal}
 

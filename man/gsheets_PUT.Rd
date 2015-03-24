@@ -14,4 +14,5 @@ gsheets_PUT(url, the_body)
 \description{
 Make PUT request to Google Sheets API.
 }
+\keyword{internal}
 
