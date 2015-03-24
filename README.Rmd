@@ -197,7 +197,7 @@ Read the function documentation for `edit_cells()` for ways to specify where the
 
 ### Delete sheets
 
-Let's clean up by deleting the `foo` spreadsheets we've been playing with.
+Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 ```{r delete-sheet}
 delete_ss("foo")
@@ -228,6 +228,30 @@ And we clean up after ourselves on Google Drive.
 ```{r delete-moar-sheets}
 delete_ss("iris")
 delete_ss("gap-data")
+```
+
+
+### Download Sheets as csv, pdf, or xlsx file
+
+You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
+
+```{r export-sheet-as-csv}
+download_ss("Gapminder", ws = "Africa", to = "gapminder-africa.csv", verbose = FALSE)
+
+read.csv("gapminder-africa.csv") %>% head()
+
+```
+
+Download the entire spreadsheet as an Excel workbook.
+
+```{r export-sheet-as-xlsx}
+download_ss("Gapminder", to = "gapminder.xlsx", verbose = FALSE)
+```
+
+And now we clean up the downloaded files.
+
+```{r clean-exported-files}
+file.remove("gapminder.xlsx", "gapminder-africa.csv")
 ```
 
 ### Authorization using OAuth2

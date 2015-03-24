@@ -41,40 +41,39 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Source: local data frame [20 x 6]
+#> Source: local data frame [19 x 6]
 #> 
 #>                                     sheet_title
 #> 1                          Public Testing Sheet
-#> 2                                  My_Gapminder
-#> 3                                     Gapminder
-#> 4                      Gapminder 2007 Can Write
-#> 5                                 Gapminder_old
-#> 6                                Testing helper
-#> 7                                       scoring
-#> 8                                   gas_mileage
-#> 9                                   Temperature
-#> 10 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 11                              Old Style Sheet
-#> 12                                   jenny-test
-#> 13                       Gapminder by Continent
-#> 14                     Gapminder 2007 View Only
-#> 15                     Gapminder by Continent R
-#> 16                                  basic-usage
-#> 17                 Caffeine craver? (Responses)
-#> 18                        Private Sheet Example
-#> 19                     Gapminder by Continent 2
-#> 20                                  Code Sample
+#> 2                                     Gapminder
+#> 3                      Gapminder 2007 Can Write
+#> 4                                 Gapminder_old
+#> 5                                Testing helper
+#> 6                                       scoring
+#> 7                                   gas_mileage
+#> 8                                   Temperature
+#> 9  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 10                              Old Style Sheet
+#> 11                                   jenny-test
+#> 12                       Gapminder by Continent
+#> 13                     Gapminder 2007 View Only
+#> 14                     Gapminder by Continent R
+#> 15                                  basic-usage
+#> 16                 Caffeine craver? (Responses)
+#> 17                        Private Sheet Example
+#> 18                     Gapminder by Continent 2
+#> 19                                  Code Sample
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 20
+#> Observations: 19
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "My_Gapminder", "Gapminde...
+#> $ sheet_title  (chr) "Public Testing Sheet", "Gapminder", "Gapminder 2...
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "rw", "r", "r...
-#> $ last_updated (time) 2015-03-24 02:58:22, 2015-03-24 02:39:20, 2015-0...
+#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "r", "rw", "r...
+#> $ last_updated (time) 2015-03-24 20:35:20, 2015-03-23 20:59:10, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -90,7 +89,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-23 20:06:32 PDT
+#>   Date of gspreadr::register_ss: 2015-03-24 13:39:55 PDT
 #> Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #> 
 #> Contains 5 worksheets:
@@ -364,17 +363,17 @@ foo <- new_ss("foo")
 #> Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1AmjLJC59EJFDmSzJ_JsIavchTO0Kb8KM-h5_v5Cq9mo
+#> sheet_key: 1Vk5fEwkmjsKtMG4sdW_V9Y53iFLnL3dpznCg3IzUY-s
 foo
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-23 20:06:40 PDT
-#> Date of last spreadsheet update: 2015-03-24 03:06:37 UTC
+#>   Date of gspreadr::register_ss: 2015-03-24 13:40:04 PDT
+#> Date of last spreadsheet update: 2015-03-24 20:39:58 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1AmjLJC59EJFDmSzJ_JsIavchTO0Kb8KM-h5_v5Cq9mo
+#> Key: 1Vk5fEwkmjsKtMG4sdW_V9Y53iFLnL3dpznCg3IzUY-s
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -412,7 +411,7 @@ Read the function documentation for `edit_cells()` for ways to specify where the
 
 ### Delete sheets
 
-Let's clean up by deleting the `foo` spreadsheets we've been playing with.
+Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 ``` r
 delete_ss("foo")
@@ -431,14 +430,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-23 20:06:49 PDT
-#> Date of last spreadsheet update: 2015-03-24 03:06:47 UTC
+#>   Date of gspreadr::register_ss: 2015-03-24 13:40:15 PDT
+#> Date of last spreadsheet update: 2015-03-24 20:40:10 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1OjWIgTSs8lDKBPWqPrgOVbnJRYDhammzyCYnnXteBSw
+#> Key: 1p1YSxS_VFbNi0po6IuL9gDcyGQzL6NClVvo7-WBCtMY
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -460,8 +459,8 @@ gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
 gap_xlsx
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-23 20:06:53 PDT
-#> Date of last spreadsheet update: 2015-03-24 03:06:51 UTC
+#>   Date of gspreadr::register_ss: 2015-03-24 13:40:19 PDT
+#> Date of last spreadsheet update: 2015-03-24 20:40:13 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -471,7 +470,7 @@ gap_xlsx
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1sBh7XnaxXSWypq8gTxRVNMD9MUpr05nlX5Ugwo_xr94
+#> Key: 1QcOqU60SxJQrVjhOXOuaY8czC-BCY-VENImw4uMVudc
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
@@ -501,6 +500,44 @@ delete_ss("gap-data")
 #> Sheets found and slated for deletion:
 #> gap-data
 #> Success. All moved to trash in Google Drive.
+```
+
+### Download Sheets as csv, pdf, or xlsx file
+
+You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
+
+``` r
+download_ss("Gapminder", ws = "Africa", to = "gapminder-africa.csv", verbose = FALSE)
+#> Sheet identified!
+#> sheet_title: Gapminder
+#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> 
+#> Accessing worksheet titled "Africa"
+
+read.csv("gapminder-africa.csv") %>% head()
+#>   country continent year lifeExp      pop gdpPercap
+#> 1 Algeria    Africa 1952  43.077  9279525  2449.008
+#> 2 Algeria    Africa 1957  45.685 10270856  3013.976
+#> 3 Algeria    Africa 1962  48.303 11000948  2550.817
+#> 4 Algeria    Africa 1967  51.407 12760499  3246.992
+#> 5 Algeria    Africa 1972  54.518 14760787  4182.664
+#> 6 Algeria    Africa 1977  58.014 17152804  4910.417
+```
+
+Download the entire spreadsheet as an Excel workbook.
+
+``` r
+download_ss("Gapminder", to = "gapminder.xlsx", verbose = FALSE)
+#> Sheet identified!
+#> sheet_title: Gapminder
+#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+```
+
+And now we clean up the downloaded files.
+
+``` r
+file.remove("gapminder.xlsx", "gapminder-africa.csv")
+#> [1] TRUE TRUE
 ```
 
 ### Authorization using OAuth2
