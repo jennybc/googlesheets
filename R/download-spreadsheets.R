@@ -23,10 +23,12 @@
 #' @param to path to write file, if it does not contain the absolute path, 
 #' then the file is relative to the current working directory
 #' 
+#' @param overwrite will only overwrite existing path if TRUE
+#' 
 #' @param verbose logical; do you want informative message?
 #' @export
-download_ss <- function(from, key = NULL, ws = NULL, 
-                        to = "my_sheet.xlsx", verbose = TRUE) {
+download_ss <- function(from, key = NULL, ws = NULL, to = "my_sheet.xlsx", 
+                        overwrite = FALSE, verbose = TRUE) {
   
   if(is.null(key)) { # figure out the sheet from 'from ='
     from_ss <- from %>% identify_ss()
@@ -46,7 +48,7 @@ download_ss <- function(from, key = NULL, ws = NULL,
   #export a single worksheet
   if(!is.null(ws)) {
     
-    this_ws <- register_ss(key) %>% get_ws(ws)
+    this_ws <- register_ss(key, verbose = FALSE) %>% get_ws(ws)
     
     export_links <- c(
       csv = this_ws$exportcsv,
@@ -67,7 +69,9 @@ download_ss <- function(from, key = NULL, ws = NULL,
   
   link <- export_links %>% `[[`(ext)
   
-  gdrive_GET(link, httr::write_disk(to), httr::progress())
+  # using httr::progress() shows number of bytes downloaded but when README knits, 
+  # incremental #bytes gets printed, so removing for now
+  gdrive_GET(link, httr::write_disk(to, overwrite = overwrite))
   
   if(file.exists(to)) {
     
