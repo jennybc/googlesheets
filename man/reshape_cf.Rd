@@ -15,6 +15,14 @@ reshape_cf(x, header = TRUE)
 \description{
 Reshape cell-level data and convert to data.frame
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+get_via_cf(gap_ss, "Asia", max_row = 4)
+reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
+}
+}
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};
   \code{\link{get_col}}; \code{\link{get_row}};

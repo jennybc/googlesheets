@@ -1,23 +1,34 @@
 #' The gspreadsheet object
 #' 
-#' The gspreadsheet object stores information about a spreadsheet. It includes
-#' the fields:
+#' The gspreadsheet object stores information that \code{gspreadr} requires in
+#' order to communicate with the
+#' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
+#' API}.
+#' 
+#' Very little of this is of interest to the user. A gspreadsheet object
+#' includes the fields:
 #' 
 #' \itemize{
 #' \item \code{sheet_key} the key of the spreadsheet
-#' \item \code{sheet_id} the id of the spreadsheet
 #' \item \code{sheet_title} the title of the spreadsheet
-#' \item \code{updated} the time of last update
 #' \item \code{n_ws} the number of worksheets contained in the spreadsheet
-#' \item \code{visibility} visibility of spreadsheet, determines whether
-#' authorization is required for request
+#' \item \code{ws_feed} the "worksheets feed" of the spreadsheet
+#' \item \code{sheet_id} the id of the spreadsheet
+#' \item \code{updated} the time of last update (at time of registration)
+#' \item \code{get_date} the time of registration
+#' \item \code{visibility} visibility of spreadsheet (Google's confusing
+#' vocabulary); actually, does not describe a property of spreadsheet itself but
+#' rather whether requests will be made with or without authentication
+#' \item \code{author_name} the name of the owner
+#' \item \code{author_email} the email of the owner
+#' \item \code{links} data.frame of links specific to the spreadsheet
 #' \item \code{ws} a data.frame about the worksheets contained in the
 #' spreadsheet
 #' }
 #' 
 #' TO DO: this documentation is neither here nor there. Either the object is
 #' self-explanatory and this isn't really needed. Or this needs to get beefed
-#' up.
+#' up. Probably the latter.
 #' 
 #' @name gspreadsheet
 gspreadsheet <- function() {

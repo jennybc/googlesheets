@@ -25,4 +25,13 @@ Since the edit link is used in the PUT request, the version path in the
   function calls using the same edit link from the same sheet object without
   'refreshing' it by re-registering results in a HTTP 409 Conflict.
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+list_ws(gap_ss)
+gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
+list_ws(gap_ss)
+}
+}
 

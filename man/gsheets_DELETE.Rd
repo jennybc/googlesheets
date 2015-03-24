@@ -12,4 +12,5 @@ gsheets_DELETE(url)
 \description{
 Make DELETE request to Google Sheets API.
 }
+\keyword{internal}
 

@@ -12,4 +12,11 @@ list_ws(ss)
 \description{
 Retrieve the titles of all the worksheets in a gpreadsheet.
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- register_ss(gap_key)
+list_ws(gap_ss)
+}
+}
 

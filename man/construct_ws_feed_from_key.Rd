@@ -16,4 +16,5 @@ construct_ws_feed_from_key(key, visibility = "private")
 \description{
 Construct a worksheets feed from a key
 }
+\keyword{internal}
 

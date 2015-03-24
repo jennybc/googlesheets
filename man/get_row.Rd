@@ -19,6 +19,14 @@ get_row(ss, ws = 1, row)
 \description{
 Get data via the cell feed for one row or for a range of rows.
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+get_row(gap_ss, "Europe", row = 1)
+simplify_cf(get_row(gap_ss, "Europe", row = 1))
+}
+}
 \seealso{
 \code{\link{reshape_cf}} to reshape the retrieved data into a more
   usable data.frame

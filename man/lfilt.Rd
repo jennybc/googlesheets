@@ -16,4 +16,5 @@ lfilt(x, name, ...)
 \description{
 Filter a list by name
 }
+\keyword{internal}
 

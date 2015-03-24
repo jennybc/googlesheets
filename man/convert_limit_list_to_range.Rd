@@ -14,4 +14,5 @@ convert_limit_list_to_range(limits, pn = c("R1C1", "A1"))
 \description{
 Convert a limits list to a cell range
 }
+\keyword{internal}
 

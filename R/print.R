@@ -9,6 +9,13 @@
 #'   \code{gspreadr} functions
 #' @param ... potential further arguments (required for Method/Generic reasons)
 #'   
+#' @examples
+#' \dontrun{
+#' foo <- new_ss("foo")
+#' foo
+#' print(foo)
+#' }
+#'   
 #' @export
 print.gspreadsheet <- function(x, ...) {  
   

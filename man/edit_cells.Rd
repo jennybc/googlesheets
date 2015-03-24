@@ -43,4 +43,19 @@ shaped range of cells will be updated. If the input has no dimension, i.e.
 it's a vector, then \code{by_row} controls whether edited cells will extend
 from the anchor across a row or down a column.
 }
+\examples{
+\dontrun{
+yo <- new_ss("yo")
+yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+get_via_csv(yo)
+
+yo <- add_ws(yo, "by_row_FALSE")
+yo <- edit_cells(yo, ws = "by_row_FALSE", LETTERS[1:5], "A8")
+get_via_cf(yo, ws = "by_row_FALSE", min_row = 7) \%>\% simplify_cf()
+
+yo <- add_ws(yo, "by_row_TRUE")
+yo <- edit_cells(yo, ws = "by_row_TRUE", LETTERS[1:5], "A8", by_row = TRUE)
+get_via_cf(yo, ws = "by_row_TRUE", min_row = 7) \%>\% simplify_cf()
+}
+}
 

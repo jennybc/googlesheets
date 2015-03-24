@@ -38,4 +38,11 @@ sheet, and restore it.
 If there are multiple sheets with the same name and you don't want to
   delete them all, identify the sheet to be deleted via key.
 }
+\examples{
+\dontrun{
+foo <- new_ss("foo")
+foo <- edit_cells(foo, input = head(iris))
+delete_ss("foo")
+}
+}
 

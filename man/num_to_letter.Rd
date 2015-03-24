@@ -12,4 +12,5 @@ num_to_letter(x)
 \description{
 Convert column IDs from numeric to letter representation
 }
+\keyword{internal}
 

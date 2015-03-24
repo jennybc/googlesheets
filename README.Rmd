@@ -6,7 +6,8 @@ output:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![Project Status: Wip - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/0.1.0/wip.svg)](http://www.repostatus.org/#wip)[![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr)[![Coverage Status](https://coveralls.io/repos/jennybc/gspreadr/badge.svg)](https://coveralls.io/r/jennybc/gspreadr)
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/0.1.0/active.svg)](http://www.repostatus.org/#active)
+ [![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr) [![Coverage Status](https://coveralls.io/repos/jennybc/gspreadr/badge.svg)](https://coveralls.io/r/jennybc/gspreadr)
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -23,13 +24,29 @@ Google Sheets R API
 
 Access and manage Google spreadsheets from R with `gspreadr`. 
 
-`gspreadr` is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API
-
 Features:
 
   - Access a spreadsheet by its title, key or URL.
   - Extract data or edit data.
-  - Create | delete | rename | copy spreadsheets and worksheets.
+  - Create | delete | rename | copy | upload | download spreadsheets and worksheets.
+
+`gspreadr` is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API
+
+The exuberant prose in this README is inspired by [Tabletop.js](https://github.com/jsoma/tabletop): If you've ever wanted to get data in or out of a Google Spreadsheet from R without jumping through a thousand hoops, welcome home!
+
+#### What the hell do I do with this?
+
+Think of `gspreadr` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
+
+Use a Google Form to conduct a survey, which populates a Google Sheet.
+
+Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en).
+
+Use `gspreadr` to get all that data into R.
+
+Use it in a Shiny app! *this will be the next demo/vignette I write*
+
+What other ideas do you have?
   
 ### Install gspreadr
 

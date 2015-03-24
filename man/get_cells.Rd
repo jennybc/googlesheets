@@ -20,6 +20,14 @@ get_cells(ss, ws = 1, range)
 \description{
 Get data via the cell feed for a rectangular range of cells
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+get_cells(gap_ss, "Europe", range = "B3:D7")
+simplify_cf(get_cells(gap_ss, "Europe", range = "A1:F1"))
+}
+}
 \seealso{
 \code{\link{reshape_cf}} to reshape the retrieved data into a more
   usable data.frame

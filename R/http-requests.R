@@ -7,6 +7,8 @@
 #' @param ... optional; further named parameters, such as \code{query}, 
 #'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
 #'   parameters will be combined with \code{\link[httr]{config}}.
+#'
+#' @keywords internal
 gsheets_GET <- function(url, to_list = TRUE, ...) {
   
   if(grepl("public", url)) {
@@ -64,6 +66,8 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
 #'
 #' @param url URL for POST request
 #' @param the_body body of POST request
+#' 
+#' @keywords internal
 gsheets_POST <- function(url, the_body) {
   
   token <- get_google_token()
@@ -97,6 +101,8 @@ gsheets_POST <- function(url, the_body) {
 #' Make DELETE request to Google Sheets API.
 #'
 #' @param url URL for DELETE request
+#' 
+#' @keywords internal
 gsheets_DELETE <- function(url) {
   req <- httr::DELETE(url, get_google_token())
   httr::stop_for_status(req)
@@ -110,7 +116,9 @@ gsheets_DELETE <- function(url) {
 #' Make PUT request to Google Sheets API.
 #'
 #' @param url URL for PUT request
-#' @param the_body body of PUT request 
+#' @param the_body body of PUT request
+#'
+#' @keywords internal
 gsheets_PUT <- function(url, the_body) {
   
   token <- get_google_token()
@@ -144,6 +152,8 @@ gsheets_PUT <- function(url, the_body) {
 #' 
 #' @param url URL for POST request
 #' @param the_body body of POST request
+#' 
+#' @keywords internal
 gdrive_POST <- function(url, the_body) {
   
   token <- get_google_token()
@@ -171,6 +181,8 @@ gdrive_POST <- function(url, the_body) {
 #'
 #' @param url URL for PUT request
 #' @param the_body body of PUT request 
+#' 
+#' @keywords internal
 gdrive_PUT <- function(url, the_body) {
   
   token <- get_google_token()
@@ -199,6 +211,8 @@ gdrive_PUT <- function(url, the_body) {
 #' @param ... optional; further named parameters, such as \code{query}, 
 #'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
 #'   parameters will be combined with \code{\link[httr]{config}}.
+#'   
+#' @keywords internal
 gdrive_GET <- function(url, ...) {
   
   token <- get_google_token()

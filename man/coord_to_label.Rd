@@ -12,4 +12,5 @@ coord_to_label(x)
 \description{
 Convert R1C1 positioning notation to A1 notation
 }
+\keyword{internal}
 
