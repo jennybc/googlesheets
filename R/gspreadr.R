@@ -1,9 +1,9 @@
 #' gspreadr
-#' 
+#'
 #' Google spreadsheets R API
-#' 
+#'
 #' See the \href{https://github.com/jennybc/gspreadr}{README} on GitHub
-#' 
+#'
 #' @docType package
 #' @name gspreadr
 #' @importFrom dplyr %>%

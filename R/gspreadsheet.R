@@ -1,13 +1,13 @@
 #' The gspreadsheet object
-#' 
+#'
 #' The gspreadsheet object stores information that \code{gspreadr} requires in
 #' order to communicate with the
 #' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
 #' API}.
-#' 
+#'
 #' Very little of this is of interest to the user. A gspreadsheet object
 #' includes the fields:
-#' 
+#'
 #' \itemize{
 #' \item \code{sheet_key} the key of the spreadsheet
 #' \item \code{sheet_title} the title of the spreadsheet
@@ -25,11 +25,11 @@
 #' \item \code{ws} a data.frame about the worksheets contained in the
 #' spreadsheet
 #' }
-#' 
+#'
 #' TO DO: this documentation is neither here nor there. Either the object is
 #' self-explanatory and this isn't really needed. Or this needs to get beefed
 #' up. Probably the latter.
-#' 
+#'
 #' @name gspreadsheet
 gspreadsheet <- function() {
   structure(list(sheet_key = character(),
@@ -45,5 +45,4 @@ gspreadsheet <- function() {
                  links = character(), # initialize as data.frame?
                  ws = list()),
             class = c("gspreadsheet", "list"))
-  
 }
