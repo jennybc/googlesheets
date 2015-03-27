@@ -15,7 +15,7 @@ install:
 script: ./travis-tool.sh run_tests
 after_script:
 - ./travis-tool.sh dump_sysinfo
-on_failure:
+after_failure:
 - ./travis-tool.sh dump_logs
 notifications:
   email:
