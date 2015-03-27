@@ -13,12 +13,12 @@ Depends:
 License: MIT + file LICENSE
 LazyData: true
 Imports:
-    dplyr,
+    dplyr (>= 0.4.0),
     httr,
     plyr,
     stringr,
     tidyr,
-    XML,
+    XML
 Suggests:
     testthat,
     knitr
