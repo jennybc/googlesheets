@@ -106,11 +106,15 @@ coord_to_label <- function(x) {
 convert_range_to_limit_list <- function(range) {
   
   tmp <- range %>%
-    stringr::str_split_fixed(":", 2) %>% ## A1:C5 --> "A1", "D5" as 1-row matrix
-    drop() %>%                           ## 1-row matrix --> vector
-    {                                    ## handle case of single cell input
-      x <- .[. != ""]                    ## replicate the single address
-      rep_len(x, 2)                      ## "C5" --> "C5", "" --> "C5", "C5"
+    ## revive next two lines when CRAN stringr > 0.6.2
+    #stringr::str_split_fixed(":", 2) %>% ## A1:C5 -> "A1", "D5" as 1-row matrix
+    #drop() %>%                           ## 1-row matrix --> vector
+    strsplit(":") %>%               ## A1:C5 --> c("A1", "D5") as 1 element list
+    unlist() %>%                        ## c("A1", "D5") as atomic vector
+    `[`(seq_len(min(2, length(.)))) %>% ## first two elements only, just in case
+    {                                   ## handle case of single cell input
+      x <- .[. != ""]                   ## replicate the single address
+      rep_len(x, 2)                     ## "C5" --> "C5", "" --> "C5", "C5"
     }
   
   A1_regex <- "^[A-Za-z]{1,2}[0-9]+$"
