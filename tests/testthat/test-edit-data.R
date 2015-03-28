@@ -36,12 +36,14 @@ test_that("Single cells can be updated", {
 
   expect_message(ss <- edit_cells(ss, ws, "eggplant", "A1"), 
                  "successfully updated")
+  Sys.sleep(1)
   tmp <- ss %>% get_cells(ws, "A1") %>% simplify_cf(header = FALSE)
   expect_identical(tmp, c(A1 = "eggplant"))
   
   # force worksheet extent to be increased
   expect_message(ss <- edit_cells(ss, ws, "Way out there!", "R1C30"), 
                  "dimensions changed")
+  Sys.sleep(1)
   expect_equal(ss %>% get_ws(ws) %>% `[[`("col_extent"), 30)
   
   # clean up
@@ -58,16 +60,19 @@ test_that("2-dimensional things can be uploaded", {
   tmp <- ss %>% get_via_cf(ws)
   input <- matrix("", nrow = max(tmp$row), ncol = max(tmp$col))
   ss <- ss %>% edit_cells(ws, input)
+  Sys.sleep(1)
   tmp <- ss %>% get_via_cf(ws)
   expect_equal(dim(tmp), c(0, 5))
   
   # update w/ a data.frame, header = FALSE
   ss <- ss %>% edit_cells(ws, iris_ish)
+  Sys.sleep(1)
   tmp <- ss %>% get_via_cf(ws) %>% reshape_cf(header = FALSE)
   expect_equivalent(tmp, iris_ish)
   
   # update w/ a data.frame, header = TRUE
   ss <- ss %>% edit_cells(ws, iris_ish, header = TRUE)
+  Sys.sleep(1)
   tmp <- ss %>% get_via_cf(ws) %>% reshape_cf()
   expect_identical(tmp, iris_ish)
   
@@ -77,11 +82,13 @@ test_that("Vectors can be uploaded", {
   
   # by_row = FALSE
   ss <- ss %>% edit_cells(ws, LETTERS[1:5], "A8")
+  Sys.sleep(1)
   tmp <- ss %>% get_via_cf(ws, min_row = 7) %>% simplify_cf()
   expect_equivalent(tmp, LETTERS[1:5])
   
   # by_row = TRUE
   ss <- ss %>% edit_cells(ws, LETTERS[5:1], "A15", by_row = TRUE)
+  Sys.sleep(1)
   tmp <- ss %>% get_via_cf(ws, min_row = 15) %>% simplify_cf()
   expect_equivalent(tmp, LETTERS[5:1])
   

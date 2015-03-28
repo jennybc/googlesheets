@@ -78,6 +78,7 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                 max(this_ws$row_extent, limits$`max-row`),
                 max(this_ws$col_extent, limits$`max-col`),
                 verbose)
+    Sys.sleep(1)
     
   }
   
@@ -138,11 +139,13 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   
   if(trim) {
     
+    Sys.sleep(1)
     ss <- ss %>%
       resize_ws(this_ws$ws_title, limits$`max-row`, limits$`max-col`, verbose)
 
   }
   
+  Sys.sleep(1)
   ss <- ss %>% register_ss(verbose = FALSE)
   invisible(ss)
   

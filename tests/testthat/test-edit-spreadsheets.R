@@ -20,17 +20,21 @@ test_that("Regexes work for deleting multiple sheets", {
   sheet_title <- c("cat", "catherine", "tomCAT", "abdicate", "FLYCATCHER")
   sapply(sheet_title, new_ss)
   
+  Sys.sleep(1)
   delete_ss("cat")
+  Sys.sleep(1)
   ss_df <- list_sheets()
   expect_false("cat" %in% ss_df$sheet_title)
   expect_true(all(sheet_title[-1] %in% ss_df$sheet_title))
   
   delete_ss(regex = "cat")
+  Sys.sleep(1)
   ss_df <- list_sheets()
   expect_false(any(c("catherine", "abdicate") %in% ss_df$sheet_title))
   expect_true(all(c("tomCAT", "FLYCATCHER") %in% ss_df$sheet_title))
   
   delete_ss(regex = "cat", ignore.case = TRUE)
+  Sys.sleep(1)
   ss_df <- list_sheets()
   expect_false(any(sheet_title %in% ss_df$sheet_title))
   

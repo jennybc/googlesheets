@@ -382,6 +382,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
   ## req carries updated info about the affected worksheet ... but I find it
   ## easier to just re-register the spreadsheet
   
+  Sys.sleep(1)
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
   
   from_is_gone <- from %>% match(ss_refresh$ws$ws_title) %>% is.na()
