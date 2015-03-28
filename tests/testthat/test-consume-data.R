@@ -47,14 +47,14 @@ test_that("Cell ranges can be converted to a cell limit list", {
 test_that("Bad cell ranges throw error", {
   
   error_regex <- "Trying to set cell limits, but requested range is invalid"
+  error_strsplit <- 'non-character argument'
   
   expect_error(convert_range_to_limit_list("eggplant1"), error_regex)
-  expect_error(convert_range_to_limit_list(11L), error_regex)
-  expect_error(convert_range_to_limit_list(factor(1:5)), error_regex)
-  expect_error(convert_range_to_limit_list(16.3), error_regex)
+  expect_error(convert_range_to_limit_list(11L), error_strsplit)
+  expect_error(convert_range_to_limit_list(factor(1:5)), error_strsplit)
+  expect_error(convert_range_to_limit_list(16.3), error_strsplit)
   expect_error(convert_range_to_limit_list("AAA1"), error_regex)
-  expect_error(convert_range_to_limit_list("A1:Q9:Z43"), error_regex)
-  expect_error(convert_range_to_limit_list(10:1), error_regex)
+  expect_error(convert_range_to_limit_list(10:1), error_strsplit)
   
 })
 
