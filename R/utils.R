@@ -60,7 +60,7 @@ list_ws <- function(ss) {
 letter_to_num <- function(x) {
   x %>%
     toupper() %>%
-    stringr::str_split('') %>% 
+    strsplit('') %>% 
     plyr::llply(match, table = LETTERS) %>%
     plyr::laply(function(z) sum(26 ^ rev(seq_along(z) - 1) * z)) %>%
     unname()
