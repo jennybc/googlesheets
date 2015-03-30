@@ -4,12 +4,13 @@
 \alias{rename_ws}
 \title{Rename a worksheet}
 \usage{
-rename_ws(ss, from, to, verbose = TRUE)
+rename_ws(ss, from = 1, to, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google sheet}
 
-\item{from}{character string for current title of worksheet}
+\item{from}{positive integer or character string specifying index or title,
+respectively, of the worksheet}
 
 \item{to}{character string for new title of worksheet}
 
@@ -32,6 +33,9 @@ gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
 list_ws(gap_ss)
 gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
 list_ws(gap_ss)
+gap_ss <- rename_ws(gap_ss, from = 1, to = "I am the first sheet!")
+list_ws(gap_ss)
+delete_ss(gap_ss)
 }
 }
 

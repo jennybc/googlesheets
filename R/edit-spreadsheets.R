@@ -32,7 +32,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
   ## identified!" in this context, esp. to do so *before* message confirming
   ## creation
   ss <- identify_ss(new_sheet_key, verbose = FALSE)
-  
+
   if(verbose) {
     message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
   }
@@ -40,6 +40,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
   ss %>%
     register_ss() %>%
     invisible()
+
 }
 
 #' Move spreadsheets to trash on Google Drive
@@ -84,7 +85,8 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
   if(!is.null(x)) {
 
     ## I set verbose = FALSE here mostly for symmetry with new_ss
-    x_ss <- x %>% identify_ss(verbose = FALSE)
+    x_ss <- x %>%
+      identify_ss(verbose = FALSE)
     # this will throw error if no sheet is uniquely identified; tolerate for
     # now, but once identify_ss() is revised, add something here to test whether
     # we've successfully identified at least one sheet for deletion; to delete
@@ -144,6 +146,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
   }
 
   sitrep %>% invisible()
+
 }
 
 
@@ -194,7 +197,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
     paste("https://www.googleapis.com/drive/v2/files", key, "copy", sep = "/")
 
   req <- gdrive_POST(the_url, body = the_body)
-  
+
   new_title <- httr::content(req)$title
 
   ## see new_ss() for why I set verbose = FALSE here
@@ -218,6 +221,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
       register_ss() %>%
       invisible()
   }
+
 }
 
 #' Add a new (empty) worksheet to spreadsheet
@@ -235,8 +239,6 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' @return a googlesheet object, resulting from re-registering the host
 #'   spreadsheet after adding the new worksheet
 #'
-#' @export
-#'
 #' @examples
 #' \dontrun{
 #' # get a copy of the Gapminder spreadsheet
@@ -245,16 +247,18 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' gap_ss <- add_ws(gap_ss, ws_title = "Atlantis")
 #' gap_ss
 #' }
-
+#'
+#' @export
 add_ws <- function(ss, ws_title = "Sheet1",
                    nrow = 1000, ncol = 26, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  ws_title_exist <- !(match(ws_title, ss$ws[["ws_title"]]) %>% is.na())
+  ws_title_exist <- ws_title %in% list_ws(ss)
 
   if(ws_title_exist) {
-    stop(sprintf("A worksheet titled \"%s\" already exists, please choose a different name.", ws_title))
+    stop(sprintf(paste("A worksheet titled \"%s\" already exists, please",
+                       "choose a different name."), ws_title))
   }
 
   the_body <-
@@ -272,7 +276,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
 
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
 
-  ws_title_exist <- !(match(ws_title, ss_refresh$ws[["ws_title"]]) %>% is.na())
+  ws_title_exist <- ws_title %in% list_ws(ss_refresh)
 
   if(verbose) {
     if(ws_title_exist) {
@@ -290,14 +294,14 @@ add_ws <- function(ss, ws_title = "Sheet1",
   } else {
     NULL
   }
+
 }
 
 #' Delete a worksheet from a spreadsheet
 #'
 #' The worksheet and all of its contents will be removed from the spreadsheet.
 #'
-#' @param ss a registered Google sheet
-#' @param ws_title title of worksheet
+#' @inheritParams get_via_lf
 #' @param verbose logical; do you want informative message?
 #'
 #' @examples
@@ -311,34 +315,32 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' gap_ss
 #' gap_ss <- delete_ws(gap_ss, "new_stuff")
 #' list_ws(gap_ss)
+#' gap_ss <- delete_ws(gap_ss, ws = 3)
+#' list_ws(gap_ss)
+#' delete_ss(gap_ss)
 #' }
 #'
 #' @export
-delete_ws <- function(ss, ws_title, verbose = TRUE) {
+delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
-  
-  ws_title_position <- match(ws_title, ss$ws$ws_title)
 
-  if(is.na(ws_title_position)) {
-    stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
-                 ws_title, ss$sheet_title))
-  }
+  this_ws <- ss %>% get_ws(ws)
 
-  req <- gsheets_DELETE(ss$ws$ws_id[ws_title_position])
+  req <- gsheets_DELETE(this_ws$ws_id)
 
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
 
-  ws_title_exist <- !(match(ws_title, ss_refresh$ws[["ws_title"]]) %>% is.na())
+  ws_title_exist <- this_ws$ws_title %in% list_ws(ss_refresh)
 
   if(verbose) {
     if(ws_title_exist) {
       message(sprintf(paste("Cannot verify whether worksheet \"%s\" was",
                             "deleted from sheet \"%s\"."),
-                      ws_title, ss_refresh$sheet_title))
+                      this_ws$ws_title, ss_refresh$sheet_title))
     } else {
       message(sprintf("Worksheet \"%s\" deleted from sheet \"%s\".",
-                      ws_title, ss$sheet_title))
+                      this_ws$ws_title, ss$sheet_title))
     }
   }
 
@@ -347,6 +349,7 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
   } else {
     ss_refresh %>% invisible()
   }
+
 }
 
 #' Rename a worksheet
@@ -355,7 +358,8 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #' existing worksheet within the spreadsheet.
 #'
 #' @param ss a registered Google sheet
-#' @param from character string for current title of worksheet
+#' @param from positive integer or character string specifying index or title, 
+#' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param verbose logical; do you want informative message?
 #'
@@ -371,19 +375,18 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #' list_ws(gap_ss)
 #' gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
 #' list_ws(gap_ss)
+#' gap_ss <- rename_ws(gap_ss, from = 1, to = "I am the first sheet!")
+#' list_ws(gap_ss)
+#' delete_ss(gap_ss)
 #' }
 #'
 #' @export
-rename_ws <- function(ss, from, to, verbose = TRUE) {
+rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
-  
-  ws_title_position <- match(from, ss$ws$ws_title)
 
-  if(is.na(ws_title_position)) {
-    stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
-                 from, ss$sheet_title))
-  }
+  this_ws <- ss %>% get_ws(from)
+  from_title <- this_ws$ws_title
 
   req <- modify_ws(ss, from = from, to = to)
   ## req carries updated info about the affected worksheet ... but I find it
@@ -391,28 +394,25 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 
   Sys.sleep(1)
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
-  
-  from_is_gone <- from %>%
-    match(ss_refresh$ws$ws_title) %>%
-    is.na()
-  to_is_there <- !(to %>%
-                     match(ss_refresh$ws$ws_title) %>%
-                     is.na())
-  
+
+  from_is_gone <- !(from_title %in% list_ws(ss_refresh))
+  to_is_there <- to %in% list_ws(ss_refresh)
+
   if(verbose) {
     if(from_is_gone && to_is_there) {
-      message(sprintf("Worksheet \"%s\" renamed to \"%s\".", from, to))
+      message(sprintf("Worksheet \"%s\" renamed to \"%s\".", from_title, to))
     } else {
       message(sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                            "renamed to \"%s\"."), from, to))
+                            "renamed to \"%s\"."), from_title, to))
     }
   }
-  
+
   if(from_is_gone && to_is_there) {
     ss_refresh %>% invisible()
   } else {
     NULL
   }
+
 }
 
 #' Resize a worksheet
@@ -421,49 +421,46 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 #' internally during cell updates, if the data would exceed the current
 #' worksheet extent. It is possible a user might want to use this directly?
 #'
-#' This function will soon get a better ws argument, i.e. that takes integer or
-#' title, with sensible defaults.
-#'
-#' @param ss a registered Google sheet
-#' @param ws_title character string for title of worksheet
+#' @inheritParams get_via_lf
 #' @param row_extent integer for new row extent
 #' @param col_extent integer for new column extent
 #' @param verbose logical; do you want informative message?
 #'
 #' @note Setting rows and columns to less than the current worksheet dimensions
 #'   will delete contents without warning!
+#'
 #' @examples
 #' \dontrun{
 #' yo <- new_ss("yo")
 #' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 #' get_via_csv(yo)
-#' yo <- resize_ws(yo, ws_title = "Sheet1", row_extent = 3, col_extent = 2)
+#' yo <- resize_ws(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
 #' get_via_csv(yo)
+#' yo <- resize_ws(yo, ws = 1, row_extent = 3, col_extent = 3)
+#' get_via_csv(yo)
+#' yo <- resize_ws(yo, row_extent = 2, col_extent = 2)
+#' get_via_csv(yo)
+#' delete_ss(yo)
 #' }
 #'
 #' @keywords internal
-resize_ws <- function(ss, ws_title,
+resize_ws <- function(ss, ws = 1,
                       row_extent = NULL, col_extent = NULL, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
+
+  this_ws <- ss %>% get_ws(ws)
   
-  ws_title_position <- match(ws_title, ss$ws$ws_title)
-
-  if(is.na(ws_title_position)) {
-    stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
-                 ws_title, ss$sheet_title))
-  }
-
   # if row or col extent not specified, make it the same as before
   if(is.null(row_extent)) {
-    row_extent <- ss$ws$row_extent[ws_title_position]
+    row_extent <- this_ws$row_extent
   }
   if(is.null(col_extent)) {
-    col_extent <- ss$ws$col_extent[ws_title_position]
+    col_extent <- this_ws$col_extent
   }
 
   req <-
-    modify_ws(ss, ws_title,
+    modify_ws(ss, ws,
               new_dim = c(row_extent = row_extent, col_extent = col_extent))
 
   new_row_extent <- req$content$rowCount %>% as.integer()
@@ -474,7 +471,7 @@ resize_ws <- function(ss, ws_title,
 
   if(verbose && success) {
     message(sprintf("Worksheet \"%s\" dimensions changed to %d x %d.",
-                    ws_title, new_row_extent, new_col_extent))
+                    this_ws$ws_title, new_row_extent, new_col_extent))
   }
 
   if(success) {
@@ -488,42 +485,45 @@ resize_ws <- function(ss, ws_title,
 
 #' Modify a worksheet's title or size
 #'
+#' @inheritParams get_via_lf
+
 #' @param ss a registered Google sheet
-#' @param from character string for current title of worksheet
+#' @param from positive integer or character string specifying index or title, 
+#' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param new_dim list of length 2 specifying the row and column extent of the
 #'   worksheet
+#'
 #' @keywords internal
 modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
     stopifnot(ss %>% inherits("googlesheet"))
-    
-    ws_title_position <- match(from, ss$ws$ws_title)
+
+    this_ws <- ss %>% get_ws(from, verbose = FALSE)
 
     # don't want return value converted to a list, keep as XML, make edits,send
     # back via PUT
-    req <- gsheets_GET(ss$ws$ws_id[ws_title_position], to_list = FALSE)
+    req <- gsheets_GET(this_ws$ws_id, to_list = FALSE)
     contents <- req %>%
       httr::content() %>%
       XML::toString.XMLNode()
-    
-    if(!is.null(to)) {
-      to_already_exists <- !(match(to, ss$ws$ws_title) %>% is.na())
-      
-      if(to_already_exists) {
+
+    if(!is.null(to)) { # our purpose is to rename a worksheet
+
+      if(to %in% list_ws(ss)) {
         stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
                            "\"%s\". Please choose another worksheet title."),
                      to, ss$sheet_title))
       }
       
-      ## TO DO: we should probably be doing something more XML-y here, instead of
-      ## doing XML --> string --> regex based subsitution --> XML
+      ## TO DO: we should probably be doing something more XML-y here, instead
+      ## of doing XML --> string --> regex based subsitution --> XML
       title_replacement <- paste0("\\1", to, "\\3")
       the_body <- contents %>%
         sub("(<title type=\"text\">)(.*)(</title>)", title_replacement, .)
     }
 
-    if(!is.null(new_dim)) {
+    if(!is.null(new_dim)) { # our purpose is to resize a worksheet
       
       row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
       col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
@@ -533,7 +533,8 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
         sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
     }
 
-  gsheets_PUT(ss$ws$edit[ws_title_position], the_body)
+  gsheets_PUT(this_ws$edit, the_body)
+
 }
 
 #' Upload a file and convert it to a Google Sheet
@@ -608,4 +609,5 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
   new_sheet_key %>%
     register_ss(verbose = FALSE) %>%
     invisible()
+
 }

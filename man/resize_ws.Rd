@@ -4,13 +4,14 @@
 \alias{resize_ws}
 \title{Resize a worksheet}
 \usage{
-resize_ws(ss, ws_title, row_extent = NULL, col_extent = NULL,
+resize_ws(ss, ws = 1, row_extent = NULL, col_extent = NULL,
   verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google sheet}
+\item{ss}{a registered Google spreadsheet}
 
-\item{ws_title}{character string for title of worksheet}
+\item{ws}{positive integer or character string specifying index or title,
+  respectively, of the worksheet to consume}
 
 \item{row_extent}{integer for new row extent}
 
@@ -23,10 +24,6 @@ Set the number of rows and columns of a worksheet. We use this function
 internally during cell updates, if the data would exceed the current
 worksheet extent. It is possible a user might want to use this directly?
 }
-\details{
-This function will soon get a better ws argument, i.e. that takes integer or
-title, with sensible defaults.
-}
 \note{
 Setting rows and columns to less than the current worksheet dimensions
   will delete contents without warning!
@@ -36,8 +33,13 @@ Setting rows and columns to less than the current worksheet dimensions
 yo <- new_ss("yo")
 yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 get_via_csv(yo)
-yo <- resize_ws(yo, ws_title = "Sheet1", row_extent = 3, col_extent = 2)
+yo <- resize_ws(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
 get_via_csv(yo)
+yo <- resize_ws(yo, ws = 1, row_extent = 3, col_extent = 3)
+get_via_csv(yo)
+yo <- resize_ws(yo, row_extent = 2, col_extent = 2)
+get_via_csv(yo)
+delete_ss(yo)
 }
 }
 \keyword{internal}

@@ -77,7 +77,7 @@ x <- register_ss("hi I am new here")
 x
 x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
 x
-delete_ws(x, ws_title = "foo")
+delete_ws(x, ws = "foo")
 x <- register_ss("hi I am new here")
 x
 

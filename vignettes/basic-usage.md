@@ -53,12 +53,12 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-30 04:26:40
-## 2   Gapminder 1HT5B8S... gspreadr   rw 2015-03-23 20:59:10
-## 3  Gapminder  1SDA_Gu... gspreadr   rw 2015-03-23 20:23:09
-## 4  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 20:23:06
-## 5  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
-## 6     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
+## 1    gap_copy 1PYa7Oa... gspreadr   rw 2015-04-02 22:24:12
+## 2     foo_new 14qNS8Y... gspreadr   rw 2015-04-02 21:41:05
+## 3     foo_new 1J2KTvQ... gspreadr   rw 2015-04-02 21:40:44
+## 4  Public Tes 1hff6Az... gspreadr   rw 2015-04-02 22:04:22
+## 5  iris_publi 1cAYN-a... gspreadr   rw 2015-03-30 18:24:06
+## 6  Flight Ris 1OvDq4_...     omid    r 2015-03-27 09:33:43
 ```
 
 This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
@@ -86,8 +86,9 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##   Date of googlesheets::register_ss: 2015-04-02 16:22:35 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                          visibility: private
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -133,8 +134,9 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##   Date of googlesheets::register_ss: 2015-04-02 16:22:36 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                          visibility: private
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -165,8 +167,9 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##   Date of googlesheets::register_ss: 2015-04-02 16:22:35 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                          visibility: private
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -358,7 +361,7 @@ new_ss("hi I am new here")
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg
+## sheet_key: 19BNxqljQJ8wzNl8kzWHeAAso5jbjC6307_LlXEFVuqo
 ```
 
 ```r
@@ -369,7 +372,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg gspreadr
+## 1 hi I am new here 19BNxqljQJ8wzNl8kzWHeAAso5jbjC6307_LlXEFVuqo gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
 ```
 
@@ -409,7 +412,7 @@ new_ss("hi I am new here")
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
+## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
 ```
 
 ```r
@@ -419,7 +422,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
+## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
 ```
 
 ```r
@@ -428,14 +431,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-03-29 22:08:20 PDT
-##     Date of last spreadsheet update: 2015-03-30 05:08:16 UTC
+##   Date of googlesheets::register_ss: 2015-04-02 16:22:46 PDT
+##     Date of last spreadsheet update: 2015-04-02 23:22:38 UTC
+##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
+## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
 ```
 
 ```r
@@ -452,22 +456,24 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-03-29 22:08:21 PDT
-##     Date of last spreadsheet update: 2015-03-30 05:08:19 UTC
+##   Date of googlesheets::register_ss: 2015-04-02 16:22:48 PDT
+##     Date of last spreadsheet update: 2015-04-02 23:22:41 UTC
+##                          visibility: private
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
+## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
 ```
 
 ```r
-delete_ws(x, ws_title = "foo")
+delete_ws(x, ws = "foo")
 ```
 
 ```
+## Accessing worksheet titled "foo"
 ## Worksheet "foo" deleted from sheet "hi I am new here".
 ```
 
@@ -478,7 +484,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
+## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
 ```
 
 ```r
@@ -487,14 +493,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-03-29 22:09:01 PDT
-##     Date of last spreadsheet update: 2015-03-30 05:08:58 UTC
+##   Date of googlesheets::register_ss: 2015-04-02 16:22:49 PDT
+##     Date of last spreadsheet update: 2015-04-02 23:22:42 UTC
+##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
+## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
@@ -505,6 +512,7 @@ rename_ws(x, "Sheet1", "First Sheet")
 ```
 
 ```
+## Accessing worksheet titled "Sheet1"
 ## Worksheet "Sheet1" renamed to "First Sheet".
 ```
 

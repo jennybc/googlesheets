@@ -4,12 +4,13 @@
 \alias{delete_ws}
 \title{Delete a worksheet from a spreadsheet}
 \usage{
-delete_ws(ss, ws_title, verbose = TRUE)
+delete_ws(ss, ws = 1, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google sheet}
+\item{ss}{a registered Google spreadsheet}
 
-\item{ws_title}{title of worksheet}
+\item{ws}{positive integer or character string specifying index or title,
+  respectively, of the worksheet to consume}
 
 \item{verbose}{logical; do you want informative message?}
 }
@@ -27,6 +28,9 @@ gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
 gap_ss
 gap_ss <- delete_ws(gap_ss, "new_stuff")
 list_ws(gap_ss)
+gap_ss <- delete_ws(gap_ss, ws = 3)
+list_ws(gap_ss)
+delete_ss(gap_ss)
 }
 }
 
