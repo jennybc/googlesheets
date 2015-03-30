@@ -57,6 +57,7 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
+#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [17 x 6]
 #> 
 #>                                     sheet_title
@@ -87,13 +88,13 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "r", "r", "rw...
-#> $ last_updated (time) 2015-03-30 05:25:40, 2015-03-23 20:59:10, 2015-0...
+#> $ last_updated (time) 2015-03-30 05:44:24, 2015-03-23 20:59:10, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
 ### Register a spreadsheet
 
-If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `googlesheets` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can get some basic info about the sheet via `str()`.
+If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `googlesheets` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can print the result to get some basic info about the sheet.
 
 ``` r
 # Hey let's look at the Gapminder data
@@ -103,7 +104,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-03-29 22:28:10 PDT
+#>   Date of googlesheets::register_ss: 2015-03-30 10:12:49 PDT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #> 
 #> Contains 5 worksheets:
@@ -377,17 +378,17 @@ foo <- new_ss("foo")
 #> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 17Ho_pgJXdphkkt1o7M1rSsRASpPrTheQrULC3KKLrTM
+#> sheet_key: 15F5oaaXxst4Jf5UP-4ZWocjtHBuGYP-VuIN5muRRAY4
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-03-29 22:28:18 PDT
-#>     Date of last spreadsheet update: 2015-03-30 05:28:14 UTC
+#>   Date of googlesheets::register_ss: 2015-03-30 10:12:58 PDT
+#>     Date of last spreadsheet update: 2015-03-30 17:12:54 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 17Ho_pgJXdphkkt1o7M1rSsRASpPrTheQrULC3KKLrTM
+#> Key: 15F5oaaXxst4Jf5UP-4ZWocjtHBuGYP-VuIN5muRRAY4
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -408,7 +409,7 @@ Go to [your spreadsheets home page](https://docs.google.com/spreadsheets/u/0/), 
 Note that we always store the returned value from `edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
 ``` r
-foo %>% get_via_lf() %>% print()
+foo %>% get_via_lf()
 #> Accessing worksheet titled "Sheet1"
 #> Source: local data frame [6 x 5]
 #> 
@@ -444,15 +445,15 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-03-29 22:28:29 PDT
-#>     Date of last spreadsheet update: 2015-03-30 05:28:27 UTC
+#>   Date of googlesheets::register_ss: 2015-03-30 10:13:53 PDT
+#>     Date of last spreadsheet update: 2015-03-30 17:13:50 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1-rH-_JNYARqFV6KgMS9-oALcetP2BB9hh93UbYKZa60
-iris_ss %>% get_via_lf() %>% print()
+#> Key: 1scy2YTJBqV16dFhgzu6hpAvKKcQfLLw_LVaMf_w-T0Y
+iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
 #> 
@@ -473,8 +474,8 @@ gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
 gap_xlsx
 #>                   Spreadsheet title: gap-data
-#>   Date of googlesheets::register_ss: 2015-03-29 22:28:36 PDT
-#>     Date of last spreadsheet update: 2015-03-30 05:28:32 UTC
+#>   Date of googlesheets::register_ss: 2015-03-30 10:13:58 PDT
+#>     Date of last spreadsheet update: 2015-03-30 17:13:55 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -484,8 +485,8 @@ gap_xlsx
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1dMjxAnYrwlxwdtqh2cU2XkaAS3HAenKeI2ANUMX7WXE
-gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
+#> Key: 1XVAxSxmqUUFalyJsa-3WPZMxfR9WGwgvt3oPSCyEFyU
+gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
 #> 

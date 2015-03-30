@@ -79,7 +79,7 @@ my_sheets %>% glimpse()
 
 ### Register a spreadsheet
 
-If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `googlesheets` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can get some basic info about the sheet via `str()`.
+If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `googlesheets` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can print the result to get some basic info about the sheet.
 
 ```{r register-sheet}
 # Hey let's look at the Gapminder data
@@ -207,7 +207,7 @@ Go to [your spreadsheets home page](https://docs.google.com/spreadsheets/u/0/), 
 Note that we always store the returned value from `edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
 ```{r consume-edited-cells}
-foo %>% get_via_lf() %>% print()
+foo %>% get_via_lf()
 ```
 
 Read the function documentation for `edit_cells()` for ways to specify where the data goes and in which direction.
@@ -228,7 +228,7 @@ Here's how we can create a new spreadsheet from a suitable local file. First, we
 iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
 iris_ss <- upload_ss("iris.csv")
 iris_ss
-iris_ss %>% get_via_lf() %>% print()
+iris_ss %>% get_via_lf()
 file.remove("iris.csv")
 ```
 
@@ -237,7 +237,7 @@ Now we'll upload a multi-sheet Excel workbook. Slowly.
 ```{r new-sheet-from-xlsx}
 gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 gap_xlsx
-gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
+gap_xlsx %>% get_via_lf(ws = "Oceania")
 ```
 
 And we clean up after ourselves on Google Drive.
