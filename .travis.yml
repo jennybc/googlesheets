@@ -7,10 +7,8 @@ before_install:
 - ./travis-tool.sh bootstrap
 install:
 - ./travis-tool.sh r_binary_install dplyr
+- ./travis-tool.sh r_binary_install XML
 - ./travis-tool.sh install_deps
-- ./travis-tool.sh github_package hadley/stringr
-- ./travis-tool.sh github_package hadley/testthat
-- ./travis-tool.sh github_package smbache/magrittr
 - ./travis-tool.sh github_package jimhester/covr
 script: ./travis-tool.sh run_tests
 after_script:
