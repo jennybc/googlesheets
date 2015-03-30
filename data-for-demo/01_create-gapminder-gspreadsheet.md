@@ -1,5 +1,5 @@
     library("gapminder")
-    library("gspreadr")
+    library("googlesheets")
     library("plyr")
     suppressPackageStartupMessages(library("dplyr"))
 

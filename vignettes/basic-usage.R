@@ -1,11 +1,11 @@
 ## ----load package--------------------------------------------------------
-library(gspreadr)
+library(googlesheets)
 suppressMessages(library(dplyr))
 
 ## ----authorize, include = FALSE------------------------------------------
 
-## look for .httr-oauth in pwd (assuming pwd is gspreadr) or two levels up
-## (assuming pwd is gspreadr/tests/testthat)
+## look for .httr-oauth in pwd (assuming pwd is googlesheets) or two levels up
+## (assuming pwd is googlesheets/tests/testthat)
 pwd <- getwd()
 one_up <- pwd %>% dirname()
 two_up <- pwd %>% dirname() %>% dirname()

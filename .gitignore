@@ -2,6 +2,6 @@
 .Rhistory
 .RData
 .httr-oauth
-gspreadr.Rproj
+googlesheets.Rproj
 jenny-tmp.R
 tests/testthat/token_file.rds

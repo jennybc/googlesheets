@@ -1,12 +1,12 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/0.1.0/active.svg)](http://www.repostatus.org/#active) [![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr) [![Coverage Status](https://coveralls.io/repos/jennybc/gspreadr/badge.svg)](https://coveralls.io/r/jennybc/gspreadr)
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/0.1.0/active.svg)](http://www.repostatus.org/#active) [![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets)
 
 ------------------------------------------------------------------------
 
 Google Sheets R API
 -------------------
 
-Access and manage Google spreadsheets from R with `gspreadr`.
+Access and manage Google spreadsheets from R with `googlesheets`.
 
 Features:
 
@@ -14,40 +14,40 @@ Features:
 -   Extract data or edit data.
 -   Create | delete | rename | copy | upload | download spreadsheets and worksheets.
 
-`gspreadr` is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API
+`googlesheets` is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API
 
 The exuberant prose in this README is inspired by [Tabletop.js](https://github.com/jsoma/tabletop): If you've ever wanted to get data in or out of a Google Spreadsheet from R without jumping through a thousand hoops, welcome home!
 
 #### What the hell do I do with this?
 
-Think of `gspreadr` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
+Think of `googlesheets` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
 
 Use a Google Form to conduct a survey, which populates a Google Sheet.
 
 Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en).
 
-Use `gspreadr` to get all that data into R.
+Use `googlesheets` to get all that data into R.
 
 Use it in a Shiny app! *this will be the next demo/vignette I write*
 
 What other ideas do you have?
 
-### Install gspreadr
+### Install googlesheets
 
 ``` r
-devtools::install_github("jennybc/gspreadr")
+devtools::install_github("jennybc/googlesheets")
 ```
 
 ### Take a look at the vignette
 
-This README is arguably as or more useful as the vignette and both are still under development. But feel free to [check out the current state of the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/gspreadr/master/vignettes/basic-usage.html).
+This README is arguably as or more useful as the vignette and both are still under development. But feel free to [check out the current state of the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html).
 
-### Load gspreadr
+### Load googlesheets
 
-`gspreadr` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R. `gspreadr` uses `dplyr` internally but does not require the user to do so.
+`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R. `googlesheets` uses `dplyr` internally but does not require the user to do so.
 
 ``` r
-library("gspreadr")
+library("googlesheets")
 suppressMessages(library("dplyr"))
 ```
 
@@ -57,37 +57,44 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Source: local data frame [21 x 6]
+#> Auto-refreshing stale OAuth token.
+#> Source: local data frame [17 x 6]
 #> 
-#>                 sheet_title                                    sheet_key
-#> 1      Public Testing Sheet 1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk
-#> 2                        yo 1nEwqAGO4tXLm5LAcOOTr6WioZr20--w4iL1oJHqdAno
-#> 3                  gap_copy 18lFDtpkFy84I4cTZLZikgkCqCZ2439sv9a1iSqrktAk
-#> 4                 Gapminder 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-#> 5  Gapminder 2007 Can Write 1SDA_Gu7vCHr1hBXtgD7xB77SHd4YKy4zLZDrwnao0pM
-#> 6             Gapminder_old 1yet5ONlyclG5nn63nQ8XDdexzxbZm0zx1wutYKzuzao
-#> 7            Testing helper 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 8                   scoring 1w8F3t9-LpMqiKBgZG1RImRyMKleI6OH0_YE-tHQl-j0
-#> 9               gas_mileage 1WH65aJjlmhOWYMFkhDuKPcRa5mloOtsTCKxrF7erHgI
-#> 10              Temperature 1Hkh20-IEQzKaBTqwWrQEYqoCaqDoyLjbgX8x4keACgE
-#> ..                      ...                                          ...
-#> Variables not shown: owner (chr), perm (chr), last_updated (time), ws_feed
-#>   (chr)
+#>                                     sheet_title
+#> 1                          Public Testing Sheet
+#> 2                                     Gapminder
+#> 3                      Gapminder 2007 Can Write
+#> 4                                 Gapminder_old
+#> 5                                Testing helper
+#> 6                                       scoring
+#> 7                                WI15 ARCHY 499
+#> 8                                   gas_mileage
+#> 9                                   Temperature
+#> 10 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 11                              Old Style Sheet
+#> 12                                   jenny-test
+#> 13                       Gapminder by Continent
+#> 14                                  basic-usage
+#> 15                 Caffeine craver? (Responses)
+#> 16                        Private Sheet Example
+#> 17                                  Code Sample
+#> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
+#>   last_updated (time), ws_feed (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 21
+#> Observations: 17
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "yo", "gap_copy", "Gapmin...
+#> $ sheet_title  (chr) "Public Testing Sheet", "Gapminder", "Gapminder 2...
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "rw", "rw", "...
-#> $ last_updated (time) 2015-03-24 19:37:37, 2015-03-24 19:23:28, 2015-0...
+#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "r", "r", "rw...
+#> $ last_updated (time) 2015-03-30 04:26:40, 2015-03-23 20:59:10, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
 ### Register a spreadsheet
 
-If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `gspreadr` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can get some basic info about the sheet via `str()`.
+If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `googlesheets` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can get some basic info about the sheet via `str()`.
 
 ``` r
 # Hey let's look at the Gapminder data
@@ -97,7 +104,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-24 12:55:19 PDT
+#>   Date of gspreadr::register_ss: 2015-03-29 21:33:46 PDT
 #> Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #> 
 #> Contains 5 worksheets:
@@ -118,7 +125,7 @@ gap <- gap_key %>% register_ss
 #> sheet_title: Gapminder
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 
-# gspreadr may be able to determine the key from the browser URL
+# googlesheets may be able to determine the key from the browser URL
 # may not work (yet) for old sheets ... open an issue if have problem
 gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
 gap <- gap_url %>% register_ss
@@ -132,7 +139,7 @@ gap <- gap_url %>% register_ss
 
 ### Get a Google spreadsheet to practice with
 
-If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
 ``` r
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
@@ -363,7 +370,7 @@ gap %>%
 
 ### Create sheets
 
-You can use `gspreadr` to create new spreadsheets.
+You can use `googlesheets` to create new spreadsheets.
 
 ``` r
 foo <- new_ss("foo")
@@ -371,17 +378,17 @@ foo <- new_ss("foo")
 #> Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 10SouvfE4jIon2xMbcFpbkffzMX_NlUuILfG3UIgyXI8
+#> sheet_key: 1uhk58ASttskZINoIJiMn_ZF_Gua2i9KGPMprsQsDEcg
 foo
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-24 12:55:27 PDT
-#> Date of last spreadsheet update: 2015-03-24 19:55:25 UTC
+#>   Date of gspreadr::register_ss: 2015-03-29 21:33:56 PDT
+#> Date of last spreadsheet update: 2015-03-30 04:33:52 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 10SouvfE4jIon2xMbcFpbkffzMX_NlUuILfG3UIgyXI8
+#> Key: 1uhk58ASttskZINoIJiMn_ZF_Gua2i9KGPMprsQsDEcg
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -438,14 +445,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-24 12:55:37 PDT
-#> Date of last spreadsheet update: 2015-03-24 19:55:36 UTC
+#>   Date of gspreadr::register_ss: 2015-03-29 21:34:07 PDT
+#> Date of last spreadsheet update: 2015-03-30 04:34:04 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1vEkmodFuq_-bEZQzO99Jyu-UaFA2jO0baV6afWDv5sw
+#> Key: 1MfhaSKJJ0_D_3OE6sQmiEczPecxqTOAchCQ_yhaFBAU
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -467,8 +474,8 @@ gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
 gap_xlsx
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-24 12:55:41 PDT
-#> Date of last spreadsheet update: 2015-03-24 19:55:40 UTC
+#>   Date of gspreadr::register_ss: 2015-03-29 21:34:12 PDT
+#> Date of last spreadsheet update: 2015-03-30 04:34:09 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -478,7 +485,7 @@ gap_xlsx
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1ZAKO4J9OS2_XcKfCv_WKrXrMminptCTPASUwCeKMSOQ
+#> Key: 16joVayXQcOnAkDTbm3FU6EobrM2nT52SCUPeo7xNzuU
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
@@ -515,7 +522,7 @@ delete_ss("gap-data")
 If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
 
 ``` r
-# Give gspreadr permission to access your spreadsheets and google drive
+# Give googlesheets permission to access your spreadsheets and google drive
 authorize() 
 ```
 
