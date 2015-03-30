@@ -14,4 +14,5 @@ gsheets_POST(url, the_body)
 \description{
 Make POST request to Google Sheets API.
 }
+\keyword{internal}
 

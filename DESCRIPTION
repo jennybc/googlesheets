@@ -1,8 +1,7 @@
-Package: gspreadr
+Package: googlesheets
 Title: Manage your Google spreadsheets in R
 Version: 0.1.1
-Description: Google Spreadsheets R API patterned after gspread,
-    a Google Spreadsheets Python API 
+Description: R API for Google Spreadsheets
 Authors@R: c(
     person("Jennifer", "Bryan", , "jenny@stat.ubc.ca", c("aut", "cre")),
     person("Joanna", "Zhao", , "joanna.zhao@alumni.ubc.ca", role = "aut")
@@ -14,12 +13,12 @@ Depends:
 License: MIT + file LICENSE
 LazyData: true
 Imports:
-    dplyr,
+    dplyr (>= 0.4.0),
     httr,
     plyr,
     stringr,
     tidyr,
-    XML,
+    XML
 Suggests:
     testthat,
     knitr

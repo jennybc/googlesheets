@@ -12,11 +12,16 @@ new_ss(title = "my_sheet", verbose = TRUE)
 \item{verbose}{logical; do you want informative message?}
 }
 \value{
-a partially populated Google spreadsheet object, giving sheet title,
-  key, and worksheets feed
+a googlesheet object
 }
 \description{
 Create a new (empty) spreadsheet in your Google Drive. The new sheet will
 contain 1 default worksheet titled "Sheet1".
+}
+\examples{
+\dontrun{
+foo <- new_ss("foo")
+foo
+}
 }
 

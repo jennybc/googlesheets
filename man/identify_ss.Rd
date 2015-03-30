@@ -8,7 +8,7 @@ identify_ss(x, method = NULL, verify = TRUE, visibility = "private",
   verbose = TRUE)
 }
 \arguments{
-\item{x}{sheet-identifying information, either a gspreadsheet object or a
+\item{x}{sheet-identifying information, either a googlesheet object or a
 character vector of length one, giving a URL, sheet title, key or
 worksheets feed}
 
@@ -25,20 +25,34 @@ or without ("public"); only consulted when \code{verify = FALSE}}
 \item{verbose}{logical}
 }
 \value{
-a gspreadsheet object
+a googlesheet object
 }
 \description{
-Create a gspreadsheet object that holds identifying information for a
-specific spreadsheet. Unless \code{verify = FALSE}, it calls
-\code{\link{list_sheets}} and attempts to return information from the row
-uniquely specified by input \code{x}. The listing provided by
-\code{\link{list_sheets}} is only available to an authorized user, so
-authorization will be required. A gspreadsheet object contains much more
-information than that available via \code{\link{list_sheets}}, so many
-components will not be populated until the sheet is registered via
-\code{\link{register_ss}}. If \code{verify = FALSE}, then user must provide
-either sheet key, URL or a worksheets feed, as opposed to sheet title. In
-this case, the information will be taken at face value, i.e. no proactive
-verification or look-up on Google Drive.
+Initialize a googlesheet object that holds identifying information for a
+specific spreadsheet. Intended primarily for internal use. Unless
+\code{verify = FALSE}, it calls \code{\link{list_sheets}} and attempts to
+return information from the row uniquely specified by input \code{x}. The
+listing provided by \code{\link{list_sheets}} is only available to an
+authorized user, so authorization will be required. A googlesheet object
+contains much more information than that available via
+\code{\link{list_sheets}}, so many components will not be populated until the
+sheet is registered properly, such as via \code{\link{register_ss}}, which is
+called internally in many \code{googlesheets} functions. If \code{verify =
+FALSE}, then user must provide either sheet key, URL or a worksheets feed, as
+opposed to sheet title. In this case, the information will be taken at face
+value, i.e. no proactive verification or look-up on Google Drive.
+}
+\details{
+This function is will be revised to be less dogmatic about only identifying
+ONE sheet.
+}
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_id_only <- identify_ss(gap_key)
+gap_id_only # see? not much info at this point
+gap_ss <- register_ss(gap_id)
+gap_ss      # much more available after registration
+}
 }
 

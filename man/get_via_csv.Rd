@@ -15,7 +15,7 @@ get_via_csv(ss, ws = 1, ...)
 \item{...}{further arguments to be passed to \code{\link{read.csv}} or,
   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is
   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
-  within \code{gspreadr} re: NOT converting character data to factor}
+  within \code{googlesheets} re: NOT converting character data to factor}
 }
 \value{
 a tbl_df
@@ -31,6 +31,15 @@ extent of the data, are returned. Empty cells will be assigned NA. Also, the
 header row, potentially containing column or variable names, is not
 transformed/mangled, as it is via the list feed. If you want all of your
 data, this is the fastest way to get it.
+}
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
+str(oceania_csv)
+oceania_csv
+}
 }
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};

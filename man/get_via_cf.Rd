@@ -45,9 +45,9 @@ Use the limits, e.g. min_row or max_col, to delineate the rectangular region
 of interest. You can specify any subset of the limits or none at all. If
 limits are provided, validity will be checked as well as internal consistency
 and compliance with known extent of the worksheet. If no limits are provided,
-all cells will be returned but user should realize that access via the list
-feed is potentially a much faster to consume data from a rectangular
-worksheet.
+all cells will be returned but realize that \code{\link{get_via_csv}} and
+\code{\link{get_via_lf}} are much faster ways to consume data from a
+rectangular worksheet.
 
 Empty cells, even if "embedded" in a rectangular region of populated cells,
 are not normally returned by the cell feed This function won't return them
@@ -55,6 +55,15 @@ either when \code{return_empty = FALSE} (default), but will if you set
 \code{return_empty = TRUE}. If you don't specify any limits AND you set
 \code{return_empty = TRUE}, you could be in for several minutes wait, as the
 feed will return all cells, which defaults to 1000 rows and 26 columns.
+}
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+get_via_cf(gap_ss, "Asia", max_row = 4)
+reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
+reshape_cf(get_via_cf(gap_ss, "Asia", limits = list(max_row = 4, min_col = 3)))
+}
 }
 \seealso{
 Other data.consumption.functions: \code{\link{get_cells}};

@@ -1,22 +1,30 @@
-#' Print information about a Google spreadsheet registered with gspreadr
+#' Print information about a Google spreadsheet registered with googlesheets
 #' 
 #' Display information about a Google spreadsheet that has been registered with 
-#' \code{gspreadr}: the title of the spreadsheet, date-time of registration, 
+#' \code{googlesheets}: the title of the spreadsheet, date-time of registration, 
 #' date-time of last update (at time of registration), the number of worksheets 
 #' contained, worksheet titles and extent, and sheet key.
 #' 
-#' @param x gspreadsheet object returned by \code{register_ss} and other
-#'   \code{gspreadr} functions
+#' @param x googlesheet object returned by \code{register_ss} and other
+#'   \code{googlesheets} functions
 #' @param ... potential further arguments (required for Method/Generic reasons)
 #'   
+#' @examples
+#' \dontrun{
+#' foo <- new_ss("foo")
+#' foo
+#' print(foo)
+#' }
+#'   
 #' @export
-print.gspreadsheet <- function(x, ...) {  
+print.googlesheet <- function(x, ...) {  
   
-  sprintf("              Spreadsheet title: %s\n", x$sheet_title) %>% cat
-  sprintf("  Date of gspreadr::register_ss: %s\n",
-          x$get_date %>% format.POSIXct(usetz = TRUE)) %>% cat
-  sprintf("Date of last spreadsheet update: %s\n",
-          x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat
+  sprintf("                  Spreadsheet title: %s\n", x$sheet_title) %>% cat()
+  sprintf("  Date of googlesheets::register_ss: %s\n",
+          x$get_date %>% format.POSIXct(usetz = TRUE)) %>% cat()
+  sprintf("    Date of last spreadsheet update: %s\n",
+          x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat()
+  sprintf("                         visibility: %s\n", x$visibility) %>% cat()
   cat("\n")
   
   ws_output <-

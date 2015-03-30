@@ -25,6 +25,21 @@
 #'   correspond exactly to the cells being edited?
 #' @param verbose logical; do you want informative message?
 #'   
+#' @examples
+#' \dontrun{
+#' yo <- new_ss("yo")
+#' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+#' get_via_csv(yo)
+#' 
+#' yo <- add_ws(yo, "by_row_FALSE")
+#' yo <- edit_cells(yo, ws = "by_row_FALSE", LETTERS[1:5], "A8")
+#' get_via_cf(yo, ws = "by_row_FALSE", min_row = 7) %>% simplify_cf()
+#' 
+#' yo <- add_ws(yo, "by_row_TRUE")
+#' yo <- edit_cells(yo, ws = "by_row_TRUE", LETTERS[1:5], "A8", by_row = TRUE)
+#' get_via_cf(yo, ws = "by_row_TRUE", min_row = 7) %>% simplify_cf()
+#' }
+#' 
 #' @export
 edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                        by_row = FALSE, header = FALSE, trim = FALSE,
@@ -63,6 +78,7 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                 max(this_ws$row_extent, limits$`max-row`),
                 max(this_ws$col_extent, limits$`max-col`),
                 verbose)
+    Sys.sleep(1)
     
   }
   
@@ -123,11 +139,13 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   
   if(trim) {
     
+    Sys.sleep(1)
     ss <- ss %>%
       resize_ws(this_ws$ws_title, limits$`max-row`, limits$`max-col`, verbose)
 
   }
   
+  Sys.sleep(1)
   ss <- ss %>% register_ss(verbose = FALSE)
   invisible(ss)
   

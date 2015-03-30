@@ -14,10 +14,10 @@ modify_ws(ss, from, to = NULL, new_dim = NULL)
 \item{to}{character string for new title of worksheet}
 
 \item{new_dim}{list of length 2 specifying the row and column extent of the
-worksheet
-why is this a list? can we use lazy eval here?}
+worksheet}
 }
 \description{
 Modify a worksheet's title or size
 }
+\keyword{internal}
 

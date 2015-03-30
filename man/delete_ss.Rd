@@ -7,7 +7,7 @@
 delete_ss(x = NULL, regex = NULL, verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{sheet-identifying information, either a gspreadsheet object or a
+\item{x}{sheet-identifying information, either a googlesheet object or a
 character vector of length one, giving a URL, sheet title, key or
 worksheets feed; if \code{x} is specified, the \code{regex} argument will
 be ignored}
@@ -37,5 +37,12 @@ sheet, and restore it.
 \note{
 If there are multiple sheets with the same name and you don't want to
   delete them all, identify the sheet to be deleted via key.
+}
+\examples{
+\dontrun{
+foo <- new_ss("foo")
+foo <- edit_cells(foo, input = head(iris))
+delete_ss("foo")
+}
 }
 

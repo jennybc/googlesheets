@@ -1,4 +1,4 @@
-context("Downloading spreadsheets")
+context("download sheets")
 
 test_that("Spreadsheet can be exported", {
   

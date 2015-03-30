@@ -12,10 +12,11 @@ gsheets_GET(url, to_list = TRUE, ...)
 \item{to_list}{whether to convert response contents to list or not}
 
 \item{...}{optional; further named parameters, such as \code{query},
-\code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
-parameters will be combined with \code{\link[httr]{config}}.}
+  \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
+  parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
 Make GET request to Google Sheets API.
 }
+\keyword{internal}
 

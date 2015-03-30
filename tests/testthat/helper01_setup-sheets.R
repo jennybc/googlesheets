@@ -29,3 +29,7 @@ old_title <- "Old Style Sheet"
 ## WARNING! this is not the key provided for this sheet by list_sheets()
 ## so it seems we cannot obtain a key from old style Sheet URLs
 # old_key <- "0Audw-qi1jh3fdG9qZFVLR0NvZGRyNHFNUFBtN2tudUE"
+
+## "Published to the web" sheet
+## For accessing via visibility = "public" w/o ever having authenticated
+ptw_key <- "1cAYN-a089TSw8GF0RadQNdZiWo2RzekT-8swZeYME4A"

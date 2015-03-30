@@ -1,11 +1,11 @@
-#' gspreadr
+#' googlesheets
 #' 
 #' Google spreadsheets R API
 #' 
-#' Package summary
+#' See the \href{https://github.com/jennybc/googlesheets}{README} on GitHub
 #' 
 #' @docType package
-#' @name gspreadr
+#' @name googlesheets
 #' @importFrom dplyr %>%
 NULL
 

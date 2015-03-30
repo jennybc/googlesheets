@@ -1,5 +1,5 @@
 ---
-title: "gspreadr Basic Usage"
+title: "googlesheets Basic Usage"
 author: "Joanna Zhao, Jenny Bryan"
 date: "`r Sys.Date()`"
 output:
@@ -7,25 +7,25 @@ output:
     toc: true
     keep_md: true
 vignette: >
-  %\VignetteIndexEntry{gspreadr Basic Usage}
+  %\VignetteIndexEntry{googlesheets Basic Usage}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/gspreadr) on GitHub has gotten alot more love recently, so you might want to read that instead or in addition to this (2015-03-23).
+__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten alot more love recently, so you might want to read that instead or in addition to this (2015-03-23).
 
 ```{r load package}
-library(gspreadr)
+library(googlesheets)
 suppressMessages(library(dplyr))
 ```
 
-This vignette shows the basic functionality of `gspreadr`.
+This vignette shows the basic functionality of `googlesheets`.
 
 # User Authentication
 
-In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `gspreadr` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
+In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `googlesheets` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
 
-The `authorize()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `gspreadr` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
+The `authorize()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
 
 If you want to switch to a different Google account, run `authorize(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
 
@@ -33,8 +33,8 @@ If you want to switch to a different Google account, run `authorize(new_user = T
 
 ```{r authorize, include = FALSE}
 
-## look for .httr-oauth in pwd (assuming pwd is gspreadr) or two levels up
-## (assuming pwd is gspreadr/tests/testthat)
+## look for .httr-oauth in pwd (assuming pwd is googlesheets) or two levels up
+## (assuming pwd is googlesheets/tests/testthat)
 pwd <- getwd()
 one_up <- pwd %>% dirname()
 two_up <- pwd %>% dirname() %>% dirname()
@@ -59,7 +59,7 @@ delete_ss(regex = my_patterns, verbose = FALSE)
 
 # Get a Google spreadsheet to practice with
 
-If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
 ```{r copy-gapminder, eval = FALSE}
 gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
@@ -88,7 +88,7 @@ This provides a nice overview of the spreadsheets you can access and is useful f
 
 # Register a spreadsheet
 
-Before you can access a spreadsheet, you must first __register__ it. This returns an object that is of little interest to the user, but is needed by various `gspreadr` functions in order to retrieve or edit spreadsheet data.
+Before you can access a spreadsheet, you must first __register__ it. This returns an object that is of little interest to the user, but is needed by various `googlesheets` functions in order to retrieve or edit spreadsheet data.
 
 Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We can use `str()` to get an overview of the spreadsheet.
 
@@ -101,7 +101,7 @@ Besides using the spreadsheet title, you can also specify a spreadsheet in three
 
   * By key: this unfriendly but unique string is probably the best long-term strategy.
   * By URL: copy and paste the URL in your browser while visiting the spreadsheet.
-  * By the "worksheets feed": under the hood, this is how `gspreadr` actually gets spreadsheet information from the API. Unlikely to be relevant to a regular user.
+  * By the "worksheets feed": under the hood, this is how `googlesheets` actually gets spreadsheet information from the API. Unlikely to be relevant to a regular user.
 
 Here's an example of using the sheet title to retrieve the key, then registering the sheet by key. While registration by title is handy for interactive use, registration by key is preferred for scripts.
 
@@ -148,7 +148,7 @@ Note that data from the cell feed comes back as a data.frame with one row per ce
 
 *Stuff below partialy redundant with above*
 
-Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `gspreadr` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
+Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `googlesheets` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
 
 There are two basic modes of consuming data stored in a worksheet (quotes taken from the [API docs](https://developers.google.com/google-apps/spreadsheets/):
 

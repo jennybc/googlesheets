@@ -6,8 +6,13 @@
 #' @param title the title for the new sheet
 #' @param verbose logical; do you want informative message?
 #'   
-#' @return a partially populated Google spreadsheet object, giving sheet title,
-#'   key, and worksheets feed
+#' @return a googlesheet object
+#' 
+#' @examples
+#' \dontrun{
+#' foo <- new_ss("foo")
+#' foo
+#' }
 #'   
 #' @export
 new_ss <- function(title = "my_sheet", verbose = TRUE) {
@@ -42,7 +47,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #' \href{https://drive.google.com/drive/#trash}{trash in Google Drive}, find the
 #' sheet, and restore it.
 #' 
-#' @param x sheet-identifying information, either a gspreadsheet object or a 
+#' @param x sheet-identifying information, either a googlesheet object or a 
 #'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed; if \code{x} is specified, the \code{regex} argument will 
 #'   be ignored
@@ -57,7 +62,14 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #'   
 #' @note If there are multiple sheets with the same name and you don't want to
 #'   delete them all, identify the sheet to be deleted via key.
-#'   
+#'
+#' @examples
+#' \dontrun{
+#' foo <- new_ss("foo")
+#' foo <- edit_cells(foo, input = head(iris))
+#' delete_ss("foo")
+#' }
+#'
 #' @export
 delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
   
@@ -138,7 +150,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 #' spreadsheet-identifying methods). Otherwise, you'll have to explicitly
 #' specify it by key.
 #' 
-#' @param from sheet-identifying information, either a gspreadsheet object or a 
+#' @param from sheet-identifying information, either a googlesheet object or a 
 #'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed
 #' @param key character string guaranteed to provide unique key of the sheet; 
@@ -151,6 +163,13 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 #'   with the most recent "last updated" timestamp will be copied.
 #'   
 #' @seealso \code{\link{identify_ss}}, \code{\link{extract_key_from_url}}
+#' 
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "Gapminder_copy")
+#' gap_ss
+#' } 
 #'   
 #' @export
 copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
@@ -205,14 +224,24 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' @param ncol number of columns (default is 26)
 #' @param verbose logical; do you want informative message?
 #'   
-#' @return a gspreadsheet object, resulting from re-registering the host
+#' @return a googlesheet object, resulting from re-registering the host
 #'   spreadsheet after adding the new worksheet
 #'   
 #' @export
+#' 
+#' @examples
+#' \dontrun{
+#' # get a copy of the Gapminder spreadsheet
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "Gapminder_copy")
+#' gap_ss <- add_ws(gap_ss, ws_title = "Atlantis")
+#' gap_ss
+#' }
+
 add_ws <- function(ss, ws_title = "Sheet1",
                    nrow = 1000, ncol = 26, verbose = TRUE) { 
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_exist <- !(match(ws_title, ss$ws[["ws_title"]]) %>% is.na())
 
@@ -264,10 +293,22 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' @param ws_title title of worksheet
 #' @param verbose logical; do you want informative message?
 #' 
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' list_ws(gap_ss)
+#' gap_ss <- add_ws(gap_ss, "new_stuff")
+#' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE, trim = TRUE)
+#' gap_ss
+#' gap_ss <- delete_ws(gap_ss, "new_stuff")
+#' list_ws(gap_ss)
+#' }
+#' 
 #' @export
 delete_ws <- function(ss, ws_title, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_position <- match(ws_title, ss$ws$ws_title)
   
@@ -316,10 +357,19 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #'   function calls using the same edit link from the same sheet object without 
 #'   'refreshing' it by re-registering results in a HTTP 409 Conflict.
 #'   
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' list_ws(gap_ss)
+#' gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
+#' list_ws(gap_ss)
+#' }
+#'   
 #' @export
 rename_ws <- function(ss, from, to, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_position <- match(from, ss$ws$ws_title)
   
@@ -332,6 +382,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
   ## req carries updated info about the affected worksheet ... but I find it
   ## easier to just re-register the spreadsheet
   
+  Sys.sleep(1)
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
   
   from_is_gone <- from %>% match(ss_refresh$ws$ws_title) %>% is.na()
@@ -357,26 +408,35 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 
 #' Resize a worksheet
 #' 
-#' Set the number of rows and columns of a worksheet. This function is useful
-#' when you need to send a batch update request and the data would exceed 
-#' the current worksheet extent. 
+#' Set the number of rows and columns of a worksheet. We use this function 
+#' internally during cell updates, if the data would exceed the current 
+#' worksheet extent. It is possible a user might want to use this directly?
 #' 
-#' This function will probably only be called internally... exporting for now. 
+#' This function will soon get a better ws argument, i.e. that takes integer or
+#' title, with sensible defaults.
 #' 
 #' @param ss a registered Google sheet
 #' @param ws_title character string for title of worksheet
 #' @param row_extent integer for new row extent
 #' @param col_extent integer for new column extent
 #' @param verbose logical; do you want informative message?
-#' 
+#'   
 #' @note Setting rows and columns to less than the current worksheet dimensions 
-#' will delete contents without warning.
-#' 
-#' @export
+#'   will delete contents without warning!
+#' @examples
+#' \dontrun{
+#' yo <- new_ss("yo")
+#' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+#' get_via_csv(yo)
+#' yo <- resize_ws(yo, ws_title = "Sheet1", row_extent = 3, col_extent = 2)
+#' get_via_csv(yo)
+#' }
+#'   
+#' @keywords internal
 resize_ws <- function(ss, ws_title,
                       row_extent = NULL, col_extent = NULL, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_position <- match(ws_title, ss$ws$ws_title)
   
@@ -424,12 +484,10 @@ resize_ws <- function(ss, ws_title,
 #' @param to character string for new title of worksheet
 #' @param new_dim list of length 2 specifying the row and column extent of the
 #'   worksheet
-#'   why is this a list? can we use lazy eval here?
-#'   
-modify_ws <-
-  function(ss, from, to = NULL, new_dim = NULL) {
+#' @keywords internal
+modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
-    stopifnot(ss %>% inherits("gspreadsheet"))
+    stopifnot(ss %>% inherits("googlesheet"))
     
     ws_title_position <- match(from, ss$ws$ws_title)
     
@@ -449,16 +507,19 @@ modify_ws <-
       
       ## TO DO: we should probably be doing something more XML-y here, instead of
       ## doing XML --> string --> regex based subsitution --> XML
+      title_replacement <- paste0("\\1", to, "\\3")
       the_body <- contents %>% 
-        stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)', to)
+        sub("(<title type=\"text\">)(.*)(</title>)", title_replacement, .)
     }
     
     if(!is.null(new_dim)) {
+
+      row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
+      col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
+      
       the_body <- contents %>% 
-        stringr::str_replace('(?<=<gs:rowCount>)(.*)(?=</gs:rowCount>)',
-                             new_dim["row_extent"]) %>%
-        stringr::str_replace('(?<=<gs:colCount>)(.*)(?=</gs:colCount>)',
-                             new_dim["col_extent"])         
+        sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
+        sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
     }
   
   gsheets_PUT(ss$ws$edit[ws_title_position], the_body)
@@ -477,6 +538,16 @@ modify_ws <-
 #' @param sheet_title the title of the spreadsheet; optional, 
 #' if not specified then the name of the file will be used
 #' @param verbose logical; do you want informative message?
+#' 
+#' @examples
+#' \dontrun{
+#' write.csv(head(iris, 5), "iris.csv", row.names = FALSE)
+#' iris_ss <- upload_ss("iris.csv")
+#' iris_ss
+#' get_via_lf(iris_ss)
+#' file.remove("iris.csv")
+#' delete_ss(iris_ss)
+#' }
 #'
 #' @export
 upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {

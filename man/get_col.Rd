@@ -19,6 +19,14 @@ get_col(ss, ws = 1, col)
 \description{
 Get data via the cell feed for one column or for a range of columns.
 }
+\examples{
+\dontrun{
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+get_col(gap_ss, "Oceania", col = 1:2)
+reshape_cf(get_col(gap_ss, "Oceania", col = 1:2))
+}
+}
 \seealso{
 \code{\link{reshape_cf}} to reshape the retrieved data into a more
   usable data.frame

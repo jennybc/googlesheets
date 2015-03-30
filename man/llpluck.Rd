@@ -9,11 +9,10 @@ llpluck(x, xpath)
 \arguments{
 \item{x}{a list}
 
-\item{xpath}{a string giving the name of the component you want, XPath style
-
-Examples: ...}
+\item{xpath}{a string giving the name of the component you want, XPath style}
 }
 \description{
 Pluck out elements from list components by name
 }
+\keyword{internal}
 

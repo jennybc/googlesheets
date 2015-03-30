@@ -2,16 +2,17 @@
 .state <- new.env(parent = emptyenv())
 
 #' Authorize user using Oauth2.0 Credentials
-#'
-#' User will be directed to web browser and asked to sign into their Google
-#' account and grant gspreadr access permission to user data for Google 
+#' 
+#' User will be directed to web browser and asked to sign into their Google 
+#' account and grant googlesheet access permission to user data for Google 
 #' Spreadsheets and Google Drive. User credentials will be cached in .httr-oauth
 #' in the current working directory.
-#'
-#' This method follows the demo described at:
-#' \url{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}
-#' @param new_user set to \code{TRUE} if you want to authenticate a different
-#' google account
+#' 
+#' @param new_user set to \code{TRUE} if you want to wipe the slate clean and
+#'   re-authenticate with the same or different Google account
+#' 
+#' Based on \href{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}{this demo} from \code{httr}
+#' 
 #' @export
 authorize <- function(new_user = FALSE) {
   
@@ -48,6 +49,7 @@ authorize <- function(new_user = FALSE) {
 #' 
 #' Get token if it's previously stored, else prompt user to get one.
 #'
+#' @keywords internal
 get_google_token <- function() {
   
   if(is.null(.state$token)) {  

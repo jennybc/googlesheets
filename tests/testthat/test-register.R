@@ -1,4 +1,4 @@
-context("register a spreadsheet")
+context("register sheets")
 
 test_that("Spreadsheets visible to authenticated user can be listed", {
   ss_list <- list_sheets()
@@ -71,23 +71,23 @@ test_that("Bad spreadsheet ID throws informative error", {
                "conflicting matches in multiple identifiers: sheet_title, sheet_key")
 
   # but everything's ok if we explicitly declare input is a key
-  expect_is(register_ss(key = wtf1_key), "gspreadsheet")
+  expect_is(register_ss(key = wtf1_key), "googlesheet")
   
 })
   
 test_that("Spreadsheet can be registered via URL, key, title, ws_feed or ss", {
   
   ## let identify_ss() determine the method
-  expect_is(register_ss(pts_ws_feed), "gspreadsheet")
-  expect_is(register_ss(pts_title), "gspreadsheet")
-  expect_is(register_ss(pts_key), "gspreadsheet")
-  expect_is(register_ss(pts_url), "gspreadsheet")
+  expect_is(register_ss(pts_ws_feed), "googlesheet")
+  expect_is(register_ss(pts_title), "googlesheet")
+  expect_is(register_ss(pts_key), "googlesheet")
+  expect_is(register_ss(pts_url), "googlesheet")
   pts_ss <- identify_ss(pts_key)
-  expect_is(register_ss(pts_ss), "gspreadsheet")
+  expect_is(register_ss(pts_ss), "googlesheet")
   
   ## explicitly declare identifier to be key or ws_feed
-  expect_is(register_ss(key = pts_key), "gspreadsheet")
-  expect_is(register_ss(ws_feed = pts_ws_feed), "gspreadsheet")
+  expect_is(register_ss(key = pts_key), "googlesheet")
+  expect_is(register_ss(ws_feed = pts_ws_feed), "googlesheet")
 
 })
 

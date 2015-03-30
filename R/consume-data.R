@@ -15,22 +15,33 @@
 #' @param ... further arguments to be passed to \code{\link{read.csv}} or, 
 #'   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is 
 #'   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
-#'   within \code{gspreadr} re: NOT converting character data to factor
+#'   within \code{googlesheets} re: NOT converting character data to factor
 #'   
 #' @family data consumption functions
 #' 
 #' @return a tbl_df
 #'   
+#' @examples 
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
+#' str(oceania_csv)
+#' oceania_csv
+#' }
 #' @export
 get_via_csv <- function(ss, ws = 1, ...) {
 
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   this_ws <- get_ws(ss, ws)
   
   ## since gsheets_GET expects xml back, just using GET for now
-  req <- 
-    httr::GET(this_ws$exportcsv, get_google_token())
+  if(ss$is_public) {
+    req <- httr::GET(this_ws$exportcsv)
+  } else { 
+    req <- httr::GET(this_ws$exportcsv, get_google_token())
+  }
   
   if(is.null(httr::content(req))) {
     stop("Worksheet is empty. There are no cells that contain data.")
@@ -68,11 +79,20 @@ get_via_csv <- function(ss, ws = 1, ...) {
 #' @family data consumption functions
 #' 
 #' @return a tbl_df
+#' 
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' oceania_lf <- get_via_lf(gap_ss, ws = "Oceania")
+#' str(oceania_lf)
+#' oceania_lf
+#' }
 #'   
 #' @export
 get_via_lf <- function(ss, ws = 1) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   this_ws <- get_ws(ss, ws)
   req <- gsheets_GET(this_ws$listfeed)
@@ -124,12 +144,12 @@ get_via_lf <- function(ss, ws = 1) {
 #' of interest. You can specify any subset of the limits or none at all. If 
 #' limits are provided, validity will be checked as well as internal consistency
 #' and compliance with known extent of the worksheet. If no limits are provided,
-#' all cells will be returned but user should realize that access via the list 
-#' feed is potentially a much faster to consume data from a rectangular 
-#' worksheet.
+#' all cells will be returned but realize that \code{\link{get_via_csv}} and
+#' \code{\link{get_via_lf}} are much faster ways to consume data from a
+#' rectangular worksheet.
 #' 
 #' Empty cells, even if "embedded" in a rectangular region of populated cells, 
-#' are not normally returned by the cell feed This function won't return them
+#' are not normally returned by the cell feed This function won't return them 
 #' either when \code{return_empty = FALSE} (default), but will if you set 
 #' \code{return_empty = TRUE}. If you don't specify any limits AND you set 
 #' \code{return_empty = TRUE}, you could be in for several minutes wait, as the 
@@ -146,7 +166,15 @@ get_via_lf <- function(ss, ws = 1) {
 #' @param return_links logical; indicates whether to return the edit and self 
 #'   links (used internally in cell editing workflow)
 #' @param verbose logical; do you want informative messages?
-#'   
+#' 
+#' @examples 
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' get_via_cf(gap_ss, "Asia", max_row = 4)
+#' reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
+#' reshape_cf(get_via_cf(gap_ss, "Asia", limits = list(max_row = 4, min_col = 3)))
+#' }
 #' @family data consumption functions
 #'   
 #' @export
@@ -156,7 +184,7 @@ get_via_cf <-
            limits = NULL, return_empty = FALSE, return_links = FALSE,
            verbose = TRUE) {
     
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
     
   this_ws <- get_ws(ss, ws, verbose)
   
@@ -255,6 +283,14 @@ get_via_cf <-
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more 
 #'   usable data.frame
 #'   
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' get_row(gap_ss, "Europe", row = 1)
+#' simplify_cf(get_row(gap_ss, "Europe", row = 1))
+#' }
+#' 
 #' @export
 get_row <- function(ss, ws = 1, row)
   get_via_cf(ss, ws, min_row = min(row), max_row = max(row))
@@ -272,6 +308,14 @@ get_row <- function(ss, ws = 1, row)
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more 
 #'   usable data.frame
 #'   
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' get_col(gap_ss, "Oceania", col = 1:2)
+#' reshape_cf(get_col(gap_ss, "Oceania", col = 1:2))
+#' } 
+#' 
 #' @export
 get_col <- function(ss, ws = 1, col)
   get_via_cf(ss, ws, min_col = min(col), max_col = max(col))
@@ -289,7 +333,15 @@ get_col <- function(ss, ws = 1, col)
 #' @family data consumption functions
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more 
 #'   usable data.frame
-#'   
+#'
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' get_cells(gap_ss, "Europe", range = "B3:D7")
+#' simplify_cf(get_cells(gap_ss, "Europe", range = "A1:F1"))
+#' }
+#' 
 #' @export
 get_cells <- function(ss, ws = 1, range) {
   
@@ -306,6 +358,13 @@ get_cells <- function(ss, ws = 1, range) {
 #' 
 #' @family data consumption functions
 #'   
+#' @examples 
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' get_via_cf(gap_ss, "Asia", max_row = 4)
+#' reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
+#' }
 #' @export
 reshape_cf <- function(x, header = TRUE) {
   
@@ -357,7 +416,7 @@ reshape_cf <- function(x, header = TRUE) {
 #' an atomic vector. That's what this function does. Note that, unlike 
 #' \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this 
 #' result. By default, the API does not transmit data for these cells; 
-#' \code{gspreadr} inserts these cells in \code{\link{reshape_cf}} because it is
+#' \code{googlesheets} inserts these cells in \code{\link{reshape_cf}} because it is
 #' necessary to give the data rectangular shape. In contrast, empty cells will 
 #' only appear in the output of \code{simplify_cf} if they were already present 
 #' in the data from the cell feed, i.e. if the original call to 
@@ -375,6 +434,15 @@ reshape_cf <- function(x, header = TRUE) {
 #'   notation, i.e. "A1" vs. "R1C1"
 #'   
 #' @return a named vector
+#' 
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- register_ss(gap_key)
+#' get_row(gap_ss, row = 1)
+#' simplify_cf(get_row(gap_ss, row = 1))
+#' simplify_cf(get_row(gap_ss, row = 1), notation = "R1C1")
+#' }
 #'   
 #' @family data consumption functions
 #'   
