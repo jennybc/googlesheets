@@ -1,5 +1,5 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/0.1.0/active.svg)](http://www.repostatus.org/#active) [![Build Status](https://travis-ci.org/jennybc/gspreadr.svg?branch=master)](https://travis-ci.org/jennybc/gspreadr) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets)
+[![Project Status: Active - The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/0.1.0/active.svg)](http://www.repostatus.org/#active) [![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets)
 
 ------------------------------------------------------------------------
 
@@ -57,7 +57,6 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [17 x 6]
 #> 
 #>                                     sheet_title
@@ -104,7 +103,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-29 21:33:46 PDT
+#>   Date of gspreadr::register_ss: 2015-03-29 21:46:46 PDT
 #> Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #> 
 #> Contains 5 worksheets:
@@ -378,17 +377,17 @@ foo <- new_ss("foo")
 #> Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1uhk58ASttskZINoIJiMn_ZF_Gua2i9KGPMprsQsDEcg
+#> sheet_key: 14o9M7YZZJHircX11luyzx7YX3j7ouztWQH8WaylD9lc
 foo
 #>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-29 21:33:56 PDT
-#> Date of last spreadsheet update: 2015-03-30 04:33:52 UTC
+#>   Date of gspreadr::register_ss: 2015-03-29 21:47:45 PDT
+#> Date of last spreadsheet update: 2015-03-30 04:47:42 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1uhk58ASttskZINoIJiMn_ZF_Gua2i9KGPMprsQsDEcg
+#> Key: 14o9M7YZZJHircX11luyzx7YX3j7ouztWQH8WaylD9lc
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -445,14 +444,14 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-29 21:34:07 PDT
-#> Date of last spreadsheet update: 2015-03-30 04:34:04 UTC
+#>   Date of gspreadr::register_ss: 2015-03-29 21:47:57 PDT
+#> Date of last spreadsheet update: 2015-03-30 04:47:54 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1MfhaSKJJ0_D_3OE6sQmiEczPecxqTOAchCQ_yhaFBAU
+#> Key: 1_wi6N__qFmFx3RaD0VEiDJ0h0OWlO883EZYNBRWBCj4
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -474,8 +473,8 @@ gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
 gap_xlsx
 #>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-29 21:34:12 PDT
-#> Date of last spreadsheet update: 2015-03-30 04:34:09 UTC
+#>   Date of gspreadr::register_ss: 2015-03-29 21:48:02 PDT
+#> Date of last spreadsheet update: 2015-03-30 04:47:58 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -485,7 +484,7 @@ gap_xlsx
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 16joVayXQcOnAkDTbm3FU6EobrM2nT52SCUPeo7xNzuU
+#> Key: 1KzMbYIVcG7cxheVWqDc2UxrRCWxqOvwnagt_vLCUbg8
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
