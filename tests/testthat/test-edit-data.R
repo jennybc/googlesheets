@@ -1,4 +1,4 @@
-context("updating cell values")
+context("edit cells")
 
 ss <- register_ss(pts_title, verbose = FALSE)
 ws <- "for_updating"

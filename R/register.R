@@ -323,9 +323,8 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC")
   ss$get_date <- req$date
   
-  ## I'm ambivalent about even storing this; it's baked into the links
-  ## holdover from an earlier stage of pkg development ... omit?
-  ss$visibility <- req$url %>% dirname %>% basename
+  ss$visibility <- req$url %>% dirname() %>% basename()
+  ss$is_public <- ss$visibility == "public"
   
   ss$author_name <- req$content[["author"]][["name"]]
   ss$author_email <- req$content[["author"]][["email"]]
