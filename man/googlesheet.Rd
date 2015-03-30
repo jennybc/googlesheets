@@ -27,6 +27,7 @@ includes the fields:
 \item \code{visibility} visibility of spreadsheet (Google's confusing
 vocabulary); actually, does not describe a property of spreadsheet itself but
 rather whether requests will be made with or without authentication
+\item \code{is_public} logical indicating visibility is "public", as opposed to "private"
 \item \code{author_name} the name of the owner
 \item \code{author_email} the email of the owner
 \item \code{links} data.frame of links specific to the spreadsheet

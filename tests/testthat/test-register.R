@@ -1,4 +1,4 @@
-context("register a spreadsheet")
+context("register sheets")
 
 test_that("Spreadsheets visible to authenticated user can be listed", {
   ss_list <- list_sheets()

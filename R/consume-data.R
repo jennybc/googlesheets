@@ -37,8 +37,11 @@ get_via_csv <- function(ss, ws = 1, ...) {
   this_ws <- get_ws(ss, ws)
   
   ## since gsheets_GET expects xml back, just using GET for now
-  req <- 
-    httr::GET(this_ws$exportcsv, get_google_token())
+  if(ss$is_public) {
+    req <- httr::GET(this_ws$exportcsv)
+  } else { 
+    req <- httr::GET(this_ws$exportcsv, get_google_token())
+  }
   
   if(is.null(httr::content(req))) {
     stop("Worksheet is empty. There are no cells that contain data.")

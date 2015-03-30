@@ -19,11 +19,12 @@
 #' @export
 print.googlesheet <- function(x, ...) {  
   
-  sprintf("                  Spreadsheet title: %s\n", x$sheet_title) %>% cat
+  sprintf("                  Spreadsheet title: %s\n", x$sheet_title) %>% cat()
   sprintf("  Date of googlesheets::register_ss: %s\n",
-          x$get_date %>% format.POSIXct(usetz = TRUE)) %>% cat
+          x$get_date %>% format.POSIXct(usetz = TRUE)) %>% cat()
   sprintf("    Date of last spreadsheet update: %s\n",
-          x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat
+          x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat()
+  sprintf("                         visibility: %s\n", x$visibility) %>% cat()
   cat("\n")
   
   ws_output <-

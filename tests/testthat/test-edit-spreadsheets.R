@@ -1,4 +1,4 @@
-context("edit spreadsheets")
+context("edit sheets")
 
 test_that("Spreadsheet can be created and deleted", {
   
