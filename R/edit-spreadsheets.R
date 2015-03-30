@@ -507,16 +507,19 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
       
       ## TO DO: we should probably be doing something more XML-y here, instead of
       ## doing XML --> string --> regex based subsitution --> XML
+      title_replacement <- paste0("\\1", to, "\\3")
       the_body <- contents %>% 
-        stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)', to)
+        sub("(<title type=\"text\">)(.*)(</title>)", title_replacement, .)
     }
     
     if(!is.null(new_dim)) {
+
+      row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
+      col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
+      
       the_body <- contents %>% 
-        stringr::str_replace('(?<=<gs:rowCount>)(.*)(?=</gs:rowCount>)',
-                             new_dim["row_extent"]) %>%
-        stringr::str_replace('(?<=<gs:colCount>)(.*)(?=</gs:colCount>)',
-                             new_dim["col_extent"])         
+        sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
+        sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
     }
   
   gsheets_PUT(ss$ws$edit[ws_title_position], the_body)

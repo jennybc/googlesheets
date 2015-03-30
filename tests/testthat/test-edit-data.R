@@ -32,13 +32,20 @@ test_that("Input converts to character vector (or not)", {
                "Input has more than 2 dimensions")
 })
 
-test_that("Single cells can be updated", {
+test_that("Single cell can be updated", {
 
   expect_message(ss <- edit_cells(ss, ws, "eggplant", "A1"), 
                  "successfully updated")
   Sys.sleep(1)
   tmp <- ss %>% get_cells(ws, "A1") %>% simplify_cf(header = FALSE)
   expect_identical(tmp, c(A1 = "eggplant"))
+  
+})
+
+test_that("Cell update can force resize of worksheet", {
+  
+  ss <- register_ss(ss)
+  ss <- ss %>% resize_ws(ws, 1000, 26)
   
   # force worksheet extent to be increased
   expect_message(ss <- edit_cells(ss, ws, "Way out there!", "R1C30"), 
