@@ -4,12 +4,13 @@
 \alias{delete_ws}
 \title{Delete a worksheet from a spreadsheet}
 \usage{
-delete_ws(ss, ws_title, verbose = TRUE)
+delete_ws(ss, ws, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google sheet}
 
-\item{ws_title}{title of worksheet}
+\item{ws}{positive integer or character string specifying index or title,
+of the worksheet}
 
 \item{verbose}{logical; do you want informative message?}
 }

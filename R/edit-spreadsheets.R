@@ -290,7 +290,8 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' The worksheet and all of its contents will be removed from the spreadsheet.
 #'
 #' @param ss a registered Google sheet
-#' @param ws_title title of worksheet
+#' @param ws positive integer or character string specifying index or title, 
+#' of the worksheet
 #' @param verbose logical; do you want informative message?
 #' 
 #' @examples
@@ -306,30 +307,25 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' }
 #' 
 #' @export
-delete_ws <- function(ss, ws_title, verbose = TRUE) {
+delete_ws <- function(ss, ws, verbose = TRUE) {
   
   stopifnot(ss %>% inherits("googlesheet"))
   
-  ws_title_position <- match(ws_title, ss$ws$ws_title)
+  this_ws <- ss %>% get_ws(ws)
   
-  if(is.na(ws_title_position)) {
-    stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
-                 ws_title, ss$sheet_title))
-  }
-  
-  req <- gsheets_DELETE(ss$ws$ws_id[ws_title_position])
+  req <- gsheets_DELETE(this_ws$ws_id)
   
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
   
-  ws_title_exist <- !(match(ws_title, ss_refresh$ws[["ws_title"]]) %>% is.na())
+  ws_title_exist <- !(match(this_ws$ws_title, ss_refresh$ws[["ws_title"]]) %>% is.na())
   
   if(verbose) {
     if(ws_title_exist) {
       message(sprintf("Cannot verify whether worksheet \"%s\" was deleted from sheet \"%s\".",
-                      ws_title, ss_refresh$sheet_title))
+                      this_ws$ws_title, ss_refresh$sheet_title))
     } else {
       message(sprintf("Worksheet \"%s\" deleted from sheet \"%s\".",
-                      ws_title, ss$sheet_title))
+                      this_ws$ws_title, ss$sheet_title))
     }
   }
   
@@ -348,7 +344,8 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #' existing worksheet within the spreadsheet.
 #' 
 #' @param ss a registered Google sheet
-#' @param from character string for current title of worksheet
+#' @param from positive integer or character string specifying index or title, 
+#' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param verbose logical; do you want informative message?
 #'   
@@ -371,13 +368,8 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
   
   stopifnot(ss %>% inherits("googlesheet"))
   
-  ws_title_position <- match(from, ss$ws$ws_title)
-  
-  if(is.na(ws_title_position)) {
-    stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
-                 from, ss$sheet_title))
-  }
-  
+  this_ws <- ss %>% get_ws(from)
+    
   req <- modify_ws(ss, from = from, to = to)
   ## req carries updated info about the affected worksheet ... but I find it
   ## easier to just re-register the spreadsheet
@@ -385,7 +377,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
   Sys.sleep(1)
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
   
-  from_is_gone <- from %>% match(ss_refresh$ws$ws_title) %>% is.na()
+  from_is_gone <- this_ws$ws_title %>% match(ss_refresh$ws$ws_title) %>% is.na()
   to_is_there <- !(to %>% match(ss_refresh$ws$ws_title) %>% is.na())
   
   if(verbose) {
@@ -416,7 +408,8 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 #' title, with sensible defaults.
 #' 
 #' @param ss a registered Google sheet
-#' @param ws_title character string for title of worksheet
+#' @param ws positive integer or character string specifying index or title, 
+#' of the worksheet
 #' @param row_extent integer for new row extent
 #' @param col_extent integer for new column extent
 #' @param verbose logical; do you want informative message?
@@ -433,28 +426,15 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 #' }
 #'   
 #' @keywords internal
-resize_ws <- function(ss, ws_title,
+resize_ws <- function(ss, ws,
                       row_extent = NULL, col_extent = NULL, verbose = TRUE) {
   
   stopifnot(ss %>% inherits("googlesheet"))
   
-  ws_title_position <- match(ws_title, ss$ws$ws_title)
-  
-  if(is.na(ws_title_position)) {
-    stop(sprintf("No worksheet titled \"%s\" found in sheet \"%s\".",
-                 ws_title, ss$sheet_title))
-  }
-  
-  # if row or col extent not specified, make it the same as before
-  if(is.null(row_extent)) {
-    row_extent <- ss$ws$row_extent[ws_title_position]
-  }
-  if(is.null(col_extent)) {
-    col_extent <- ss$ws$col_extent[ws_title_position]
-  }
+  this_ws <- ss %>% get_ws(ws)
   
   req <-
-    modify_ws(ss, ws_title,
+    modify_ws(ss, ws,
               new_dim = c(row_extent = row_extent, col_extent = col_extent))
   
   new_row_extent <- req$content$rowCount %>% as.integer()
@@ -465,7 +445,7 @@ resize_ws <- function(ss, ws_title,
   
   if(verbose && success) {
     message(sprintf("Worksheet \"%s\" dimensions changed to %d x %d.",
-                    ws_title, new_row_extent, new_col_extent))
+                    this_ws$ws_title, new_row_extent, new_col_extent))
   }
   
   if(success) {
@@ -480,7 +460,8 @@ resize_ws <- function(ss, ws_title,
 #' Modify a worksheet's title or size
 #' 
 #' @param ss a registered Google sheet
-#' @param from character string for current title of worksheet
+#' @param from positive integer or character string specifying index or title, 
+#' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param new_dim list of length 2 specifying the row and column extent of the
 #'   worksheet
@@ -489,11 +470,11 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
     stopifnot(ss %>% inherits("googlesheet"))
     
-    ws_title_position <- match(from, ss$ws$ws_title)
+    this_ws <- ss %>% get_ws(from, verbose = FALSE)
     
     # don't want return value converted to a list, keep as XML, make edits,send
     # back via PUT
-    req <- gsheets_GET(ss$ws$ws_id[ws_title_position], to_list = FALSE)
+    req <- gsheets_GET(this_ws$ws_id, to_list = FALSE)
     contents <- req %>% httr::content() %>% XML::toString.XMLNode()
     
     if(!is.null(to)) {
@@ -522,7 +503,7 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
         sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
     }
   
-  gsheets_PUT(ss$ws$edit[ws_title_position], the_body)
+  gsheets_PUT(this_ws$edit, the_body)
   
 }
 
