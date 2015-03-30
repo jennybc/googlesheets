@@ -85,9 +85,9 @@ gap
 ```
 
 ```
-##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:13 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -132,9 +132,9 @@ ss2
 ```
 
 ```
-##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:13 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -164,9 +164,9 @@ gap
 ```
 
 ```
-##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:13 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -355,10 +355,10 @@ new_ss("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
-## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1XFlLRqE84_LFzdkA0GoYqloKKsTUaQZ7OjCWY4NbZsE
+## sheet_key: 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg
 ```
 
 ```r
@@ -369,7 +369,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1XFlLRqE84_LFzdkA0GoYqloKKsTUaQZ7OjCWY4NbZsE gspreadr
+## 1 hi I am new here 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
 ```
 
@@ -406,10 +406,10 @@ new_ss("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
-## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -419,7 +419,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -427,15 +427,15 @@ x
 ```
 
 ```
-##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:22 PDT
-## Date of last spreadsheet update: 2015-03-30 04:30:18 UTC
+##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:20 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:16 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -451,16 +451,16 @@ x
 ```
 
 ```
-##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:23 PDT
-## Date of last spreadsheet update: 2015-03-30 04:30:21 UTC
+##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:21 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:19 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -478,7 +478,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -486,15 +486,15 @@ x
 ```
 
 ```
-##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:25 PDT
-## Date of last spreadsheet update: 2015-03-30 04:30:22 UTC
+##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:09:01 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:58 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

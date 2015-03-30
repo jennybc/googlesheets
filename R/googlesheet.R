@@ -1,11 +1,11 @@
-#' The gspreadsheet object
+#' The googlesheet object
 #' 
-#' The gspreadsheet object stores information that \code{gspreadr} requires in
+#' The googlesheet object stores information that \code{googlesheets} requires in
 #' order to communicate with the
 #' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
 #' API}.
 #' 
-#' Very little of this is of interest to the user. A gspreadsheet object
+#' Very little of this is of interest to the user. A googlesheet object
 #' includes the fields:
 #' 
 #' \itemize{
@@ -30,8 +30,8 @@
 #' self-explanatory and this isn't really needed. Or this needs to get beefed
 #' up. Probably the latter.
 #' 
-#' @name gspreadsheet
-gspreadsheet <- function() {
+#' @name googlesheet
+googlesheet <- function() {
   structure(list(sheet_key = character(),
                  sheet_title = character(),
                  n_ws = integer(),
@@ -44,6 +44,6 @@ gspreadsheet <- function() {
                  author_email = character(),
                  links = character(), # initialize as data.frame?
                  ws = list()),
-            class = c("gspreadsheet", "list"))
+            class = c("googlesheet", "list"))
   
 }

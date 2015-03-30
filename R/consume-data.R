@@ -15,7 +15,7 @@
 #' @param ... further arguments to be passed to \code{\link{read.csv}} or, 
 #'   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is 
 #'   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
-#'   within \code{gspreadr} re: NOT converting character data to factor
+#'   within \code{googlesheets} re: NOT converting character data to factor
 #'   
 #' @family data consumption functions
 #' 
@@ -32,7 +32,7 @@
 #' @export
 get_via_csv <- function(ss, ws = 1, ...) {
 
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   this_ws <- get_ws(ss, ws)
   
@@ -89,7 +89,7 @@ get_via_csv <- function(ss, ws = 1, ...) {
 #' @export
 get_via_lf <- function(ss, ws = 1) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   this_ws <- get_ws(ss, ws)
   req <- gsheets_GET(this_ws$listfeed)
@@ -181,7 +181,7 @@ get_via_cf <-
            limits = NULL, return_empty = FALSE, return_links = FALSE,
            verbose = TRUE) {
     
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
     
   this_ws <- get_ws(ss, ws, verbose)
   
@@ -413,7 +413,7 @@ reshape_cf <- function(x, header = TRUE) {
 #' an atomic vector. That's what this function does. Note that, unlike 
 #' \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this 
 #' result. By default, the API does not transmit data for these cells; 
-#' \code{gspreadr} inserts these cells in \code{\link{reshape_cf}} because it is
+#' \code{googlesheets} inserts these cells in \code{\link{reshape_cf}} because it is
 #' necessary to give the data rectangular shape. In contrast, empty cells will 
 #' only appear in the output of \code{simplify_cf} if they were already present 
 #' in the data from the cell feed, i.e. if the original call to 

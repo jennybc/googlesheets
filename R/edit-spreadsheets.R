@@ -6,7 +6,7 @@
 #' @param title the title for the new sheet
 #' @param verbose logical; do you want informative message?
 #'   
-#' @return a gspreadsheet object
+#' @return a googlesheet object
 #' 
 #' @examples
 #' \dontrun{
@@ -47,7 +47,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #' \href{https://drive.google.com/drive/#trash}{trash in Google Drive}, find the
 #' sheet, and restore it.
 #' 
-#' @param x sheet-identifying information, either a gspreadsheet object or a 
+#' @param x sheet-identifying information, either a googlesheet object or a 
 #'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed; if \code{x} is specified, the \code{regex} argument will 
 #'   be ignored
@@ -150,7 +150,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 #' spreadsheet-identifying methods). Otherwise, you'll have to explicitly
 #' specify it by key.
 #' 
-#' @param from sheet-identifying information, either a gspreadsheet object or a 
+#' @param from sheet-identifying information, either a googlesheet object or a 
 #'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed
 #' @param key character string guaranteed to provide unique key of the sheet; 
@@ -224,7 +224,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' @param ncol number of columns (default is 26)
 #' @param verbose logical; do you want informative message?
 #'   
-#' @return a gspreadsheet object, resulting from re-registering the host
+#' @return a googlesheet object, resulting from re-registering the host
 #'   spreadsheet after adding the new worksheet
 #'   
 #' @export
@@ -241,7 +241,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 add_ws <- function(ss, ws_title = "Sheet1",
                    nrow = 1000, ncol = 26, verbose = TRUE) { 
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_exist <- !(match(ws_title, ss$ws[["ws_title"]]) %>% is.na())
 
@@ -308,7 +308,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' @export
 delete_ws <- function(ss, ws_title, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_position <- match(ws_title, ss$ws$ws_title)
   
@@ -369,7 +369,7 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #' @export
 rename_ws <- function(ss, from, to, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_position <- match(from, ss$ws$ws_title)
   
@@ -436,7 +436,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 resize_ws <- function(ss, ws_title,
                       row_extent = NULL, col_extent = NULL, verbose = TRUE) {
   
-  stopifnot(ss %>% inherits("gspreadsheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
   
   ws_title_position <- match(ws_title, ss$ws$ws_title)
   
@@ -487,7 +487,7 @@ resize_ws <- function(ss, ws_title,
 #' @keywords internal
 modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
-    stopifnot(ss %>% inherits("gspreadsheet"))
+    stopifnot(ss %>% inherits("googlesheet"))
     
     ws_title_position <- match(from, ss$ws$ws_title)
     

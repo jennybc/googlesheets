@@ -121,9 +121,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_title: Gapminder
 ## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
-<pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:13 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+<pre><code>##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -148,9 +148,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_title: Gapminder
 ## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">ss2</code></pre>
-<pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:13 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+<pre><code>##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -172,9 +172,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 <p>Example of getting nice tabular data from the “list feed”:</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
-<pre><code>##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:13 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+<pre><code>##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -299,15 +299,15 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create a new empty spreadsheet by title</span>
 <span class="kw">new_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet &quot;hi I am new here&quot; created in Google Drive.
-## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1XFlLRqE84_LFzdkA0GoYqloKKsTUaQZ7OjCWY4NbZsE</code></pre>
+## sheet_key: 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list_sheets</span>() %&gt;%<span class="st"> </span><span class="kw">filter</span>(sheet_title ==<span class="st"> &quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1XFlLRqE84_LFzdkA0GoYqloKKsTUaQZ7OjCWY4NbZsE gspreadr
+## 1 hi I am new here 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Move spreadsheet to trash</span>
 <span class="kw">delete_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
@@ -325,53 +325,53 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to <code>x</code> after adding the worksheet. This is because adding a worksheet changes the information associate with a registered sheet and, within editing function like <code>add_ws()</code>, we re-register the sheet and return the current sheet info.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">new_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet &quot;hi I am new here&quot; created in Google Drive.
-## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw</code></pre>
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw</code></pre>
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
-<pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:22 PDT
-## Date of last spreadsheet update: 2015-03-30 04:30:18 UTC
+<pre><code>##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:20 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:16 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw</code></pre>
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">add_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; added to sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
-<pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:23 PDT
-## Date of last spreadsheet update: 2015-03-30 04:30:21 UTC
+<pre><code>##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:21 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:19 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw</code></pre>
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">delete_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; deleted from sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw</code></pre>
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
-<pre><code>##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-29 21:30:25 PDT
-## Date of last spreadsheet update: 2015-03-30 04:30:22 UTC
+<pre><code>##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:09:01 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:58 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1r6J0x_oRN2lY-OQvKwWbUQlZAFS9kVxnenB9UwRD0mw</code></pre>
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU</code></pre>
 <p>To rename a worksheet, pass in the spreadsheet object, the worksheet’s current name and the new name you want it to be.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rename_ws</span>(x, <span class="st">&quot;Sheet1&quot;</span>, <span class="st">&quot;First Sheet&quot;</span>)</code></pre>
 <pre><code>## Worksheet &quot;Sheet1&quot; renamed to &quot;First Sheet&quot;.</code></pre>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{list_ws}
 \alias{list_ws}
-\title{List the worksheets in a gspreadsheet}
+\title{List the worksheets in a googlesheet}
 \usage{
 list_ws(ss)
 }

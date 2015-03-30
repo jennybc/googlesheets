@@ -87,7 +87,7 @@ my_sheets %>% glimpse()
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
 #> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
 #> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "r", "r", "rw...
-#> $ last_updated (time) 2015-03-30 04:26:40, 2015-03-23 20:59:10, 2015-0...
+#> $ last_updated (time) 2015-03-30 05:25:40, 2015-03-23 20:59:10, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -102,9 +102,9 @@ gap <- register_ss("Gapminder")
 #> sheet_title: Gapminder
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
-#>               Spreadsheet title: Gapminder
-#>   Date of gspreadr::register_ss: 2015-03-29 21:46:46 PDT
-#> Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+#>                   Spreadsheet title: Gapminder
+#>   Date of googlesheets::register_ss: 2015-03-29 22:28:10 PDT
+#>     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -129,7 +129,7 @@ gap <- gap_key %>% register_ss
 gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
 gap <- gap_url %>% register_ss
 #> Identifying info will be processed as a URL.
-#> gspreadr will attempt to extract sheet key from the URL.
+#> googlesheets will attempt to extract sheet key from the URL.
 #> Putative key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 #> Sheet identified!
 #> sheet_title: Gapminder
@@ -374,20 +374,20 @@ You can use `googlesheets` to create new spreadsheets.
 ``` r
 foo <- new_ss("foo")
 #> Sheet "foo" created in Google Drive.
-#> Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+#> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 14o9M7YZZJHircX11luyzx7YX3j7ouztWQH8WaylD9lc
+#> sheet_key: 17Ho_pgJXdphkkt1o7M1rSsRASpPrTheQrULC3KKLrTM
 foo
-#>               Spreadsheet title: foo
-#>   Date of gspreadr::register_ss: 2015-03-29 21:47:45 PDT
-#> Date of last spreadsheet update: 2015-03-30 04:47:42 UTC
+#>                   Spreadsheet title: foo
+#>   Date of googlesheets::register_ss: 2015-03-29 22:28:18 PDT
+#>     Date of last spreadsheet update: 2015-03-30 05:28:14 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 14o9M7YZZJHircX11luyzx7YX3j7ouztWQH8WaylD9lc
+#> Key: 17Ho_pgJXdphkkt1o7M1rSsRASpPrTheQrULC3KKLrTM
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -443,15 +443,15 @@ iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
 iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
-#>               Spreadsheet title: iris
-#>   Date of gspreadr::register_ss: 2015-03-29 21:47:57 PDT
-#> Date of last spreadsheet update: 2015-03-30 04:47:54 UTC
+#>                   Spreadsheet title: iris
+#>   Date of googlesheets::register_ss: 2015-03-29 22:28:29 PDT
+#>     Date of last spreadsheet update: 2015-03-30 05:28:27 UTC
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1_wi6N__qFmFx3RaD0VEiDJ0h0OWlO883EZYNBRWBCj4
+#> Key: 1-rH-_JNYARqFV6KgMS9-oALcetP2BB9hh93UbYKZa60
 iris_ss %>% get_via_lf() %>% print()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -472,9 +472,9 @@ Now we'll upload a multi-sheet Excel workbook. Slowly.
 gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
 gap_xlsx
-#>               Spreadsheet title: gap-data
-#>   Date of gspreadr::register_ss: 2015-03-29 21:48:02 PDT
-#> Date of last spreadsheet update: 2015-03-30 04:47:58 UTC
+#>                   Spreadsheet title: gap-data
+#>   Date of googlesheets::register_ss: 2015-03-29 22:28:36 PDT
+#>     Date of last spreadsheet update: 2015-03-30 05:28:32 UTC
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -484,7 +484,7 @@ gap_xlsx
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1KzMbYIVcG7cxheVWqDc2UxrRCWxqOvwnagt_vLCUbg8
+#> Key: 1dMjxAnYrwlxwdtqh2cU2XkaAS3HAenKeI2ANUMX7WXE
 gap_xlsx %>% get_via_lf(ws = "Oceania") %>% print()
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]

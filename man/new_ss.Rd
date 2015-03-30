@@ -12,7 +12,7 @@ new_ss(title = "my_sheet", verbose = TRUE)
 \item{verbose}{logical; do you want informative message?}
 }
 \value{
-a gspreadsheet object
+a googlesheet object
 }
 \description{
 Create a new (empty) spreadsheet in your Google Drive. The new sheet will

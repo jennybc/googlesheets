@@ -1,6 +1,6 @@
-#' Retrieve a worksheet-describing list from a gspreadsheet
+#' Retrieve a worksheet-describing list from a googlesheet
 #' 
-#' From a gspreadsheet, retrieve a list (actually a row of a data.frame) giving
+#' From a googlesheet, retrieve a list (actually a row of a data.frame) giving
 #' everything we know about a specific worksheet.
 #' 
 #' @inheritParams get_via_lf
@@ -10,7 +10,7 @@
 #' @keywords internal
 get_ws <- function(ss, ws, verbose = TRUE) {
   
-  stopifnot(inherits(ss, "gspreadsheet"),
+  stopifnot(inherits(ss, "googlesheet"),
             length(ws) == 1L,
             is.character(ws) || (is.numeric(ws) && ws > 0))
   
@@ -31,7 +31,7 @@ get_ws <- function(ss, ws, verbose = TRUE) {
   ss$ws[ws, ]
 }
 
-#' List the worksheets in a gspreadsheet
+#' List the worksheets in a googlesheet
 #' 
 #' Retrieve the titles of all the worksheets in a gpreadsheet.
 #' 
@@ -46,7 +46,7 @@ get_ws <- function(ss, ws, verbose = TRUE) {
 #' @export
 list_ws <- function(ss) {
   
-  stopifnot(inherits(ss, "gspreadsheet"))
+  stopifnot(inherits(ss, "googlesheet"))
   
   ss$ws$ws_title
 
