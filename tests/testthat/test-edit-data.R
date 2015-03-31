@@ -46,6 +46,7 @@ test_that("Cell update can force resize of worksheet", {
   
   ss <- register_ss(ss)
   ss <- ss %>% resize_ws(ws, 1000, 26)
+  Sys.sleep(1)
   
   # force worksheet extent to be increased
   expect_message(ss <- edit_cells(ss, ws, "Way out there!", "R1C30"), 
@@ -87,15 +88,17 @@ test_that("2-dimensional things can be uploaded", {
 
 test_that("Vectors can be uploaded", {
   
+  ss <- register_ss(ss)
+  
   # by_row = FALSE
   ss <- ss %>% edit_cells(ws, LETTERS[1:5], "A8")
-  Sys.sleep(1)
+  Sys.sleep(2)
   tmp <- ss %>% get_via_cf(ws, min_row = 7) %>% simplify_cf()
   expect_equivalent(tmp, LETTERS[1:5])
   
   # by_row = TRUE
   ss <- ss %>% edit_cells(ws, LETTERS[5:1], "A15", by_row = TRUE)
-  Sys.sleep(1)
+  Sys.sleep(2)
   tmp <- ss %>% get_via_cf(ws, min_row = 15) %>% simplify_cf()
   expect_equivalent(tmp, LETTERS[5:1])
   
