@@ -112,7 +112,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
   
   if(verbose) {
     sprintf("Sheets found and slated for deletion:\n%s",
-            titles_to_delete %>%paste(collapse = "\n")) %>%
+            titles_to_delete %>% paste(collapse = "\n")) %>%
       message()
   }
 

@@ -38,9 +38,14 @@ The exuberant prose in this README is inspired by [Tabletop.js](https://github.c
 
 Think of `googlesheets` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
 
-Use a Google Form to conduct a survey, which populates a Google Sheet.
+Use a [Google Form](http://www.google.com/forms/about/) to conduct a survey, which populates a Google Sheet.
 
-Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en).
+Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en). Take advantage of [data validation](https://support.google.com/docs/answer/139705?hl=en) to limit the crazy on the way in.
+
+There are various ways to harvest web data directly into a Google Sheet. For example:
+
+  * [This blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) from Aylien.com has a simple example that uses the `=IMPORTXML()` formula to populate a Sheet with restaurant reviews and ratings from TripAdvisor.
+  * Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free Google Sheet template to setup and run automated collection of search results from Twitter.
 
 Use `googlesheets` to get all that data into R.
 
@@ -196,7 +201,7 @@ By default, there will be an empty worksheet called "Sheet1". You can also add, 
 
 ### Edit cells
 
-You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit essentially populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns).
+You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns).
 
 ```{r edit-cells}
 foo <- foo %>% edit_cells(input = head(iris), header = TRUE, trim = TRUE)
@@ -210,7 +215,7 @@ Note that we always store the returned value from `edit_cells()` (and all other 
 foo %>% get_via_lf()
 ```
 
-Read the function documentation for `edit_cells()` for ways to specify where the data goes and in which direction.
+Read the function documentation for `edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
 
 ### Delete sheets
 
@@ -247,28 +252,28 @@ delete_ss("iris")
 delete_ss("gap-data")
 ```
 
-
-### Download Sheets as csv, pdf, or xlsx file
+### Download sheets as csv, pdf, or xlsx file
 
 You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
 
 ```{r export-sheet-as-csv}
-download_ss("Gapminder", ws = "Africa", to = "gapminder-africa.csv", verbose = FALSE)
-
-read.csv("gapminder-africa.csv") %>% head()
-
+download_ss("Gapminder", ws = "Africa", to = "~/tmp/gapminder-africa.csv")
+## is it there? yes!
+read.csv("~/tmp/gapminder-africa.csv") %>% head()
 ```
 
 Download the entire spreadsheet as an Excel workbook.
 
 ```{r export-sheet-as-xlsx}
-download_ss("Gapminder", to = "gapminder.xlsx", verbose = FALSE)
+download_ss("Gapminder", to = "~/tmp/gapminder.xlsx")
 ```
+
+Go check it out in Excel, if you wish!
 
 And now we clean up the downloaded files.
 
 ```{r clean-exported-files}
-file.remove("gapminder.xlsx", "gapminder-africa.csv")
+file.remove(file.path("~/tmp", c("gapminder.xlsx", "gapminder-africa.csv")))
 ```
 
 ### Authorization using OAuth2

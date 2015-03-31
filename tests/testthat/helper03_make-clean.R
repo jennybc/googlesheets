@@ -32,6 +32,5 @@ ws <- "for_updating"
 
 # update with empty strings to "clear" cells
 pts <- pts %>% googlesheets:::resize_ws(ws, 10, 26, verbose = FALSE)
-tmp <- pts %>% get_via_cf(ws, verbose = FALSE)
 input <- matrix("", nrow = 10, ncol = 26)
 pts <- pts %>% edit_cells(ws, input, verbose = FALSE)
