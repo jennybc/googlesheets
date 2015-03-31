@@ -4,12 +4,14 @@
 \alias{gdrive_POST}
 \title{Make POST request to Google Drive API}
 \usage{
-gdrive_POST(url, the_body)
+gdrive_POST(url, ...)
 }
 \arguments{
 \item{url}{URL for POST request}
 
-\item{the_body}{body of POST request}
+\item{...}{optional; further named parameters, such as \code{query},
+  \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
+  parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
 Used in new_ss(), delete_ss(), copy_ss()
