@@ -4,13 +4,13 @@
 \alias{resize_ws}
 \title{Resize a worksheet}
 \usage{
-resize_ws(ss, ws_title, row_extent = NULL, col_extent = NULL,
-  verbose = TRUE)
+resize_ws(ss, ws, row_extent = NULL, col_extent = NULL, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google sheet}
 
-\item{ws_title}{character string for title of worksheet}
+\item{ws}{positive integer or character string specifying index or title,
+of the worksheet}
 
 \item{row_extent}{integer for new row extent}
 

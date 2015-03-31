@@ -85,7 +85,7 @@ test_that("Add a new worksheet", {
 })
 
 
-test_that("Delete a worksheet", {
+test_that("Delete a worksheet by title and index", {
   
   ss_old <- register_ss(pts_title)
   
@@ -96,11 +96,19 @@ test_that("Delete a worksheet", {
   expect_equal(ss_old$n_ws - 1, ss_new$n_ws)
   expect_false("Test Sheet" %in% ss_new$ws[["ws_title"]])
   
+  
+  ss_new <- add_ws(ss_new, "one more to delete")
+  ws_pos <- match("one more to delete", ss_new$ws$ws_title)
+  ss_final <- delete_ws(ss_new, ws_pos)
+  
+  expect_equal(ss_new$n_ws - 1, ss_final$n_ws)
+  expect_false("one more to delete" %in% ss_final$ws[["ws_title"]])
+  
   ## can't delete a non-existent worksheet
   expect_error(delete_ws(ss_old, "Hello World"))
 })
 
-test_that("Worksheet is renamed", {
+test_that("Worksheet is renamed by title and index", {
   
   ss <- register_ss(pts_title)
   ss_new <- rename_ws(ss, "Asia", "Somewhere in Asia")
@@ -109,7 +117,7 @@ test_that("Worksheet is renamed", {
   expect_true("Somewhere in Asia" %in% ss_new$ws$ws_title)
   expect_false("Asia" %in% ss_new$ws$ws_title)
 
-  ss_final <- rename_ws(ss_new, "Somewhere in Asia", "Asia")
+  ss_final <- rename_ws(ss_new, 1, "Asia")
   expect_is(ss_final, "googlesheet")
   expect_false("Somewhere in Asia" %in% ss_final$ws$ws_title)
   expect_true("Asia" %in% ss_final$ws$ws_title)
@@ -119,19 +127,24 @@ test_that("Worksheet is renamed", {
 
 })
 
-test_that("Worksheet is resized", {
-
+test_that("Worksheet is resized by title and index", {
+  
   ss <- register_ss(pts_title)
   
   ws_title_pos <- match("for_resizing", ss$ws$ws_title)
   
-  row <- sample(1:2000, 1)
-  col <- sample(1:35, 1)
+  row <- sample(1:2000, 2)
+  col <- sample(1:35, 2)
   
-  ss_new <- resize_ws(ss, "for_resizing", row_extent = row, col_extent = col)
-
-  expect_equal(ss_new$ws$row_extent[ws_title_pos], row)
-  expect_equal(ss_new$ws$col_extent[ws_title_pos], col)
+  ss_new <- resize_ws(ss, "for_resizing", row_extent = row[1], col_extent = col[1])
+  
+  expect_equal(ss_new$ws$row_extent[ws_title_pos], row[1])
+  expect_equal(ss_new$ws$col_extent[ws_title_pos], col[1])
+  
+  ss_final <- resize_ws(ss_new, ws_title_pos, row_extent = row[2], col_extent = col[2])
+  
+  expect_equal(ss_final$ws$row_extent[ws_title_pos], row[2])
+  expect_equal(ss_final$ws$col_extent[ws_title_pos], col[2])
   
 })
 
