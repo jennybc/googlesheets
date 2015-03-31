@@ -17,17 +17,22 @@
 #' @export
 new_ss <- function(title = "my_sheet", verbose = TRUE) {
 
+  ## TO DO? warn if sheet with same title alredy exists?
+  ## right now we proceed quietly, because sheet is identified by key
+  
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
 
   req <-
-    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", the_body)
+    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", 
+                body = the_body)
 
+  new_sheet_key <- httr::content(req)$id
   ## I set verbose = FALSE here because it seems weird to message "Spreadsheet
   ## identified!" in this context, esp. to do so *before* message confirming
   ## creation
-  ss <- identify_ss(title, verbose = FALSE)
-
+  ss <- identify_ss(new_sheet_key, verbose = FALSE)
+  
   if(verbose) {
     message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
   }
@@ -121,7 +126,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
   the_url <- paste("https://www.googleapis.com/drive/v2/files",
                    keys_to_delete, "trash", sep = "/")
 
-  post <- lapply(the_url, gdrive_POST, the_body = NULL)
+  post <- lapply(the_url, gdrive_POST, body = NULL)
   statii <- post %>% lapluck("status_code")
   sitrep <-
     dplyr::data_frame_(list(ss_title = ~ titles_to_delete,
@@ -188,8 +193,8 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   the_url <-
     paste("https://www.googleapis.com/drive/v2/files", key, "copy", sep = "/")
 
-  req <- gdrive_POST(the_url, the_body)
-
+  req <- gdrive_POST(the_url, body = the_body)
+  
   new_title <- httr::content(req)$title
 
   ## see new_ss() for why I set verbose = FALSE here
@@ -573,9 +578,10 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
     sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
   }
 
-  req <- gdrive_POST(url = "https://www.googleapis.com/drive/v2/files",
-                     the_body = list(title = sheet_title,
-                                     mimeType = "application/vnd.google-apps.spreadsheet"))
+  req <-
+    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", 
+                body = list(title = sheet_title, 
+                            mimeType = "application/vnd.google-apps.spreadsheet"))
 
   new_sheet_key <- httr::content(req)$id
 
