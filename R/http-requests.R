@@ -151,10 +151,12 @@ gsheets_PUT <- function(url, the_body) {
 #' Used in new_ss(), delete_ss(), copy_ss()
 #' 
 #' @param url URL for POST request
-#' @param the_body body of POST request
+#' @param ... optional; further named parameters, such as \code{query}, 
+#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
+#'   parameters will be combined with \code{\link[httr]{config}}.
 #' 
 #' @keywords internal
-gdrive_POST <- function(url, the_body) {
+gdrive_POST <- function(url, ...) {
   
   token <- get_google_token()
   
@@ -162,16 +164,9 @@ gdrive_POST <- function(url, the_body) {
     stop("Must be authorized user in order to perform request")
   } else {
     
-    req <- httr::POST(url, config = token, body = the_body, encode = "json")
+    req <- httr::POST(url, config = token, encode = "json", ...)
     httr::stop_for_status(req)
     req
-    
-    ## TO DO: inform users of why client error (404) Not Found may arise when
-    ## copying a spreadsheet
-    #     message(paste("The spreadsheet can not be found.",
-    #                   "Please make sure that the spreadsheet exists and that you have permission to access it.",
-    #                   'A "published to the web" spreadsheet does not necessarily mean you have permission for access.',
-    #                   "Permission for access is set in the sharing dialog of a sheets file."))
   }
 }
 
