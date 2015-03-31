@@ -5,7 +5,7 @@
 \title{Download a Google Sheet}
 \usage{
 download_ss(from, key = NULL, ws = NULL, to = "my_sheet.xlsx",
-  verbose = TRUE)
+  overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{from}{sheet-identifying information, either a spreadsheet object or a
@@ -21,6 +21,8 @@ download_ss(from, key = NULL, ws = NULL, to = "my_sheet.xlsx",
 
 \item{to}{path to write file, if it does not contain the absolute path,
 then the file is relative to the current working directory}
+
+\item{overwrite}{will only overwrite existing path if TRUE}
 
 \item{verbose}{logical; do you want informative message?}
 }
