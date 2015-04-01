@@ -54,22 +54,20 @@ download_ss <- function(from, key = NULL, ws = NULL, to = "my_sheet.xlsx",
       csv = this_ws$exportcsv,
       pdf = httr::modify_url(this_ws$exportcsv, query = list(format = "pdf")),
       xlsx = httr::modify_url(this_ws$exportcsv, query = list(format = "xlsx")))
-    
-  } else { 
+  } else {
     # get export links for entire spreadsheet
     the_url <-
       paste("https://www.googleapis.com/drive/v2/files", key, sep = "/")
     
     req <- gdrive_GET(the_url)
-    
     export_links <- c(
       csv = req$content$exportLinks$'text/csv', # first sheet only
       pdf = req$content$exportLinks$'application/pdf',
-      xlsx = req$content$exportLinks$'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')  
+      xlsx = req$content$exportLinks$'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   }
-  
+
   link <- export_links %>% `[[`(ext)
-  
+
   if (interactive()) {
     gdrive_GET(link, httr::write_disk(to, overwrite = overwrite))
   } else {
@@ -78,7 +76,7 @@ download_ss <- function(from, key = NULL, ws = NULL, to = "my_sheet.xlsx",
   }
 
   if(file.exists(to)) {
-    
+
     if(verbose) {
       message(sprintf("Sheet successfully downloaded: %s", normalizePath(to)))
     }

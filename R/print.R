@@ -8,14 +8,14 @@
 #' @param x googlesheet object returned by \code{register_ss} and other
 #'   \code{googlesheets} functions
 #' @param ... potential further arguments (required for Method/Generic reasons)
-#'   
+#'
 #' @examples
 #' \dontrun{
 #' foo <- new_ss("foo")
 #' foo
 #' print(foo)
 #' }
-#'   
+#'
 #' @export
 print.googlesheet <- function(x, ...) {  
   
@@ -26,16 +26,15 @@ print.googlesheet <- function(x, ...) {
           x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat()
   sprintf("                         visibility: %s\n", x$visibility) %>% cat()
   cat("\n")
-  
+
   ws_output <-
     sprintf("%s: %d x %d",
             x$ws$ws_title, x$ws$row_extent, x$ws$col_extent)
   sprintf("Contains %d worksheets:\n", x$n_ws) %>% cat
   cat("(Title): (Nominal worksheet extent as rows x columns)\n")
   cat(ws_output, sep = "\n")
-  
+
   cat("\n")
   sprintf("Key: %s\n", x$sheet_key) %>% cat
   #sprintf("Worksheets feed: %s\n", x$ws_feed) %>% cat
-  
 }

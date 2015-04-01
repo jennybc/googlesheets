@@ -14,7 +14,7 @@ Based on \href{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}{
 }
 \description{
 User will be directed to web browser and asked to sign into their Google
-account and grant googlesheet access permission to user data for Google
+account and grant googlesheets access permission to user data for Google
 Spreadsheets and Google Drive. User credentials will be cached in .httr-oauth
 in the current working directory.
 }

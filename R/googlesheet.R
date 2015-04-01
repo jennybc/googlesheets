@@ -7,7 +7,7 @@
 #' 
 #' Very little of this is of interest to the user. A googlesheet object
 #' includes the fields:
-#' 
+#'
 #' \itemize{
 #' \item \code{sheet_key} the key of the spreadsheet
 #' \item \code{sheet_title} the title of the spreadsheet
@@ -26,7 +26,7 @@
 #' \item \code{ws} a data.frame about the worksheets contained in the
 #' spreadsheet
 #' }
-#' 
+#'
 #' TO DO: this documentation is neither here nor there. Either the object is
 #' self-explanatory and this isn't really needed. Or this needs to get beefed
 #' up. Probably the latter.

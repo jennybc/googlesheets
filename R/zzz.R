@@ -6,6 +6,6 @@
   )
   toset <- !(names(op.gspreadr) %in% names(op))
   if(any(toset)) options(op.gspreadr[toset])
-  
+
   invisible()
 }
