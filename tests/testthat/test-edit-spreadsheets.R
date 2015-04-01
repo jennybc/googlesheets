@@ -153,6 +153,7 @@ test_that("Different file formats can be uploaded", {
   expect_message(upload_ss("gap-data.txt"), "uploaded")
   expect_message(upload_ss("gap-data.ods"), "uploaded")
   
+  Sys.sleep()
   ss_df <- list_sheets()
   gap_matches <- grepl("gap-data", ss_df$sheet_title)
   expect_equal(gap_matches %>% sum(), 5)
