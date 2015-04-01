@@ -7,9 +7,11 @@ test_that("Spreadsheet can be created and deleted", {
   
   expect_message(new_ss <- new_ss(sheet_title), "created")
   expect_is(new_ss, "googlesheet")
+  Sys.sleep(1)
   ss_df <- list_sheets()
   expect_true(sheet_title %in% ss_df$sheet_title)
   expect_message(tmp <- delete_ss(sheet_title), "moved to trash")
+  Sys.sleep(1)
   ss_df <- list_sheets()
   expect_false(sheet_title %in% ss_df$sheet_title)
   
@@ -151,6 +153,7 @@ test_that("Different file formats can be uploaded", {
   expect_message(upload_ss("gap-data.txt"), "uploaded")
   expect_message(upload_ss("gap-data.ods"), "uploaded")
   
+  Sys.sleep(1)
   ss_df <- list_sheets()
   gap_matches <- grepl("gap-data", ss_df$sheet_title)
   expect_equal(gap_matches %>% sum(), 5)

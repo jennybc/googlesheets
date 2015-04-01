@@ -22,9 +22,14 @@ The exuberant prose in this README is inspired by [Tabletop.js](https://github.c
 
 Think of `googlesheets` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
 
-Use a Google Form to conduct a survey, which populates a Google Sheet.
+Use a [Google Form](http://www.google.com/forms/about/) to conduct a survey, which populates a Google Sheet.
 
-Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en).
+Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en). Take advantage of [data validation](https://support.google.com/docs/answer/139705?hl=en) to limit the crazy on the way in.
+
+There are various ways to harvest web data directly into a Google Sheet. For example:
+
+-   [This blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) from Aylien.com has a simple example that uses the `=IMPORTXML()` formula to populate a Sheet with restaurant reviews and ratings from TripAdvisor.
+-   Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free Google Sheet template to setup and run automated collection of search results from Twitter.
 
 Use `googlesheets` to get all that data into R.
 
@@ -57,38 +62,39 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
-#> Source: local data frame [17 x 6]
+#> Source: local data frame [19 x 6]
 #> 
 #>                                     sheet_title
 #> 1                          Public Testing Sheet
-#> 2                                     Gapminder
-#> 3                      Gapminder 2007 Can Write
-#> 4                                 Gapminder_old
-#> 5                                Testing helper
-#> 6                                       scoring
-#> 7                                WI15 ARCHY 499
-#> 8                                   gas_mileage
-#> 9                                   Temperature
-#> 10 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 11                              Old Style Sheet
-#> 12                                   jenny-test
-#> 13                       Gapminder by Continent
-#> 14                                  basic-usage
-#> 15                 Caffeine craver? (Responses)
-#> 16                        Private Sheet Example
-#> 17                                  Code Sample
+#> 2                                   iris_public
+#> 3                              Flight Risk JSON
+#> 4                                     Gapminder
+#> 5                      Gapminder 2007 Can Write
+#> 6                                 Gapminder_old
+#> 7                                Testing helper
+#> 8                                       scoring
+#> 9                                WI15 ARCHY 499
+#> 10                                  gas_mileage
+#> 11                                  Temperature
+#> 12 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> 13                              Old Style Sheet
+#> 14                                   jenny-test
+#> 15                       Gapminder by Continent
+#> 16                                  basic-usage
+#> 17                 Caffeine craver? (Responses)
+#> 18                        Private Sheet Example
+#> 19                                  Code Sample
 #> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
 #>   last_updated (time), ws_feed (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 17
+#> Observations: 19
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "Gapminder", "Gapminder 2...
+#> $ sheet_title  (chr) "Public Testing Sheet", "iris_public", "Flight Ri...
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
-#> $ owner        (chr) "gspreadr", "gspreadr", "gspreadr", "gspreadr", "...
-#> $ perm         (chr) "rw", "rw", "rw", "rw", "rw", "rw", "r", "r", "rw...
-#> $ last_updated (time) 2015-03-30 05:44:24, 2015-03-23 20:59:10, 2015-0...
+#> $ owner        (chr) "gspreadr", "gspreadr", "omid", "gspreadr", "gspr...
+#> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
+#> $ last_updated (time) 2015-03-31 18:17:00, 2015-03-30 18:24:06, 2015-0...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
 ```
 
@@ -104,8 +110,9 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-03-30 10:12:49 PDT
+#>   Date of googlesheets::register_ss: 2015-03-31 17:27:03 PDT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+#>                          visibility: private
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -378,24 +385,25 @@ foo <- new_ss("foo")
 #> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 15F5oaaXxst4Jf5UP-4ZWocjtHBuGYP-VuIN5muRRAY4
+#> sheet_key: 1YzI2Dd5bVo0vKadrwwzpRJLz0KSKgsCuUmPOsyh4-60
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-03-30 10:12:58 PDT
-#>     Date of last spreadsheet update: 2015-03-30 17:12:54 UTC
+#>   Date of googlesheets::register_ss: 2015-03-31 17:27:13 PDT
+#>     Date of last spreadsheet update: 2015-04-01 00:27:11 UTC
+#>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 15F5oaaXxst4Jf5UP-4ZWocjtHBuGYP-VuIN5muRRAY4
+#> Key: 1YzI2Dd5bVo0vKadrwwzpRJLz0KSKgsCuUmPOsyh4-60
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
 
 ### Edit cells
 
-You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit essentially populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns).
+You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns).
 
 ``` r
 foo <- foo %>% edit_cells(input = head(iris), header = TRUE, trim = TRUE)
@@ -422,11 +430,11 @@ foo %>% get_via_lf()
 #> 6          5.4         3.9          1.7         0.4  setosa
 ```
 
-Read the function documentation for `edit_cells()` for ways to specify where the data goes and in which direction.
+Read the function documentation for `edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
 
 ### Delete sheets
 
-Let's clean up by deleting the `foo` spreadsheets we've been playing with.
+Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 ``` r
 delete_ss("foo")
@@ -445,14 +453,15 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-03-30 10:13:53 PDT
-#>     Date of last spreadsheet update: 2015-03-30 17:13:50 UTC
+#>   Date of googlesheets::register_ss: 2015-03-31 17:27:26 PDT
+#>     Date of last spreadsheet update: 2015-04-01 00:27:24 UTC
+#>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1scy2YTJBqV16dFhgzu6hpAvKKcQfLLw_LVaMf_w-T0Y
+#> Key: 1T0BPvmHvZfIOd-UPKIt889TTuj9cN6rbuEyn8ynrSDA
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -474,8 +483,9 @@ gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
 gap_xlsx
 #>                   Spreadsheet title: gap-data
-#>   Date of googlesheets::register_ss: 2015-03-30 10:13:58 PDT
-#>     Date of last spreadsheet update: 2015-03-30 17:13:55 UTC
+#>   Date of googlesheets::register_ss: 2015-03-31 17:27:30 PDT
+#>     Date of last spreadsheet update: 2015-04-01 00:27:28 UTC
+#>                          visibility: private
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -485,7 +495,7 @@ gap_xlsx
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1XVAxSxmqUUFalyJsa-3WPZMxfR9WGwgvt3oPSCyEFyU
+#> Key: 1aI2yz9l93-JhV57HntNmQK_BOjEtqdl4NJW35VpOQLc
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
@@ -515,6 +525,184 @@ delete_ss("gap-data")
 #> Sheets found and slated for deletion:
 #> gap-data
 #> Success. All moved to trash in Google Drive.
+```
+
+### Download sheets as csv, pdf, or xlsx file
+
+You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
+
+``` r
+download_ss("Gapminder", ws = "Africa", to = "~/tmp/gapminder-africa.csv")
+#> Sheet identified!
+#> sheet_title: Gapminder
+#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> 
+#> Accessing worksheet titled "Africa"
+#> 
+Downloading: 470 B     
+Downloading: 1.9 kB     
+Downloading: 3.3 kB     
+Downloading: 4.6 kB     
+Downloading: 6 kB     
+Downloading: 7.4 kB     
+Downloading: 8.8 kB     
+Downloading: 10 kB     
+Downloading: 11 kB     
+Downloading: 11 kB     
+Downloading: 12 kB     
+Downloading: 14 kB     
+Downloading: 14 kB     
+Downloading: 15 kB     
+Downloading: 15 kB     
+Downloading: 17 kB     
+Downloading: 17 kB     
+Downloading: 18 kB     
+Downloading: 19 kB     
+Downloading: 19 kB     
+Downloading: 21 kB     
+Downloading: 21 kB     
+Downloading: 22 kB     
+Downloading: 23 kB     
+Downloading: 24 kB     
+Downloading: 25 kB     
+Downloading: 27 kB     
+Downloading: 27 kB     
+Downloading: 28 kB     
+Downloading: 29 kB     
+Downloading: 29 kB     
+Downloading: 29 kB     
+Downloading: 29 kB
+#> Sheet successfully downloaded: /Users/jenny/tmp/gapminder-africa.csv
+## is it there? yes!
+read.csv("~/tmp/gapminder-africa.csv") %>% head()
+#>   country continent year lifeExp      pop gdpPercap
+#> 1 Algeria    Africa 1952  43.077  9279525  2449.008
+#> 2 Algeria    Africa 1957  45.685 10270856  3013.976
+#> 3 Algeria    Africa 1962  48.303 11000948  2550.817
+#> 4 Algeria    Africa 1967  51.407 12760499  3246.992
+#> 5 Algeria    Africa 1972  54.518 14760787  4182.664
+#> 6 Algeria    Africa 1977  58.014 17152804  4910.417
+```
+
+Download the entire spreadsheet as an Excel workbook.
+
+``` r
+download_ss("Gapminder", to = "~/tmp/gapminder.xlsx")
+#> Sheet identified!
+#> sheet_title: Gapminder
+#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> 
+Downloading: 1.4 kB     
+Downloading: 2.8 kB     
+Downloading: 4.1 kB     
+Downloading: 5.5 kB     
+Downloading: 6.9 kB     
+Downloading: 8.2 kB     
+Downloading: 9.6 kB     
+Downloading: 11 kB     
+Downloading: 12 kB     
+Downloading: 14 kB     
+Downloading: 15 kB     
+Downloading: 16 kB     
+Downloading: 16 kB     
+Downloading: 17 kB     
+Downloading: 17 kB     
+Downloading: 19 kB     
+Downloading: 19 kB     
+Downloading: 20 kB     
+Downloading: 20 kB     
+Downloading: 20 kB     
+Downloading: 21 kB     
+Downloading: 21 kB     
+Downloading: 23 kB     
+Downloading: 23 kB     
+Downloading: 24 kB     
+Downloading: 24 kB     
+Downloading: 26 kB     
+Downloading: 26 kB     
+Downloading: 27 kB     
+Downloading: 29 kB     
+Downloading: 29 kB     
+Downloading: 30 kB     
+Downloading: 30 kB     
+Downloading: 31 kB     
+Downloading: 31 kB     
+Downloading: 33 kB     
+Downloading: 33 kB     
+Downloading: 34 kB     
+Downloading: 34 kB     
+Downloading: 34 kB     
+Downloading: 35 kB     
+Downloading: 35 kB     
+Downloading: 37 kB     
+Downloading: 37 kB     
+Downloading: 38 kB     
+Downloading: 38 kB     
+Downloading: 40 kB     
+Downloading: 41 kB     
+Downloading: 41 kB     
+Downloading: 42 kB     
+Downloading: 42 kB     
+Downloading: 44 kB     
+Downloading: 44 kB     
+Downloading: 45 kB     
+Downloading: 45 kB     
+Downloading: 47 kB     
+Downloading: 47 kB     
+Downloading: 48 kB     
+Downloading: 48 kB     
+Downloading: 49 kB     
+Downloading: 49 kB     
+Downloading: 51 kB     
+Downloading: 51 kB     
+Downloading: 52 kB     
+Downloading: 52 kB     
+Downloading: 53 kB     
+Downloading: 53 kB     
+Downloading: 55 kB     
+Downloading: 55 kB     
+Downloading: 56 kB     
+Downloading: 56 kB     
+Downloading: 58 kB     
+Downloading: 58 kB     
+Downloading: 59 kB     
+Downloading: 59 kB     
+Downloading: 60 kB     
+Downloading: 60 kB     
+Downloading: 61 kB     
+Downloading: 61 kB     
+Downloading: 63 kB     
+Downloading: 63 kB     
+Downloading: 64 kB     
+Downloading: 65 kB     
+Downloading: 65 kB     
+Downloading: 66 kB     
+Downloading: 66 kB     
+Downloading: 67 kB     
+Downloading: 69 kB     
+Downloading: 69 kB     
+Downloading: 70 kB     
+Downloading: 70 kB     
+Downloading: 71 kB     
+Downloading: 71 kB     
+Downloading: 72 kB     
+Downloading: 74 kB     
+Downloading: 74 kB     
+Downloading: 75 kB     
+Downloading: 75 kB     
+Downloading: 75 kB     
+Downloading: 75 kB     
+Downloading: 75 kB
+#> Sheet successfully downloaded: /Users/jenny/tmp/gapminder.xlsx
+```
+
+Go check it out in Excel, if you wish!
+
+And now we clean up the downloaded files.
+
+``` r
+file.remove(file.path("~/tmp", c("gapminder.xlsx", "gapminder-africa.csv")))
+#> [1] TRUE TRUE
 ```
 
 ### Authorization using OAuth2
