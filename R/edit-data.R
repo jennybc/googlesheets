@@ -156,9 +156,10 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 catch_hopeless_input <- function(x) {
 
   if(x %>% is.recursive() && !(x %>% is.data.frame())) {
-    stop(paste("Non-data-frame, list-like objects not suitable as input.",                         "Maybe pre-process it yourself?"))
+    stop(paste("Non-data-frame, list-like objects not suitable as input.",
+               "Maybe pre-process it yourself?"))
   }
-
+  
   if(!is.null(dim(x)) && length(dim(x)) > 2) {
     stop("Input has more than 2 dimensions.")
   }

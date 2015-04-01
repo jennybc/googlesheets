@@ -4,7 +4,7 @@
 #' Authorize user using Oauth2.0 Credentials
 #'
 #' User will be directed to web browser and asked to sign into their Google
-#' account and grant gspreadr access permission to user data for Google
+#' account and grant googlesheets access permission to user data for Google
 #' Spreadsheets and Google Drive. User credentials will be cached in .httr-oauth
 #' in the current working directory.
 #'

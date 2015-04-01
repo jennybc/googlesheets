@@ -49,8 +49,6 @@ list_ws <- function(ss) {
   stopifnot(inherits(ss, "googlesheet"))
   
   ss$ws$ws_title
-
-  ss$ws$ws_title
 }
 
 #' Convert column IDs from letter representation to numeric

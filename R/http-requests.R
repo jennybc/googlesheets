@@ -57,6 +57,7 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
   }
 
   req
+
 }
 
 #' Create POST request
@@ -91,6 +92,7 @@ gsheets_POST <- function(url, the_body) {
     httr::stop_for_status(req)
 
     req
+
   }
 }
 

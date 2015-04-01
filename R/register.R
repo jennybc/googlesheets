@@ -49,24 +49,24 @@ list_sheets <- function() {
   ## if ends with 'full' permission is read/write
   ws_feed <- plyr::laply(sheet_list, function(x) {
     links <- x %>%
-               lfilt("^link$") %>%
-               do.call("rbind", .) %>%
-               as.data.frame(stringsAsFactors = FALSE)
+      lfilt("^link$") %>%
+      do.call("rbind", .) %>%
+      as.data.frame(stringsAsFactors = FALSE)
     return(links$href[grepl("2006#worksheetsfeed", links$rel)])
   })
 
   dplyr::data_frame(
     sheet_title = plyr::laply(sheet_list, function(x) x$title$text),
     sheet_key = sheet_list %>%
-                  lapluck("id") %>%
-                  basename,
+      lapluck("id") %>%
+      basename,
     owner = plyr::laply(sheet_list, function(x) x$author$name),
     perm = ws_feed %>%
-             stringr::str_detect("values") %>%
-             ifelse("r", "rw"),
+      stringr::str_detect("values") %>%
+      ifelse("r", "rw"),
     last_updated = sheet_list %>%
-                     lapluck("updated") %>%
-                     as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
+      lapluck("updated") %>%
+      as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
     ws_feed = ws_feed)
 }
 
@@ -359,13 +359,13 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
            ws_key = ~ ws_id %>% basename,
            ws_title = ~ plyr::laply(ws_list, function(x) x$title$text),
            row_extent = ~ ws_list %>%
-                            lapluck("rowCount") %>%
-                            as.integer(),
+             lapluck("rowCount") %>%
+             as.integer(),
            col_extent = ~ ws_list %>% lapluck("colCount") %>% as.integer()))
   ws_links <- plyr::ldply(ws_list, function(x) {
     links <- x %>%
-               lfilt("^link$") %>%
-               do.call("cbind", .)
+      lfilt("^link$") %>%
+      do.call("cbind", .)
     links["href", ] %>%
       setNames(links["rel", ] %>%
                  basename %>%

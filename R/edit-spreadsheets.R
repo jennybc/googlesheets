@@ -134,7 +134,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
       sprintf("Oops. These sheets were NOT deleted:\n%s",
               sitrep$ss_title[!sitrep$deleted] %>%
                 paste(collapse = "\n")) %>%
-                message()
+        message()
     }
   }
 
@@ -243,11 +243,11 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 
 add_ws <- function(ss, ws_title = "Sheet1",
                    nrow = 1000, ncol = 26, verbose = TRUE) {
-  
+
   stopifnot(ss %>% inherits("googlesheet"))
-  
+
   ws_title_exist <- !(match(ws_title, ss$ws[["ws_title"]]) %>% is.na())
-  
+
   if(ws_title_exist) {
     stop(sprintf("A worksheet titled \"%s\" already exists, please choose a different name.", ws_title))
   }
@@ -276,7 +276,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
     } else {
       message(sprintf(paste("Cannot verify whether worksheet \"%s\" was added",
                             "to sheet \"%s\"."), ws_title,
-                            ss_refresh$sheet_title))
+                      ss_refresh$sheet_title))
     }
   }
 
@@ -386,14 +386,14 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 
   Sys.sleep(1)
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
-
+  
   from_is_gone <- from %>%
-                    match(ss_refresh$ws$ws_title) %>%
-                    is.na()
+    match(ss_refresh$ws$ws_title) %>%
+    is.na()
   to_is_there <- !(to %>%
                      match(ss_refresh$ws$ws_title) %>%
                      is.na())
-
+  
   if(verbose) {
     if(from_is_gone && to_is_there) {
       message(sprintf("Worksheet \"%s\" renamed to \"%s\".", from, to))
@@ -402,7 +402,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
                             "renamed to \"%s\"."), from, to))
     }
   }
-
+  
   if(from_is_gone && to_is_there) {
     ss_refresh %>% invisible()
   } else {
@@ -499,18 +499,18 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
     # back via PUT
     req <- gsheets_GET(ss$ws$ws_id[ws_title_position], to_list = FALSE)
     contents <- req %>%
-                  httr::content() %>%
-                  XML::toString.XMLNode()
-
+      httr::content() %>%
+      XML::toString.XMLNode()
+    
     if(!is.null(to)) {
       to_already_exists <- !(match(to, ss$ws$ws_title) %>% is.na())
-
+      
       if(to_already_exists) {
         stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
                            "\"%s\". Please choose another worksheet title."),
                      to, ss$sheet_title))
       }
-
+      
       ## TO DO: we should probably be doing something more XML-y here, instead of
       ## doing XML --> string --> regex based subsitution --> XML
       title_replacement <- paste0("\\1", to, "\\3")

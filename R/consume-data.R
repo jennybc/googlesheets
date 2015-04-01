@@ -172,8 +172,8 @@ get_via_lf <- function(ss, ws = 1) {
 #' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
 #' get_via_cf(gap_ss, "Asia", max_row = 4)
 #' reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
-#' reshape_cf(get_via_cf(gap_ss, "Asia", limits = list(max_row = 4,
-#'                                                     min_col = 3)))
+#' reshape_cf(get_via_cf(gap_ss, "Asia",
+#'                       limits = list(max_row = 4, min_col = 3)))
 #' }
 #' @family data consumption functions
 #'
@@ -192,9 +192,11 @@ get_via_cf <-
     limits <- list("min-row" = min_row, "max-row" = max_row,
                    "min-col" = min_col, "max-col" = max_col)
   } else{
-    names(limits) <- names(limits) %>% stringr::str_replace("_", "-")
+    names(limits) <- names(limits) %>%
+      stringr::str_replace("_", "-")
   }
-  limits <- limits %>% validate_limits(this_ws$row_extent, this_ws$col_extent)
+  limits <- limits %>%
+    validate_limits(this_ws$row_extent, this_ws$col_extent)
 
   query <- limits
   if(return_empty) {
@@ -429,9 +431,9 @@ reshape_cf <- function(x, header = TRUE) {
 #' @param notation character; the result vector will have names that reflect 
 #'   which cell the data came from; this argument selects the positioning 
 #'   notation, i.e. "A1" vs. "R1C1"
-#'   
+#'
 #' @return a named vector
-#'   
+#'
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
@@ -440,9 +442,9 @@ reshape_cf <- function(x, header = TRUE) {
 #' simplify_cf(get_row(gap_ss, row = 1))
 #' simplify_cf(get_row(gap_ss, row = 1), notation = "R1C1")
 #' }
-#' 
+#'
 #' @family data consumption functions
-#'   
+#'
 #' @export
 simplify_cf <- function(x, convert = TRUE, as.is = TRUE,
                         notation = c("A1", "R1C1"), header = NULL) {
