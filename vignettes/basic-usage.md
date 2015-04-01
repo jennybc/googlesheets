@@ -1,22 +1,22 @@
-# gspreadr Basic Usage
+# googlesheets Basic Usage
 Joanna Zhao, Jenny Bryan  
 `r Sys.Date()`  
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/gspreadr) on GitHub has gotten alot more love recently, so you might want to read that instead or in addition to this (2015-03-23).
+__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten alot more love recently, so you might want to read that instead or in addition to this (2015-03-23).
 
 
 ```r
-library(gspreadr)
+library(googlesheets)
 suppressMessages(library(dplyr))
 ```
 
-This vignette shows the basic functionality of `gspreadr`.
+This vignette shows the basic functionality of `googlesheets`.
 
 # User Authentication
 
-In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `gspreadr` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
+In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `googlesheets` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
 
-The `authorize()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `gspreadr` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
+The `authorize()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
 
 If you want to switch to a different Google account, run `authorize(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
 
@@ -29,7 +29,7 @@ If you want to switch to a different Google account, run `authorize(new_user = T
 
 # Get a Google spreadsheet to practice with
 
-If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `gspreadr` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
 
 ```r
@@ -53,19 +53,19 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 5]
 ## 
 ##   sheet_title  sheet_key    owner perm        last_updated
-## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-24 02:58:22
-## 2  My_Gapmind 1R2prV3... gspreadr   rw 2015-03-24 02:39:20
-## 3   Gapminder 1HT5B8S... gspreadr   rw 2015-03-23 20:59:10
-## 4  Gapminder  1SDA_Gu... gspreadr   rw 2015-03-23 20:23:09
-## 5  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 20:23:06
-## 6  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
+## 1  Public Tes 1hff6Az... gspreadr   rw 2015-03-30 04:26:40
+## 2   Gapminder 1HT5B8S... gspreadr   rw 2015-03-23 20:59:10
+## 3  Gapminder  1SDA_Gu... gspreadr   rw 2015-03-23 20:23:09
+## 4  Gapminder_ 1yet5ON... gspreadr   rw 2015-03-23 20:23:06
+## 5  Testing he 1F0iNuY... gspreadr   rw 2015-03-23 03:30:29
+## 6     scoring 1w8F3t9... gspreadr   rw 2015-03-20 22:32:48
 ```
 
 This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
 
 # Register a spreadsheet
 
-Before you can access a spreadsheet, you must first __register__ it. This returns an object that is of little interest to the user, but is needed by various `gspreadr` functions in order to retrieve or edit spreadsheet data.
+Before you can access a spreadsheet, you must first __register__ it. This returns an object that is of little interest to the user, but is needed by various `googlesheets` functions in order to retrieve or edit spreadsheet data.
 
 Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We can use `str()` to get an overview of the spreadsheet.
 
@@ -85,9 +85,9 @@ gap
 ```
 
 ```
-##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -104,7 +104,7 @@ Besides using the spreadsheet title, you can also specify a spreadsheet in three
 
   * By key: this unfriendly but unique string is probably the best long-term strategy.
   * By URL: copy and paste the URL in your browser while visiting the spreadsheet.
-  * By the "worksheets feed": under the hood, this is how `gspreadr` actually gets spreadsheet information from the API. Unlikely to be relevant to a regular user.
+  * By the "worksheets feed": under the hood, this is how `googlesheets` actually gets spreadsheet information from the API. Unlikely to be relevant to a regular user.
 
 Here's an example of using the sheet title to retrieve the key, then registering the sheet by key. While registration by title is handy for interactive use, registration by key is preferred for scripts.
 
@@ -132,9 +132,9 @@ ss2
 ```
 
 ```
-##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -164,9 +164,9 @@ gap
 ```
 
 ```
-##               Spreadsheet title: Gapminder
-##   Date of gspreadr::register_ss: 2015-03-23 20:07:27 PDT
-## Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##                   Spreadsheet title: Gapminder
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:10 PDT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -308,7 +308,7 @@ Note that data from the cell feed comes back as a data.frame with one row per ce
 
 *Stuff below partialy redundant with above*
 
-Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `gspreadr` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
+Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `googlesheets` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
 
 There are two basic modes of consuming data stored in a worksheet (quotes taken from the [API docs](https://developers.google.com/google-apps/spreadsheets/):
 
@@ -355,10 +355,10 @@ new_ss("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
-## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 14M2GD4MttdExbkgbu4zKu_dr-pTcia_PzBLZmerRMN0
+## sheet_key: 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg
 ```
 
 ```r
@@ -369,7 +369,7 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 6]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 14M2GD4MttdExbkgbu4zKu_dr-pTcia_PzBLZmerRMN0 gspreadr
+## 1 hi I am new here 1bup9l8umgJkaPJ6Q1VackVCLOpaYgA_04RACXJkykjg gspreadr
 ## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
 ```
 
@@ -406,10 +406,10 @@ new_ss("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
-## Identifying info is a gspreadsheet object; gspreadr will re-identify the sheet based on sheet key.
+## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -419,7 +419,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -427,15 +427,15 @@ x
 ```
 
 ```
-##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 20:07:37 PDT
-## Date of last spreadsheet update: 2015-03-24 03:07:34 UTC
+##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:20 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:16 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -451,16 +451,16 @@ x
 ```
 
 ```
-##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 20:07:38 PDT
-## Date of last spreadsheet update: 2015-03-24 03:07:37 UTC
+##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:08:21 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:19 UTC
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -478,7 +478,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
+## sheet_key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 ```r
@@ -486,15 +486,15 @@ x
 ```
 
 ```
-##               Spreadsheet title: hi I am new here
-##   Date of gspreadr::register_ss: 2015-03-23 20:07:39 PDT
-## Date of last spreadsheet update: 2015-03-24 03:07:38 UTC
+##                   Spreadsheet title: hi I am new here
+##   Date of googlesheets::register_ss: 2015-03-29 22:09:01 PDT
+##     Date of last spreadsheet update: 2015-03-30 05:08:58 UTC
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1rWu-LsEmOh9b6Zlb6FXG9Gf7igvBeAFP7elqvEI2j4Q
+## Key: 1FW6dpqlZejLz8guFLklWQqBAtGxyJEKhs5d7pzZF6FU
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

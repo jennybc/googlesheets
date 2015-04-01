@@ -1,4 +1,4 @@
 library(testthat)
-library(gspreadr)
+library(googlesheets)
 
-test_check("gspreadr")
+test_check("googlesheets")

@@ -7,7 +7,7 @@
 copy_ss(from, key = NULL, to = NULL, verbose = TRUE)
 }
 \arguments{
-\item{from}{sheet-identifying information, either a gspreadsheet object or a
+\item{from}{sheet-identifying information, either a googlesheet object or a
 character vector of length one, giving a URL, sheet title, key or
 worksheets feed}
 

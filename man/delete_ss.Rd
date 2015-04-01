@@ -7,7 +7,7 @@
 delete_ss(x = NULL, regex = NULL, verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{sheet-identifying information, either a gspreadsheet object or a
+\item{x}{sheet-identifying information, either a googlesheet object or a
 character vector of length one, giving a URL, sheet title, key or
 worksheets feed; if \code{x} is specified, the \code{regex} argument will
 be ignored}

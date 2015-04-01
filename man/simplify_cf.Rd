@@ -34,7 +34,7 @@ feed into a data.frame via \code{\link{reshape_cf}}. You might prefer it as
 an atomic vector. That's what this function does. Note that, unlike
 \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this
 result. By default, the API does not transmit data for these cells;
-\code{gspreadr} inserts these cells in \code{\link{reshape_cf}} because it is
+\code{googlesheets} inserts these cells in \code{\link{reshape_cf}} because it is
 necessary to give the data rectangular shape. In contrast, empty cells will
 only appear in the output of \code{simplify_cf} if they were already present
 in the data from the cell feed, i.e. if the original call to

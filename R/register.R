@@ -8,12 +8,12 @@
 #' This function returns the information available from the
 #' \href{https://developers.google.com/google-apps/spreadsheets/#retrieving_a_list_of_spreadsheets}{spreadsheets
 #' feed} of the Google Sheets API.
-#'
-#' This listing give the user a partial view of the sheets available for
-#' access (why just partial? see below). It also gives a map between readily
-#' available information, such as sheet title, and more obscure information you
-#' might use in scripts, such as the sheet key. This sort of "table lookup" is
-#' implemented in the \code{gspreadr} helper function
+#' 
+#' This listing give the user a partial view of the sheets available for 
+#' access (why just partial? see below). It also gives a map between readily 
+#' available information, such as sheet title, and more obscure information you 
+#' might use in scripts, such as the sheet key. This sort of "table lookup" is 
+#' implemented in the \code{googlesheets} helper function 
 #' \code{\link{identify_ss}}.
 #'
 #' Which sheets show up here? Certainly those owned by the authorized user. But
@@ -25,8 +25,8 @@
 #' key only if it appears in this listing. For shared sheets that may not appear
 #' in this listing, a more robust workflow is to extract the key from the
 #' browser URL via \code{\link{extract_key_from_url}} and explicitly specify the
-#' sheet in \code{gspreadr} functions by key.
-#'
+#' sheet in \code{googlesheets} functions by key.
+#' 
 #' @return a data.frame, one row per sheet
 #'
 #' @examples
@@ -71,26 +71,26 @@ list_sheets <- function() {
 }
 
 #' Retrieve the identifiers for a spreadsheet
-#'
-#' Initialize a gspreadsheet object that holds identifying information for a
-#' specific spreadsheet. Intended primarily for internal use. Unless
-#' \code{verify = FALSE}, it calls \code{\link{list_sheets}} and attempts to
-#' return information from the row uniquely specified by input \code{x}. The
-#' listing provided by \code{\link{list_sheets}} is only available to an
-#' authorized user, so authorization will be required. A gspreadsheet object
-#' contains much more information than that available via
+#' 
+#' Initialize a googlesheet object that holds identifying information for a 
+#' specific spreadsheet. Intended primarily for internal use. Unless 
+#' \code{verify = FALSE}, it calls \code{\link{list_sheets}} and attempts to 
+#' return information from the row uniquely specified by input \code{x}. The 
+#' listing provided by \code{\link{list_sheets}} is only available to an 
+#' authorized user, so authorization will be required. A googlesheet object 
+#' contains much more information than that available via 
 #' \code{\link{list_sheets}}, so many components will not be populated until the
 #' sheet is registered properly, such as via \code{\link{register_ss}}, which is
-#' called internally in many \code{gspreadr} functions. If \code{verify =
+#' called internally in many \code{googlesheets} functions. If \code{verify = 
 #' FALSE}, then user must provide either sheet key, URL or a worksheets feed, as
 #' opposed to sheet title. In this case, the information will be taken at face
 #' value, i.e. no proactive verification or look-up on Google Drive.
 #'
 #' This function is will be revised to be less dogmatic about only identifying
 #' ONE sheet.
-#'
-#' @param x sheet-identifying information, either a gspreadsheet object or a
-#'   character vector of length one, giving a URL, sheet title, key or
+#' 
+#' @param x sheet-identifying information, either a googlesheet object or a 
+#'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed
 #' @param method optional character string specifying the method of sheet
 #'   identification; if given, must be one of: URL, key, title, ws_feed, or ss
@@ -100,9 +100,9 @@ list_sheets <- function() {
 #'   a worksheets feed that anticipates requests with authentication ("private")
 #'   or without ("public"); only consulted when \code{verify = FALSE}
 #' @param verbose logical
-#'
-#' @return a gspreadsheet object
-#'
+#'   
+#' @return a googlesheet object
+#'   
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
@@ -116,7 +116,7 @@ list_sheets <- function() {
 identify_ss <- function(x, method = NULL, verify = TRUE,
                         visibility = "private", verbose = TRUE) {
 
-  if(!inherits(x, "gspreadsheet")) {
+  if(!inherits(x, "googlesheet")) {
     if(!is.character(x)) {
       stop(paste("The information that specifies the sheet must be character,",
                  "regardless of whether it is the URL, title, key or",
@@ -133,16 +133,15 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
     match.arg(method,
               choices = c('unknown', 'url', 'key', 'title', 'ws_feed', 'ss'))
 
-  ## is x a gspreadsheet object?
-  if(method == 'ss' || inherits(x, "gspreadsheet")) {
+  ## is x a googlesheet object?
+  if(method == 'ss' || inherits(x, "googlesheet")) {
     if(verify) {
       if(verbose) {
-        message(paste("Identifying info is a gspreadsheet object; gspreadr",
-                      "will re-identify the sheet based on sheet key."))
+        message("Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.")
       }
       x <- x$sheet_key
       method <- 'key'
-    } else { ## it's a gspreadsheet, no verification requested
+    } else { ## it's a googlesheet, no verification requested
              ## so just pass it on through
       return(x)
     }
@@ -155,8 +154,9 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
       !(x %>% stringr::str_detect(ws_feed_start))
      )) {
     if(verbose) {
-      message(paste("Identifying info will be processed as a URL.\ngspreadr",
-                    "will attempt to extract sheet key from the URL."))
+      paste0("Identifying info will be processed as a URL.\n",
+             "googlesheets will attempt to extract sheet key from the URL.") %>%
+        message()
     }
     x <- x %>% extract_key_from_url()
     method <- 'key'
@@ -170,7 +170,7 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 
   if(!verify) {
     if(method == 'title') {
-      stop("Impossible to identify a sheet based on title when verify = FALSE. gspreadr must look up the title to obtain key or worksheets feed.")
+      stop("Impossible to identify a sheet based on title when verify = FALSE. googlesheets must look up the title to obtain key or worksheets feed.")
     }
 
     ## if method still unknown, make a guess between key or ws_feed
@@ -186,8 +186,8 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
       message(sprintf("Identifying info will be handled as: %s.", method))
     }
 
-    ss <- gspreadsheet()
-
+    ss <- googlesheet()
+    
     if(method == 'key') {
       ss$sheet_key <- x
       ss$ws_feed <- construct_ws_feed_from_key(x, visibility)
@@ -251,7 +251,7 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
     message(mess)
   }
 
-  ss <- gspreadsheet()
+  ss <- googlesheet()
   ss$sheet_key <- x_ss$sheet_key
   ss$sheet_title <- x_ss$sheet_title
   ss$ws_feed <- x_ss$ws_feed
@@ -260,13 +260,13 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 }
 
 #' Register a Google spreadsheet
-#'
-#' Specify a Google spreadsheet via its URL, unique key, title, or worksheets
-#' feed and register it for further use. This function returns an object of
-#' class \code{gspreadsheet}, which contains all the information other
-#' \code{gspreadr} functions will need to consume data from the sheet or to edit
-#' the sheet. This object also contains sheet information that may be of
-#' interest to the user, such as the time of last update, the number of
+#' 
+#' Specify a Google spreadsheet via its URL, unique key, title, or worksheets 
+#' feed and register it for further use. This function returns an object of 
+#' class \code{googlesheet}, which contains all the information other 
+#' \code{googlesheets} functions will need to consume data from the sheet or to
+#' edit the sheet. This object also contains sheet information that may be of 
+#' interest to the user, such as the time of last update, the number of 
 #' worksheets contained, and their titles.
 #'
 #' @param x character vector of length one, with sheet-identifying information;
@@ -278,15 +278,15 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 #' @param visibility either "public" or "private"; used to specify visibility
 #'   when sheet identified via \code{key}
 #' @param verbose logical; do you want informative message?
-#'
-#' @return Object of class gspreadsheet.
-#'
-#' @note Re: the reported extent of the worksheets. Contain your excitement,
-#'   because it may not be what you think or hope it is. It does not report how
-#'   many rows or columns are actually nonempty. This cannot be determined via
+#'   
+#' @return Object of class googlesheet.
+#'   
+#' @note Re: the reported extent of the worksheets. Contain your excitement, 
+#'   because it may not be what you think or hope it is. It does not report how 
+#'   many rows or columns are actually nonempty. This cannot be determined via 
 #'   the Google sheets API without consuming the data and noting which cells are
-#'   populated. Therefore, these numbers often reflect the default extent of a
-#'   new worksheet, e.g., 1000 rows and 26 columns at the time or writing, and
+#'   populated. Therefore, these numbers often reflect the default extent of a 
+#'   new worksheet, e.g., 1000 rows and 26 columns at the time or writing, and 
 #'   provide an upper bound on the true number of rows and columns.
 #'
 #' @note The visibility can only be "public" if the sheet is "Published to the
@@ -325,8 +325,8 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     stop("Please check visibility settings.")
   }
 
-  ss <- gspreadsheet()
-
+  ss <- googlesheet()
+  
   ss$sheet_key <- ws_feed %>% extract_key_from_url()
   ss$sheet_title <- req$content[["title"]][["text"]]
   ss$n_ws <- req$content[["totalResults"]] %>% as.integer()
@@ -339,10 +339,9 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC")
   ss$get_date <- req$date
 
-  ## I'm ambivalent about even storing this; it's baked into the links
-  ## holdover from an earlier stage of pkg development ... omit?
-  ss$visibility <- req$url %>% dirname %>% basename
-
+  ss$visibility <- req$url %>% dirname() %>% basename()
+  ss$is_public <- ss$visibility == "public"
+  
   ss$author_name <- req$content[["author"]][["name"]]
   ss$author_email <- req$content[["author"]][["email"]]
 

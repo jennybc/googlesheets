@@ -15,7 +15,7 @@ get_via_csv(ss, ws = 1, ...)
 \item{...}{further arguments to be passed to \code{\link{read.csv}} or,
   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is
   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
-  within \code{gspreadr} re: NOT converting character data to factor}
+  within \code{googlesheets} re: NOT converting character data to factor}
 }
 \value{
 a tbl_df

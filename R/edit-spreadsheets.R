@@ -5,9 +5,9 @@
 #'
 #' @param title the title for the new sheet
 #' @param verbose logical; do you want informative message?
-#'
-#' @return a gspreadsheet object
-#'
+#'   
+#' @return a googlesheet object
+#' 
 #' @examples
 #' \dontrun{
 #' foo <- new_ss("foo")
@@ -47,10 +47,10 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #' mistake, remain calm, and visit the
 #' \href{https://drive.google.com/drive/#trash}{trash in Google Drive}, find the
 #' sheet, and restore it.
-#'
-#' @param x sheet-identifying information, either a gspreadsheet object or a
-#'   character vector of length one, giving a URL, sheet title, key or
-#'   worksheets feed; if \code{x} is specified, the \code{regex} argument will
+#' 
+#' @param x sheet-identifying information, either a googlesheet object or a 
+#'   character vector of length one, giving a URL, sheet title, key or 
+#'   worksheets feed; if \code{x} is specified, the \code{regex} argument will 
 #'   be ignored
 #' @param regex character; a regular expression; sheets whose titles match will
 #'   be deleted
@@ -115,7 +115,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
     sprintf("Sheets found and slated for deletion:\n%s",
             titles_to_delete %>%
               paste(collapse = "\n")) %>%
-              message()
+      message()
   }
 
   the_url <- paste("https://www.googleapis.com/drive/v2/files",
@@ -150,9 +150,9 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 #' \code{\link{list_sheets}}, you can specify it by title (or any of the other
 #' spreadsheet-identifying methods). Otherwise, you'll have to explicitly
 #' specify it by key.
-#'
-#' @param from sheet-identifying information, either a gspreadsheet object or a
-#'   character vector of length one, giving a URL, sheet title, key or
+#' 
+#' @param from sheet-identifying information, either a googlesheet object or a 
+#'   character vector of length one, giving a URL, sheet title, key or 
 #'   worksheets feed
 #' @param key character string guaranteed to provide unique key of the sheet;
 #'   overrides \code{from}
@@ -226,8 +226,8 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' @param nrow number of rows (default is 1000)
 #' @param ncol number of columns (default is 26)
 #' @param verbose logical; do you want informative message?
-#'
-#' @return a gspreadsheet object, resulting from re-registering the host
+#'   
+#' @return a googlesheet object, resulting from re-registering the host
 #'   spreadsheet after adding the new worksheet
 #'
 #' @export
@@ -243,11 +243,11 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 
 add_ws <- function(ss, ws_title = "Sheet1",
                    nrow = 1000, ncol = 26, verbose = TRUE) {
-
-  stopifnot(ss %>% inherits("gspreadsheet"))
-
+  
+  stopifnot(ss %>% inherits("googlesheet"))
+  
   ws_title_exist <- !(match(ws_title, ss$ws[["ws_title"]]) %>% is.na())
-
+  
   if(ws_title_exist) {
     stop(sprintf("A worksheet titled \"%s\" already exists, please choose a different name.", ws_title))
   }
@@ -311,8 +311,8 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' @export
 delete_ws <- function(ss, ws_title, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("gspreadsheet"))
-
+  stopifnot(ss %>% inherits("googlesheet"))
+  
   ws_title_position <- match(ws_title, ss$ws$ws_title)
 
   if(is.na(ws_title_position)) {
@@ -371,8 +371,8 @@ delete_ws <- function(ss, ws_title, verbose = TRUE) {
 #' @export
 rename_ws <- function(ss, from, to, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("gspreadsheet"))
-
+  stopifnot(ss %>% inherits("googlesheet"))
+  
   ws_title_position <- match(from, ss$ws$ws_title)
 
   if(is.na(ws_title_position)) {
@@ -384,6 +384,7 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
   ## req carries updated info about the affected worksheet ... but I find it
   ## easier to just re-register the spreadsheet
 
+  Sys.sleep(1)
   ss_refresh <- ss %>% register_ss(verbose = FALSE)
 
   from_is_gone <- from %>%
@@ -439,8 +440,8 @@ rename_ws <- function(ss, from, to, verbose = TRUE) {
 resize_ws <- function(ss, ws_title,
                       row_extent = NULL, col_extent = NULL, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("gspreadsheet"))
-
+  stopifnot(ss %>% inherits("googlesheet"))
+  
   ws_title_position <- match(ws_title, ss$ws$ws_title)
 
   if(is.na(ws_title_position)) {
@@ -490,8 +491,8 @@ resize_ws <- function(ss, ws_title,
 #' @keywords internal
 modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
-    stopifnot(ss %>% inherits("gspreadsheet"))
-
+    stopifnot(ss %>% inherits("googlesheet"))
+    
     ws_title_position <- match(from, ss$ws$ws_title)
 
     # don't want return value converted to a list, keep as XML, make edits,send
@@ -512,16 +513,19 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
       ## TO DO: we should probably be doing something more XML-y here, instead of
       ## doing XML --> string --> regex based subsitution --> XML
+      title_replacement <- paste0("\\1", to, "\\3")
       the_body <- contents %>%
-        stringr::str_replace('(?<=<title type=\"text\">)(.*)(?=</title>)', to)
+        sub("(<title type=\"text\">)(.*)(</title>)", title_replacement, .)
     }
 
     if(!is.null(new_dim)) {
+      
+      row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
+      col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
+      
       the_body <- contents %>%
-        stringr::str_replace('(?<=<gs:rowCount>)(.*)(?=</gs:rowCount>)',
-                             new_dim["row_extent"]) %>%
-        stringr::str_replace('(?<=<gs:colCount>)(.*)(?=</gs:colCount>)',
-                             new_dim["col_extent"])
+        sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
+        sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
     }
 
   gsheets_PUT(ss$ws$edit[ws_title_position], the_body)
