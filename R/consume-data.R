@@ -110,7 +110,15 @@ get_via_lf <- function(ss, ws = 1) {
   var_names <- component_names %>% dplyr::setdiff(boilerplate_names)
   row_data %>%
     ## get just the data, as named character vector
-    plyr::llply(function(x) x[var_names] %>% unlist) %>%
+    ## because empty cells emerge from the XML as NULL values
+    ## these need to be trapped and converted to NA before unlisting
+    ## otherwise the list gets truncated
+      ## - subset to variables
+	    plyr::llply(function(x) x[var_names] ) %>%
+	    ## - replace NULLs 
+		  plyr::llply(function(x) {x[sapply(x, is.null)] <- NA; return(x)}) %>%
+		  ## - convert to vector
+		  plyr::llply(unlist) %>%
       ## rowbind to produce character matrix
       do.call("rbind", .) %>%
       ## drop stupid repetitive "entry" rownames
