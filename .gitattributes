@@ -1,1 +1,2 @@
-vignettes/* linguist-documentation
+vignettes/*.html linguist-documentation
+data-for-demo/*.html linguist-documentation
