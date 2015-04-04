@@ -234,7 +234,12 @@ get_via_cf <-
         `rownames<-`(NULL) %>%
         as.data.frame(stringsAsFactors = FALSE)
       # edit link looks like so: "path/R1C1/version"
-      edit_link <- links$href[grepl("edit", links$rel)]
+      edit_link <- grepl("edit", links$rel)
+      if(any(edit_link)) {
+        edit_link <- links$href[edit_link]
+      } else {
+        edit_link <- NA_character_
+      }
 
       dplyr::data_frame(cell = x$title$text,
                         cell_alt = x$id %>% basename,
@@ -377,7 +382,8 @@ reshape_cf <- function(x, header = TRUE) {
     dplyr::summarise_each_(dplyr::funs(min, max), list(~ row, ~ col))
   all_possible_cells <-
     with(limits,
-         expand.grid(row = row_min:row_max, col = col_min:col_max))
+         expand.grid(row = row_min:row_max, col = col_min:col_max)) %>%
+    dplyr::as.tbl()
   suppressMessages(
     x_augmented <- all_possible_cells %>% dplyr::left_join(x)
   )

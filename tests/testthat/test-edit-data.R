@@ -58,7 +58,7 @@ test_that("Cell update can force resize of worksheet", {
   ss <- ss %>% resize_ws(ws, 1000, 26)
 })
 
-iris_ish <- iris %>% head(3)
+iris_ish <- iris %>% head(3) %>% dplyr::as.tbl()
 ## because our data consumption m.o. is stringsAsFactors = FALSE
 iris_ish$Species <- iris_ish$Species %>% as.character()
 
@@ -66,16 +66,19 @@ test_that("2-dimensional things can be uploaded", {
 
   # update with empty strings to "clear" cells
   tmp <- ss %>% get_via_cf(ws)
-  input <- matrix("", nrow = max(tmp$row), ncol = max(tmp$col))
-  ss <- ss %>% edit_cells(ws, input)
-  Sys.sleep(1)
-  tmp <- ss %>% get_via_cf(ws)
+  if(nrow(tmp) > 0) {
+    input <- matrix("", nrow = max(tmp$row), ncol = max(tmp$col))
+    ss <- ss %>% edit_cells(ws, input)
+    Sys.sleep(1)
+    tmp <- ss %>% get_via_cf(ws)
+  }
   expect_equal(dim(tmp), c(0, 5))
   
   # update w/ a data.frame, header = FALSE
   ss <- ss %>% edit_cells(ws, iris_ish)
   Sys.sleep(1)
   tmp <- ss %>% get_via_cf(ws) %>% reshape_cf(header = FALSE)
+  names(tmp) <- names(iris_ish) # I know these disagree, so just equate them
   expect_equivalent(tmp, iris_ish)
   
   # update w/ a data.frame, header = TRUE
