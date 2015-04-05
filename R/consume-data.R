@@ -35,6 +35,15 @@ get_via_csv <- function(ss, ws = 1, ...) {
   stopifnot(ss %>% inherits("googlesheet"))
   
   this_ws <- get_ws(ss, ws)
+  
+  if(is.null(this_ws$exportcsv)) {
+    stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
+               "not offer the API access required by this function.",
+               "Consider converting it from an old Sheet to a new Sheet.",
+               "Or use another data consumption function, such as get_via_lf()",
+               "or get_via_cf(). Or use download_ss() to export it to a local",
+               "file and then read it into R."))
+  }
 
   ## since gsheets_GET expects xml back, just using GET for now
   if(ss$is_public) {
