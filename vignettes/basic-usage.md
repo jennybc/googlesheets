@@ -50,15 +50,16 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 
 
 ```
-## Source: local data frame [6 x 5]
+## Source: local data frame [6 x 9]
 ## 
-##   sheet_title  sheet_key    owner perm        last_updated
-## 1    gap_copy 1PYa7Oa... gspreadr   rw 2015-04-02 22:24:12
-## 2     foo_new 14qNS8Y... gspreadr   rw 2015-04-02 21:41:05
-## 3     foo_new 1J2KTvQ... gspreadr   rw 2015-04-02 21:40:44
-## 4  Public Tes 1hff6Az... gspreadr   rw 2015-04-02 22:04:22
-## 5  iris_publi 1cAYN-a... gspreadr   rw 2015-03-30 18:24:06
-## 6  Flight Ris 1OvDq4_...     omid    r 2015-03-27 09:33:43
+##   sheet_title  sheet_key      owner perm        last_updated version
+## 1  Ari's Anch tQKSYVR...   anahmani    r 2015-04-05 21:46:18     old
+## 2  Public Tes 1hff6Az...   gspreadr   rw 2015-04-05 21:50:27     new
+## 3  Projects_2 1ET1NGc... david.orme    r 2015-04-01 15:21:36     new
+## 4  iris_publi 1cAYN-a...   gspreadr   rw 2015-03-30 18:24:06     new
+## 5  Flight Ris 1OvDq4_...       omid    r 2015-03-27 09:33:43     new
+## 6   Gapminder 1HT5B8S...   gspreadr   rw 2015-03-23 20:59:10     new
+## Variables not shown: alternate (chr), self (chr), alt_key (chr)
 ```
 
 This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
@@ -86,7 +87,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:35 PDT
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:40 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ##                          visibility: private
 ## 
@@ -134,7 +135,7 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:36 PDT
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:41 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ##                          visibility: private
 ## 
@@ -167,7 +168,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:35 PDT
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:40 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ##                          visibility: private
 ## 
@@ -278,7 +279,7 @@ str(oceania_reshaped)
 ```
 
 ```
-## 'data.frame':	24 obs. of  6 variables:
+## Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
 ##  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 ##  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
 ##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
@@ -292,6 +293,8 @@ head(oceania_reshaped, 10)
 ```
 
 ```
+## Source: local data frame [10 x 6]
+## 
 ##      country continent year lifeExp      pop gdpPercap
 ## 1  Australia   Oceania 1952   69.12  8691212  10039.60
 ## 2  Australia   Oceania 1957   70.33  9712569  10949.65
@@ -361,7 +364,7 @@ new_ss("hi I am new here")
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 19BNxqljQJ8wzNl8kzWHeAAso5jbjC6307_LlXEFVuqo
+## sheet_key: 1jvITM4n3BewIP8t9_wyOOyVKYTPSStakel90iHsZefE
 ```
 
 ```r
@@ -369,11 +372,12 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ```
 
 ```
-## Source: local data frame [1 x 6]
+## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 19BNxqljQJ8wzNl8kzWHeAAso5jbjC6307_LlXEFVuqo gspreadr
-## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)
+## 1 hi I am new here 1jvITM4n3BewIP8t9_wyOOyVKYTPSStakel90iHsZefE gspreadr
+## Variables not shown: perm (chr), last_updated (time), version (chr),
+##   ws_feed (chr), alternate (chr), self (chr), alt_key (chr)
 ```
 
 ```r
@@ -392,10 +396,11 @@ list_sheets() %>% filter(sheet_title == "hi I am new here")
 ```
 
 ```
-## Source: local data frame [0 x 6]
+## Source: local data frame [0 x 10]
 ## 
 ## Variables not shown: sheet_title (chr), sheet_key (chr), owner (chr), perm
-##   (chr), last_updated (time), ws_feed (chr)
+##   (chr), last_updated (time), version (chr), ws_feed (chr), alternate
+##   (chr), self (chr), alt_key (chr)
 ```
 
 ### Add, delete, or rename a worksheet
@@ -412,7 +417,7 @@ new_ss("hi I am new here")
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
+## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
 ```
 
 ```r
@@ -422,7 +427,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
+## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
 ```
 
 ```r
@@ -431,15 +436,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:46 PDT
-##     Date of last spreadsheet update: 2015-04-02 23:22:38 UTC
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:52 PDT
+##     Date of last spreadsheet update: 2015-04-05 21:52:48 UTC
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
+## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
 ```
 
 ```r
@@ -456,8 +461,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:48 PDT
-##     Date of last spreadsheet update: 2015-04-02 23:22:41 UTC
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:52 PDT
+##     Date of last spreadsheet update: 2015-04-05 21:52:52 UTC
 ##                          visibility: private
 ## 
 ## Contains 2 worksheets:
@@ -465,7 +470,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
+## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
 ```
 
 ```r
@@ -484,7 +489,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
+## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
 ```
 
 ```r
@@ -493,15 +498,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:49 PDT
-##     Date of last spreadsheet update: 2015-04-02 23:22:42 UTC
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:54 PDT
+##     Date of last spreadsheet update: 2015-04-05 21:52:53 UTC
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g
+## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

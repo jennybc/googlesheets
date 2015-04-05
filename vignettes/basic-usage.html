@@ -10,7 +10,7 @@
 
 <meta name="author" content="Joanna Zhao, Jenny Bryan" />
 
-<meta name="date" content="2015-04-02" />
+<meta name="date" content="2015-04-05" />
 
 <title>googlesheets Basic Usage</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">googlesheets Basic Usage</h1>
 <h4 class="author"><em>Joanna Zhao, Jenny Bryan</em></h4>
-<h4 class="date"><em>2015-04-02</em></h4>
+<h4 class="date"><em>2015-04-05</em></h4>
 </div>
 
 <div id="TOC">
@@ -101,15 +101,16 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>As an authenticated user, you can get a (partial) listing of accessible sheets. If you have not yet authenticated, you will be prompted to do so. If it’s been a while since you authenticated, you’ll see a message about refreshing a stale OAuth token.</p>
 <pre class="sourceCode r"><code class="sourceCode r">my_sheets &lt;-<span class="st"> </span><span class="kw">list_sheets</span>()</code></pre>
 <p>Explore the <code>my_sheets</code> object. Here’s a look at the top of ours, where we’ve truncated the variables <code>sheet_title</code> and <code>sheet_key</code> and suppressed the variable <code>ws_id</code> for readability.</p>
-<pre><code>## Source: local data frame [6 x 5]
+<pre><code>## Source: local data frame [6 x 9]
 ## 
-##   sheet_title  sheet_key    owner perm        last_updated
-## 1    gap_copy 1PYa7Oa... gspreadr   rw 2015-04-02 22:24:12
-## 2     foo_new 14qNS8Y... gspreadr   rw 2015-04-02 21:41:05
-## 3     foo_new 1J2KTvQ... gspreadr   rw 2015-04-02 21:40:44
-## 4  Public Tes 1hff6Az... gspreadr   rw 2015-04-02 22:04:22
-## 5  iris_publi 1cAYN-a... gspreadr   rw 2015-03-30 18:24:06
-## 6  Flight Ris 1OvDq4_...     omid    r 2015-03-27 09:33:43</code></pre>
+##   sheet_title  sheet_key      owner perm        last_updated version
+## 1  Ari's Anch tQKSYVR...   anahmani    r 2015-04-05 21:46:18     old
+## 2  Public Tes 1hff6Az...   gspreadr   rw 2015-04-05 21:50:27     new
+## 3  Projects_2 1ET1NGc... david.orme    r 2015-04-01 15:21:36     new
+## 4  iris_publi 1cAYN-a...   gspreadr   rw 2015-03-30 18:24:06     new
+## 5  Flight Ris 1OvDq4_...       omid    r 2015-03-27 09:33:43     new
+## 6   Gapminder 1HT5B8S...   gspreadr   rw 2015-03-23 20:59:10     new
+## Variables not shown: alternate (chr), self (chr), alt_key (chr)</code></pre>
 <p>This provides a nice overview of the spreadsheets you can access and is useful for looking up the <strong>key</strong> of a spreadsheet (see below).</p>
 </div>
 <div id="register-a-spreadsheet" class="section level1">
@@ -122,7 +123,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
 <pre><code>##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:35 PDT
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:40 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ##                          visibility: private
 ## 
@@ -150,7 +151,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">ss2</code></pre>
 <pre><code>##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:36 PDT
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:41 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ##                          visibility: private
 ## 
@@ -175,7 +176,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Example of getting nice tabular data from the “list feed”:</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
 <pre><code>##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:35 PDT
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:40 PDT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 ##                          visibility: private
 ## 
@@ -241,7 +242,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## 10   D2     R2C4   2   4     69.12</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">oceania_reshaped &lt;-<span class="st"> </span><span class="kw">reshape_cf</span>(oceania_cell_feed)
 <span class="kw">str</span>(oceania_reshaped)</code></pre>
-<pre><code>## 'data.frame':    24 obs. of  6 variables:
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:
 ##  $ country  : chr  &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; ...
 ##  $ continent: chr  &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; ...
 ##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
@@ -249,7 +250,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ##  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
 ##  $ gdpPercap: num  10040 10950 12217 14526 16789 ...</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(oceania_reshaped, <span class="dv">10</span>)</code></pre>
-<pre><code>##      country continent year lifeExp      pop gdpPercap
+<pre><code>## Source: local data frame [10 x 6]
+## 
+##      country continent year lifeExp      pop gdpPercap
 ## 1  Australia   Oceania 1952   69.12  8691212  10039.60
 ## 2  Australia   Oceania 1957   70.33  9712569  10949.65
 ## 3  Australia   Oceania 1962   70.93 10794968  12217.23
@@ -305,23 +308,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 19BNxqljQJ8wzNl8kzWHeAAso5jbjC6307_LlXEFVuqo</code></pre>
+## sheet_key: 1jvITM4n3BewIP8t9_wyOOyVKYTPSStakel90iHsZefE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list_sheets</span>() %&gt;%<span class="st"> </span><span class="kw">filter</span>(sheet_title ==<span class="st"> &quot;hi I am new here&quot;</span>)</code></pre>
-<pre><code>## Source: local data frame [1 x 6]
+<pre><code>## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 19BNxqljQJ8wzNl8kzWHeAAso5jbjC6307_LlXEFVuqo gspreadr
-## Variables not shown: perm (chr), last_updated (time), ws_feed (chr)</code></pre>
+## 1 hi I am new here 1jvITM4n3BewIP8t9_wyOOyVKYTPSStakel90iHsZefE gspreadr
+## Variables not shown: perm (chr), last_updated (time), version (chr),
+##   ws_feed (chr), alternate (chr), self (chr), alt_key (chr)</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Move spreadsheet to trash</span>
 <span class="kw">delete_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheets found and slated for deletion:
 ## hi I am new here
 ## Success. All moved to trash in Google Drive.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">list_sheets</span>() %&gt;%<span class="st"> </span><span class="kw">filter</span>(sheet_title ==<span class="st"> &quot;hi I am new here&quot;</span>)</code></pre>
-<pre><code>## Source: local data frame [0 x 6]
+<pre><code>## Source: local data frame [0 x 10]
 ## 
 ## Variables not shown: sheet_title (chr), sheet_key (chr), owner (chr), perm
-##   (chr), last_updated (time), ws_feed (chr)</code></pre>
+##   (chr), last_updated (time), version (chr), ws_feed (chr), alternate
+##   (chr), self (chr), alt_key (chr)</code></pre>
 </div>
 <div id="add-delete-or-rename-a-worksheet" class="section level3">
 <h3>Add, delete, or rename a worksheet</h3>
@@ -331,28 +336,28 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g</code></pre>
+## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g</code></pre>
+## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:46 PDT
-##     Date of last spreadsheet update: 2015-04-02 23:22:38 UTC
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:52 PDT
+##     Date of last spreadsheet update: 2015-04-05 21:52:48 UTC
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g</code></pre>
+## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">add_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; added to sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:48 PDT
-##     Date of last spreadsheet update: 2015-04-02 23:22:41 UTC
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:52 PDT
+##     Date of last spreadsheet update: 2015-04-05 21:52:52 UTC
 ##                          visibility: private
 ## 
 ## Contains 2 worksheets:
@@ -360,25 +365,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g</code></pre>
+## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">delete_ws</span>(x, <span class="dt">ws =</span> <span class="st">&quot;foo&quot;</span>)</code></pre>
 <pre><code>## Accessing worksheet titled &quot;foo&quot;
 ## Worksheet &quot;foo&quot; deleted from sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g</code></pre>
+## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-02 16:22:49 PDT
-##     Date of last spreadsheet update: 2015-04-02 23:22:42 UTC
+##   Date of googlesheets::register_ss: 2015-04-05 14:52:54 PDT
+##     Date of last spreadsheet update: 2015-04-05 21:52:53 UTC
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1LCehD7Zm7Q6qkZCcI1EmdUzF4CMnDdCgtojvZ3CpN5g</code></pre>
+## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE</code></pre>
 <p>To rename a worksheet, pass in the spreadsheet object, the worksheet’s current name and the new name you want it to be.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rename_ws</span>(x, <span class="st">&quot;Sheet1&quot;</span>, <span class="st">&quot;First Sheet&quot;</span>)</code></pre>
 <pre><code>## Accessing worksheet titled &quot;Sheet1&quot;

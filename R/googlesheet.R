@@ -25,6 +25,7 @@
 #' \item \code{links} data.frame of links specific to the spreadsheet
 #' \item \code{ws} a data.frame about the worksheets contained in the
 #' spreadsheet
+#' \item \code{alt_key} alternate key; applies only to "old" sheets
 #' }
 #'
 #' TO DO: this documentation is neither here nor there. Either the object is
@@ -45,7 +46,8 @@ googlesheet <- function() {
                  author_name = character(),
                  author_email = character(),
                  links = character(), # initialize as data.frame?
-                 ws = list()),
+                 ws = list(),
+                 alt_key = character()),
             class = c("googlesheet", "list"))
   
 }
