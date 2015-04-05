@@ -449,7 +449,7 @@ resize_ws <- function(ss, ws = 1,
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- ss %>% get_ws(ws)
+  this_ws <- ss %>% get_ws(ws, verbose)
   
   # if row or col extent not specified, make it the same as before
   if(is.null(row_extent)) {
