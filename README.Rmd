@@ -287,6 +287,12 @@ authorize()
  
 Use `authorize(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
 
+### "Old" Google Sheets
+
+In March 2014 [Google introduced "new" Sheets](https://support.google.com/docs/answer/3541068?hl=en). "New" Sheets and "old" sheets behave quite differently with respect to access via API and present a big headache for us. Recently, we've noted that Google is forcibly converting sheets: [all "old" Sheets will be switched over the "new" sheets during 2015](https://support.google.com/docs/answer/6082736?p=new_sheets_migrate&rd=1). However there are still "old" sheets lying around, so we've made some effort to support them, when it's easy to do so. But keep your expectations low.
+
+In particular, `get_via_csv()` does not and indeed __cannot__ work for "old"   sheets.
+
 ##### Stuff we are in the process of bringing back online after the Great Refactor of February 2015
 
   * visual overview of which cells are populated
