@@ -62,40 +62,36 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 
 ``` r
 (my_sheets <- list_sheets())
-#> Source: local data frame [19 x 6]
+#> Source: local data frame [23 x 10]
 #> 
-#>                                     sheet_title
-#> 1                          Public Testing Sheet
-#> 2                                   iris_public
-#> 3                              Flight Risk JSON
-#> 4                                     Gapminder
-#> 5                      Gapminder 2007 Can Write
-#> 6                                 Gapminder_old
-#> 7                                Testing helper
-#> 8                                       scoring
-#> 9                                WI15 ARCHY 499
-#> 10                                  gas_mileage
-#> 11                                  Temperature
-#> 12 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 13                              Old Style Sheet
-#> 14                                   jenny-test
-#> 15                       Gapminder by Continent
-#> 16                                  basic-usage
-#> 17                 Caffeine craver? (Responses)
-#> 18                        Private Sheet Example
-#> 19                                  Code Sample
-#> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
-#>   last_updated (time), ws_feed (chr)
+#>                  sheet_title                                    sheet_key
+#> 1       Public Testing Sheet 1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk
+#> 2    Old School Google Sheet                      txPYh4OkYvFjOeLx6g8s85A
+#> 3  Ari's Anchor Text Scraper                      tQKSYVRwBXssUfYEaMdt-aw
+#> 4           Projects_2013_14 1ET1NGcPpAOKoqBBfcL1t1D2wcQ-3rc1H5RcYxY-TbTE
+#> 5                iris_public 1cAYN-a089TSw8GF0RadQNdZiWo2RzekT-8swZeYME4A
+#> 6           Flight Risk JSON 1OvDq4_BtbR6nSnnHnjD5hVC3HQ-ulZPGbo0RDGbzM3Q
+#> 7                  Gapminder 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> 8   Gapminder 2007 Can Write 1SDA_Gu7vCHr1hBXtgD7xB77SHd4YKy4zLZDrwnao0pM
+#> 9              Gapminder_old 1yet5ONlyclG5nn63nQ8XDdexzxbZm0zx1wutYKzuzao
+#> 10            Testing helper 1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
+#> ..                       ...                                          ...
+#> Variables not shown: owner (chr), perm (chr), last_updated (time), version
+#>   (chr), ws_feed (chr), alternate (chr), self (chr), alt_key (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 19
+#> Observations: 23
 #> Variables:
-#> $ sheet_title  (chr) "Public Testing Sheet", "iris_public", "Flight Ri...
+#> $ sheet_title  (chr) "Public Testing Sheet", "Old School Google Sheet"...
 #> $ sheet_key    (chr) "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk", "...
-#> $ owner        (chr) "gspreadr", "gspreadr", "omid", "gspreadr", "gspr...
-#> $ perm         (chr) "rw", "rw", "r", "rw", "rw", "rw", "rw", "rw", "r...
-#> $ last_updated (time) 2015-03-31 18:17:00, 2015-03-30 18:24:06, 2015-0...
+#> $ owner        (chr) "gspreadr", "gspreadr", "anahmani", "david.orme",...
+#> $ perm         (chr) "rw", "rw", "r", "r", "rw", "r", "rw", "rw", "rw"...
+#> $ last_updated (time) 2015-04-05 22:54:08, 2015-04-05 22:00:43, 2015-0...
+#> $ version      (chr) "new", "old", "old", "new", "new", "new", "new", ...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
+#> $ alternate    (chr) "https://docs.google.com/spreadsheets/d/1hff6AzFA...
+#> $ self         (chr) "https://spreadsheets.google.com/feeds/spreadshee...
+#> $ alt_key      (chr) NA, "0Audw-qi1jh3fdHhQWWg0T2tZdkZqT2VMeDZnOHM4NUE...
 ```
 
 ### Register a spreadsheet
@@ -110,7 +106,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-03-31 17:27:03 PDT
+#>   Date of googlesheets::register_ss: 2015-04-05 15:56:08 PDT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
 #>                          visibility: private
 #> 
@@ -260,7 +256,7 @@ There are a few ways to limit the data you're consuming. You can put direct limi
 # Reshape: instead of one row per cell, make a nice rectangular data.frame
 oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
 str(oceania_reshaped)
-#> 'data.frame':    24 obs. of  6 variables:
+#> Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:
 #>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 #>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
 #>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
@@ -268,6 +264,8 @@ str(oceania_reshaped)
 #>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
 #>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
 head(oceania_reshaped, 10)
+#> Source: local data frame [10 x 6]
+#> 
 #>      country continent year lifeExp      pop gdpPercap
 #> 1  Australia   Oceania 1952   69.12  8691212  10039.60
 #> 2  Australia   Oceania 1957   70.33  9712569  10949.65
@@ -298,6 +296,8 @@ gap_3rows %>% head()
 
 # convert to a data.frame (first row treated as header by default)
 gap_3rows %>% reshape_cf()
+#> Source: local data frame [2 x 6]
+#> 
 #>   country continent year lifeExp     pop gdpPercap
 #> 1 Albania    Europe 1952   55.23 1282697  1601.056
 #> 2 Albania    Europe 1957   59.28 1476505  1942.284
@@ -326,37 +326,28 @@ gap %>%
   get_col("Oceania", col = 3:4) %>%
   reshape_cf()
 #> Accessing worksheet titled "Oceania"
+#> Source: local data frame [24 x 2]
+#> 
 #>    year lifeExp
-#> 1  1952  69.120
-#> 2  1957  70.330
-#> 3  1962  70.930
-#> 4  1967  71.100
-#> 5  1972  71.930
-#> 6  1977  73.490
-#> 7  1982  74.740
-#> 8  1987  76.320
-#> 9  1992  77.560
-#> 10 1997  78.830
-#> 11 2002  80.370
-#> 12 2007  81.235
-#> 13 1952  69.390
-#> 14 1957  70.260
-#> 15 1962  71.240
-#> 16 1967  71.520
-#> 17 1972  71.890
-#> 18 1977  72.220
-#> 19 1982  73.840
-#> 20 1987  74.320
-#> 21 1992  76.330
-#> 22 1997  77.550
-#> 23 2002  79.110
-#> 24 2007  80.204
+#> 1  1952   69.12
+#> 2  1957   70.33
+#> 3  1962   70.93
+#> 4  1967   71.10
+#> 5  1972   71.93
+#> 6  1977   73.49
+#> 7  1982   74.74
+#> 8  1987   76.32
+#> 9  1992   77.56
+#> 10 1997   78.83
+#> ..  ...     ...
 
 # arbitrary cell range
 gap %>%
   get_cells("Oceania", range = "D12:F15") %>%
   reshape_cf(header = FALSE)
 #> Accessing worksheet titled "Oceania"
+#> Source: local data frame [4 x 3]
+#> 
 #>       X4       X5       X6
 #> 1 80.370 19546792 30687.75
 #> 2 81.235 20434176 34435.37
@@ -368,6 +359,8 @@ gap %>%
   get_via_cf("Oceania", max_row = 5, min_col = 1, max_col = 3) %>%
   reshape_cf()
 #> Accessing worksheet titled "Oceania"
+#> Source: local data frame [4 x 3]
+#> 
 #>     country continent year
 #> 1 Australia   Oceania 1952
 #> 2 Australia   Oceania 1957
@@ -385,18 +378,18 @@ foo <- new_ss("foo")
 #> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1YzI2Dd5bVo0vKadrwwzpRJLz0KSKgsCuUmPOsyh4-60
+#> sheet_key: 1abi4wdsKpVRU-ectnn_cRm2tfxQEMHP8Ww1Cyh0B4jQ
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-03-31 17:27:13 PDT
-#>     Date of last spreadsheet update: 2015-04-01 00:27:11 UTC
+#>   Date of googlesheets::register_ss: 2015-04-05 15:56:16 PDT
+#>     Date of last spreadsheet update: 2015-04-05 22:56:14 UTC
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1YzI2Dd5bVo0vKadrwwzpRJLz0KSKgsCuUmPOsyh4-60
+#> Key: 1abi4wdsKpVRU-ectnn_cRm2tfxQEMHP8Ww1Cyh0B4jQ
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -409,6 +402,7 @@ You can modify the data in sheet cells via `edit_cells()`. We'll work on the com
 foo <- foo %>% edit_cells(input = head(iris), header = TRUE, trim = TRUE)
 #> Range affected by the update: "A1:E7"
 #> Worksheet "Sheet1" successfully updated with 35 new value(s).
+#> Accessing worksheet titled "Sheet1"
 #> Worksheet "Sheet1" dimensions changed to 7 x 5.
 ```
 
@@ -453,15 +447,15 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-03-31 17:27:26 PDT
-#>     Date of last spreadsheet update: 2015-04-01 00:27:24 UTC
+#>   Date of googlesheets::register_ss: 2015-04-05 15:56:29 PDT
+#>     Date of last spreadsheet update: 2015-04-05 22:56:28 UTC
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1T0BPvmHvZfIOd-UPKIt889TTuj9cN6rbuEyn8ynrSDA
+#> Key: 1EKwro1VkXtIK5EBQeR_Y2ZFLkHCUMU2mEzGs8_eHy0Y
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -483,8 +477,8 @@ gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
 #> "gap-data.xlsx" uploaded to Google Drive and converted to a Google Sheet named "gap-data"
 gap_xlsx
 #>                   Spreadsheet title: gap-data
-#>   Date of googlesheets::register_ss: 2015-03-31 17:27:30 PDT
-#>     Date of last spreadsheet update: 2015-04-01 00:27:28 UTC
+#>   Date of googlesheets::register_ss: 2015-04-05 15:56:36 PDT
+#>     Date of last spreadsheet update: 2015-04-05 22:56:34 UTC
 #>                          visibility: private
 #> 
 #> Contains 5 worksheets:
@@ -495,7 +489,7 @@ gap_xlsx
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1aI2yz9l93-JhV57HntNmQK_BOjEtqdl4NJW35VpOQLc
+#> Key: 1t9ZUNaTibWheMmqxTi692jD6zZq5lkD9D9TS8GjkifI
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [24 x 6]
@@ -536,7 +530,6 @@ download_ss("Gapminder", ws = "Africa", to = "~/tmp/gapminder-africa.csv")
 #> Sheet identified!
 #> sheet_title: Gapminder
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-#> 
 #> Accessing worksheet titled "Africa"
 #> 
 Downloading: 470 B     
@@ -548,25 +541,17 @@ Downloading: 7.4 kB
 Downloading: 8.8 kB     
 Downloading: 10 kB     
 Downloading: 11 kB     
-Downloading: 11 kB     
 Downloading: 12 kB     
 Downloading: 14 kB     
-Downloading: 14 kB     
 Downloading: 15 kB     
-Downloading: 15 kB     
-Downloading: 17 kB     
 Downloading: 17 kB     
 Downloading: 18 kB     
 Downloading: 19 kB     
-Downloading: 19 kB     
-Downloading: 21 kB     
 Downloading: 21 kB     
 Downloading: 22 kB     
-Downloading: 23 kB     
 Downloading: 24 kB     
 Downloading: 25 kB     
-Downloading: 27 kB     
-Downloading: 27 kB     
+Downloading: 26 kB     
 Downloading: 28 kB     
 Downloading: 29 kB     
 Downloading: 29 kB     
@@ -592,104 +577,63 @@ download_ss("Gapminder", to = "~/tmp/gapminder.xlsx")
 #> sheet_title: Gapminder
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 #> 
-Downloading: 1.4 kB     
-Downloading: 2.8 kB     
-Downloading: 4.1 kB     
-Downloading: 5.5 kB     
-Downloading: 6.9 kB     
-Downloading: 8.2 kB     
-Downloading: 9.6 kB     
+Downloading: 840 B     
+Downloading: 2.2 kB     
+Downloading: 3.2 kB     
+Downloading: 4.6 kB     
+Downloading: 6 kB     
+Downloading: 7.4 kB     
+Downloading: 8.8 kB     
+Downloading: 10 kB     
+Downloading: 11 kB     
 Downloading: 11 kB     
 Downloading: 12 kB     
 Downloading: 14 kB     
 Downloading: 15 kB     
 Downloading: 16 kB     
-Downloading: 16 kB     
-Downloading: 17 kB     
-Downloading: 17 kB     
+Downloading: 18 kB     
 Downloading: 19 kB     
-Downloading: 19 kB     
-Downloading: 20 kB     
-Downloading: 20 kB     
-Downloading: 20 kB     
 Downloading: 21 kB     
-Downloading: 21 kB     
-Downloading: 23 kB     
+Downloading: 22 kB     
 Downloading: 23 kB     
 Downloading: 24 kB     
-Downloading: 24 kB     
-Downloading: 26 kB     
-Downloading: 26 kB     
+Downloading: 25 kB     
 Downloading: 27 kB     
+Downloading: 28 kB     
 Downloading: 29 kB     
-Downloading: 29 kB     
-Downloading: 30 kB     
-Downloading: 30 kB     
 Downloading: 31 kB     
-Downloading: 31 kB     
-Downloading: 33 kB     
-Downloading: 33 kB     
-Downloading: 34 kB     
-Downloading: 34 kB     
+Downloading: 32 kB     
 Downloading: 34 kB     
 Downloading: 35 kB     
-Downloading: 35 kB     
-Downloading: 37 kB     
-Downloading: 37 kB     
+Downloading: 36 kB     
 Downloading: 38 kB     
-Downloading: 38 kB     
+Downloading: 39 kB     
 Downloading: 40 kB     
-Downloading: 41 kB     
-Downloading: 41 kB     
 Downloading: 42 kB     
-Downloading: 42 kB     
+Downloading: 43 kB     
 Downloading: 44 kB     
-Downloading: 44 kB     
-Downloading: 45 kB     
-Downloading: 45 kB     
+Downloading: 46 kB     
 Downloading: 47 kB     
-Downloading: 47 kB     
-Downloading: 48 kB     
-Downloading: 48 kB     
 Downloading: 49 kB     
-Downloading: 49 kB     
+Downloading: 50 kB     
 Downloading: 51 kB     
-Downloading: 51 kB     
-Downloading: 52 kB     
-Downloading: 52 kB     
 Downloading: 53 kB     
-Downloading: 53 kB     
+Downloading: 54 kB     
 Downloading: 55 kB     
-Downloading: 55 kB     
-Downloading: 56 kB     
-Downloading: 56 kB     
-Downloading: 58 kB     
+Downloading: 57 kB     
 Downloading: 58 kB     
 Downloading: 59 kB     
-Downloading: 59 kB     
-Downloading: 60 kB     
-Downloading: 60 kB     
 Downloading: 61 kB     
-Downloading: 61 kB     
-Downloading: 63 kB     
-Downloading: 63 kB     
+Downloading: 62 kB     
 Downloading: 64 kB     
 Downloading: 65 kB     
-Downloading: 65 kB     
-Downloading: 66 kB     
 Downloading: 66 kB     
 Downloading: 67 kB     
 Downloading: 69 kB     
-Downloading: 69 kB     
 Downloading: 70 kB     
-Downloading: 70 kB     
-Downloading: 71 kB     
-Downloading: 71 kB     
 Downloading: 72 kB     
+Downloading: 73 kB     
 Downloading: 74 kB     
-Downloading: 74 kB     
-Downloading: 75 kB     
-Downloading: 75 kB     
 Downloading: 75 kB     
 Downloading: 75 kB     
 Downloading: 75 kB
