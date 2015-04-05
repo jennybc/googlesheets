@@ -72,11 +72,11 @@ test_that("Bad spreadsheet ID throws informative error", {
 
   # but everything's ok if we explicitly declare input is a key
   expect_is(register_ss(key = wtf1_key), "googlesheet")
-  
+
 })
-  
+
 test_that("Spreadsheet can be registered via URL, key, title, ws_feed or ss", {
-  
+
   ## let identify_ss() determine the method
   expect_is(register_ss(pts_ws_feed), "googlesheet")
   expect_is(register_ss(pts_title), "googlesheet")
@@ -84,7 +84,7 @@ test_that("Spreadsheet can be registered via URL, key, title, ws_feed or ss", {
   expect_is(register_ss(pts_url), "googlesheet")
   pts_ss <- identify_ss(pts_key)
   expect_is(register_ss(pts_ss), "googlesheet")
-  
+
   ## explicitly declare identifier to be key or ws_feed
   expect_is(register_ss(key = pts_key), "googlesheet")
   expect_is(register_ss(ws_feed = pts_ws_feed), "googlesheet")
@@ -92,11 +92,12 @@ test_that("Spreadsheet can be registered via URL, key, title, ws_feed or ss", {
 })
 
 test_that("We get correct number and titles of worksheets", {
-  
+
   ss <- register_ss(ws_feed = pts_ws_feed)
   expect_more_than(ss$n_ws, 6L)
   expect_true(all(c("Asia", "Africa", "Americas", "Europe", "Oceania") %in%
                     ss$ws$ws_title))
+
   })
 
 ## TO DO: test re: visibility?

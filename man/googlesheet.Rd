@@ -33,6 +33,7 @@ rather whether requests will be made with or without authentication
 \item \code{links} data.frame of links specific to the spreadsheet
 \item \code{ws} a data.frame about the worksheets contained in the
 spreadsheet
+\item \code{alt_key} alternate key; applies only to "old" sheets
 }
 
 TO DO: this documentation is neither here nor there. Either the object is

@@ -43,31 +43,41 @@ list_sheets <- function() {
   req <- gsheets_GET(the_url)
 
   sheet_list <- req$content %>% lfilt("^entry$")
-
-  ## wrangling prep useful for the data.frame formed below; gets the worksheets
-  ## feed for each sheet; if ends with 'values' permission is read only,
-  ## if ends with 'full' permission is read/write
-  ws_feed <- plyr::laply(sheet_list, function(x) {
+  
+  links <- plyr::ldply(sheet_list, function(x) {
     links <- x %>%
       lfilt("^link$") %>%
-      do.call("rbind", .) %>%
-      as.data.frame(stringsAsFactors = FALSE)
-    return(links$href[grepl("2006#worksheetsfeed", links$rel)])
-  })
-
+      unname() %>% 
+      do.call("cbind", .)
+    dplyr::data_frame(ws_feed =
+                        links["href",
+                              grepl("2006#worksheetsfeed", links["rel", ])],
+                      alternate_link =
+                        links["href",
+                              grepl("alternate", links["rel", ])],
+                      self_link = links["href",
+                                        grepl("self", links["rel", ])])
+  }) %>% dplyr::select_(quote(-.id))
+  
   dplyr::data_frame(
     sheet_title = plyr::laply(sheet_list, function(x) x$title$text),
     sheet_key = sheet_list %>%
       lapluck("id") %>%
       basename,
     owner = plyr::laply(sheet_list, function(x) x$author$name),
-    perm = ws_feed %>%
+    perm = links$ws_feed %>%
       stringr::str_detect("values") %>%
       ifelse("r", "rw"),
     last_updated = sheet_list %>%
       lapluck("updated") %>%
       as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
-    ws_feed = ws_feed)
+    version = ifelse(grepl("^https://docs.google.com/spreadsheets/d",
+                           links$alternate_link), "new", "old"),
+    ws_feed = links$ws_feed,
+    alternate = links$alternate_link,
+    self = links$self_link,
+    alt_key = ifelse(version == "new", NA_character_,
+                     extract_key_from_url(links$alternate_link)))
 }
 
 #' Retrieve the identifiers for a spreadsheet
@@ -208,7 +218,7 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 
   ## we need listing of sheets visible to this user
   ssfeed_df <- list_sheets() %>%
-    dplyr::select_(~ sheet_title, ~sheet_key, ~ws_feed)
+    dplyr::select_(~ sheet_title, ~sheet_key, ~ws_feed, ~alt_key)
 
   ## can we find x in the variables that hold identifiers?
   match_here <- ssfeed_df %>%
@@ -246,15 +256,20 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 
   if(verbose) {
     #mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s\nws_feed: %s\n", x_ss$sheet_title, x_ss$sheet_key, x_ss$ws_feed)
-    mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s\n",
+    mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s",
                     x_ss$sheet_title, x_ss$sheet_key)
     message(mess)
+    if(!is.na(x_ss$alt_key)) {
+      mess <- sprintf("alt_key: %s", x_ss$alt_key)
+      message(mess)
+    }
   }
 
   ss <- googlesheet()
   ss$sheet_key <- x_ss$sheet_key
   ss$sheet_title <- x_ss$sheet_title
   ss$ws_feed <- x_ss$ws_feed
+  ss$alt_key <- x_ss$alt_key
 
   ss
 }
