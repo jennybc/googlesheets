@@ -215,11 +215,12 @@ extract_key_from_url <- function(url) {
     c(ws_feed_start = "https://spreadsheets.google.com/feeds/worksheets/",
       url_start_new = "https://docs.google.com/spreadsheets/d/",
       url_start_old = "https://docs.google.com/spreadsheet/ccc\\?key=",
-      url_start_old2 = "https://docs.google.com/spreadsheet/pub\\?key=")
+      url_start_old2 = "https://docs.google.com/spreadsheet/pub\\?key=",
+      url_start_old3 = "https://spreadsheets.google.com/ccc\\?key=")
   url_start <- url_start_list %>% stringr::str_c(collapse = "|")
   url %>% stringr::str_replace(url_start, '') %>%
     stringr::str_split_fixed('[/&#]', n = 2) %>%
-    `[`(1)
+    `[`(, 1)
 }
 
 #' Construct a worksheets feed from a key

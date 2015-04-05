@@ -98,13 +98,18 @@ test_that("We can a extract a key from a URL", {
   # new style URL
   expect_equal(extract_key_from_url(pts_url), pts_key)
   
-  # old style URL
-  #expect_equal(extract_key_from_url(old_url), old_key)
-  # 2015-02-27 Anecdotally it appears you cannot extract current keys for use
-  # with the API from old style Sheets URLs ... must identify via title, I
-  # guess?
-  
   # worksheets feed
   expect_equal(extract_key_from_url(pts_ws_feed), pts_key)
   
+  # vectorized
+  expect_equal(extract_key_from_url(c(pts_url, pts_ws_feed)),
+               c(pts_key, pts_key))
+  
+})
+
+test_that("We can a extract a key from an old URL", {
+
+  # old style URL
+  expect_equal(extract_key_from_url(old_url), old_alt_key)
+
 })
