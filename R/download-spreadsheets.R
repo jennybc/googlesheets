@@ -36,7 +36,11 @@ download_ss <- function(from, key = NULL, ws = NULL, to = "my_sheet.xlsx",
   
   if(is.null(key)) { # figure out the sheet from 'from ='
     from_ss <- from %>% identify_ss()
-    key <-  from_ss$sheet_key
+    if(is.na(from_ss$alt_key)) { ## this is a "new" sheet
+      key <-  from_ss$sheet_key
+    } else {                     ## this is an "old" sheet
+      key <- from_ss$alt_key
+    }
     title <- from_ss$sheet_title
   }                 # otherwise ... take key at face value
 
@@ -66,13 +70,21 @@ download_ss <- function(from, key = NULL, ws = NULL, to = "my_sheet.xlsx",
       xlsx = req$content$exportLinks$'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   }
 
-  link <- export_links %>% `[[`(ext)
+  ext_match <- grepl(ext, names(export_links))
+  if(any(ext_match)) {
+    link <- export_links %>% `[[`(ext)
+  } else {
+    mess <- sprintf(paste("Download as a %s file is not supported for this",
+                          "sheet. Is this perhaps an \"old\" Google Sheet?"),
+                    ext)
+    stop(mess)
+  }
 
   if (interactive()) {
-    gdrive_GET(link, httr::write_disk(to, overwrite = overwrite))
-  } else {
     gdrive_GET(link, httr::write_disk(to, overwrite = overwrite),
                httr::progress())
+  } else {
+    gdrive_GET(link, httr::write_disk(to, overwrite = overwrite))
   }
 
   if(file.exists(to)) {

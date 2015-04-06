@@ -92,7 +92,11 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
     # we've successfully identified at least one sheet for deletion; to delete
     # multiple sheets or avoid error in case of no sheets, current workaround is
     # to use the regex argument
-    keys_to_delete <- x_ss$sheet_key
+    if(is.na(x_ss$alt_key)) { ## this is a "new" sheet
+      keys_to_delete <-  x_ss$sheet_key
+    } else {                     ## this is an "old" sheet
+      keys_to_delete <- x_ss$alt_key
+    }
     titles_to_delete <- x_ss$sheet_title
 
   } else {
@@ -105,10 +109,12 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 
       ss_df <- list_sheets()
       delete_me <- grepl(regex, ss_df$sheet_title, ...)
-      keys_to_delete <- ss_df$sheet_key[delete_me]
+      keys_to_delete <-
+        ifelse(ss_df$version == "new", ss_df$sheet_key,
+               ss_df$alt_key)[delete_me]
       titles_to_delete <- ss_df$sheet_title[delete_me]
 
-      if(length(keys_to_delete) == 0L) {
+      if(length(titles_to_delete) == 0L) {
         if(verbose) {
           sprintf("No matching sheets found.") %>%
             message()
@@ -185,7 +191,11 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 
   if(is.null(key)) { # figure out the sheet from 'from ='
     from_ss <- from %>% identify_ss()
-    key <-  from_ss$sheet_key
+    if(is.na(from_ss$alt_key)) { ## this is a "new" sheet
+      key <-  from_ss$sheet_key
+    } else {                     ## this is an "old" sheet
+      key <- from_ss$alt_key
+    }
     title <- from_ss$sheet_title
   } else {           # else ... take key at face value
     title <- key
@@ -218,7 +228,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
     invisible(NULL)
   } else {
     new_ss %>%
-      register_ss() %>%
+      register_ss(verbose = verbose) %>%
       invisible()
   }
 

@@ -23,3 +23,29 @@ test_that("Spreadsheet can be exported", {
                                         c("pts.xlsx", "pts.pdf", "pts.csv")))))
   
 })
+
+test_that("Old Sheets can be exported", {
+
+  temp_dir <- tempdir()
+  ss <- register_ss(old_title)
+
+  # csv should not work
+  expect_error(download_ss(old_title, to = file.path(temp_dir, "old.csv")),
+               "not supported")
+
+  # good formats and different specifications
+  expect_message(ss %>% download_ss(to = file.path(temp_dir, "old.xlsx"),
+                                    overwrite = TRUE),
+                 "successfully downloaded")
+  expect_message(download_ss(old_title, to = file.path(temp_dir, "old.xlsx"),
+                                                       overwrite = TRUE),
+                 "successfully downloaded")
+  expect_message(download_ss(old_url, to = file.path(temp_dir, "old.pdf"),
+                             overwrite = TRUE),
+                 "successfully downloaded")
+
+  expect_true(all(file.exists(file.path(temp_dir, c("old.xlsx", "old.pdf")))))
+
+  expect_true(all(file.remove(file.path(temp_dir, c("old.xlsx", "old.pdf")))))
+
+})
