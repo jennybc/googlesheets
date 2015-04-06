@@ -86,7 +86,6 @@ test_that("Add a new worksheet", {
   
 })
 
-
 test_that("Delete a worksheet by title and index", {
   
   ss_old <- register_ss(pts_title)
@@ -174,10 +173,37 @@ test_that("Different file formats can be uploaded", {
   
 })
 
+test_that("Old Sheets can be copied and deleted", {
+
+  temp_dir <- tempdir()
+  ss <- register_ss(old_title)
+
+  expect_message(ss_copy <- ss %>% copy_ss(to = "test-old-sheet-copy"),
+                 "Successful copy!")
+  Sys.sleep(1)
+  expect_message(delete_ss(ss_copy), "moved to trash")
+  Sys.sleep(1)
+
+  expect_message(ss_copy <-
+                   copy_ss(from = old_title, to = "test-old-sheet-copy"),
+                 "Successful copy!")
+  Sys.sleep(1)
+  expect_message(delete_ss("test-old-sheet-copy"), "moved to trash")
+  Sys.sleep(1)
+
+  expect_message(ss_copy <-
+                   copy_ss(from = old_url, to = "test-old-sheet-copy"),
+                 "Successful copy!")
+  Sys.sleep(1)
+  expect_message(delete_ss("test-old-sheet-copy"), "moved to trash")
+
+})
+
 ## delete any remaining sheets created here
 ## useful to tidy after failed tests
 my_patterns <- c("testing[0-9]{1}", "gap-data",
                  paste("Copy of", pts_title),
-                 "eggplants are purple")
+                 "eggplants are purple",
+                 "test-old-sheet-copy")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
 delete_ss(regex = my_patterns, verbose = FALSE)

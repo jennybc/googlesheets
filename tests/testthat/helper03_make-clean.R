@@ -12,7 +12,8 @@
 my_patterns <- c("testing[0-9]{1}", "gap-data",
                  paste("Copy of", pts_title),
                  "eggplants are purple",
-                 "cat", "catherine", "tomCAT", "abdicate", "FLYCATCHER")
+                 "cat", "catherine", "tomCAT", "abdicate", "FLYCATCHER",
+                 "test-old-sheet-copy")
 my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
 delete_ss(regex = my_patterns, verbose = FALSE)
 
