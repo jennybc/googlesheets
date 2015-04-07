@@ -14,7 +14,7 @@ License: MIT + file LICENSE
 LazyData: true
 Imports:
     dplyr (>= 0.4.0),
-    httr,
+    httr (>= 0.6.1),
     plyr,
     stringr,
     tidyr,
