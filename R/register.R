@@ -350,9 +350,8 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
   ss$sheet_id <- req$content[["id"]]  # same as ws_feed ... pick one?
   # for that matter, this URL appears a third time as the "self" link below :(
 
-  ss$updated <- req$content[["updated"]] %>%
-    as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC")
-  ss$get_date <- req$date
+  ss$updated <- req$headers$`last-modified` %>% httr::parse_http_date()
+  ss$get_date <- req$headers$date %>% httr::parse_http_date()
 
   ss$visibility <- req$url %>% dirname() %>% basename()
   ss$is_public <- ss$visibility == "public"
