@@ -1,39 +1,39 @@
 #' Get a listing of spreadsheets
-#'
-#' Lists spreadsheets that the authorized user would see in the Google Sheets
-#' home screen: \url{https://docs.google.com/spreadsheets/}. For these sheets,
-#' get sheet title, owner, user's permission, date-time of last update, the
-#' unique key, and the worksheets feed.
-#'
-#' This function returns the information available from the
+#' 
+#' Lists spreadsheets that the authorized user would see in the Google Sheets 
+#' home screen: \url{https://docs.google.com/spreadsheets/}. For these sheets, 
+#' get sheet title, sheet key, owner, user's permission, date-time of last
+#' update, version (old vs new Sheets), various links, and an alternative key
+#' (only relevant to old Sheets).
+#' 
+#' This function returns the information available from the 
 #' \href{https://developers.google.com/google-apps/spreadsheets/#retrieving_a_list_of_spreadsheets}{spreadsheets
 #' feed} of the Google Sheets API.
 #' 
-#' This listing give the user a partial view of the sheets available for 
-#' access (why just partial? see below). It also gives a map between readily 
-#' available information, such as sheet title, and more obscure information you 
-#' might use in scripts, such as the sheet key. This sort of "table lookup" is 
-#' implemented in the \code{googlesheets} helper function 
-#' \code{\link{identify_ss}}.
-#'
-#' Which sheets show up here? Certainly those owned by the authorized user. But
-#' also a subset of the sheets owned by others but visible to the authorized
-#' user. We have yet to find explicit Google documentation on this matter.
-#' Anecdotally, sheets shared by others seem to appear in this listing if
-#' the authorized user has visited them in the browser. This is an important
-#' point for usability because a sheet can be summoned by title instead of
-#' key only if it appears in this listing. For shared sheets that may not appear
-#' in this listing, a more robust workflow is to extract the key from the
-#' browser URL via \code{\link{extract_key_from_url}} and explicitly specify the
-#' sheet in \code{googlesheets} functions by key.
+#' This listing give the user a partial view of the sheets available for access
+#' (why just partial? see below). It also gives a map between readily available
+#' information, such as sheet title, and more obscure information you might use
+#' in scripts, such as the sheet key. This sort of "table lookup" is implemented
+#' in the \code{googlesheets} helper function \code{\link{identify_ss}}.
 #' 
-#' @return a data.frame, one row per sheet
-#'
+#' Which sheets show up here? Certainly those owned by the authorized user. But 
+#' also a subset of the sheets owned by others but visible to the authorized 
+#' user. We have yet to find explicit Google documentation on this matter. 
+#' Anecdotally, sheets shared by others seem to appear in this listing if the
+#' authorized user has visited them in the browser. This is an important point
+#' for usability because a sheet can be summoned by title instead of key only if
+#' it appears in this listing. For shared sheets that may not appear in this
+#' listing, a more robust workflow is to extract the key from the browser URL
+#' via \code{\link{extract_key_from_url}} and explicitly specify the sheet in
+#' \code{googlesheets} functions by key.
+#' 
+#' @return a tbl_df, one row per sheet
+#'   
 #' @examples
 #' \dontrun{
 #' list_sheets()
 #' }
-#'
+#' 
 #' @export
 list_sheets <- function() {
 
@@ -58,13 +58,15 @@ list_sheets <- function() {
                       self_link = links["href",
                                         grepl("self", links["rel", ])])
   }) %>% dplyr::select_(quote(-.id))
-  
+
   dplyr::data_frame(
     sheet_title = plyr::laply(sheet_list, function(x) x$title$text),
     sheet_key = sheet_list %>%
       lapluck("id") %>%
       basename,
-    owner = plyr::laply(sheet_list, function(x) x$author$name),
+    owner = plyr::laply(sheet_list,
+                        function(x) paste0(x$author$name, " <",
+                                           x$author$email, ">")),
     perm = links$ws_feed %>%
       stringr::str_detect("values") %>%
       ifelse("r", "rw"),
@@ -78,6 +80,7 @@ list_sheets <- function() {
     self = links$self_link,
     alt_key = ifelse(version == "new", NA_character_,
                      extract_key_from_url(links$alternate_link)))
+
 }
 
 #' Retrieve the identifiers for a spreadsheet
