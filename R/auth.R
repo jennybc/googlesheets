@@ -24,13 +24,13 @@ authorize <- function(new_user = FALSE) {
   scope_list <- paste("https://spreadsheets.google.com/feeds",
                       "https://docs.google.com/feeds")
 
-  client_id <- getOption("gspreadr.client_id")
-  client_secret <- getOption("gspreadr.client_secret")
+  client_id <- getOption("googlesheets.client_id")
+  client_secret <- getOption("googlesheets.client_secret")
 
-  gspreadr_app <- httr::oauth_app("google", client_id, client_secret)
+  googlesheets_app <- httr::oauth_app("google", client_id, client_secret)
 
   google_token <-
-    httr::oauth2.0_token(httr::oauth_endpoints("google"), gspreadr_app,
+    httr::oauth2.0_token(httr::oauth_endpoints("google"), googlesheets_app,
                          scope = scope_list, cache = TRUE)
 
   # check for validity so error is found before making requests
