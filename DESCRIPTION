@@ -18,7 +18,8 @@ Imports:
     plyr,
     stringr,
     tidyr,
-    XML
+    XML,
+    xml2
 Suggests:
     testthat,
     knitr
