@@ -1,4 +1,4 @@
-google_token <- readRDS("token_file.rds")
+google_token <- readRDS("googlesheets_token.rds")
 .state$token <- google_token
 
 ## "RAIN DANCE"

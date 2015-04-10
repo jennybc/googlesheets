@@ -1,7 +1,7 @@
 language: c
 before_install:
-- openssl aes-256-cbc -K $encrypted_93b7ad8c3b57_key -iv $encrypted_93b7ad8c3b57_iv
-  -in tests/testthat/token_file.rds.enc -out tests/testthat/token_file.rds -d
+- openssl aes-256-cbc -K $encrypted_14663dddc4d3_key -iv $encrypted_14663dddc4d3_iv
+  -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
 - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
 - chmod 755 ./travis-tool.sh
 - ./travis-tool.sh bootstrap
@@ -24,6 +24,5 @@ notifications:
     on_failure: change
 env:
 - secure: KG+szfdd5qhWb5C/kz05BND8wkEreqSOlZOWc9o2XXH2wFoabNUbA90mK2WeSR99gzoPqeydphrGwco+UPfoXcAwowhk3PzVOAZPhMlEX3G2znpeq8d17k4cQ/KoqpO1upKiADYqmxHkMaxjxb8JDOmeCqhhW5HYcOvTNUHdH2I=
-after_success:
-  git log -n 1 --format=%B | grep -iq "covr"; if [ $? -eq 0 ]; then echo "Checking test coverage with covr"; Rscript -e 'library(covr);coveralls()'; fi
-
+after_success: git log -n 1 --format=%B | grep -iq "covr"; if [ $? -eq 0 ]; then echo
+  "Checking test coverage with covr"; Rscript -e 'library(covr);coveralls()'; fi
