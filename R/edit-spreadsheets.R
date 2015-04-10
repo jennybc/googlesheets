@@ -511,12 +511,8 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
     this_ws <- ss %>% get_ws(from, verbose = FALSE)
 
-    # don't want return value converted to a list, keep as XML, make edits,send
-    # back via PUT
-    req <- gsheets_GET(this_ws$ws_id, to_list = FALSE)
-    contents <- req %>%
-      httr::content() %>%
-      XML::toString.XMLNode()
+    req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
+    contents <- req$content
 
     if(!is.null(to)) { # our purpose is to rename a worksheet
 
@@ -530,7 +526,7 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
       ## of doing XML --> string --> regex based subsitution --> XML
       title_replacement <- paste0("\\1", to, "\\3")
       the_body <- contents %>%
-        sub("(<title type=\"text\">)(.*)(</title>)", title_replacement, .)
+        sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
     }
 
     if(!is.null(new_dim)) { # our purpose is to resize a worksheet

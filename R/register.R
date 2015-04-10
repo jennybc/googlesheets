@@ -36,40 +36,41 @@
 #'
 #' @export
 list_sheets <- function() {
-
   # only calling spreadsheets feed from here, so hardwiring url
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
-
-  req <- gsheets_GET(the_url)
-
-  sheet_list <- req$content %>% lfilt("^entry$")
+  
+  req <- gsheets_GET(the_url) 
+  
+  sheet_list <- req$content  %>% 
+    xml2::as_list() %>% 
+    lfilt("^entry$")
   
   links <- plyr::ldply(sheet_list, function(x) {
     links <- x %>%
-      lfilt("^link$") %>%
-      unname() %>% 
-      do.call("cbind", .)
-    dplyr::data_frame(ws_feed =
-                        links["href",
-                              grepl("2006#worksheetsfeed", links["rel", ])],
-                      alternate_link =
-                        links["href",
-                              grepl("alternate", links["rel", ])],
-                      self_link = links["href",
-                                        grepl("self", links["rel", ])])
-  }) %>% dplyr::select_(quote(-.id))
+      lfilt("^link$") %>% plyr::llply(function(x) { 
+        link_names <- attr(x, "rel") %>% 
+          basename() %>%
+          stringr::str_replace("[0-9]{4}#", "")
+        links <- attr(x, "href") %>% setNames(link_names) 
+      })
+    links <- unlist(links)
+    names(links) <- c("ws_feed", "alternate_link", "self_link")
+    links
+  }) %>% 
+    dplyr::select_(quote(-.id))
+  
   
   dplyr::data_frame(
-    sheet_title = plyr::laply(sheet_list, function(x) x$title$text),
+    sheet_title = plyr::laply(sheet_list, function(x) x$title %>% unlist()),
     sheet_key = sheet_list %>%
-      lapluck("id") %>%
-      basename,
-    owner = plyr::laply(sheet_list, function(x) x$author$name),
+      lapluck("id") %>% unlist() %>%
+      basename(),
+    owner = plyr::laply(sheet_list, function(x) x$author$name %>% unlist()),
     perm = links$ws_feed %>%
       stringr::str_detect("values") %>%
       ifelse("r", "rw"),
     last_updated = sheet_list %>%
-      lapluck("updated") %>%
+      lapluck("updated") %>% unlist() %>%
       as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
     version = ifelse(grepl("^https://docs.google.com/spreadsheets/d",
                            links$alternate_link), "new", "old"),
@@ -79,6 +80,8 @@ list_sheets <- function() {
     alt_key = ifelse(version == "new", NA_character_,
                      extract_key_from_url(links$alternate_link)))
 }
+
+
 
 #' Retrieve the identifiers for a spreadsheet
 #' 
@@ -125,7 +128,7 @@ list_sheets <- function() {
 #' @export
 identify_ss <- function(x, method = NULL, verify = TRUE,
                         visibility = "private", verbose = TRUE) {
-
+  
   if(!inherits(x, "googlesheet")) {
     if(!is.character(x)) {
       stop(paste("The information that specifies the sheet must be character,",
@@ -138,11 +141,11 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
       }
     }
   }
-
+  
   method <-
     match.arg(method,
               choices = c('unknown', 'url', 'key', 'title', 'ws_feed', 'ss'))
-
+  
   ## is x a googlesheet object?
   if(method == 'ss' || inherits(x, "googlesheet")) {
     if(verify) {
@@ -152,17 +155,17 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
       x <- x$sheet_key
       method <- 'key'
     } else { ## it's a googlesheet, no verification requested
-             ## so just pass it on through
+      ## so just pass it on through
       return(x)
     }
   } ## if x was ss, x is now a key
-
+  
   ## is x a URL but NOT a worksheets feed?
   ws_feed_start <- "https://spreadsheets.google.com/feeds/worksheets"
   if(method == 'url' ||
-     (x %>% stringr::str_detect("^https://") &&
-      !(x %>% stringr::str_detect(ws_feed_start))
-     )) {
+       (x %>% stringr::str_detect("^https://") &&
+          !(x %>% stringr::str_detect(ws_feed_start))
+       )) {
     if(verbose) {
       paste0("Identifying info will be processed as a URL.\n",
              "googlesheets will attempt to extract sheet key from the URL.") %>%
@@ -175,14 +178,14 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
       message(mess)
     }
   } ## if x was URL (but not ws_feed), x is now a key
-
+  
   ## x is now known or presumed to be key, title, or ws_feed
-
+  
   if(!verify) {
     if(method == 'title') {
       stop("Impossible to identify a sheet based on title when verify = FALSE. googlesheets must look up the title to obtain key or worksheets feed.")
     }
-
+    
     ## if method still unknown, make a guess between key or ws_feed
     if(method == 'unknown') {
       if(x %>% stringr::str_detect(ws_feed_start)) {
@@ -191,42 +194,42 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
         method <- 'key'
       }
     }
-
+    
     if(verbose) {
       message(sprintf("Identifying info will be handled as: %s.", method))
     }
-
+    
     ss <- googlesheet()
     
     if(method == 'key') {
       ss$sheet_key <- x
       ss$ws_feed <- construct_ws_feed_from_key(x, visibility)
     }
-
+    
     if(method == 'ws_feed') {
       ss$ws_feed <- x
       ss$sheet_key <- x %>% extract_key_from_url()
     }
-
+    
     if(verbose) {
       message(sprintf("Unverified sheet key: %s.", ss$sheet_key))
       #message(sprintf("Unverified worksheets feed: %s.", ss$ws_feed))
     }
-
+    
     return(ss)
   }
-
+  
   ## we need listing of sheets visible to this user
   ssfeed_df <- list_sheets() %>%
     dplyr::select_(~ sheet_title, ~sheet_key, ~ws_feed, ~alt_key)
-
+  
   ## can we find x in the variables that hold identifiers?
   match_here <- ssfeed_df %>%
     ## using llply, not match, to detect multiple matches
     plyr::llply(function(z) which(z == x))
-
+  
   n_match <- match_here %>% plyr::laply(length)
-
+  
   if(any(n_match > 1)) { # oops! multiple matches within identifier(s)
     mess <- sprintf(paste("Identifying info \"%s\" has multiple matches in",
                           "these identifiers: %s\n"), x,
@@ -235,14 +238,14 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
   } else { # at most one match per identifier, so unlist now
     match_here <- match_here %>% unlist()
   }
-
+  
   if(all(n_match < 1)) { # oops! no match anywhere
     mess <- sprintf(paste("Identifying info \"%s\" doesn't match title, key,",
                           "or worksheets feed for any sheet listed in the",
                           "Google sheets home screen for authorized user."), x)
     stop(mess)
   }
-
+  
   if(match_here %>% unique() %>% length() > 1) { # oops! conflicting matches
     mess <- sprintf(paste("Identifying info \"%s\" has conflicting matches in",
                           "multiple identifiers: %s\n"), x,
@@ -250,10 +253,10 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
                       stringr::str_c(collapse = ", "))
     stop(mess)
   }
-
+  
   the_match <- match_here %>% unique()
   x_ss <- ssfeed_df[the_match, ] %>% as.list()
-
+  
   if(verbose) {
     #mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s\nws_feed: %s\n", x_ss$sheet_title, x_ss$sheet_key, x_ss$ws_feed)
     mess <- sprintf("Sheet identified!\nsheet_title: %s\nsheet_key: %s",
@@ -264,13 +267,13 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
       message(mess)
     }
   }
-
+  
   ss <- googlesheet()
   ss$sheet_key <- x_ss$sheet_key
   ss$sheet_title <- x_ss$sheet_title
   ss$ws_feed <- x_ss$ws_feed
   ss$alt_key <- x_ss$alt_key
-
+  
   ss
 }
 
@@ -320,7 +323,7 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 #' @export
 register_ss <- function(x, key = NULL, ws_feed = NULL,
                         visibility = "private", verbose = TRUE) {
-
+  
   if(is.null(ws_feed)) {
     if(is.null(key)) { # get ws_feed from x
       ws_feed <- x %>%
@@ -330,64 +333,76 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
       ws_feed <- construct_ws_feed_from_key(key, visibility)
     }
   }                    # else ... take ws_feed at face value
-
+  
   req <- gsheets_GET(ws_feed)
-
+   
+  req$content <- xml2::as_list(req$content)
+  
   if(grepl("html", req$headers[["content-type"]])) {
     ## TO DO: give more specific error message. Have they said "public" when
     ## they meant "private" or vice versa? What's the actual problem and
     ## solution?
     stop("Please check visibility settings.")
   }
-
+  
   ss <- googlesheet()
   
   ss$sheet_key <- ws_feed %>% extract_key_from_url()
-  ss$sheet_title <- req$content[["title"]][["text"]]
+  ss$sheet_title <- req$content[["title"]] %>% unlist()
   ss$n_ws <- req$content[["totalResults"]] %>% as.integer()
-
+  
   ss$ws_feed <- req$url               # same as sheet_id ... pick one?
-  ss$sheet_id <- req$content[["id"]]  # same as ws_feed ... pick one?
+  ss$sheet_id <- req$content[["id"]] %>% unlist() # same as ws_feed ... pick one?
   # for that matter, this URL appears a third time as the "self" link below :(
-
+  
   ss$updated <- req$headers$`last-modified` %>% httr::parse_http_date()
   ss$get_date <- req$headers$date %>% httr::parse_http_date()
-
+  
   ss$visibility <- req$url %>% dirname() %>% basename()
   ss$is_public <- ss$visibility == "public"
   
-  ss$author_name <- req$content[["author"]][["name"]]
-  ss$author_email <- req$content[["author"]][["email"]]
-
+  ss$author_name <- req$content[["author"]][["name"]] %>% unlist()
+  ss$author_email <- req$content[["author"]][["email"]] %>% unlist()
+  
   ss$links <- req$content %>%
-    lfilt("^link$") %>%
-    plyr::ldply() %>% dplyr::select_(quote(-.id))
+    lfilt("^link$") %>% 
+    plyr::ldply(function(x) 
+      c("rel" = attr(x, "rel"), 
+        "type" = attr(x, "type"), 
+        "href" = attr(x, "href"))) %>% 
+    dplyr::select_(quote(-.id))
   ## select_() will be unnecessary when this PR gets merged into plyr
   ## https://github.com/hadley/plyr/pull/207
   ## and ldply handles '.id = NULL' correctly
-
+  
   ws_list <- req$content %>% lfilt("^entry$")
   ws_info <-
     dplyr::data_frame_(
-      list(ws_id = ~ ws_list %>% lapluck("id"),
-           ws_key = ~ ws_id %>% basename,
-           ws_title = ~ plyr::laply(ws_list, function(x) x$title$text),
+      list(ws_id = ~ ws_list %>% lapluck("id") %>% unlist(),
+           ws_key = ~ ws_id %>% basename(),
+           ws_title = ~ plyr::laply(ws_list, function(x) x$title %>% unlist()),
            row_extent = ~ ws_list %>%
              lapluck("rowCount") %>%
              as.integer(),
-           col_extent = ~ ws_list %>% lapluck("colCount") %>% as.integer()))
+           col_extent = ~ ws_list %>%
+             lapluck("colCount") %>%
+             as.integer()))
+  
   ws_links <- plyr::ldply(ws_list, function(x) {
     links <- x %>%
-      lfilt("^link$") %>%
-      do.call("cbind", .)
-    links["href", ] %>%
-      setNames(links["rel", ] %>%
-                 basename %>%
-                 stringr::str_replace("[0-9]{4}#", ""))
-  }) %>%
+      lfilt("^link$") %>% plyr::llply(function(x) { 
+        link_names <- attr(x, "rel") %>% 
+          basename() %>%
+          stringr::str_replace("[0-9]{4}#", "")
+        links <- attr(x, "href") %>% setNames(link_names) 
+      })
+    links <- unlist(links)
+    names(links) <- stringr::str_replace(names(links), "link.", "")
+    links
+  }) %>% 
     dplyr::select_(quote(-.id))
   ## see comment above about ldply(.id = NULL)
-
+  
   ss$ws <- dplyr::bind_cols(ws_info, ws_links)
   ss
 }
