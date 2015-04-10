@@ -4,4 +4,4 @@
 .httr-oauth
 googlesheets.Rproj
 jenny-tmp.R
-tests/testthat/token_file.rds
+tests/testthat/googlesheets_token.rds
