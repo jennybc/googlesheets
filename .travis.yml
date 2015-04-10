@@ -12,6 +12,7 @@ install:
 - ./travis-tool.sh r_binary_install stringi
 - ./travis-tool.sh r_binary_install tidyr
 - ./travis-tool.sh install_deps
+- ./travis-tool.sh github_package hadley/xml2
 - ./travis-tool.sh github_package jimhester/covr
 script: ./travis-tool.sh run_tests
 after_script:
