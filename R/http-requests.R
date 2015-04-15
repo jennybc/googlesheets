@@ -52,7 +52,7 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
   # This is only FALSE when calling modify_ws() where we are using regex 
   # substitution, waiting for xml2 to support changing xml_doc()
   if(to_xml) { 
-    req$content <- req$content %>% xml2::xml()
+    req$content <- req$content %>% xml2::read_xml()
   }
   
   req
