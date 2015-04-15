@@ -220,6 +220,12 @@ get_via_cf <-
     ## query parameter
     query <- query %>% c(list("return-empty" = "true"))
   }
+  
+  ## to prevent appending of "?=" to url when query elements are all NULL
+  if(query %>% unlist() %>% is.null()) {
+    query <- NULL
+  }
+  
   req <- gsheets_GET(this_ws$cellsfeed, query = query)
   x <- req$content %>%
     lfilt("entry") %>%
