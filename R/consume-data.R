@@ -16,7 +16,7 @@
 #'   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is
 #'   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
 #'   within \code{googlesheets} re: NOT converting character data to factor
-#'   
+#'
 #' @family data consumption functions
 #'
 #' @return a tbl_df
@@ -31,11 +31,11 @@
 #' }
 #' @export
 get_via_csv <- function(ss, ws = 1, ...) {
-  
+
   stopifnot(ss %>% inherits("googlesheet"))
-  
+
   this_ws <- get_ws(ss, ws)
-  
+
   if(is.null(this_ws$exportcsv)) {
     stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
                "not offer the API access required by this function.",
@@ -44,18 +44,18 @@ get_via_csv <- function(ss, ws = 1, ...) {
                "or get_via_cf(). Or use download_ss() to export it to a local",
                "file and then read it into R."))
   }
-  
+
   ## since gsheets_GET expects xml back, just using GET for now
   if(ss$is_public) {
     req <- httr::GET(this_ws$exportcsv)
-  } else { 
+  } else {
     req <- httr::GET(this_ws$exportcsv, get_google_token())
   }
-  
+
   if(is.null(httr::content(req))) {
     stop("Worksheet is empty. There are no cells that contain data.")
   }
-  
+
   ## content() will process with read.csv, because req$headers$content-type is
   ## "text/csv"
   ## for empty cells, numeric columns returned as NA vs "" for chr
@@ -100,30 +100,29 @@ get_via_csv <- function(ss, ws = 1, ...) {
 #'
 #' @export
 get_via_lf <- function(ss, ws = 1) {
-  
+
   stopifnot(ss %>% inherits("googlesheet"))
-  
+
   this_ws <- get_ws(ss, ws)
   req <- gsheets_GET(this_ws$listfeed)
-  
+
   ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
-  
-  var_names <- req$content %>% 
-    xml2::xml_find_all("//feed:entry//gsx:*", ns) %>% 
-    xml2::xml_name() %>% 
-    unique()
-  
-  # empty cells returned as empty string ""
-  values <- req$content %>% 
-    xml2::xml_find_all("//feed:entry//gsx:*", ns) %>% 
+
+  var_names <- req$content %>%
+    xml2::xml_find_all("(//feed:entry)[1]", ns) %>%
+    xml2::xml_find_all(".//gsx:*", ns) %>%
+    xml2::xml_name()
+
+  values <- req$content %>%
+    xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
     xml2::xml_text()
-  
-  dat <- matrix(values, ncol = length(var_names), byrow = TRUE, 
-                dimnames = list(NULL, var_names)) %>% 
+
+  dat <- matrix(values, ncol = length(var_names), byrow = TRUE,
+                dimnames = list(NULL, var_names)) %>%
     ## convert to integer, numeric, etc. but w/ stringsAsFactors = FALSE
-    plyr::alply(2, function(x) type.convert(x, na.strings = c("NA", ""), 
-                                            as.is = TRUE)) %>%
-    ## get rid of attributes that are non-standard for tbl_dfs or data.frames 
+    ## empty cells returned as empty string ""
+    plyr::alply(2, type.convert, na.strings = c("NA", ""), as.is = TRUE) %>%
+    ## get rid of attributes that are non-standard for tbl_dfs or data.frames
     ## and that are an artefact of the above (specifically, I think, the use of
     ## alply?); if I don't do this, the output is fugly when you str() it
     `attr<-`("split_type", NULL) %>%
@@ -131,11 +130,12 @@ get_via_lf <- function(ss, ws = 1) {
     `attr<-`("dim", NULL) %>%
     ## for some reason removing the non-standard dim attributes clobbers the
     ## variable names, so those must be restored
-    `names<-`(var_names) %>% 
+    `names<-`(var_names) %>%
     ## convert to data.frame (tbl_df, actually)
     dplyr::as_data_frame()
-  
+
   dat
+
 }
 
 #' Create a data.frame of the non-empty cells in a rectangular region of a
@@ -186,15 +186,16 @@ get_via_lf <- function(ss, ws = 1) {
 #' @family data consumption functions
 #'
 #' @export
-get_via_cf <- function(ss, ws = 1,
-                       min_row = NULL, max_row = NULL, min_col = NULL, max_col = NULL,
-                       limits = NULL, return_empty = FALSE, return_links = FALSE,
-                       verbose = TRUE) {
-  
+get_via_cf <-
+  function(ss, ws = 1,
+           min_row = NULL, max_row = NULL, min_col = NULL, max_col = NULL,
+           limits = NULL, return_empty = FALSE, return_links = FALSE,
+           verbose = TRUE) {
+
   stopifnot(ss %>% inherits ("googlesheet"))
-  
+
   this_ws <- get_ws(ss, ws, verbose)
-  
+
   if(is.null(limits)) {
     limits <- list("min-row" = min_row, "max-row" = max_row,
                    "min-col" = min_col, "max-col" = max_col)
@@ -203,7 +204,7 @@ get_via_cf <- function(ss, ws = 1,
   }
   limits <- limits %>%
     validate_limits(this_ws$row_extent, this_ws$col_extent)
-  
+
   query <- limits
   if(return_empty) {
     ## the return-empty parameter is not documented in current sheets API, but
@@ -212,38 +213,38 @@ get_via_cf <- function(ss, ws = 1,
     ## query parameter
     query <- query %>% c(list("return-empty" = "true"))
   }
-  
-  req <- gsheets_GET(this_ws$cellsfeed, query = query) 
-  
-  # rename default namespace for clarity 
+
+  req <- gsheets_GET(this_ws$cellsfeed, query = query)
+
   ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
-  
-  x1 <- req$content %>% 
-    xml2::xml_find_all("//feed:entry", ns) %>%
-    dplyr::data_frame(cell = xml2::xml_find_all(., ".//feed:title", ns) %>%
-                        xml2::xml_text(),
-                      edit_link = xml2::xml_find_all(., ".//feed:link[@rel='edit']", ns) %>%
-                        xml2::xml_attr("href"),
-                      cell_id = xml2::xml_find_all(., ".//feed:id", ns) %>%
-                        xml2::xml_text(),
-                      cell_alt = xml2::xml_find_all(., ".//feed:id", ns) %>%
-                        xml2::xml_text() %>% basename()) %>%
-    dplyr::select_(quote(-.))
-  
-  x2 <- req$content %>% 
-    xml2::xml_find_all("//feed:entry//gs:cell", ns) %>%
-    dplyr::data_frame(row = xml2::xml_attr(., "row") %>% as.integer(), 
-                      col = xml2::xml_attr(., "col") %>% as.integer(), 
-                      cell_text = xml2::xml_attr(., "inputValue")) %>%
-    dplyr::select_(quote(-.))
-  
-  x <- dplyr::bind_cols(x1,x2) %>%
-    dplyr::select_(~cell, ~cell_alt, ~row, ~col, ~cell_text, 
+
+  x1 <- req$content %>%
+    xml2::xml_find_all("//feed:entry", ns) %>% {
+      ## we're inside brackets to the nodeset is not used to create the first
+      ## variable in this tbl_df
+      dplyr::data_frame(cell = xml2::xml_find_all(., ".//feed:title", ns) %>%
+                          xml2::xml_text(),
+                        edit_link = xml2::xml_find_all(., ".//feed:link[@rel='edit']", ns) %>%
+                          xml2::xml_attr("href"),
+                        cell_id = xml2::xml_find_all(., ".//feed:id", ns) %>%
+                          xml2::xml_text(),
+                        cell_alt = cell_id %>% basename())
+    }
+
+  x2 <- req$content %>%
+    xml2::xml_find_all("//feed:entry//gs:cell", ns) %>% {
+      dplyr::data_frame(row = xml2::xml_attr(., "row") %>% as.integer(),
+                        col = xml2::xml_attr(., "col") %>% as.integer(),
+                        cell_text = xml2::xml_attr(., "inputValue"))
+    }
+
+  x <- dplyr::bind_cols(x1, x2) %>%
+    dplyr::select_(~cell, ~cell_alt, ~row, ~col, ~cell_text,
                    ~edit_link, ~cell_id) %>%
     dplyr::as_data_frame()
-  
+
   attr(x, "ws_title") <- this_ws$ws_title
-  
+
   # the pros outweighed the cons re: setting up a zero row data.frame that, at
   # least, has the correct variables
   if(nrow(x) == 0L) {
@@ -255,14 +256,14 @@ get_via_cf <- function(ss, ws = 1,
                            edit_link = character(),
                            cell_id = character())
   }
-  
+
   if(return_links) {
     x
   } else {
     x %>%
       dplyr::select_(~ -edit_link, ~ -cell_id)
   }
-  
+
   # see issue #19 about all the places cell data is (mostly redundantly) stored
   # in the XML, such as:
   # content_text = x$content$text,
@@ -348,7 +349,7 @@ get_col <- function(ss, ws = 1, col) {
 #'
 #' @export
 get_cells <- function(ss, ws = 1, range) {
-  
+
   limits <- convert_range_to_limit_list(range)
   get_via_cf(ss, ws, limits = limits)
 }
@@ -370,7 +371,7 @@ get_cells <- function(ss, ws = 1, range) {
 #' }
 #' @export
 reshape_cf <- function(x, header = TRUE) {
-  
+
   limits <- x %>%
     dplyr::summarise_each_(dplyr::funs(min, max), list(~ row, ~ col))
   all_possible_cells <-
@@ -383,9 +384,9 @@ reshape_cf <- function(x, header = TRUE) {
   ## tidyr::spread(), used below, could do something similar as this join, but
   ## it would handle completely missing rows and columns differently; still
   ## thinking about this
-  
+
   if(header) {
-    
+
     if(x_augmented$row %>% dplyr::n_distinct() < 2) {
       message("No data to reshape!")
       if(header) {
@@ -393,7 +394,7 @@ reshape_cf <- function(x, header = TRUE) {
       }
       return(NULL)
     }
-    
+
     row_one <- x_augmented %>%
       dplyr::filter_(~ row == min(row))
     var_names <- ifelse(is.na(row_one$cell_text),
@@ -404,7 +405,7 @@ reshape_cf <- function(x, header = TRUE) {
   } else {
     var_names <- limits$col_min:limits$col_max %>% make.names()
   }
-  
+
   x_augmented %>%
     dplyr::select_(~ row, ~ col, ~ cell_text) %>%
     tidyr::spread_("col", "cell_text", convert = TRUE) %>%
@@ -413,27 +414,27 @@ reshape_cf <- function(x, header = TRUE) {
 }
 
 #' Simplify data from the cell feed
-#' 
+#'
 #' In some cases, you might not want to convert the data retrieved from the cell
-#' feed into a data.frame via \code{\link{reshape_cf}}. You might prefer it as 
-#' an atomic vector. That's what this function does. Note that, unlike 
-#' \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this 
-#' result. By default, the API does not transmit data for these cells; 
+#' feed into a data.frame via \code{\link{reshape_cf}}. You might prefer it as
+#' an atomic vector. That's what this function does. Note that, unlike
+#' \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this
+#' result. By default, the API does not transmit data for these cells;
 #' \code{googlesheets} inserts these cells in \code{\link{reshape_cf}} because
 #' it is necessary to give the data rectangular shape. In contrast, empty cells
 #' will only appear in the output of \code{simplify_cf} if they were already
-#' present in the data from the cell feed, i.e. if the original call to 
+#' present in the data from the cell feed, i.e. if the original call to
 #' \code{\link{get_via_cf}} had argument \code{return_empty} set to \code{TRUE}.
-#' 
+#'
 #' @inheritParams reshape_cf
-#' @param convert logical, indicating whether to attempt to convert the result 
-#'   vector from character to something more appropriate, such as logical, 
+#' @param convert logical, indicating whether to attempt to convert the result
+#'   vector from character to something more appropriate, such as logical,
 #'   integer, or numeric; if TRUE, result is passed through \code{type.convert};
 #'   if FALSE, result will be character
-#' @param as.is logical, passed through to the \code{as.is} argument of 
+#' @param as.is logical, passed through to the \code{as.is} argument of
 #'   \code{type.convert}
-#' @param notation character; the result vector will have names that reflect 
-#'   which cell the data came from; this argument selects the positioning 
+#' @param notation character; the result vector will have names that reflect
+#'   which cell the data came from; this argument selects the positioning
 #'   notation, i.e. "A1" vs. "R1C1"
 #'
 #' @return a named vector
@@ -452,25 +453,25 @@ reshape_cf <- function(x, header = TRUE) {
 #' @export
 simplify_cf <- function(x, convert = TRUE, as.is = TRUE,
                         notation = c("A1", "R1C1"), header = NULL) {
-  
+
   ## TO DO: If the input contains empty cells, maybe this function should have a
   ## way to request that cell entry "" be converted to NA?
-  
+
   notation <- match.arg(notation)
-  
+
   if(is.null(header) &&
-       x$row %>% min() == 1 &&
-       x$col %>% dplyr::n_distinct() == 1) {
+     x$row %>% min() == 1 &&
+     x$col %>% dplyr::n_distinct() == 1) {
     header <-  TRUE
   } else {
     header <- FALSE
   }
-  
+
   if(header) {
     x <- x %>%
       dplyr::filter_(~ row > min(row))
   }
-  
+
   y <- x$cell_text
   names(y) <- switch(notation,
                      A1 = x$cell,
@@ -487,9 +488,9 @@ simplify_cf <- function(x, convert = TRUE, as.is = TRUE,
 ## re: min_row, max_row, min_col, max_col = query params for cell feed
 validate_limits <-
   function(limits, ws_row_extent = NULL, ws_col_extent = NULL) {
-    
+
     ## limits must be length one vector, holding a positive integer
-    
+
     ## why do I proceed this way?
     ## [1] want to preserve original invalid limits for use in error message
     ## [2] want to be able to say which element(s) of limits is/are invalid
@@ -506,7 +507,7 @@ validate_limits <-
     } else {
       limits <- tmp_limits
     }
-    
+
     ## min must be <= max, min and max must be <= nominal worksheet extent
     jfun <- function(x, upper_bound) {
       x_name <- deparse(substitute(x))
@@ -518,14 +519,14 @@ validate_limits <-
         stop(mess)
       }
     }
-    
+
     jfun(limits[["min-row"]], limits[["max-row"]])
     jfun(limits[["min-row"]], ws_row_extent)
     jfun(limits[["max-row"]], ws_row_extent)
     jfun(limits[["min-col"]], limits[["max-col"]])
     jfun(limits[["min-col"]], ws_col_extent)
     jfun(limits[["max-col"]], ws_col_extent)
-    
+
     limits
   }
 
