@@ -1,5 +1,5 @@
 #' Retrieve a worksheet-describing list from a googlesheet
-#' 
+#'
 #' From a googlesheet, retrieve a list (actually a row of a data.frame) giving
 #' everything we know about a specific worksheet.
 #'
@@ -32,7 +32,7 @@ get_ws <- function(ss, ws, verbose = TRUE) {
 }
 
 #' List the worksheets in a googlesheet
-#' 
+#'
 #' Retrieve the titles of all the worksheets in a gpreadsheet.
 #'
 #' @inheritParams get_via_lf
@@ -47,7 +47,7 @@ get_ws <- function(ss, ws, verbose = TRUE) {
 list_ws <- function(ss) {
 
   stopifnot(inherits(ss, "googlesheet"))
-  
+
   ss$ws$ws_title
 }
 
@@ -59,7 +59,7 @@ list_ws <- function(ss) {
 letter_to_num <- function(x) {
   x %>%
     toupper() %>%
-    strsplit('') %>% 
+    strsplit('') %>%
     plyr::llply(match, table = LETTERS) %>%
     plyr::laply(function(z) sum(26 ^ rev(seq_along(z) - 1) * z)) %>%
     unname()
@@ -234,8 +234,6 @@ extract_key_from_url <- function(url) {
 #' @keywords internal
 construct_ws_feed_from_key <- function(key, visibility = "private") {
   tmp <-
-    "https://spreadsheets.google.com/feeds/worksheets/KEY/VISIBILITY/full"
-  tmp %>%
-    stringr::str_replace('KEY', key) %>%
-    stringr::str_replace('VISIBILITY', visibility)
+    "https://spreadsheets.google.com/feeds/worksheets/%s/%s/full"
+  sprintf(tmp, key, visibility)
 }
