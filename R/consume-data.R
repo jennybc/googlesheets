@@ -214,6 +214,11 @@ get_via_cf <-
     query <- query %>% c(list("return-empty" = "true"))
   }
 
+  ## to prevent appending of "?=" to url when query elements are all NULL
+  if(query %>% unlist() %>% is.null()) {
+    query <- NULL
+  }
+  
   req <- gsheets_GET(this_ws$cellsfeed, query = query)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
