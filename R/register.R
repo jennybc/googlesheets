@@ -1,24 +1,24 @@
 #' Get a listing of spreadsheets
-#' 
-#' Lists spreadsheets that the authorized user would see in the Google Sheets 
-#' home screen: \url{https://docs.google.com/spreadsheets/}. For these sheets, 
+#'
+#' Lists spreadsheets that the authorized user would see in the Google Sheets
+#' home screen: \url{https://docs.google.com/spreadsheets/}. For these sheets,
 #' get sheet title, sheet key, owner, user's permission, date-time of last
 #' update, version (old vs new Sheets), various links, and an alternative key
 #' (only relevant to old Sheets).
-#' 
-#' This function returns the information available from the 
+#'
+#' This function returns the information available from the
 #' \href{https://developers.google.com/google-apps/spreadsheets/#retrieving_a_list_of_spreadsheets}{spreadsheets
 #' feed} of the Google Sheets API.
-#' 
+#'
 #' This listing give the user a partial view of the sheets available for access
 #' (why just partial? see below). It also gives a map between readily available
 #' information, such as sheet title, and more obscure information you might use
 #' in scripts, such as the sheet key. This sort of "table lookup" is implemented
 #' in the \code{googlesheets} helper function \code{\link{identify_ss}}.
-#' 
-#' Which sheets show up here? Certainly those owned by the authorized user. But 
-#' also a subset of the sheets owned by others but visible to the authorized 
-#' user. We have yet to find explicit Google documentation on this matter. 
+#'
+#' Which sheets show up here? Certainly those owned by the authorized user. But
+#' also a subset of the sheets owned by others but visible to the authorized
+#' user. We have yet to find explicit Google documentation on this matter.
 #' Anecdotally, sheets shared by others seem to appear in this listing if the
 #' authorized user has visited them in the browser. This is an important point
 #' for usability because a sheet can be summoned by title instead of key only if
@@ -26,14 +26,14 @@
 #' listing, a more robust workflow is to extract the key from the browser URL
 #' via \code{\link{extract_key_from_url}} and explicitly specify the sheet in
 #' \code{googlesheets} functions by key.
-#' 
+#'
 #' @return a tbl_df, one row per sheet
-#'   
+#'
 #' @examples
 #' \dontrun{
 #' list_sheets()
 #' }
-#' 
+#'
 #' @export
 list_sheets <- function() {
 
@@ -43,11 +43,11 @@ list_sheets <- function() {
   req <- gsheets_GET(the_url)
 
   sheet_list <- req$content %>% lfilt("^entry$")
-  
+
   links <- plyr::ldply(sheet_list, function(x) {
     links <- x %>%
       lfilt("^link$") %>%
-      unname() %>% 
+      unname() %>%
       do.call("cbind", .)
     dplyr::data_frame(ws_feed =
                         links["href",
@@ -84,26 +84,26 @@ list_sheets <- function() {
 }
 
 #' Retrieve the identifiers for a spreadsheet
-#' 
-#' Initialize a googlesheet object that holds identifying information for a 
-#' specific spreadsheet. Intended primarily for internal use. Unless 
-#' \code{verify = FALSE}, it calls \code{\link{list_sheets}} and attempts to 
-#' return information from the row uniquely specified by input \code{x}. The 
-#' listing provided by \code{\link{list_sheets}} is only available to an 
-#' authorized user, so authorization will be required. A googlesheet object 
-#' contains much more information than that available via 
+#'
+#' Initialize a googlesheet object that holds identifying information for a
+#' specific spreadsheet. Intended primarily for internal use. Unless
+#' \code{verify = FALSE}, it calls \code{\link{list_sheets}} and attempts to
+#' return information from the row uniquely specified by input \code{x}. The
+#' listing provided by \code{\link{list_sheets}} is only available to an
+#' authorized user, so authorization will be required. A googlesheet object
+#' contains much more information than that available via
 #' \code{\link{list_sheets}}, so many components will not be populated until the
 #' sheet is registered properly, such as via \code{\link{register_ss}}, which is
-#' called internally in many \code{googlesheets} functions. If \code{verify = 
+#' called internally in many \code{googlesheets} functions. If \code{verify =
 #' FALSE}, then user must provide either sheet key, URL or a worksheets feed, as
 #' opposed to sheet title. In this case, the information will be taken at face
 #' value, i.e. no proactive verification or look-up on Google Drive.
 #'
 #' This function is will be revised to be less dogmatic about only identifying
 #' ONE sheet.
-#' 
-#' @param x sheet-identifying information, either a googlesheet object or a 
-#'   character vector of length one, giving a URL, sheet title, key or 
+#'
+#' @param x sheet-identifying information, either a googlesheet object or a
+#'   character vector of length one, giving a URL, sheet title, key or
 #'   worksheets feed
 #' @param method optional character string specifying the method of sheet
 #'   identification; if given, must be one of: URL, key, title, ws_feed, or ss
@@ -113,9 +113,9 @@ list_sheets <- function() {
 #'   a worksheets feed that anticipates requests with authentication ("private")
 #'   or without ("public"); only consulted when \code{verify = FALSE}
 #' @param verbose logical
-#'   
+#'
 #' @return a googlesheet object
-#'   
+#'
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
@@ -200,7 +200,7 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
     }
 
     ss <- googlesheet()
-    
+
     if(method == 'key') {
       ss$sheet_key <- x
       ss$ws_feed <- construct_ws_feed_from_key(x, visibility)
@@ -278,13 +278,13 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 }
 
 #' Register a Google spreadsheet
-#' 
-#' Specify a Google spreadsheet via its URL, unique key, title, or worksheets 
-#' feed and register it for further use. This function returns an object of 
-#' class \code{googlesheet}, which contains all the information other 
+#'
+#' Specify a Google spreadsheet via its URL, unique key, title, or worksheets
+#' feed and register it for further use. This function returns an object of
+#' class \code{googlesheet}, which contains all the information other
 #' \code{googlesheets} functions will need to consume data from the sheet or to
-#' edit the sheet. This object also contains sheet information that may be of 
-#' interest to the user, such as the time of last update, the number of 
+#' edit the sheet. This object also contains sheet information that may be of
+#' interest to the user, such as the time of last update, the number of
 #' worksheets contained, and their titles.
 #'
 #' @param x character vector of length one, with sheet-identifying information;
@@ -296,15 +296,15 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
 #' @param visibility either "public" or "private"; used to specify visibility
 #'   when sheet identified via \code{key}
 #' @param verbose logical; do you want informative message?
-#'   
+#'
 #' @return Object of class googlesheet.
-#'   
-#' @note Re: the reported extent of the worksheets. Contain your excitement, 
-#'   because it may not be what you think or hope it is. It does not report how 
-#'   many rows or columns are actually nonempty. This cannot be determined via 
+#'
+#' @note Re: the reported extent of the worksheets. Contain your excitement,
+#'   because it may not be what you think or hope it is. It does not report how
+#'   many rows or columns are actually nonempty. This cannot be determined via
 #'   the Google sheets API without consuming the data and noting which cells are
-#'   populated. Therefore, these numbers often reflect the default extent of a 
-#'   new worksheet, e.g., 1000 rows and 26 columns at the time or writing, and 
+#'   populated. Therefore, these numbers often reflect the default extent of a
+#'   new worksheet, e.g., 1000 rows and 26 columns at the time or writing, and
 #'   provide an upper bound on the true number of rows and columns.
 #'
 #' @note The visibility can only be "public" if the sheet is "Published to the
@@ -326,8 +326,9 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
 
   if(is.null(ws_feed)) {
     if(is.null(key)) { # get ws_feed from x
-      ws_feed <- x %>%
-        identify_ss(visibility = TRUE, verbose = verbose) %>%
+      this_ss <- x %>%
+        identify_ss(visibility = TRUE, verbose = verbose)
+      ws_feed <- this_ss %>%
         `[[`("ws_feed")
     } else {           # take key at face value
       ws_feed <- construct_ws_feed_from_key(key, visibility)
@@ -344,7 +345,7 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
   }
 
   ss <- googlesheet()
-  
+
   ss$sheet_key <- ws_feed %>% extract_key_from_url()
   ss$sheet_title <- req$content[["title"]][["text"]]
   ss$n_ws <- req$content[["totalResults"]] %>% as.integer()
@@ -358,7 +359,7 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
 
   ss$visibility <- req$url %>% dirname() %>% basename()
   ss$is_public <- ss$visibility == "public"
-  
+
   ss$author_name <- req$content[["author"]][["name"]]
   ss$author_email <- req$content[["author"]][["email"]]
 
@@ -368,6 +369,12 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
   ## select_() will be unnecessary when this PR gets merged into plyr
   ## https://github.com/hadley/plyr/pull/207
   ## and ldply handles '.id = NULL' correctly
+
+  ## if we have info from the spreadhsheet feed, use it
+  ## that's the only way to populate alt_key
+  if(exists("this_ss")) {
+    ss$alt_key <- this_ss$alt_key
+  }
 
   ws_list <- req$content %>% lfilt("^entry$")
   ws_info <-

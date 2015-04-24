@@ -55,7 +55,11 @@ download_ss <- function(from, key = NULL, ws = NULL, to = "my_sheet.xlsx",
   # export a single worksheet
   if(!is.null(ws)) {
 
-    this_ws <- register_ss(key, verbose = FALSE) %>% get_ws(ws)
+    if(!inherits(from, "googlesheet")) {
+      this_ws <- register_ss(key, verbose = FALSE) %>% get_ws(ws)
+    } else {
+      this_ws <- from %>% get_ws(ws)
+    }
 
     export_links <- c(
       csv = this_ws$exportcsv,
