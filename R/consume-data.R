@@ -16,7 +16,7 @@
 #'   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is
 #'   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
 #'   within \code{googlesheets} re: NOT converting character data to factor
-#'   
+#'
 #' @family data consumption functions
 #'
 #' @return a tbl_df
@@ -33,9 +33,9 @@
 get_via_csv <- function(ss, ws = 1, ...) {
 
   stopifnot(ss %>% inherits("googlesheet"))
-  
+
   this_ws <- get_ws(ss, ws)
-  
+
   if(is.null(this_ws$exportcsv)) {
     stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
                "not offer the API access required by this function.",
@@ -48,10 +48,10 @@ get_via_csv <- function(ss, ws = 1, ...) {
   ## since gsheets_GET expects xml back, just using GET for now
   if(ss$is_public) {
     req <- httr::GET(this_ws$exportcsv)
-  } else { 
+  } else {
     req <- httr::GET(this_ws$exportcsv, get_google_token())
   }
-  
+
   if(is.null(httr::content(req))) {
     stop("Worksheet is empty. There are no cells that contain data.")
   }
@@ -59,9 +59,9 @@ get_via_csv <- function(ss, ws = 1, ...) {
   ## content() will process with read.csv, because req$headers$content-type is
   ## "text/csv"
   ## for empty cells, numeric columns returned as NA vs "" for chr
-  #columns so set all "" to NA
+  ## columns so set all "" to NA
   req %>%
-    httr::content(na.strings = c("", "NA"), ...) %>%
+    httr::content(na.strings = c("", "NA"), encoding = "UTF-8", ...) %>%
     dplyr::as_data_frame()
 }
 
@@ -102,17 +102,17 @@ get_via_csv <- function(ss, ws = 1, ...) {
 get_via_lf <- function(ss, ws = 1) {
 
   stopifnot(ss %>% inherits("googlesheet"))
-  
+
   this_ws <- get_ws(ss, ws)
   req <- gsheets_GET(this_ws$listfeed)
   row_data <- req$content %>% lfilt("entry")
-  
+
   ## when I switch to xml2 and/or stop converting feed via xmlToList(), I can
   ## dramatically rationalize the separation of boilerplate from content
   ## TO DO: experiment with empty header cells, header cells with
   ## space or other non-alphanumeric characters
   ## https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds
-  
+
   component_names <- row_data[[1]] %>% names()
   boilerplate_names <-
     c("id", "updated", "category", "title", "content", "link")
@@ -122,10 +122,10 @@ get_via_lf <- function(ss, ws = 1) {
     `-`(1)
   drop_boilerplate_vars <- -1 * seq_len(last_boilerplate)
   var_names <- component_names[drop_boilerplate_vars]
-  
+
   ## used below to handle empty cells: replace NULL with NA
   null_NA_character <- function(x) if(is.null(x)) NA_character_ else x
-  
+
   row_data %>%
     unname() %>% # drop stupid and ubiquitous 'entry' names
     plyr::llply(`[`, drop_boilerplate_vars) %>%
@@ -199,7 +199,7 @@ get_via_cf <-
            verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
-    
+
   this_ws <- get_ws(ss, ws, verbose)
 
   if(is.null(limits)) {
@@ -220,12 +220,12 @@ get_via_cf <-
     ## query parameter
     query <- query %>% c(list("return-empty" = "true"))
   }
-  
+
   ## to prevent appending of "?=" to url when query elements are all NULL
   if(query %>% unlist() %>% is.null()) {
     query <- NULL
   }
-  
+
   req <- gsheets_GET(this_ws$cellsfeed, query = query)
   x <- req$content %>%
     lfilt("entry") %>%
@@ -435,27 +435,27 @@ reshape_cf <- function(x, header = TRUE) {
 }
 
 #' Simplify data from the cell feed
-#' 
+#'
 #' In some cases, you might not want to convert the data retrieved from the cell
-#' feed into a data.frame via \code{\link{reshape_cf}}. You might prefer it as 
-#' an atomic vector. That's what this function does. Note that, unlike 
-#' \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this 
-#' result. By default, the API does not transmit data for these cells; 
+#' feed into a data.frame via \code{\link{reshape_cf}}. You might prefer it as
+#' an atomic vector. That's what this function does. Note that, unlike
+#' \code{\link{reshape_cf}}, empty cells will NOT necessarily appear in this
+#' result. By default, the API does not transmit data for these cells;
 #' \code{googlesheets} inserts these cells in \code{\link{reshape_cf}} because
 #' it is necessary to give the data rectangular shape. In contrast, empty cells
 #' will only appear in the output of \code{simplify_cf} if they were already
-#' present in the data from the cell feed, i.e. if the original call to 
+#' present in the data from the cell feed, i.e. if the original call to
 #' \code{\link{get_via_cf}} had argument \code{return_empty} set to \code{TRUE}.
-#' 
+#'
 #' @inheritParams reshape_cf
-#' @param convert logical, indicating whether to attempt to convert the result 
-#'   vector from character to something more appropriate, such as logical, 
+#' @param convert logical, indicating whether to attempt to convert the result
+#'   vector from character to something more appropriate, such as logical,
 #'   integer, or numeric; if TRUE, result is passed through \code{type.convert};
 #'   if FALSE, result will be character
-#' @param as.is logical, passed through to the \code{as.is} argument of 
+#' @param as.is logical, passed through to the \code{as.is} argument of
 #'   \code{type.convert}
-#' @param notation character; the result vector will have names that reflect 
-#'   which cell the data came from; this argument selects the positioning 
+#' @param notation character; the result vector will have names that reflect
+#'   which cell the data came from; this argument selects the positioning
 #'   notation, i.e. "A1" vs. "R1C1"
 #'
 #' @return a named vector
