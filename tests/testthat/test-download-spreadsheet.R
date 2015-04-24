@@ -31,6 +31,7 @@ test_that("Old Sheets can be exported", {
 
   # csv should not work
   # 2015-04-22 AND YET NOW IT DOES? LOOK INTO THIS
+  # 2015-02-24 Oh, it's because Google forcibly converted old --> new again :(
   #expect_error(download_ss(old_title, to = file.path(temp_dir, "old.csv")),
   #             "not supported")
 
@@ -42,6 +43,7 @@ test_that("Old Sheets can be exported", {
                                                        overwrite = TRUE),
                  "successfully downloaded")
   # this used to use old_url, but that is not working ... figure that out
+  # see above re: why things changed
   expect_message(download_ss(old_title, to = file.path(temp_dir, "old.pdf"),
                              overwrite = TRUE),
                  "successfully downloaded")

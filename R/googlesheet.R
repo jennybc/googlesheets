@@ -1,10 +1,10 @@
 #' The googlesheet object
-#' 
+#'
 #' The googlesheet object stores information that \code{googlesheets} requires in
 #' order to communicate with the
 #' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
 #' API}.
-#' 
+#'
 #' Very little of this is of interest to the user. A googlesheet object
 #' includes the fields:
 #'
@@ -16,7 +16,7 @@
 #' \item \code{sheet_id} the id of the spreadsheet
 #' \item \code{updated} the time of last update (at time of registration)
 #' \item \code{get_date} the time of registration
-#' \item \code{visibility} visibility of spreadsheet (Google's confusing 
+#' \item \code{visibility} visibility of spreadsheet (Google's confusing
 #' vocabulary); actually, does not describe a property of spreadsheet itself but
 #' rather whether requests will be made with or without authentication
 #' \item \code{is_public} logical indicating visibility is "public", as opposed to "private"
@@ -31,7 +31,7 @@
 #' TO DO: this documentation is neither here nor there. Either the object is
 #' self-explanatory and this isn't really needed. Or this needs to get beefed
 #' up. Probably the latter.
-#' 
+#'
 #' @name googlesheet
 googlesheet <- function() {
   structure(list(sheet_key = character(),
@@ -47,7 +47,7 @@ googlesheet <- function() {
                  author_email = character(),
                  links = character(), # initialize as data.frame?
                  ws = list(),
-                 alt_key = character()),
+                 alt_key = NA_character_),
             class = c("googlesheet", "list"))
-  
+
 }
