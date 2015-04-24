@@ -30,11 +30,11 @@
 #' oceania_csv
 #' }
 #' @export
-get_via_csv <- function(ss, ws = 1, ...) {
+get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- get_ws(ss, ws)
+  this_ws <- get_ws(ss, ws, verbose)
 
   if(is.null(this_ws$exportcsv)) {
     stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
@@ -84,6 +84,7 @@ get_via_csv <- function(ss, ws = 1, ...) {
 #' @param ss a registered Google spreadsheet
 #' @param ws positive integer or character string specifying index or title,
 #'   respectively, of the worksheet to consume
+#' @param verbose logical; do you want informative messages?
 #'
 #' @family data consumption functions
 #'
@@ -99,11 +100,11 @@ get_via_csv <- function(ss, ws = 1, ...) {
 #' }
 #'
 #' @export
-get_via_lf <- function(ss, ws = 1) {
+get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- get_ws(ss, ws)
+  this_ws <- get_ws(ss, ws, verbose)
   req <- gsheets_GET(this_ws$listfeed)
   row_data <- req$content %>% lfilt("entry")
 
@@ -178,7 +179,6 @@ get_via_lf <- function(ss, ws = 1) {
 #' @param return_empty logical; indicates whether to return empty cells
 #' @param return_links logical; indicates whether to return the edit and self
 #'   links (used internally in cell editing workflow)
-#' @param verbose logical; do you want informative messages?
 #'
 #' @examples
 #' \dontrun{
@@ -317,8 +317,9 @@ get_via_cf <-
 #' }
 #'
 #' @export
-get_row <- function(ss, ws = 1, row)
-  get_via_cf(ss, ws, min_row = min(row), max_row = max(row))
+get_row <- function(ss, ws = 1, row, verbose = TRUE) {
+  get_via_cf(ss, ws, min_row = min(row), max_row = max(row), verbose = verbose)
+}
 
 #' Get data from a column or range of columns
 #'
@@ -342,8 +343,8 @@ get_row <- function(ss, ws = 1, row)
 #' }
 #'
 #' @export
-get_col <- function(ss, ws = 1, col) {
-  get_via_cf(ss, ws, min_col = min(col), max_col = max(col))
+get_col <- function(ss, ws = 1, col, verbose = TRUE) {
+  get_via_cf(ss, ws, min_col = min(col), max_col = max(col), verbose = verbose)
 }
 
 #' Get data from a cell or range of cells
@@ -369,10 +370,10 @@ get_col <- function(ss, ws = 1, col) {
 #' }
 #'
 #' @export
-get_cells <- function(ss, ws = 1, range) {
+get_cells <- function(ss, ws = 1, range, verbose = TRUE) {
 
   limits <- convert_range_to_limit_list(range)
-  get_via_cf(ss, ws, limits = limits)
+  get_via_cf(ss, ws, limits = limits, verbose = verbose)
 }
 
 #' Reshape cell-level data and convert to data.frame
@@ -417,7 +418,8 @@ reshape_cf <- function(x, header = TRUE) {
     }
 
     row_one <- x_augmented %>%
-      dplyr::filter_(~ row == min(row))
+      dplyr::filter_(~ (row == min(row))) %>%
+      dplyr::mutate_(cell_text = ~ ifelse(cell_text == "", NA, cell_text))
     var_names <- ifelse(is.na(row_one$cell_text),
                         stringr::str_c("C", row_one$col),
                         row_one$cell_text) %>% make.names()
