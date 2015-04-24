@@ -31,10 +31,12 @@ wtf2_url <- "https://docs.google.com/spreadsheets/d/1upHM4Kg9Zr3dmzW2LW_rMG44NFJ
 ## http://its.faith.edu.ph/news/oldstylegooglesheet
 ## the actual link to make a copy of an old style sheet is this:
 ## https://drive.google.com/open?id=0AixWk2YYzNjidGxZS1ItdkN1bzJyeFFTSGxjc0lXamc&authuser=0&newcopy
-old_title <- "Old School Google Sheet"
-old_url <- "https://docs.google.com/spreadsheet/ccc?key=0Audw-qi1jh3fdHhQWWg0T2tZdkZqT2VMeDZnOHM4NUE#gid=1"
-old_alt_key <- "0Audw-qi1jh3fdHhQWWg0T2tZdkZqT2VMeDZnOHM4NUE"
-old_key <- "txPYh4OkYvFjOeLx6g8s85A"
+## Old sheet (owned by rpackagetest)
+old_url <- "https://docs.google.com/spreadsheet/ccc?key=0Ai6OdwH-k_ZcdElYSWIxNkhwRkMzdnJTenowazFSS3c"
+old_key <- "tIXIb16HpFC3vrSzz0k1RKw"
+old_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/tIXIb16HpFC3vrSzz0k1RKw/private/values" # it appears only private works for old sheets?
+old_alt_key <- "0Ai6OdwH-k_ZcdElYSWIxNkhwRkMzdnJTenowazFSS3c"
+old_title <- "test-gs-old-sheet"
 
 ## "Published to the web" sheet
 ## For accessing via visibility = "public" w/o ever having authenticated

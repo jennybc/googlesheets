@@ -2,49 +2,52 @@ context("download sheets")
 
 test_that("Spreadsheet can be exported", {
 
+  ss <- register_ss(ws_feed = gap_ws_feed)
+
   temp_dir <- tempdir()
 
   # bad format
-  expect_error(download_ss(pts_title, to = "pts.txt"),
+  expect_error(download_ss(ss, to = "pts.txt"),
                "Cannot download Google spreadsheet as this format")
 
   # good formats
-  expect_message(download_ss(pts_title, to = file.path(temp_dir, "pts.xlsx")),
-                 "successfully downloaded")
-  expect_message(download_ss(pts_title, to = file.path(temp_dir, "pts.pdf")),
-                 "successfully downloaded")
-  expect_message(download_ss(pts_title, to = file.path(temp_dir, "pts.csv")),
-                 "successfully downloaded")
+  fmts <- c("xlsx", "pdf", "csv")
+  to_files <- file.path(temp_dir, paste0("oceania.", fmts))
+  for(to in to_files) {
+    expect_message(ss %>%
+                     download_ss(ws = "Oceania", to = to, overwrite = TRUE),
+                   "successfully downloaded")
+  }
 
-  expect_true(all(file.exists(file.path(temp_dir,
-                                        c("pts.xlsx", "pts.pdf", "pts.csv")))))
-
-  expect_true(all(file.remove(file.path(temp_dir,
-                                        c("pts.xlsx", "pts.pdf", "pts.csv")))))
+  expect_true(all(file.exists(to_files)))
+  expect_true(all(file.remove(to_files)))
 
 })
 
 test_that("Old Sheets can be exported", {
 
   temp_dir <- tempdir()
+  ## we must register by title, in order to get info from the spreadsheets feed,
+  ## which, in turn, is the only way to populate the alt_key
+  ## this means we must have visited the sheet in the browser at least once!
   ss <- register_ss(old_title)
 
   # csv should not work
-  # 2015-04-22 AND YET NOW IT DOES? LOOK INTO THIS
-  # 2015-02-24 Oh, it's because Google forcibly converted old --> new again :(
-  #expect_error(download_ss(old_title, to = file.path(temp_dir, "old.csv")),
-  #             "not supported")
+  # 2015-04-24 periodically google will forcibly convert an old sheet to new
+  # until they eradicate all of them, this means we have to go grab a fresh
+  # old sheet to test against
+  # https://github.com/jennybc/googlesheets/issues/107
+  expect_error(ss %>% download_ss(to = file.path(temp_dir, "old.csv")),
+               "not supported")
 
   # good formats and different specifications
   expect_message(ss %>% download_ss(to = file.path(temp_dir, "old.xlsx"),
                                     overwrite = TRUE),
                  "successfully downloaded")
-  expect_message(download_ss(old_title, to = file.path(temp_dir, "old.xlsx"),
-                                                       overwrite = TRUE),
+  expect_message(ss %>% download_ss(to = file.path(temp_dir, "old.xlsx"),
+                                    overwrite = TRUE),
                  "successfully downloaded")
-  # this used to use old_url, but that is not working ... figure that out
-  # see above re: why things changed
-  expect_message(download_ss(old_title, to = file.path(temp_dir, "old.pdf"),
+  expect_message(ss %>% download_ss(to = file.path(temp_dir, "old.pdf"),
                              overwrite = TRUE),
                  "successfully downloaded")
 
