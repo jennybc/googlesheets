@@ -13,6 +13,7 @@ install:
 - ./travis-tool.sh r_binary_install tidyr
 - ./travis-tool.sh install_deps
 - ./travis-tool.sh github_package jimhester/covr
+- ./travis-tool.sh github_package jimhester/robustr
 script: ./travis-tool.sh run_tests
 after_script:
 - ./travis-tool.sh dump_sysinfo
