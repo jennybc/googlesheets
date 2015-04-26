@@ -12,7 +12,7 @@ install:
 - ./travis-tool.sh r_binary_install stringi
 - ./travis-tool.sh r_binary_install tidyr
 - ./travis-tool.sh install_deps
-- ./travis-tool.sh github_package hadley/xml2
+- ./travis-tool.sh github_package jimhester/robustr
 - ./travis-tool.sh github_package jimhester/covr
 script: ./travis-tool.sh run_tests
 after_script:
@@ -27,3 +27,4 @@ env:
 - secure: KG+szfdd5qhWb5C/kz05BND8wkEreqSOlZOWc9o2XXH2wFoabNUbA90mK2WeSR99gzoPqeydphrGwco+UPfoXcAwowhk3PzVOAZPhMlEX3G2znpeq8d17k4cQ/KoqpO1upKiADYqmxHkMaxjxb8JDOmeCqhhW5HYcOvTNUHdH2I=
 after_success: git log -n 1 --format=%B | grep -iq "covr"; if [ $? -eq 0 ]; then echo
   "Checking test coverage with covr"; Rscript -e 'library(covr);coveralls()'; fi
+
