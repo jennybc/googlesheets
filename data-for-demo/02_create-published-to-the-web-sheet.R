@@ -2,6 +2,12 @@
 #' output: md_document
 #' ---
 
+## NOTE 2015-04-25 The file created here is no longer used for testing. All
+## testing of "published to the web" is done via files owned by rpackagetest. A
+## version of this script and its output file does, however, live on. It is now
+## used to test the exact opposite: working with a file that has NOT been
+## published to the web and is owned by gspreadr.
+
 library("googlesheets")
 suppressPackageStartupMessages(library("dplyr"))
 
