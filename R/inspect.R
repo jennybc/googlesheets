@@ -44,7 +44,7 @@ gs_inspect <- function(x) {
   }
   
   p <- x_table %>% 
-    ggplot2::ggplot(ggplot2::aes(x = col, y = row, fill = data_type)) +
+    ggplot2::ggplot(ggplot2::aes(x = col, y = row, fill = ~ data_type)) +
     ggplot2::geom_tile(colour = cell_outline) +
     ggplot2::scale_x_continuous(breaks = seq(1, max_col, 1), 
                        labels = strtrim(levels(x_table$key), 20)) +
@@ -58,7 +58,7 @@ gs_inspect <- function(x) {
     ggplot2::theme_bw()
   
   if(max_col > 10) {
-    p <- p + ggplot2::theme(axis.text.x = element_text(angle = 90))
+    p <- p + ggplot2::theme(axis.text.x = ~ element_text(angle = 90))
   }
   
   p
