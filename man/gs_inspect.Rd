@@ -13,16 +13,19 @@ gs_inspect(x)
 a ggplot object
 }
 \description{
-This function plots a data frame. You can inspect your data for
-populated/empty cells and data types after consuming the data. Empty cells
-(ie. \code{NA}'s) are represented by no colour fill.
+This function plots a data frame and is much like a visual representation of
+\code{str} on a data frame. You can inspect your data for populated and empty
+cells. Empty cells (ie. \code{NA}'s) are represented by no colour fill.
 }
 \examples{
 \dontrun{
+gs_inspect(iris)
+
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
 oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
 gs_inspect(oceania_csv)
+
 }
 }
 
