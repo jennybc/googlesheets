@@ -69,9 +69,10 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 #'
 #' Gets data via the list feed, which assumes populated cells form a neat
 #' rectangle. The list feed consumes data row by row. First row regarded as
-#' header row of variable or column names. If data is neatly rectangular and you
-#' want all of it, this is the fastest way to get it. Anecdotally, ~3x faster
-#' than using methods based on the cellfeed.
+#' header row of variable or column names. The related function,
+#' \code{get_via_csv}, also returns data from a neat rectangle of cells, so you
+#' probably want to use that (unless you are dealing with an "old" Google Sheet,
+#' which \code{get_via_csv} does not support).
 #'
 #' @note When you use the listfeed, the Sheets API transforms the variable or
 #'   column names like so: 'The column names are the header values of the
@@ -157,7 +158,7 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 #' rectangular worksheet.
 #'
 #' Empty cells, even if "embedded" in a rectangular region of populated cells,
-#' are not normally returned by the cell feed This function won't return them
+#' are not normally returned by the cell feed. This function won't return them
 #' either when \code{return_empty = FALSE} (default), but will if you set
 #' \code{return_empty = TRUE}. If you don't specify any limits AND you set
 #' \code{return_empty = TRUE}, you could be in for several minutes wait, as the
@@ -192,7 +193,7 @@ get_via_cf <-
            limits = NULL, return_empty = FALSE, return_links = FALSE,
            verbose = TRUE) {
 
-    stopifnot(ss %>% inherits ("googlesheet"))
+    stopifnot(ss %>% inherits("googlesheet"))
 
     this_ws <- get_ws(ss, ws, verbose)
 
@@ -224,56 +225,58 @@ get_via_cf <-
     ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
 
     x <- req$content %>%
-      xml2::xml_find_all("//feed:entry", ns) %>% {
+      xml2::xml_find_all("//feed:entry", ns)
 
-        ## we're inside brackets to the nodeset is not used to create the first
-        ## variable in this tbl_df
+    if(length(x) == 0L) {
+      # the pros outweighed the cons re: setting up a zero row data.frame that,
+      # at least, has the correct variables
+      x <- dplyr::data_frame(cell = character(),
+                             cell_alt = character(),
+                             row = integer(),
+                             col = integer(),
+                             cell_text = character(),
+                             edit_link = character(),
+                             cell_id = character())
+    } else {
+      edit_links <- x %>%
+        xml2::xml_find_all(".//feed:link[@rel='edit']", ns) %>%
+        xml2::xml_attr("href")
 
-        if(length(.) != 0) {
-
-          edit_links <- xml2::xml_find_all(., ".//feed:link[@rel='edit']", ns) %>%
-            xml2::xml_attr("href")
-
-          if(length(edit_links) == 0) {
-            edit_links <- NA
-          }
-
-          dplyr::data_frame_(
-            list(cell = ~xml2::xml_find_all(., ".//feed:title", ns) %>%
-                   xml2::xml_text(),
-                 edit_link = ~ edit_links,
-                 cell_id = ~xml2::xml_find_all(., ".//feed:id", ns) %>%
-                   xml2::xml_text(),
-                 cell_alt = ~cell_id %>% basename(),
-                 row = ~xml2::xml_find_all(., ".//gs:cell", ns) %>%
-                   xml2::xml_attr(., "row") %>%
-                   as.integer(),
-                 col = ~xml2::xml_find_all(., ".//gs:cell", ns) %>%
-                   xml2::xml_attr(., "col") %>%
-                   as.integer(),
-                 cell_text = ~xml2::xml_find_all(., ".//gs:cell", ns) %>%
-                   xml2::xml_text(.)
-            ))
-        } else {
-          dplyr::data_frame(cell = character(),
-                            cell_alt = character(),
-                            row = integer(),
-                            col = integer(),
-                            cell_text = character(),
-                            edit_link = character(),
-                            cell_id = character())
-        }
+      ## this will be true if user does not have permission to edit
+      if(length(edit_links) == 0) {
+        edit_links <- NA
       }
 
-    x <- x %>% dplyr::select_(~cell, ~cell_alt, ~row, ~col, ~cell_text,
-                              ~edit_link, ~cell_id) %>%
+      x <- dplyr::data_frame_(
+        list(cell = ~ xml2::xml_find_all(x, ".//feed:title", ns) %>%
+               xml2::xml_text(),
+             edit_link = ~ edit_links,
+             cell_id = ~ xml2::xml_find_all(x, ".//feed:id", ns) %>%
+               xml2::xml_text(),
+             cell_alt = ~ cell_id %>% basename(),
+             row = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+               xml2::xml_attr("row") %>%
+               as.integer(),
+             col = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+               xml2::xml_attr("col") %>%
+               as.integer(),
+             cell_text = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+               xml2::xml_text()
+        ))
+      # see issue #19 about all the places cell data is (mostly redundantly)
+      # stored in the XML, such as: content_text = x$content$text,
+      # cell_inputValue = x$cell$.attrs["inputValue"], cell_numericValue =
+      # x$cell$.attrs["numericValue"], when/if we think about formulas
+      # explicitly, we will want to come back and distinguish between inputValue
+      # and numericValue
+    }
+
+    x <- x %>%
+      dplyr::select_(~ cell, ~ cell_alt, ~ row, ~ col, ~ cell_text,
+                     ~ edit_link, ~ cell_id) %>%
       dplyr::as_data_frame()
 
     attr(x, "ws_title") <- this_ws$ws_title
-
-    # the pros outweighed the cons re: setting up a zero row data.frame that, at
-    # least, has the correct variables
-
 
     if(return_links) {
       x
@@ -282,15 +285,7 @@ get_via_cf <-
         dplyr::select_(~ -edit_link, ~ -cell_id)
     }
 
-    # see issue #19 about all the places cell data is (mostly redundantly) stored
-    # in the XML, such as:
-    # content_text = x$content$text,
-    # cell_inputValue = x$cell$.attrs["inputValue"],
-    # cell_numericValue = x$cell$.attrs["numericValue"],
-    # when/if we think about formulas explicitly, we will want to come back and
-    # distinguish between inputValue and numericValue
   }
-
 
 #' Get data from a row or range of rows
 #'
@@ -479,8 +474,8 @@ simplify_cf <- function(x, convert = TRUE, as.is = TRUE,
   notation <- match.arg(notation)
 
   if(is.null(header) &&
-       x$row %>% min() == 1 &&
-       x$col %>% dplyr::n_distinct() == 1) {
+     x$row %>% min() == 1 &&
+     x$col %>% dplyr::n_distinct() == 1) {
     header <-  TRUE
   } else {
     header <- FALSE

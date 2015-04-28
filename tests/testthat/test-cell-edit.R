@@ -116,3 +116,5 @@ test_that("We can trim worksheet extent to fit uploaded data", {
   expect_equal(ncol(iris_ish), ss$ws$col_extent[ss$ws$ws_title == ws])
 
 })
+
+delete_ss(regex = TEST, verbose = FALSE)

@@ -163,40 +163,6 @@ convert_limit_list_to_range <- function(limits, pn = c('R1C1', 'A1')) {
   paste(range, collapse = ":")
 }
 
-
-## functions for annoying book-keeping tasks with lists
-## probably more naturally done via rlist or purrr
-## see #12 for plan re: getting outside help for FP w/ lists
-
-#' Filter a list by name
-#'
-#' @param x a list
-#' @param name a regular expression
-#' @param ... other parameters you might want to pass to grep
-#'
-#' @keywords internal
-lfilt <- function(x, name, ...) {
-  x[grep(name, names(x), ...)]
-}
-
-#' Pluck out elements from list components by name
-#'
-#' @param x a list
-#' @param xpath a string giving the name of the component you want, XPath style
-#'
-#' @keywords internal
-llpluck <- function(x, xpath) {
-  x %>% plyr::llply("[[", xpath) %>% plyr::llply(unname)
-}
-lapluck <- function(x, xpath, .drop = TRUE) {
-  x %>% plyr::laply("[[", xpath, .drop = .drop) %>% unname()
-}
-
-# OMG this is just here to use during development, i.e. after
-# devtools::load_all(), when inspecting big hairy lists
-#' @keywords internal
-str1 <- function(...) str(..., max.level = 1)
-
 #' Extract sheet key from its browser URL
 #'
 #' @param url URL seen in the browser when visiting the sheet

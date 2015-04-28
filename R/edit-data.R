@@ -44,10 +44,10 @@
 edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                        by_row = FALSE, header = FALSE, trim = FALSE,
                        verbose = TRUE) {
-  
+
   catch_hopeless_input(input)
   this_ws <- get_ws(ss, ws, verbose = FALSE)
-  
+
   if(dim(input) %>% is.null()) {
     if(by_row) {
       input_extent <- c(1L, length(input))
@@ -69,25 +69,25 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   if(verbose) {
     message(sprintf("Range affected by the update: \"%s\"", range))
   }
-  
+
   if(limits$`max-row` > this_ws$row_extent ||
-       limits$`max-col` > this_ws$col_extent) {
+     limits$`max-col` > this_ws$col_extent) {
     ss <- ss %>%
       resize_ws(this_ws$ws_title,
                 max(this_ws$row_extent, limits$`max-row`),
                 max(this_ws$col_extent, limits$`max-col`),
                 verbose)
     Sys.sleep(1)
-    
+
   }
-  
+
   input <- input %>% as_character_vector(header = header)
-  
+
   cells_df <- ss %>%
     get_via_cf(ws, limits = limits,
                return_empty = TRUE, return_links = TRUE, verbose = FALSE) %>%
     dplyr::mutate_(update_value = ~ input)
-  
+
   update_entries <-
     plyr::alply(
       cells_df, 1, function(x) {
@@ -113,20 +113,20 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                  .children = list(XML::xmlNode("id", this_ws$cellsfeed))) %>%
     XML::addChildren(kids = update_entries) %>%
     XML::toString.XMLNode()
-  
+
   ## TO DO: according to our policy, we should be using the capability of
   ## httr::POST() to append 'batch` here, but current version of gsheets_POST()
   ## would not support that and other edits are coming there soon ... leave it
   ## for now
   req <-
     gsheets_POST(paste(this_ws$cellsfeed, "batch", sep = "/"), update_feed)
-  
+
   ## proactive check for successful update
-  cell_status <- 
+  cell_status <-
     req$content %>%
     xml2::xml_find_all("atom:entry//batch:status", xml2::xml_ns(.)) %>%
     xml2::xml_attr("code")
-  
+
   if(all(cell_status == "200")) {
     sprintf("Worksheet \"%s\" successfully updated with %d new value(s).",
             this_ws$ws_title, length(input)) %>% message()
@@ -139,30 +139,30 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
               paste(sep = ",")) %>%
       message()
   }
-  
+
   if(trim) {
-    
+
     Sys.sleep(1)
     ss <- ss %>%
       resize_ws(this_ws$ws_title, limits$`max-row`, limits$`max-col`, verbose)
   }
-  
+
   Sys.sleep(1)
   ss <- ss %>% register_ss(verbose = FALSE)
   invisible(ss)
 }
 
 catch_hopeless_input <- function(x) {
-  
+
   if(x %>% is.recursive() && !(x %>% is.data.frame())) {
     stop(paste("Non-data-frame, list-like objects not suitable as input.",
                "Maybe pre-process it yourself?"))
   }
-  
+
   if(!is.null(dim(x)) && length(dim(x)) > 2) {
     stop("Input has more than 2 dimensions.")
   }
-  
+
   invisible(NULL)
 }
 
@@ -170,11 +170,11 @@ catch_hopeless_input <- function(x) {
 ## into a character vector
 ## header controls whether column names are prepended, when x has 2 dimensions
 as_character_vector <- function(x, header = FALSE) {
-  
+
   catch_hopeless_input(x)
-  
+
   x_colnames <- NULL
-  
+
   ## instead of fiddly tests on x (see comments below), just go with it, if x
   ## can be turned into a character vector
   if(dim(x) %>% is.null()) {
@@ -183,15 +183,15 @@ as_character_vector <- function(x, header = FALSE) {
     x_colnames <- x %>% colnames()
     y <- try(x %>% t() %>% as.character() %>% drop(), silent = TRUE)
   }
-  
+
   if(y %>% inherits("try-error")) {
     stop("Input cannot be converted to character vector.")
   }
-  
+
   if(header) {
     y <- c(x_colnames, y)
   }
-  
+
   y
   ## re: why vetting x directly is not as simple as you would expect
   ## http://stackoverflow.com/questions/19501186/how-to-test-if-object-is-a-vector

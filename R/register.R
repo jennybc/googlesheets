@@ -36,52 +36,52 @@
 #'
 #' @export
 list_sheets <- function() {
+
   # only calling spreadsheets feed from here, so hardwiring url
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
 
   req <- gsheets_GET(the_url)
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
+  entries <- req$content %>% xml2::xml_find_all(".//feed:entry", ns)
+  links <- entries %>% xml2::xml_find_all(".//feed:link", ns)
 
-  sheet_list <- req$content  %>%
-    xml2::as_list() %>%
-    lfilt("^entry$")
+  link_dat <- dplyr::data_frame(
+    ws_feed = links %>%
+      xml2::xml_find_all("../*[contains(@rel, '2006#worksheetsfeed')]", ns) %>%
+      xml2::xml_attr("href"),
+    alternate = links %>%
+      xml2::xml_find_all("../*[@rel='alternate']", ns) %>%
+      xml2::xml_attr("href"),
+    self = links %>%
+      xml2::xml_find_all("../*[@rel='self']", ns) %>% xml2::xml_attr("href")
+  )
 
-  links <- plyr::ldply(sheet_list, function(x) {
-    links <- x %>%
-      lfilt("^link$") %>% plyr::llply(function(x) {
-        link_names <- attr(x, "rel") %>%
-          basename() %>%
-          stringr::str_replace("[0-9]{4}#", "")
-        links <- attr(x, "href") %>% setNames(link_names)
-      })
-    links <- unlist(links)
-    names(links) <- c("ws_feed", "alternate_link", "self_link")
-    links
-  }) %>%
-    dplyr::select_(quote(-.id))
-
-  dplyr::data_frame(
-    sheet_title = plyr::laply(sheet_list, function(x) x$title %>% unlist()),
-    sheet_key = sheet_list %>%
-      lapluck("id") %>% unlist() %>%
-      basename(),
-    owner = plyr::laply(sheet_list, function(x) x$author$name %>% unlist()),
-    perm = links$ws_feed %>%
+  dplyr::data_frame_(list(
+    sheet_title =
+      ~ entries %>% xml2::xml_find_all(".//feed:title", ns) %>% xml2::xml_text,
+    sheet_key =
+      ~ entries %>% xml2::xml_find_all(".//feed:id", ns) %>% xml2::xml_text %>%
+      basename,
+    owner =
+      ~ entries %>% xml2::xml_find_all(".//feed:author//feed:name", ns) %>%
+      xml2::xml_text,
+    perm = ~ link_dat$ws_feed %>%
       stringr::str_detect("values") %>%
       ifelse("r", "rw"),
-    last_updated = sheet_list %>%
-      lapluck("updated") %>% unlist() %>%
+    last_updated =
+      ~ entries %>% xml2::xml_find_all(".//feed:updated", ns) %>%
+      xml2::xml_text %>%
       as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
-    version = ifelse(grepl("^https://docs.google.com/spreadsheets/d",
-                           links$alternate_link), "new", "old"),
-    ws_feed = links$ws_feed,
-    alternate = links$alternate_link,
-    self = links$self_link,
-    alt_key = ifelse(version == "new", NA_character_,
-                     extract_key_from_url(links$alternate_link)))
+    version = ~ ifelse(grepl("^https://docs.google.com/spreadsheets/d",
+                             link_dat$alternate), "new", "old"),
+    ws_feed = ~ link_dat$ws_feed,
+    alternate = ~ link_dat$alternate,
+    self = ~ link_dat$self,
+    alt_key = ~ ifelse(version == "new", NA_character_,
+                       extract_key_from_url(link_dat$alternate))
+  ))
 
 }
-
-
 
 #' Retrieve the identifiers for a spreadsheet
 #'
@@ -163,9 +163,9 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
   ## is x a URL but NOT a worksheets feed?
   ws_feed_start <- "https://spreadsheets.google.com/feeds/worksheets"
   if(method == 'url' ||
-       (x %>% stringr::str_detect("^https://") &&
-          !(x %>% stringr::str_detect(ws_feed_start))
-       )) {
+     (x %>% stringr::str_detect("^https://") &&
+      !(x %>% stringr::str_detect(ws_feed_start))
+     )) {
     if(verbose) {
       paste0("Identifying info will be processed as a URL.\n",
              "googlesheets will attempt to extract sheet key from the URL.") %>%
@@ -328,16 +328,13 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     if(is.null(key)) { # get ws_feed from x
       this_ss <- x %>%
         identify_ss(visibility = TRUE, verbose = verbose)
-      ws_feed <- this_ss %>%
-        `[[`("ws_feed")
+      ws_feed <- this_ss$ws_feed
     } else {           # take key at face value
       ws_feed <- construct_ws_feed_from_key(key, visibility)
     }
   }                    # else ... take ws_feed at face value
 
   req <- gsheets_GET(ws_feed)
-
-  req$content <- xml2::as_list(req$content)
 
   if(grepl("html", req$headers[["content-type"]])) {
     ## TO DO: give more specific error message. Have they said "public" when
@@ -346,15 +343,21 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     stop("Please check visibility settings.")
   }
 
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
+
   ss <- googlesheet()
 
   ss$sheet_key <- ws_feed %>% extract_key_from_url()
-  ss$sheet_title <- req$content[["title"]] %>% unlist()
-  ss$n_ws <- req$content[["totalResults"]] %>% as.integer()
+  ss$sheet_title <- req$content %>%
+    xml2::xml_find_one("./feed:title", ns) %>% xml2::xml_text()
+  ss$n_ws <- req$content %>%
+    xml2::xml_find_one("./openSearch:totalResults", ns) %>% xml2::xml_text() %>%
+    as.integer()
 
   ss$ws_feed <- req$url               # same as sheet_id ... pick one?
-  ss$sheet_id <- req$content[["id"]] %>% unlist() # same as ws_feed ... pick one?
-  # for that matter, this URL appears a third time as the "self" link below :(
+  ss$sheet_id <- req$content %>%      # same as ws_feed ... pick one?
+    # for that matter, this URL appears a third time as the "self" link below :(
+    xml2::xml_find_one("./feed:id", ns) %>% xml2::xml_text()
 
   ss$updated <- req$headers$`last-modified` %>% httr::parse_http_date()
   ss$get_date <- req$headers$date %>% httr::parse_http_date()
@@ -362,53 +365,65 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
   ss$visibility <- req$url %>% dirname() %>% basename()
   ss$is_public <- ss$visibility == "public"
 
-  ss$author_name <- req$content[["author"]][["name"]] %>% unlist()
-  ss$author_email <- req$content[["author"]][["email"]] %>% unlist()
+  ss$author_name <- req$content %>%
+    xml2::xml_find_one("./feed:author/feed:name", ns) %>% xml2::xml_text()
+  ss$author_email <- req$content %>%
+    xml2::xml_find_one("./feed:author/feed:email", ns) %>% xml2::xml_text()
 
-  ss$links <- req$content %>%
-    lfilt("^link$") %>%
-    plyr::ldply(function(x)
-      c("rel" = attr(x, "rel"),
-        "type" = attr(x, "type"),
-        "href" = attr(x, "href"))) %>%
-    dplyr::select_(quote(-.id))
-  ## select_() will be unnecessary when this PR gets merged into plyr
-  ## https://github.com/hadley/plyr/pull/207
-  ## and ldply handles '.id = NULL' correctly
+  links <- req$content %>% xml2::xml_find_all("./feed:link", ns)
+  ss$links <- dplyr::data_frame_(list(
+    rel = ~ links %>% xml2::xml_attr("rel"),
+    type = ~ links %>% xml2::xml_attr("type"),
+    href = ~ links %>% xml2::xml_attr("href")
+  ))
 
-  ## if we have info from the spreadhsheet feed, use it
+  ## if we have info from the spreadsheet feed, use it
   ## that's the only way to populate alt_key
   if(exists("this_ss")) {
     ss$alt_key <- this_ss$alt_key
   }
 
-  ws_list <- req$content %>% lfilt("^entry$")
-  ws_info <-
-    dplyr::data_frame_(
-      list(ws_id = ~ ws_list %>% lapluck("id") %>% unlist(),
-           ws_key = ~ ws_id %>% basename(),
-           ws_title = ~ plyr::laply(ws_list, function(x) x$title %>% unlist()),
-           row_extent = ~ ws_list %>%
-             lapluck("rowCount") %>%
-             as.integer(),
-           col_extent = ~ ws_list %>%
-             lapluck("colCount") %>%
-             as.integer()))
+  ws <- req$content %>% xml2::xml_find_all("./feed:entry", ns)
+  ws_info <- dplyr::data_frame_(list(
+    ws_id = ~ ws %>% xml2::xml_find_all("feed:id", ns) %>% xml2::xml_text(),
+    ws_key = ~ ws_id %>% basename(),
+    ws_title =
+      ~ ws %>% xml2::xml_find_all("feed:title", ns) %>% xml2::xml_text(),
+    row_extent =
+      ~ ws %>% xml2::xml_find_all("gs:rowCount", ns) %>%
+      xml2::xml_text() %>% as.integer(),
+    col_extent =
+      ~ ws %>% xml2::xml_find_all("gs:colCount", ns) %>%
+      xml2::xml_text() %>% as.integer()
+  ))
 
-  ws_links <- plyr::ldply(ws_list, function(x) {
-    links <- x %>%
-      lfilt("^link$") %>% plyr::llply(function(x) {
-        link_names <- attr(x, "rel") %>%
-          basename() %>%
-          stringr::str_replace("[0-9]{4}#", "")
-        links <- attr(x, "href") %>% setNames(link_names)
-      })
-    links <- unlist(links)
-    names(links) <- stringr::str_replace(names(links), "link.", "")
-    links
+  ## use the first worksheet to learn about the links available why we do this?
+  ## because the 'edit' link will not be available for sheets accessed via
+  ## public visibility or to which user does not have write permission
+  link_rels <- ws[1] %>%
+    xml2::xml_find_all("feed:link", ns) %>%
+    xml2::xml_attrs() %>%
+    vapply(`[`, FUN.VALUE = character(1), "rel")
+  ## here's what we expect here
+  #   [1] "http://schemas.google.com/spreadsheets/2006#listfeed"
+  #   [2] "http://schemas.google.com/spreadsheets/2006#cellsfeed"
+  #   [3] "http://schemas.google.com/visualization/2008#visualizationApi"
+  #   [4] "http://schemas.google.com/spreadsheets/2006#exportcsv"
+  #   [5] "self"
+  #   [6] "edit"  <-- absent in some cases
+  names(link_rels) <-
+    link_rels %>% basename() %>% gsub("200[[:digit:]]\\#", '', .)
+  ## here's what we expect here
+  ## "listfeed" "cellsfeed" "visualizationApi" "exportcsv" "self" ?"edit"?
+
+  ws_links <- ws %>% xml2::xml_find_all("feed:link", ns)
+  ws_links <- lapply(link_rels, function(x) {
+    xpath <- paste0("../*[@rel='", x, "']")
+    ws_links %>%
+      xml2::xml_find_all(xpath, ns) %>%
+      xml2::xml_attr("href")
   }) %>%
-    dplyr::select_(quote(-.id))
-  ## see comment above about ldply(.id = NULL)
+    dplyr::as_data_frame()
 
   ss$ws <- dplyr::bind_cols(ws_info, ws_links)
   ss
