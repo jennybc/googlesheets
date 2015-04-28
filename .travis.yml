@@ -11,7 +11,6 @@ install:
 - ./travis-tool.sh r_binary_install reshape2
 - ./travis-tool.sh r_binary_install stringi
 - ./travis-tool.sh r_binary_install tidyr
-- ./travis-tool.sh r_binary_install xml2
 - ./travis-tool.sh install_deps
 - ./travis-tool.sh github_package jimhester/robustr
 - ./travis-tool.sh github_package jimhester/covr
