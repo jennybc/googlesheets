@@ -7,11 +7,11 @@
 delete_perm(ss, value = NULL, perm_id = NULL, verbose = TRUE)
 }
 \arguments{
+\item{value}{The email address or domain name for the entity.}
+
 \item{perm_id}{The permission ID}
 
 \item{verbose}{logical; do you want informative messages?}
-
-\item{email}{The email address or domain name for the entity.}
 }
 \description{
 Delete a permission from a spreadsheet

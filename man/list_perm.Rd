@@ -18,9 +18,10 @@ This function returns the information available from the
 feed} of the Google Drive API.
 }
 \details{
-This listing gives the user all permissions for a spreadsheet.
-The first row will always be the permission for the owner of the spreadsheet.
-Any additional permissions follow.
+This listing gives the user all permissions for a spreadsheet which is also
+viewable from the sharing dialog of a Google Sheet. The first row will always
+be the permission for the owner of the spreadsheet. Any additional
+permissions follow.
 }
 \examples{
 \dontrun{

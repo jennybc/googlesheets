@@ -4,11 +4,11 @@
 \alias{add_perm}
 \title{Add a permission to a spreadsheet}
 \usage{
-add_perm(ss, name = NULL, type = NULL, role = NULL, with_link = TRUE,
-  verbose = TRUE)
+add_perm(ss, value = NULL, type = NULL, role = NULL, with_link = TRUE,
+  send_email = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{name}{The email address or domain name for the entity.}
+\item{value}{The email address or domain name for the entity.}
 
 \item{type}{The account type. Allowed values "user", "group", "domain", or
 "anyone".}
@@ -18,33 +18,25 @@ add_perm(ss, name = NULL, type = NULL, role = NULL, with_link = TRUE,
 
 \item{with_link}{boolean, whether the link is required for this permission}
 
+\item{send_email}{logical, do you want to send notification emails when
+sharing to users or groups?}
+
 \item{verbose}{logical, do you want informative messages?}
 }
 \value{
-Information about newly added permission
+Information about newly added permission.
 }
 \description{
-An email will be sent automatically to the subject to notify them of the
+An email will be sent automatically to the entity to notify them of the
 permission.
 }
 \examples{
 \dontrun{
 foo <- new_ss("foo")
 
-# Add someone as a writer/reader:
-add_perm(foo, value = "someone@gmail.com", type = "user", role = "writer")
-add_perm(foo, value = "someone@gmail.com", type = "user", role = "reader")
-
 # Add anyone as a writer/reader:
 add_perm(foo, value = NULL, type = "anyone", role = "writer")
 add_perm(foo, value = NULL, type = "anyone", role = "reader")
-
-# Add a domain as reader:
-add_perm(foo, value = "hotmail.com", type = "domain", role = "reader")
-
-# Add a group as reader/writer:
-add_perm(foo, value = "some_cool_group@googlegroups.com", type = "group", role = "reader")
-add_perm(foo, value = "some_cool_group@googlegroups.com", type = "group", role = "writer")
 
 }
 }

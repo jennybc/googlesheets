@@ -4,7 +4,7 @@
 \alias{get_perm}
 \title{Retrieve a permission from a spreadsheet}
 \usage{
-get_perm(ss, info)
+get_perm(ss, info, verbose = TRUE)
 }
 \description{
 Retrieve a permission from a spreadsheet

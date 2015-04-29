@@ -4,9 +4,10 @@
 #' \href{https://developers.google.com/drive/v2/reference/permissions}{permissions
 #' feed} of the Google Drive API.
 #' 
-#' This listing gives the user all permissions for a spreadsheet. 
-#' The first row will always be the permission for the owner of the spreadsheet.
-#' Any additional permissions follow. 
+#' This listing gives the user all permissions for a spreadsheet which is also 
+#' viewable from the sharing dialog of a Google Sheet. The first row will always
+#' be the permission for the owner of the spreadsheet. Any additional 
+#' permissions follow. 
 #' 
 #' @param ss a registered Google spreadsheet
 #' 
@@ -36,58 +37,50 @@ list_perm <- function(ss) {
 
 #' Add a permission to a spreadsheet
 #' 
-#' An email will be sent automatically to the subject to notify them of the 
+#' An email will be sent automatically to the entity to notify them of the 
 #' permission. 
 #' 
-#' @param name The email address or domain name for the entity.
+#' @param value The email address or domain name for the entity.
 #' @param type The account type. Allowed values "user", "group", "domain", or 
 #'    "anyone".
 #' @param role The primary role for this user. Allowed values are: "owner", 
 #'    "writer", or "reader".
 #' @param with_link boolean, whether the link is required for this permission
+#' @param send_email logical, do you want to send notification emails when 
+#' sharing to users or groups?
 #' @param verbose logical, do you want informative messages?
 #' 
-#' @return Information about newly added permission
+#' @return Information about newly added permission.
 #' 
 #' @examples
 #' \dontrun{
 #' foo <- new_ss("foo")
 #' 
-#' # Add someone as a writer/reader:
-#' add_perm(foo, value = "someone@@gmail.com", type = "user", role = "writer")
-#' add_perm(foo, value = "someone@@gmail.com", type = "user", role = "reader")
-#' 
 #' # Add anyone as a writer/reader:
 #' add_perm(foo, value = NULL, type = "anyone", role = "writer")
 #' add_perm(foo, value = NULL, type = "anyone", role = "reader")
 #' 
-#' # Add a domain as reader:
-#' add_perm(foo, value = "hotmail.com", type = "domain", role = "reader")
-#' 
-#' # Add a group as reader/writer:
-#' add_perm(foo, value = "some_cool_group@@googlegroups.com", type = "group", role = "reader")
-#' add_perm(foo, value = "some_cool_group@@googlegroups.com", type = "group", role = "writer")
-#' 
 #' }
 #' 
 #' @export 
-add_perm <- function(ss, name = NULL, type = NULL, role = NULL,
-                     with_link = TRUE, verbose = TRUE) {
+add_perm <- function(ss, value = NULL, type = NULL, role = NULL,
+                     with_link = TRUE, send_email = TRUE, verbose = TRUE) {
   
   the_url <- list_perm(ss)$selfLink %>% dirname() %>% unique()
   
   stopifnot(length(the_url) == 1L)
   
-  # inserts a permission for a file
+  query <-  list("sendNotificationEmails" = "send_email")
+  
   req <- gdrive_POST(the_url,
-                     body = list("value" = name, 
+                     body = list("value" = value, 
                                  "type" = type,
                                  "role" = role,
-                                 "withLink" = with_link))
+                                 "withLink" = with_link), httr::verbose())
   
   new_perm_id <- req %>% httr::content() %>% '[['("id")
   
-  perm <- ss %>% get_perm(new_perm_id)
+  perm <- ss %>% get_perm(new_perm_id, verbose = FALSE)
   
   if(perm$type == "anyone") {
     who <- perm$type
@@ -150,7 +143,7 @@ edit_perm <- function(ss, perm_id = NULL , role = "reader", verbose = TRUE) {
 
 #' Delete a permission from a spreadsheet
 #' 
-#' @param email The email address or domain name for the entity.
+#' @param value The email address or domain name for the entity.
 #' @param perm_id The permission ID
 #' @param verbose logical; do you want informative messages?
 #' 
@@ -189,7 +182,7 @@ delete_perm <- function(ss, value = NULL, perm_id = NULL, verbose = TRUE) {
 #' Retrieve a permission from a spreadsheet
 #' 
 #' @keywords internal
-get_perm <- function(ss, info) {
+get_perm <- function(ss, info, verbose = TRUE) {
   
   ss_perm <- ss %>% list_perm()
   
@@ -206,11 +199,15 @@ get_perm <- function(ss, info) {
       stop(sprintf("Identifying permission by %s: %s not found.", 
                    info_type, info))
     } else {
-      message(sprintf("Identifying permission by %s", info_type))
+      if(verbose) {
+        message(sprintf("Identifying permission by %s.", info_type))
+      }
     }
     
   } else {
-    message(sprintf("Identifying permission by %s", info_type))
+    if(verbose) {
+      message(sprintf("Identifying permission by %s.", info_type))
+    }
   }
   
   ss_perm[ind, ]
