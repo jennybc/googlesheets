@@ -7,7 +7,7 @@
 gsheets_PUT(url, the_body)
 }
 \arguments{
-\item{url}{URL for PUT request}
+\item{url}{the url of the page to retrieve}
 
 \item{the_body}{body of PUT request}
 }

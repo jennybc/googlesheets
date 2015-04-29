@@ -2,7 +2,7 @@
 #' 
 #' Make GET request to Google Sheets API.
 #' 
-#' @param url URL for GET request
+#' @param url the url of the page to retrieve
 #' @param to_list whether to convert response contents to list or not
 #' @param ... optional; further named parameters, such as \code{query}, 
 #'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
@@ -65,7 +65,7 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
 #'
 #' Make POST request to Google Sheets API.
 #'
-#' @param url URL for POST request
+#' @param url the url of the page to retrieve
 #' @param the_body body of POST request
 #' 
 #' @keywords internal
@@ -101,7 +101,7 @@ gsheets_POST <- function(url, the_body) {
 #'
 #' Make DELETE request to Google Sheets API.
 #'
-#' @param url URL for DELETE request
+#' @param url the url of the page to retrieve
 #' 
 #' @keywords internal
 gsheets_DELETE <- function(url) {
@@ -116,7 +116,7 @@ gsheets_DELETE <- function(url) {
 #'
 #' Make PUT request to Google Sheets API.
 #'
-#' @param url URL for PUT request
+#' @param url the url of the page to retrieve
 #' @param the_body body of PUT request
 #'
 #' @keywords internal
@@ -151,7 +151,7 @@ gsheets_PUT <- function(url, the_body) {
 #'
 #' Used in new_ss(), delete_ss(), copy_ss()
 #' 
-#' @param url URL for POST request
+#' @param url the url of the page to retrieve
 #' @param ... optional; further named parameters, such as \code{query}, 
 #'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
 #'   parameters will be combined with \code{\link[httr]{config}}.
@@ -175,11 +175,10 @@ gdrive_POST <- function(url, ...) {
 #'
 #' Used in upload_ss() 
 #'
-#' @param url URL for PUT request
-#' @param the_body body of PUT request 
+#' @inheritParams gdrive_POST
 #' 
 #' @keywords internal
-gdrive_PUT <- function(url, the_body) {
+gdrive_PUT <- function(url, ...) {
   
   token <- get_google_token()
   
@@ -187,9 +186,7 @@ gdrive_PUT <- function(url, the_body) {
     stop("Must be authorized in order to perform request")
   } else {
     
-    req <- httr::PUT(url, query = list(uploadType = "media", convert = "true"), 
-                     config = token, 
-                     body = httr::upload_file(the_body))
+    req <- httr::PUT(url, config = token, ...)
   }
   
   httr::stop_for_status(req)
@@ -203,10 +200,7 @@ gdrive_PUT <- function(url, the_body) {
 #'
 #' Used in download_ss() 
 #'
-#' @param url URL for GET request
-#' @param ... optional; further named parameters, such as \code{query}, 
-#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
-#'   parameters will be combined with \code{\link[httr]{config}}.
+#' @inheritParams gdrive_POST
 #'   
 #' @keywords internal
 gdrive_GET <- function(url, ...) {

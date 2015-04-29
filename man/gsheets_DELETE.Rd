@@ -7,7 +7,7 @@
 gsheets_DELETE(url)
 }
 \arguments{
-\item{url}{URL for DELETE request}
+\item{url}{the url of the page to retrieve}
 }
 \description{
 Make DELETE request to Google Sheets API.

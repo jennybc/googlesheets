@@ -7,7 +7,7 @@
 gsheets_GET(url, to_list = TRUE, ...)
 }
 \arguments{
-\item{url}{URL for GET request}
+\item{url}{the url of the page to retrieve}
 
 \item{to_list}{whether to convert response contents to list or not}
 

@@ -601,7 +601,8 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
                               path = paste0("upload/drive/v2/files/",
                                             new_sheet_key))
 
-  gdrive_PUT(put_url, the_body = file)
+  gdrive_PUT(put_url, query = list(uploadType = "media", convert = "true"), 
+             body = httr::upload_file(file))
 
   ss_df <- list_sheets()
   success <- new_sheet_key %in% ss_df$sheet_key
