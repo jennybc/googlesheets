@@ -58,19 +58,20 @@ list_sheets <- function() {
 
   dplyr::data_frame_(list(
     sheet_title =
-      ~ entries %>% xml2::xml_find_all(".//feed:title", ns) %>% xml2::xml_text,
+      ~ entries %>% xml2::xml_find_all(".//feed:title", ns) %>%
+      xml2::xml_text(),
     sheet_key =
-      ~ entries %>% xml2::xml_find_all(".//feed:id", ns) %>% xml2::xml_text %>%
-      basename,
+      ~ entries %>% xml2::xml_find_all(".//feed:id", ns) %>%
+      xml2::xml_text() %>% basename(),
     owner =
       ~ entries %>% xml2::xml_find_all(".//feed:author//feed:name", ns) %>%
-      xml2::xml_text,
+      xml2::xml_text(),
     perm = ~ link_dat$ws_feed %>%
       stringr::str_detect("values") %>%
       ifelse("r", "rw"),
     last_updated =
       ~ entries %>% xml2::xml_find_all(".//feed:updated", ns) %>%
-      xml2::xml_text %>%
+      xml2::xml_text() %>%
       as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
     version = ~ ifelse(grepl("^https://docs.google.com/spreadsheets/d",
                              link_dat$alternate), "new", "old"),
