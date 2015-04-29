@@ -3,13 +3,14 @@
 #' Make GET request to Google Sheets API.
 #' 
 #' @param url URL for GET request
-#' @param to_list whether to convert response contents to list or not
+#' @param to_xml whether to convert response contents to xml_doc() or leave as 
+#'    character string
 #' @param ... optional; further named parameters, such as \code{query}, 
 #'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
 #'   parameters will be combined with \code{\link[httr]{config}}.
 #'
 #' @keywords internal
-gsheets_GET <- function(url, to_list = TRUE, ...) {
+gsheets_GET <- function(url, to_xml = TRUE, ...) {
   
   if(grepl("public", url)) {
     req <- httr::GET(url, ...)
@@ -45,16 +46,13 @@ gsheets_GET <- function(url, to_list = TRUE, ...) {
   # refresh the token ... we should have a better message or do something
   # constructive when this happens ... sort of waiting til I can review all the
   # auth stuff
+
+  req$content <- httr::content(req, as = "text", encoding = "UTF-8") 
   
-  ## TO DO: eventually we will depend on xml2 instead of XML and then we should
-  ## use it to parse the XML instead of httr:content()
-  ## see https://github.com/hadley/httr/issues/189
-  ## Hadley: Yeah, I think you should be parsing this yourself, with e.g.,
-  ## xml2::xml(context(r, "raw"))
-  req$content <- httr::content(req, type = "text/xml", encoding = "UTF-8")
-  
-  if(to_list) {
-    req$content <- XML::xmlToList(req$content)
+  # This is only FALSE when calling modify_ws() where we are using regex 
+  # substitution, waiting for xml2 to support changing xml_doc()
+  if(to_xml) { 
+    req$content <- req$content %>% xml2::read_xml()
   }
   
   req
@@ -84,10 +82,11 @@ gsheets_POST <- function(url, the_body) {
                  config = c(token, 
                             httr::add_headers("Content-Type" = content_type)),
                  body = the_body)
-    req$content <- httr::content(req, type = "text/xml")
+    req$content <- httr::content(req, as = "text", encoding = "UTF-8")
+   
     if(!is.null(req$content)) {
       ## known example of this: POST request triggered by add_ws()
-      req$content <- XML::xmlToList(req$content)
+      req$content <- req$content %>% xml2::read_xml()
     }
     
     httr::stop_for_status(req)

@@ -240,7 +240,7 @@ file.remove("iris.csv")
 Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ```{r new-sheet-from-xlsx}
-gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
+gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
 gap_xlsx
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 ```
@@ -249,7 +249,7 @@ And we clean up after ourselves on Google Drive.
 
 ```{r delete-moar-sheets}
 delete_ss("iris")
-delete_ss("gap-data")
+delete_ss("mini-gap")
 ```
 
 ### Download sheets as csv, pdf, or xlsx file

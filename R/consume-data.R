@@ -69,9 +69,10 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 #'
 #' Gets data via the list feed, which assumes populated cells form a neat
 #' rectangle. The list feed consumes data row by row. First row regarded as
-#' header row of variable or column names. If data is neatly rectangular and you
-#' want all of it, this is the fastest way to get it. Anecdotally, ~3x faster
-#' than using methods based on the cellfeed.
+#' header row of variable or column names. The related function,
+#' \code{get_via_csv}, also returns data from a neat rectangle of cells, so you
+#' probably want to use that (unless you are dealing with an "old" Google Sheet,
+#' which \code{get_via_csv} does not support).
 #'
 #' @note When you use the listfeed, the Sheets API transforms the variable or
 #'   column names like so: 'The column names are the header values of the
@@ -106,33 +107,23 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 
   this_ws <- get_ws(ss, ws, verbose)
   req <- gsheets_GET(this_ws$listfeed)
-  row_data <- req$content %>% lfilt("entry")
 
-  ## when I switch to xml2 and/or stop converting feed via xmlToList(), I can
-  ## dramatically rationalize the separation of boilerplate from content
-  ## TO DO: experiment with empty header cells, header cells with
-  ## space or other non-alphanumeric characters
-  ## https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
 
-  component_names <- row_data[[1]] %>% names()
-  boilerplate_names <-
-    c("id", "updated", "category", "title", "content", "link")
-  last_boilerplate <-
-    which(!(component_names %in% boilerplate_names)) %>%
-    min() %>%
-    `-`(1)
-  drop_boilerplate_vars <- -1 * seq_len(last_boilerplate)
-  var_names <- component_names[drop_boilerplate_vars]
+  var_names <- req$content %>%
+    xml2::xml_find_all("(//feed:entry)[1]", ns) %>%
+    xml2::xml_find_all(".//gsx:*", ns) %>%
+    xml2::xml_name()
 
-  ## used below to handle empty cells: replace NULL with NA
-  null_NA_character <- function(x) if(is.null(x)) NA_character_ else x
+  values <- req$content %>%
+    xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
+    xml2::xml_text()
 
-  row_data %>%
-    unname() %>% # drop stupid and ubiquitous 'entry' names
-    plyr::llply(`[`, drop_boilerplate_vars) %>%
-    plyr::llply(function(x) unlist(lapply(x, null_NA_character))) %>%
-    do.call("rbind", .) %>%
-    plyr::alply(2, type.convert, as.is = TRUE, .dims = TRUE)  %>%
+  dat <- matrix(values, ncol = length(var_names), byrow = TRUE,
+                dimnames = list(NULL, var_names)) %>%
+    ## convert to integer, numeric, etc. but w/ stringsAsFactors = FALSE
+    ## empty cells returned as empty string ""
+    plyr::alply(2, type.convert, na.strings = c("NA", ""), as.is = TRUE) %>%
     ## get rid of attributes that are non-standard for tbl_dfs or data.frames
     ## and that are an artefact of the above (specifically, I think, the use of
     ## alply?); if I don't do this, the output is fugly when you str() it
@@ -142,7 +133,11 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
     ## for some reason removing the non-standard dim attributes clobbers the
     ## variable names, so those must be restored
     `names<-`(var_names) %>%
+    ## convert to data.frame (tbl_df, actually)
     dplyr::as_data_frame()
+
+  dat
+
 }
 
 #' Create a data.frame of the non-empty cells in a rectangular region of a
@@ -163,7 +158,7 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 #' rectangular worksheet.
 #'
 #' Empty cells, even if "embedded" in a rectangular region of populated cells,
-#' are not normally returned by the cell feed This function won't return them
+#' are not normally returned by the cell feed. This function won't return them
 #' either when \code{return_empty = FALSE} (default), but will if you set
 #' \code{return_empty = TRUE}. If you don't specify any limits AND you set
 #' \code{return_empty = TRUE}, you could be in for several minutes wait, as the
@@ -198,102 +193,99 @@ get_via_cf <-
            limits = NULL, return_empty = FALSE, return_links = FALSE,
            verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("googlesheet"))
+    stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- get_ws(ss, ws, verbose)
+    this_ws <- get_ws(ss, ws, verbose)
 
-  if(is.null(limits)) {
-    limits <- list("min-row" = min_row, "max-row" = max_row,
-                   "min-col" = min_col, "max-col" = max_col)
-  } else{
-    names(limits) <- names(limits) %>%
-      stringr::str_replace("_", "-")
-  }
-  limits <- limits %>%
-    validate_limits(this_ws$row_extent, this_ws$col_extent)
+    if(is.null(limits)) {
+      limits <- list("min-row" = min_row, "max-row" = max_row,
+                     "min-col" = min_col, "max-col" = max_col)
+    } else{
+      names(limits) <- names(limits) %>% stringr::str_replace("_", "-")
+    }
+    limits <- limits %>%
+      validate_limits(this_ws$row_extent, this_ws$col_extent)
 
-  query <- limits
-  if(return_empty) {
-    ## the return-empty parameter is not documented in current sheets API, but
-    ## is discussed in older internet threads re: the older gdata API; so if
-    ## this stops working, consider that they finally stopped supporting this
-    ## query parameter
-    query <- query %>% c(list("return-empty" = "true"))
-  }
+    query <- limits
+    if(return_empty) {
+      ## the return-empty parameter is not documented in current sheets API, but
+      ## is discussed in older internet threads re: the older gdata API; so if
+      ## this stops working, consider that they finally stopped supporting this
+      ## query parameter
+      query <- query %>% c(list("return-empty" = "true"))
+    }
 
-  ## to prevent appending of "?=" to url when query elements are all NULL
-  if(query %>% unlist() %>% is.null()) {
-    query <- NULL
-  }
+    ## to prevent appending of "?=" to url when query elements are all NULL
+    if(query %>% unlist() %>% is.null()) {
+      query <- NULL
+    }
 
-  req <- gsheets_GET(this_ws$cellsfeed, query = query)
-  x <- req$content %>%
-    lfilt("entry") %>%
-    lapply(FUN = function(x) {
+    req <- gsheets_GET(this_ws$cellsfeed, query = query)
 
-      # filled cells: "row" "col" "inputValue" stored in x$cell$.attr
-      # empty cells:  "row" "col" "inputValue" stored in x$cell
-      # revisit this when/if we switch to xml2 ... these gymnastics may just be
-      # an unsavory consequence of our use of XML::xmlToList
-      if(is.null(x$cell[["row"]])) { # cell is not empty
-        row_num <- x$cell$.attrs["row"]
-        col_num <- x$cell$.attrs["col"]
-        text <- x$cell$text
-      } else { # cell is empty
-        row_num <- x$cell["row"]
-        col_num <- x$cell["col"]
-        text <- x$cell["inputValue"]
+    ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
+
+    x <- req$content %>%
+      xml2::xml_find_all("//feed:entry", ns)
+
+    if(length(x) == 0L) {
+      # the pros outweighed the cons re: setting up a zero row data.frame that,
+      # at least, has the correct variables
+      x <- dplyr::data_frame(cell = character(),
+                             cell_alt = character(),
+                             row = integer(),
+                             col = integer(),
+                             cell_text = character(),
+                             edit_link = character(),
+                             cell_id = character())
+    } else {
+      edit_links <- x %>%
+        xml2::xml_find_all(".//feed:link[@rel='edit']", ns) %>%
+        xml2::xml_attr("href")
+
+      ## this will be true if user does not have permission to edit
+      if(length(edit_links) == 0) {
+        edit_links <- NA
       }
 
-      links <- x %>% lfilt("^link$") %>% do.call("rbind", .) %>%
-        `rownames<-`(NULL) %>%
-        as.data.frame(stringsAsFactors = FALSE)
-      # edit link looks like so: "path/R1C1/version"
-      edit_link <- grepl("edit", links$rel)
-      if(any(edit_link)) {
-        edit_link <- links$href[edit_link]
-      } else {
-        edit_link <- NA_character_
-      }
+      x <- dplyr::data_frame_(
+        list(cell = ~ xml2::xml_find_all(x, ".//feed:title", ns) %>%
+               xml2::xml_text(),
+             edit_link = ~ edit_links,
+             cell_id = ~ xml2::xml_find_all(x, ".//feed:id", ns) %>%
+               xml2::xml_text(),
+             cell_alt = ~ cell_id %>% basename(),
+             row = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+               xml2::xml_attr("row") %>%
+               as.integer(),
+             col = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+               xml2::xml_attr("col") %>%
+               as.integer(),
+             cell_text = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+               xml2::xml_text()
+        ))
+      # see issue #19 about all the places cell data is (mostly redundantly)
+      # stored in the XML, such as: content_text = x$content$text,
+      # cell_inputValue = x$cell$.attrs["inputValue"], cell_numericValue =
+      # x$cell$.attrs["numericValue"], when/if we think about formulas
+      # explicitly, we will want to come back and distinguish between inputValue
+      # and numericValue
+    }
 
-      dplyr::data_frame(cell = x$title$text,
-                        cell_alt = x$id %>% basename,
-                        row = row_num %>% as.integer(),
-                        col = col_num %>% as.integer(),
-                        cell_text = text,
-                        edit_link = edit_link,
-                        cell_id = x$id) # full URL to cell to be updated
-    }) %>%
-    dplyr::bind_rows()
+    x <- x %>%
+      dplyr::select_(~ cell, ~ cell_alt, ~ row, ~ col, ~ cell_text,
+                     ~ edit_link, ~ cell_id) %>%
+      dplyr::as_data_frame()
 
-  attr(x, "ws_title") <- this_ws$ws_title
+    attr(x, "ws_title") <- this_ws$ws_title
 
-  # the pros outweighed the cons re: setting up a zero row data.frame that, at
-  # least, has the correct variables
-  if(nrow(x) == 0L) {
-    x <- dplyr::data_frame(cell = character(),
-                           cell_alt = character(),
-                           row = integer(),
-                           col = integer(),
-                           cell_text = character(),
-                           edit_link = character(),
-                           cell_id = character())
+    if(return_links) {
+      x
+    } else {
+      x %>%
+        dplyr::select_(~ -edit_link, ~ -cell_id)
+    }
+
   }
-
-  if(return_links) {
-    x
-  } else {
-    x %>%
-      dplyr::select_(~ -edit_link, ~ -cell_id)
-  }
-  # see issue #19 about all the places cell data is (mostly redundantly) stored
-  # in the XML, such as:
-  # content_text = x$content$text,
-  # cell_inputValue = x$cell$.attrs["inputValue"],
-  # cell_numericValue = x$cell$.attrs["numericValue"],
-  # when/if we think about formulas explicitly, we will want to come back and
-  # distinguish between inputValue and numericValue
-}
 
 #' Get data from a row or range of rows
 #'
@@ -371,7 +363,6 @@ get_col <- function(ss, ws = 1, col, verbose = TRUE) {
 #'
 #' @export
 get_cells <- function(ss, ws = 1, range, verbose = TRUE) {
-
   limits <- convert_range_to_limit_list(range)
   get_via_cf(ss, ws, limits = limits, verbose = verbose)
 }
@@ -589,3 +580,4 @@ affirm_positive <- function(x) {
     NA
   }
 }
+

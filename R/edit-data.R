@@ -72,14 +72,13 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 
   if(limits$`max-row` > this_ws$row_extent ||
      limits$`max-col` > this_ws$col_extent) {
-
     ss <- ss %>%
       resize_ws(this_ws$ws_title,
                 max(this_ws$row_extent, limits$`max-row`),
                 max(this_ws$col_extent, limits$`max-col`),
                 verbose)
     Sys.sleep(1)
-    
+
   }
 
   input <- input %>% as_character_vector(header = header)
@@ -112,8 +111,8 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                      batch = "http://schemas.google.com/gdata/batch",
                      gs = "http://schemas.google.com/spreadsheets/2006"),
                  .children = list(XML::xmlNode("id", this_ws$cellsfeed))) %>%
-                     XML::addChildren(kids = update_entries) %>%
-                     XML::toString.XMLNode()
+    XML::addChildren(kids = update_entries) %>%
+    XML::toString.XMLNode()
 
   ## TO DO: according to our policy, we should be using the capability of
   ## httr::POST() to append 'batch` here, but current version of gsheets_POST()
@@ -123,22 +122,22 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
     gsheets_POST(paste(this_ws$cellsfeed, "batch", sep = "/"), update_feed)
 
   ## proactive check for successful update
-  cell_status <- req$content %>%
-    lfilt("entry") %>%
-    lapluck("status", .drop = FALSE)
-  if(verbose) {
-    if(all(cell_status[ , 1] == "200")) {
-      sprintf("Worksheet \"%s\" successfully updated with %d new value(s).",
-              this_ws$ws_title, length(input)) %>% message()
-    } else {
-      sprintf(paste("Problems updating cells in worksheet \"%s\".",
-                    "Statuses returned:\n"),
-              this_ws$ws_title,
-              cell_status[ , 2] %>%
-                  unique() %>%
-                  paste(sep = ",")) %>%
-                  message()
-    }
+  cell_status <-
+    req$content %>%
+    xml2::xml_find_all("atom:entry//batch:status", xml2::xml_ns(.)) %>%
+    xml2::xml_attr("code")
+
+  if(all(cell_status == "200")) {
+    sprintf("Worksheet \"%s\" successfully updated with %d new value(s).",
+            this_ws$ws_title, length(input)) %>% message()
+  } else {
+    sprintf(paste("Problems updating cells in worksheet \"%s\".",
+                  "Statuses returned:\n"),
+            this_ws$ws_title,
+            cell_status %>%
+              unique() %>%
+              paste(sep = ",")) %>%
+      message()
   }
 
   if(trim) {
@@ -159,7 +158,7 @@ catch_hopeless_input <- function(x) {
     stop(paste("Non-data-frame, list-like objects not suitable as input.",
                "Maybe pre-process it yourself?"))
   }
-  
+
   if(!is.null(dim(x)) && length(dim(x)) > 2) {
     stop("Input has more than 2 dimensions.")
   }
