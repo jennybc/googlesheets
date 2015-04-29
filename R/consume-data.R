@@ -363,8 +363,12 @@ get_col <- function(ss, ws = 1, col, verbose = TRUE) {
 #'
 #' @export
 get_cells <- function(ss, ws = 1, range, verbose = TRUE) {
-  limits <- convert_range_to_limit_list(range)
+
+  limits <- range %>%
+    cellranger::as.cell_limits() %>%
+    limit_list()
   get_via_cf(ss, ws, limits = limits, verbose = verbose)
+
 }
 
 #' Reshape cell-level data and convert to data.frame

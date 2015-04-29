@@ -65,8 +65,8 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 #> Source: local data frame [30 x 10]
 #> 
 #>                                     sheet_title
-#> 1                       EasyTweetSheet - Shared
-#> 2                     Ari's Anchor Text Scraper
+#> 1                     Ari's Anchor Text Scraper
+#> 2                       EasyTweetSheet - Shared
 #> 3                                  #rhizo15 #tw
 #> 4                        test-gs-mini-gapminder
 #> 5                          test-gs-iris-private
@@ -83,16 +83,16 @@ The `list_sheets()` function returns the sheets you would see in your Google She
 my_sheets %>% glimpse()
 #> Observations: 30
 #> Variables:
-#> $ sheet_title  (chr) "EasyTweetSheet - Shared", "Ari's Anchor Text Scr...
-#> $ sheet_key    (chr) "14mAbIi1UyZtJTDuIa7iMb80xYtXbxCr-TGlvFbPgi3E", "...
-#> $ owner        (chr) "m.hawksey", "anahmani", "m.hawksey", "rpackagete...
+#> $ sheet_title  (chr) "Ari's Anchor Text Scraper", "EasyTweetSheet - Sh...
+#> $ sheet_key    (chr) "tQKSYVRwBXssUfYEaMdt-aw", "14mAbIi1UyZtJTDuIa7iM...
+#> $ owner        (chr) "anahmani", "m.hawksey", "m.hawksey", "rpackagete...
 #> $ perm         (chr) "r", "r", "r", "r", "rw", "rw", "rw", "rw", "r", ...
-#> $ last_updated (time) 2015-04-29 02:45:19, 2015-04-28 22:26:43, 2015-0...
-#> $ version      (chr) "new", "old", "new", "new", "new", "new", "new", ...
+#> $ last_updated (time) 2015-04-29 06:13:18, 2015-04-29 05:44:07, 2015-0...
+#> $ version      (chr) "old", "new", "new", "new", "new", "new", "new", ...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
-#> $ alternate    (chr) "https://docs.google.com/spreadsheets/d/14mAbIi1U...
+#> $ alternate    (chr) "https://spreadsheets.google.com/ccc?key=0Av8m6X4...
 #> $ self         (chr) "https://spreadsheets.google.com/feeds/spreadshee...
-#> $ alt_key      (chr) NA, "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc...
+#> $ alt_key      (chr) "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc", N...
 ```
 
 ### Register a spreadsheet
@@ -107,7 +107,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-04-29 03:35:56 GMT
+#>   Date of googlesheets::register_ss: 2015-04-29 06:23:32 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #> 
@@ -379,18 +379,18 @@ foo <- new_ss("foo")
 #> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1DbOi-JT_0yr4tqgNXn0ehTzDGFKz1PuKRKe0m9NoKaM
+#> sheet_key: 1SqB8CZH6ZhnKGQMQev-WCItRbZqEckTYhx7sUGn0IA8
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-04-29 03:36:04 GMT
-#>     Date of last spreadsheet update: 2015-04-29 03:36:01 GMT
+#>   Date of googlesheets::register_ss: 2015-04-29 06:23:40 GMT
+#>     Date of last spreadsheet update: 2015-04-29 06:23:38 GMT
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1DbOi-JT_0yr4tqgNXn0ehTzDGFKz1PuKRKe0m9NoKaM
+#> Key: 1SqB8CZH6ZhnKGQMQev-WCItRbZqEckTYhx7sUGn0IA8
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -448,15 +448,15 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-04-29 03:36:16 GMT
-#>     Date of last spreadsheet update: 2015-04-29 03:36:15 GMT
+#>   Date of googlesheets::register_ss: 2015-04-29 06:23:53 GMT
+#>     Date of last spreadsheet update: 2015-04-29 06:23:51 GMT
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1FP4YgHB3QlZpA5N4I4tTFD6lnNL8YO0Ep2OHtcdMvBA
+#> Key: 1stLezSDjw7nyweJEmCkt-pSfRSqD41wVp9P4fXOTDgk
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -478,8 +478,8 @@ gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
 #> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
-#>   Date of googlesheets::register_ss: 2015-04-29 03:36:21 GMT
-#>     Date of last spreadsheet update: 2015-04-29 03:36:19 GMT
+#>   Date of googlesheets::register_ss: 2015-04-29 06:23:57 GMT
+#>     Date of last spreadsheet update: 2015-04-29 06:23:55 GMT
 #>                          visibility: private
 #> 
 #> Contains 5 worksheets:
@@ -490,7 +490,7 @@ gap_xlsx
 #> Europe: 20 x 6
 #> Oceania: 20 x 6
 #> 
-#> Key: 1QgzbL6n7QV1YZUgrMh3QfNbtG3lPt3Zow-3P-R7SnSQ
+#> Key: 1k000jJaoPQN4swpUw-VfAMGzqdE-NY6oh8Liq22lKXw
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [5 x 6]

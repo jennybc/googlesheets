@@ -5,7 +5,7 @@
 #' corner of the edited cell region, and the size and shape of the input. If the
 #' input has rectangular shape, i.e. is a data.frame or matrix, then a simiarly
 #' shaped range of cells will be updated. If the input has no dimension, i.e.
-#' it's a vector, then \code{by_row} controls whether edited cells will extend
+#' it's a vector, then \code{byrow} controls whether edited cells will extend
 #' from the anchor across a row or down a column.
 #'
 #' @inheritParams get_via_lf
@@ -14,8 +14,8 @@
 #'   data.frame
 #' @param anchor single character string specifying the upper left cell of the
 #'   cell range to edit; positioning notation can be either "A1" or "R1C1"
-#' @param by_row logical; should we fill cells across a row (\code{by_row =
-#'   TRUE}) or down a column (\code{by_row = FALSE}, default); consulted only
+#' @param byrow logical; should we fill cells across a row (\code{byrow =
+#'   TRUE}) or down a column (\code{byrow = FALSE}, default); consulted only
 #'   when \code{input} is a vector, i.e. \code{dim(input)} is \code{NULL}
 #' @param header logical; indicates whether column names of input should be
 #'   included in the edit, i.e. prepended to the input; consulted only when
@@ -31,41 +31,33 @@
 #' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 #' get_via_csv(yo)
 #'
-#' yo <- add_ws(yo, "by_row_FALSE")
-#' yo <- edit_cells(yo, ws = "by_row_FALSE", LETTERS[1:5], "A8")
-#' get_via_cf(yo, ws = "by_row_FALSE", min_row = 7) %>% simplify_cf()
+#' yo <- add_ws(yo, "byrow_FALSE")
+#' yo <- edit_cells(yo, ws = "byrow_FALSE", LETTERS[1:5], "A8")
+#' get_via_cf(yo, ws = "byrow_FALSE", min_row = 7) %>% simplify_cf()
 #'
-#' yo <- add_ws(yo, "by_row_TRUE")
-#' yo <- edit_cells(yo, ws = "by_row_TRUE", LETTERS[1:5], "A8", by_row = TRUE)
-#' get_via_cf(yo, ws = "by_row_TRUE", min_row = 7) %>% simplify_cf()
+#' yo <- add_ws(yo, "byrow_TRUE")
+#' yo <- edit_cells(yo, ws = "byrow_TRUE", LETTERS[1:5], "A8", byrow = TRUE)
+#' get_via_cf(yo, ws = "byrow_TRUE", min_row = 7) %>% simplify_cf()
 #' }
 #'
 #' @export
 edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
-                       by_row = FALSE, header = FALSE, trim = FALSE,
+                       byrow = FALSE, header = FALSE, trim = FALSE,
                        verbose = TRUE) {
 
   catch_hopeless_input(input)
   this_ws <- get_ws(ss, ws, verbose = FALSE)
 
-  if(dim(input) %>% is.null()) {
-    if(by_row) {
-      input_extent <- c(1L, length(input))
-    } else {
-      input_extent <- c(length(input), 1L)
-    }
-  } else {
-    input_extent <- dim(input)
-    if(header) {
-      input_extent[1] <- input_extent[1] + 1
-    }
-  }
-  limits <- convert_range_to_limit_list(anchor)
-  limits$`max-row` <- limits$`max-row` + input_extent[1] - 1
-  limits$`max-col` <- limits$`max-col` + input_extent[2] - 1
+
+  limits <-
+    cellranger::anchored(anchor, input = input, header = header,
+                         byrow = byrow) %>%
+    limit_list()
   ## TO DO: if I were really nice, I would use the positioning notation from the
   ## user, i.e. learn it from anchor, instead of defaulting to A1
-  range <- limits %>% convert_limit_list_to_range(pn = 'A1')
+  range <- limits %>%
+    un_limit_list() %>%
+    cellranger::as.range()
   if(verbose) {
     message(sprintf("Range affected by the update: \"%s\"", range))
   }

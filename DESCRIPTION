@@ -13,6 +13,7 @@ Depends:
 License: MIT + file LICENSE
 LazyData: true
 Imports:
+    cellranger,
     dplyr (>= 0.4.0),
     httr (>= 0.6.1),
     plyr,
