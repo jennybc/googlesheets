@@ -4,12 +4,13 @@
 \alias{gsheets_GET}
 \title{Create GET request}
 \usage{
-gsheets_GET(url, to_list = TRUE, ...)
+gsheets_GET(url, to_xml = TRUE, ...)
 }
 \arguments{
 \item{url}{the url of the page to retrieve}
 
-\item{to_list}{whether to convert response contents to list or not}
+\item{to_xml}{whether to convert response contents to xml_doc() or leave as
+character string}
 
 \item{...}{optional; further named parameters, such as \code{query},
   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed

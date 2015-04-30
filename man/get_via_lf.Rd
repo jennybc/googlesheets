@@ -20,9 +20,10 @@ a tbl_df
 \description{
 Gets data via the list feed, which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. First row regarded as
-header row of variable or column names. If data is neatly rectangular and you
-want all of it, this is the fastest way to get it. Anecdotally, ~3x faster
-than using methods based on the cellfeed.
+header row of variable or column names. The related function,
+\code{get_via_csv}, also returns data from a neat rectangle of cells, so you
+probably want to use that (unless you are dealing with an "old" Google Sheet,
+which \code{get_via_csv} does not support).
 }
 \note{
 When you use the listfeed, the Sheets API transforms the variable or

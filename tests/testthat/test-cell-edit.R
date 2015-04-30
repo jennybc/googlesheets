@@ -94,14 +94,14 @@ test_that("Vectors can be uploaded", {
 
   ss <- register_ss(ss)
 
-  # by_row = FALSE
+  # byrow = FALSE
   ss <- ss %>% edit_cells(ws, LETTERS[1:5], "A8")
   Sys.sleep(2)
   tmp <- ss %>% get_via_cf(ws, min_row = 7) %>% simplify_cf()
   expect_equivalent(tmp, LETTERS[1:5])
 
-  # by_row = TRUE
-  ss <- ss %>% edit_cells(ws, LETTERS[5:1], "A15", by_row = TRUE)
+  # byrow = TRUE
+  ss <- ss %>% edit_cells(ws, LETTERS[5:1], "A15", byrow = TRUE)
   Sys.sleep(2)
   tmp <- ss %>% get_via_cf(ws, min_row = 15) %>% simplify_cf()
   expect_equivalent(tmp, LETTERS[5:1])
@@ -116,3 +116,5 @@ test_that("We can trim worksheet extent to fit uploaded data", {
   expect_equal(ncol(iris_ish), ss$ws$col_extent[ss$ws$ws_title == ws])
 
 })
+
+delete_ss(regex = TEST, verbose = FALSE)

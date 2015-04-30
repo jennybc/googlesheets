@@ -50,7 +50,7 @@ all cells will be returned but realize that \code{\link{get_via_csv}} and
 rectangular worksheet.
 
 Empty cells, even if "embedded" in a rectangular region of populated cells,
-are not normally returned by the cell feed This function won't return them
+are not normally returned by the cell feed. This function won't return them
 either when \code{return_empty = FALSE} (default), but will if you set
 \code{return_empty = TRUE}. If you don't specify any limits AND you set
 \code{return_empty = TRUE}, you could be in for several minutes wait, as the
