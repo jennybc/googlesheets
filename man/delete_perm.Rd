@@ -4,16 +4,25 @@
 \alias{delete_perm}
 \title{Delete a permission from a spreadsheet}
 \usage{
-delete_perm(ss, value = NULL, perm_id = NULL, verbose = TRUE)
+delete_perm(ss, email = NULL, perm_id = NULL, verbose = TRUE)
 }
 \arguments{
-\item{value}{The email address or domain name for the entity.}
+\item{ss}{a registered Google Spreadsheet}
 
-\item{perm_id}{The permission ID}
+\item{email}{The email address or domain name for the entity.}
+
+\item{perm_id}{The ID for the permission.}
 
 \item{verbose}{logical; do you want informative messages?}
 }
 \description{
-Delete a permission from a spreadsheet
+Identify the permission to be deleted via email or permission ID.
+}
+\examples{
+\dontrun{
+foo <- new_ss("foo")
+add_perm(foo, email = NULL, type = "anyone", role = "reader")
+delete_perm(foo, email = NA)
+}
 }
 

@@ -4,10 +4,17 @@
 #' \href{https://developers.google.com/drive/v2/reference/permissions}{permissions
 #' feed} of the Google Drive API.
 #' 
-#' This listing gives the user all permissions for a spreadsheet which is also 
-#' viewable from the sharing dialog of a Google Sheet. The first row will always
-#' be the permission for the owner of the spreadsheet. Any additional 
-#' permissions follow. 
+#' This listing gives the user all the permissions for a spreadsheet. A 
+#' simplified viewing is available in the sharing dialog of a Google Sheet. 
+#' 
+#' The first row will always be the permission for the owner of the spreadsheet. 
+#' Any additional permissions follow. 
+#' 
+#' A permission for a sheet includes the following information: the name for 
+#' this permission, the email of the user or group the permission refers to, the 
+#' primary role for the user, any additional roles they have, the type of user 
+#' they are, the (unique) ID of the user this permission refers to, a link 
+#' back to this permission, and the ETag of the permission.
 #' 
 #' @param ss a registered Google spreadsheet
 #' 
@@ -27,11 +34,29 @@ list_perm <- function(ss) {
   
   req <- gdrive_GET(the_url)
   
-  req$content$items %>% 
-    plyr::ldply(function(x) dplyr::as_data_frame(x)) %>% 
-    dplyr::tbl_df() %>%
-    dplyr::select_(~ name, email = ~ emailAddress, ~ role, ~ type, 
-                   perm_id = ~ id, ~ selfLink, ~ kind, ~ etag, ~ domain)
+  tbl <- req$content$items %>% 
+    plyr::ldply(function(x) dplyr::as_data_frame(x))
+  
+  if(is.null(tbl$additionalRoles)) {
+    
+    perm_tbl <- tbl %>% 
+      dplyr::select_(~ name, email = ~ emailAddress, ~ domain, ~ type, 
+                     ~ role, perm_id = ~ id, ~ selfLink, ~ etag, ~ kind) 
+    
+  } else {
+    
+    add_roles <- plyr::ldply(tbl$additionalRoles, 
+                             function(x) ifelse(is.null(x), x <- NA, x))
+    
+    perm_tbl <- tbl %>% 
+      dplyr::bind_cols(add_roles) %>%
+      dplyr::select_(~ name, email = ~ emailAddress, ~ domain, ~ type, ~ role,
+                     add_roles = ~ V1, perm_id = ~ id, 
+                     ~ selfLink, ~ etag, ~ kind)
+  }
+  
+  perm_tbl %>% dplyr::tbl_df()
+
 }
 
 
@@ -40,43 +65,53 @@ list_perm <- function(ss) {
 #' An email will be sent automatically to the entity to notify them of the 
 #' permission. 
 #' 
-#' @param value The email address or domain name for the entity.
-#' @param type The account type. Allowed values "user", "group", "domain", or 
-#'    "anyone".
-#' @param role The primary role for this user. Allowed values are: "owner", 
-#'    "writer", or "reader".
-#' @param with_link boolean, whether the link is required for this permission
-#' @param send_email logical, do you want to send notification emails when 
-#' sharing to users or groups?
-#' @param verbose logical, do you want informative messages?
+#' Commenting is allowed by default for "owners" and "writers". 
+#' Set commenter = TRUE if you want "readers" to be able to comment.
 #' 
-#' @return Information about newly added permission.
+#' @inheritParams edit_perm
+#' @param type The value "user", "group", "domain" or "anyone".
+#' @param with_link logical; whether the link is required for this permission
+#' @param send_email logical; do you want to send notification emails when 
+#' sharing to users or groups?
+#' 
+#' @return a tbl_df with information about the newly added permission.
 #' 
 #' @examples
 #' \dontrun{
 #' foo <- new_ss("foo")
 #' 
 #' # Add anyone as a writer/reader:
-#' add_perm(foo, value = NULL, type = "anyone", role = "writer")
-#' add_perm(foo, value = NULL, type = "anyone", role = "reader")
-#' 
+#' add_perm(foo, email = NULL, type = "anyone", role = "writer")
+#' add_perm(foo, email = NULL, type = "anyone", role = "reader")
 #' }
 #' 
 #' @export 
-add_perm <- function(ss, value = NULL, type = NULL, role = NULL,
-                     with_link = TRUE, send_email = TRUE, verbose = TRUE) {
+add_perm <- function(ss, email = NULL, type = NULL, role = NULL, 
+                     commenter = FALSE, with_link = TRUE, 
+                     send_email = TRUE, verbose = TRUE) {
   
   the_url <- list_perm(ss)$selfLink %>% dirname() %>% unique()
   
   stopifnot(length(the_url) == 1L)
   
-  query <-  list("sendNotificationEmails" = "send_email")
+  if(send_email) {
+    query <- list("sendNotificationEmails" = send_email)
+  } else {
+    query <- NULL
+  }
   
-  req <- gdrive_POST(the_url,
-                     body = list("value" = value, 
+  if(commenter) {
+    comm <- "commenter"
+  } else {
+    comm <- NULL
+  }
+  
+  req <- gdrive_POST(the_url, query = query,
+                     body = list("value" = email, 
                                  "type" = type,
                                  "role" = role,
-                                 "withLink" = with_link), httr::verbose())
+                                 "withLink" = with_link,
+                                 "additionalRoles" = comm))
   
   new_perm_id <- req %>% httr::content() %>% '[['("id")
   
@@ -97,35 +132,45 @@ add_perm <- function(ss, value = NULL, type = NULL, role = NULL,
                     who, perm$role))
   }
   
-  # cant think of why with_link would be FALSE ...
-  if(with_link) {
-    share_link <- paste(ss$links$href[1] %>% dirname(), "edit?usp=sharing", sep = "/")
-    message(sprintf("Sharing Link: %s", share_link)) 
-  }
-  
   perm
 }
 
 
 #' Update an existing permission
 #'
-#' Assign a new role to an existing user permission. This function is used when 
-#' you want to change "writer" to a "reader" and vice versa.
+#' Assign a new role to an existing user permission. This function is useful
+#' when you want to change roles for an entity from "writer" to a "reader" and 
+#' vice versa.
 #' 
 #' @param ss a registered Google Spreadsheet
+#' @param email The email address or domain name for the entity.
 #' @param perm_id The ID for the permission.
 #' @param role The primary role for this user. Allowed values are "owner", 
 #' "reader", and "writer".
+#' @param commenter logical; allow the user to comment? This is only effective 
+#' if role = "reader".
 #' @param verbose logical; do you want informative messages?
 #' 
 #' @export
-edit_perm <- function(ss, perm_id = NULL , role = "reader", verbose = TRUE) {
+edit_perm <- function(ss, email = NULL, perm_id = NULL, 
+                      role = "reader", commenter = FALSE, verbose = TRUE) {
   
-  perm <- get_perm(ss, perm_id)
+  if(!is.null(perm_id)) {
+    perm <- get_perm(ss, perm_id)
+  } else {
+    perm <- get_perm(ss, email)
+  }
+  
+  if(commenter) {
+    comm <- "commenter"
+  } else {
+    comm <- NULL
+  }
   
   # updates a permission
   req <- gdrive_PUT(perm$selfLink,  
-                    body = list("role" = role), 
+                    body = list("role" = role,
+                                "additionalRoles" = comm), 
                     encode = "json")
   
   if(is.na(perm$email) && perm$type == "anyone") {
@@ -143,23 +188,30 @@ edit_perm <- function(ss, perm_id = NULL , role = "reader", verbose = TRUE) {
 
 #' Delete a permission from a spreadsheet
 #' 
-#' @param value The email address or domain name for the entity.
-#' @param perm_id The permission ID
-#' @param verbose logical; do you want informative messages?
+#' Identify the permission to be deleted via email or permission ID.  
+#' 
+#' @inheritParams edit_perm
+#' 
+#' @examples
+#' \dontrun{
+#' foo <- new_ss("foo")
+#' add_perm(foo, email = NULL, type = "anyone", role = "reader")
+#' delete_perm(foo, email = NA)
+#' }
 #' 
 #' @export
-delete_perm <- function(ss, value = NULL, perm_id = NULL, verbose = TRUE) {
+delete_perm <- function(ss, email = NULL, perm_id = NULL, verbose = TRUE) {
   
   if(!is.null(perm_id)) {
     perm <- ss %>% get_perm(perm_id)
     the_url <- perm$selfLink
   } else {
-    if(!is.null(value)) {
-      perm <- ss %>% get_perm(value)
+    if(!is.null(email)) {
+      perm <- ss %>% get_perm(email)
       perm_id <- perm$perm_id
       the_url <- perm$selfLink
     } else {
-      stop("Need one of email or permission id to identity permission to delete")
+      stop("Need one of email or permission id to identity the permission to delete")
     }
   }
   
@@ -173,13 +225,16 @@ delete_perm <- function(ss, value = NULL, perm_id = NULL, verbose = TRUE) {
   
   if(verbose & ok) {
     message(
-      sprintf("Success. Permissions for \"%s\" have been deleted.", 
-              value))
+      sprintf("Success. Permissions for \"%s\" have been deleted.", email))
   }
 }
 
 
 #' Retrieve a permission from a spreadsheet
+#' 
+#' @param ss a registered Google Spreadsheet
+#' @param id identifying info, should be either email or permission ID
+#' @param verbose logical; do you want informative messages?
 #' 
 #' @keywords internal
 get_perm <- function(ss, info, verbose = TRUE) {

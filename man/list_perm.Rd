@@ -18,10 +18,17 @@ This function returns the information available from the
 feed} of the Google Drive API.
 }
 \details{
-This listing gives the user all permissions for a spreadsheet which is also
-viewable from the sharing dialog of a Google Sheet. The first row will always
-be the permission for the owner of the spreadsheet. Any additional
-permissions follow.
+This listing gives the user all the permissions for a spreadsheet. A
+simplified viewing is available in the sharing dialog of a Google Sheet.
+
+The first row will always be the permission for the owner of the spreadsheet.
+Any additional permissions follow.
+
+A permission for a sheet includes the following information: the name for
+this permission, the email of the user or group the permission refers to, the
+primary role for the user, any additional roles they have, the type of user
+they are, the (unique) ID of the user this permission refers to, a link
+back to this permission, and the ETag of the permission.
 }
 \examples{
 \dontrun{

@@ -4,40 +4,47 @@
 \alias{add_perm}
 \title{Add a permission to a spreadsheet}
 \usage{
-add_perm(ss, value = NULL, type = NULL, role = NULL, with_link = TRUE,
-  send_email = TRUE, verbose = TRUE)
+add_perm(ss, email = NULL, type = NULL, role = NULL, commenter = FALSE,
+  with_link = TRUE, send_email = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{value}{The email address or domain name for the entity.}
+\item{ss}{a registered Google Spreadsheet}
 
-\item{type}{The account type. Allowed values "user", "group", "domain", or
-"anyone".}
+\item{email}{The email address or domain name for the entity.}
 
-\item{role}{The primary role for this user. Allowed values are: "owner",
-"writer", or "reader".}
+\item{type}{The value "user", "group", "domain" or "anyone".}
 
-\item{with_link}{boolean, whether the link is required for this permission}
+\item{role}{The primary role for this user. Allowed values are "owner",
+"reader", and "writer".}
 
-\item{send_email}{logical, do you want to send notification emails when
+\item{commenter}{logical; allow the user to comment? This is only effective
+if role = "reader".}
+
+\item{with_link}{logical; whether the link is required for this permission}
+
+\item{send_email}{logical; do you want to send notification emails when
 sharing to users or groups?}
 
-\item{verbose}{logical, do you want informative messages?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
-Information about newly added permission.
+a tbl_df with information about the newly added permission.
 }
 \description{
 An email will be sent automatically to the entity to notify them of the
 permission.
+}
+\details{
+Commenting is allowed by default for "owners" and "writers".
+Set commenter = TRUE if you want "readers" to be able to comment.
 }
 \examples{
 \dontrun{
 foo <- new_ss("foo")
 
 # Add anyone as a writer/reader:
-add_perm(foo, value = NULL, type = "anyone", role = "writer")
-add_perm(foo, value = NULL, type = "anyone", role = "reader")
-
+add_perm(foo, email = NULL, type = "anyone", role = "writer")
+add_perm(foo, email = NULL, type = "anyone", role = "reader")
 }
 }
 

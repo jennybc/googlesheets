@@ -4,20 +4,27 @@
 \alias{edit_perm}
 \title{Update an existing permission}
 \usage{
-edit_perm(ss, perm_id = NULL, role = "reader", verbose = TRUE)
+edit_perm(ss, email = NULL, perm_id = NULL, role = "reader",
+  commenter = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google Spreadsheet}
+
+\item{email}{The email address or domain name for the entity.}
 
 \item{perm_id}{The ID for the permission.}
 
 \item{role}{The primary role for this user. Allowed values are "owner",
 "reader", and "writer".}
 
+\item{commenter}{logical; allow the user to comment? This is only effective
+if role = "reader".}
+
 \item{verbose}{logical; do you want informative messages?}
 }
 \description{
-Assign a new role to an existing user permission. This function is used when
-you want to change "writer" to a "reader" and vice versa.
+Assign a new role to an existing user permission. This function is useful
+when you want to change roles for an entity from "writer" to a "reader" and
+vice versa.
 }
 

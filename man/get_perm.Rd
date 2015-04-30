@@ -6,6 +6,13 @@
 \usage{
 get_perm(ss, info, verbose = TRUE)
 }
+\arguments{
+\item{ss}{a registered Google Spreadsheet}
+
+\item{verbose}{logical; do you want informative messages?}
+
+\item{id}{identifying info, should be either email or permission ID}
+}
 \description{
 Retrieve a permission from a spreadsheet
 }
