@@ -19,11 +19,18 @@ pts_key <- "1amnxLg9VVDoE6KSIZvutYkEGNgQyJSnLJgHthehruy8"
 pts_ws_feed <- construct_ws_feed_from_key(pts_key, "public")
 
 ## Old sheet (owned by rpackagetest)
-old_url <- "https://docs.google.com/spreadsheet/ccc?key=0Ai6OdwH-k_ZcdElYSWIxNkhwRkMzdnJTenowazFSS3c"
-old_key <- "tIXIb16HpFC3vrSzz0k1RKw"
-old_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/tIXIb16HpFC3vrSzz0k1RKw/private/values" # it appears only private works for old sheets?
-old_alt_key <- "0Ai6OdwH-k_ZcdElYSWIxNkhwRkMzdnJTenowazFSS3c"
-old_title <- "test-gs-old-sheet"
+# old_url <- "https://docs.google.com/spreadsheet/ccc?key=0Ai6OdwH-k_ZcdElYSWIxNkhwRkMzdnJTenowazFSS3c"
+# old_key <- "tIXIb16HpFC3vrSzz0k1RKw"
+# old_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/tIXIb16HpFC3vrSzz0k1RKw/private/values" # it appears only private works for old sheets?
+# old_alt_key <- "0Ai6OdwH-k_ZcdElYSWIxNkhwRkMzdnJTenowazFSS3c"
+# old_title <- "test-gs-old-sheet"
+
+## Old sheet (owned by gspreadr)
+old_url <- "https://docs.google.com/spreadsheet/ccc?key=0Audw-qi1jh3fdDBsbVJTa3VBZW5lRUp5NVhHc1FQaXc"
+old_key <- "t0lmRSkuAeneEJy5XGsQPiw"
+old_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/t0lmRSkuAeneEJy5XGsQPiw/private/values" # it appears only private works for old sheets?
+old_alt_key <- "0Audw-qi1jh3fdDBsbVJTa3VBZW5lRUp5NVhHc1FQaXc"
+old_title <- "test-gs-old-sheet2"
 
 ## WTF sheets (owned by gspreadr)
 ## first sheet -- "Testing helper" -- exists solely so that ...

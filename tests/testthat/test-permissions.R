@@ -1,6 +1,6 @@
 context("Different permissions are set")
 
-my_sheet <- new_ss("Permissions Testing")
+my_sheet <- new_ss("test-gs-permissions")
 
 test_that("Permissions for a spreadsheet are listed", {
 
@@ -42,4 +42,4 @@ test_that("Permissions can be deleted", {
   
 })
 
-delete_ss("Permissions Testing")
+delete_ss("test-gs-permissions")
