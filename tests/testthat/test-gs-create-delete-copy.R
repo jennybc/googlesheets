@@ -69,9 +69,10 @@ test_that("Nonexistent spreadsheet can NOT be deleted or copied", {
 
 test_that("Old Sheets can be copied and deleted", {
 
-  ## we must register by title, in order to get info from the spreadsheets feed,
-  ## which, in turn, is the only way to populate the alt_key
-  ## this means we must have visited the sheet in the browser at least once!
+  ## don't even bother if we can't see this sheet in the spreadsheets feed or if
+  ## it's been "helpfully" converted to a new sheet by google AGAIN :(
+  check_old_sheet()
+
   ss <- register_ss(old_title)
 
   ## pre-register
@@ -93,7 +94,6 @@ test_that("Old Sheets can be copied and deleted", {
                    copy_ss(from = old_url, to = my_copy), "Successful copy!")
   Sys.sleep(1)
   expect_message(delete_ss(my_copy), "moved to trash")
-
 })
 
 delete_ss(regex = TEST, verbose = FALSE)
