@@ -2,7 +2,7 @@
 library(googlesheets)
 suppressMessages(library(dplyr))
 
-## ----authorize, include = FALSE------------------------------------------
+## ----auth, include = FALSE-----------------------------------------------
 
 ## look for .httr-oauth in pwd (assuming pwd is googlesheets) or two levels up
 ## (assuming pwd is googlesheets/tests/testthat)

@@ -280,7 +280,7 @@ file.remove(file.path("~/tmp", c("gapminder.xlsx", "gapminder-africa.csv")))
  
 If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
  
-```{r authorize, eval = FALSE}
+```{r auth, eval = FALSE}
 # Give googlesheets permission to access your spreadsheets and google drive
 authorize() 
 ```

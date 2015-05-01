@@ -31,16 +31,16 @@ a googlesheet object
 Initialize a googlesheet object that holds identifying information for a
 specific spreadsheet. Intended primarily for internal use. Unless
 \code{verify = FALSE}, it calls \code{\link{list_sheets}} and attempts to
-return information from the row uniquely specified by input \code{x}. The
-listing provided by \code{\link{list_sheets}} is only available to an
-authorized user, so authorization will be required. A googlesheet object
-contains much more information than that available via
-\code{\link{list_sheets}}, so many components will not be populated until the
-sheet is registered properly, such as via \code{\link{register_ss}}, which is
-called internally in many \code{googlesheets} functions. If \code{verify =
-FALSE}, then user must provide either sheet key, URL or a worksheets feed, as
-opposed to sheet title. In this case, the information will be taken at face
-value, i.e. no proactive verification or look-up on Google Drive.
+return information from the row uniquely specified by input \code{x}. Since
+\code{\link{list_sheets}} fetches non-public user data, authorization will be
+required. A googlesheet object contains much more information than that
+available via \code{\link{list_sheets}}, so many components will not be
+populated until the sheet is registered properly, such as via
+\code{\link{register_ss}}, which is called internally in many
+\code{googlesheets} functions. If \code{verify = FALSE}, then user must
+provide either sheet key, URL or a worksheets feed, as opposed to sheet
+title. In this case, the information will be taken at face value, i.e. no
+proactive verification or look-up on Google Drive.
 }
 \details{
 This function is will be revised to be less dogmatic about only identifying

@@ -31,7 +31,7 @@ If you want to switch to a different Google account, run `authorize(new_user = T
 
 *In a hidden chunk, we are logging into Google as a user associated with this package, so we can work with some Google spreadsheets later in this vignette.*
 
-```{r authorize, include = FALSE}
+```{r auth, include = FALSE}
 
 ## look for .httr-oauth in pwd (assuming pwd is googlesheets) or two levels up
 ## (assuming pwd is googlesheets/tests/testthat)
