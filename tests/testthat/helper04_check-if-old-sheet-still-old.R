@@ -25,7 +25,7 @@
 ## NOTE: old_title is defined in helper01 !!!
 
 check_old_sheet <- function() {
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   if(!(old_title %in% ss_df$sheet_title)) {
     skip(sprintf("Old sheet \"%s\" doesn't appear in the spreadsheets feed.",
                  old_title))

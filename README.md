@@ -58,40 +58,38 @@ suppressMessages(library("dplyr"))
 
 ### See some spreadsheets you can access
 
-The `list_sheets()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
 ``` r
-(my_sheets <- list_sheets())
-#> Auto-refreshing stale OAuth token.
+(my_sheets <- gs_ls())
 #> Source: local data frame [30 x 10]
 #> 
-#>                                     sheet_title
-#> 1                       EasyTweetSheet - Shared
-#> 2                     Ari's Anchor Text Scraper
-#> 3                            test-gs-old-sheet2
-#> 4                                  #rhizo15 #tw
-#> 5                                   gas_mileage
-#> 6                        test-gs-mini-gapminder
-#> 7                          test-gs-iris-private
-#> 8  1F0iNuYW4v_oG69s7c5NzdoMF_aXq1aOP-OAOJ4gK6Xc
-#> 9                        gs-test-testing helper
-#> 10                            test-gs-old-sheet
-#> ..                                          ...
-#> Variables not shown: sheet_key (chr), owner (chr), perm (chr),
-#>   last_updated (time), version (chr), ws_feed (chr), alternate (chr), self
+#>                 sheet_title         owner perm version        last_updated
+#> 1               gas_mileage      woo.kara    r     new 2015-05-01 23:37:42
+#> 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-01 21:13:59
+#> 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-01 18:54:05
+#> 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-02 00:38:33
+#> 5        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
+#> 6    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
+#> 7      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
+#> 8  1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
+#> 9    gs-test-testing helper      gspreadr   rw     new 2015-04-25 02:31:42
+#> 10        test-gs-old-sheet  rpackagetest    r     new 2015-04-24 21:46:56
+#> ..                      ...           ...  ...     ...                 ...
+#> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 #>   (chr), alt_key (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
 #> Observations: 30
 #> Variables:
-#> $ sheet_title  (chr) "EasyTweetSheet - Shared", "Ari's Anchor Text Scr...
-#> $ sheet_key    (chr) "14mAbIi1UyZtJTDuIa7iMb80xYtXbxCr-TGlvFbPgi3E", "...
-#> $ owner        (chr) "m.hawksey", "anahmani", "gspreadr", "m.hawksey",...
-#> $ perm         (chr) "r", "r", "rw", "r", "r", "r", "rw", "rw", "rw", ...
-#> $ last_updated (time) 2015-05-01 02:54:44, 2015-05-01 02:15:14, 2015-0...
-#> $ version      (chr) "new", "old", "old", "new", "new", "new", "new", ...
+#> $ sheet_title  (chr) "gas_mileage", "Ari's Anchor Text Scraper", "#rhi...
+#> $ owner        (chr) "woo.kara", "anahmani", "m.hawksey", "m.hawksey",...
+#> $ perm         (chr) "r", "r", "r", "r", "rw", "r", "rw", "rw", "rw", ...
+#> $ version      (chr) "new", "old", "new", "new", "old", "new", "new", ...
+#> $ last_updated (time) 2015-05-01 23:37:42, 2015-05-01 21:13:59, 2015-0...
+#> $ sheet_key    (chr) "1WH65aJjlmhOWYMFkhDuKPcRa5mloOtsTCKxrF7erHgI", "...
 #> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
-#> $ alternate    (chr) "https://docs.google.com/spreadsheets/d/14mAbIi1U...
+#> $ alternate    (chr) "https://docs.google.com/spreadsheets/d/1WH65aJjl...
 #> $ self         (chr) "https://spreadsheets.google.com/feeds/spreadshee...
 #> $ alt_key      (chr) NA, "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc...
 ```
@@ -108,7 +106,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-05-01 06:03:37 GMT
+#>   Date of googlesheets::register_ss: 2015-05-02 00:52:03 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #> 
@@ -151,7 +149,7 @@ gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 copy_ss(key = gap_key, to = "Gapminder")
 ```
 
-If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `list_sheets()` again and make sure the Gapminder sheet is listed.
+If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `gs_ls()` again and make sure the Gapminder sheet is listed.
 
 Now register your copy of the Gapminder sheet and you can follow along:
 
@@ -380,18 +378,18 @@ foo <- new_ss("foo")
 #> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 #> Sheet identified!
 #> sheet_title: foo
-#> sheet_key: 1LIC4uSO9Iq47xelYoSauf9kMxHmP65GRHhOFuCTBN3Q
+#> sheet_key: 1PuKdPTW3Yu53w4SSGjv0pvIXx-b4IIj3bZD0rLs6ub4
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-05-01 06:03:44 GMT
-#>     Date of last spreadsheet update: 2015-05-01 06:03:43 GMT
+#>   Date of googlesheets::register_ss: 2015-05-02 00:52:12 GMT
+#>     Date of last spreadsheet update: 2015-05-02 00:52:10 GMT
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1LIC4uSO9Iq47xelYoSauf9kMxHmP65GRHhOFuCTBN3Q
+#> Key: 1PuKdPTW3Yu53w4SSGjv0pvIXx-b4IIj3bZD0rLs6ub4
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -449,15 +447,15 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-05-01 06:03:57 GMT
-#>     Date of last spreadsheet update: 2015-05-01 06:03:55 GMT
+#>   Date of googlesheets::register_ss: 2015-05-02 00:52:24 GMT
+#>     Date of last spreadsheet update: 2015-05-02 00:52:23 GMT
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1KE1PVxx-n_jAi6xS1iQESxKRrzUWxnO0rXQmMj1CUJM
+#> Key: 1eVg35u6UEQrsoBLtZtbGTes4CKy8_sZ6jojGQC6pkN0
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -479,8 +477,8 @@ gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
 #> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
-#>   Date of googlesheets::register_ss: 2015-05-01 06:04:00 GMT
-#>     Date of last spreadsheet update: 2015-05-01 06:03:59 GMT
+#>   Date of googlesheets::register_ss: 2015-05-02 00:52:28 GMT
+#>     Date of last spreadsheet update: 2015-05-02 00:52:27 GMT
 #>                          visibility: private
 #> 
 #> Contains 5 worksheets:
@@ -491,7 +489,7 @@ gap_xlsx
 #> Europe: 20 x 6
 #> Oceania: 20 x 6
 #> 
-#> Key: 1E2WUtIj3_CARxoEqfSws8HSkEL89Y29uk8hmEEB06Bs
+#> Key: 1kLpGLJkhtIX3G8dxH9EVH6ZUDPUder0eDgAZmzCJi3E
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [5 x 6]

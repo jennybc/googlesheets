@@ -107,7 +107,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 
     } else {
 
-      ss_df <- list_sheets()
+      ss_df <- gs_ls()
       delete_me <- grepl(regex, ss_df$sheet_title, ...)
       keys_to_delete <-
         ifelse(ss_df$version == "new", ss_df$sheet_key,
@@ -161,7 +161,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 #' You can copy a spreadsheet that you own or a sheet owned by a third party
 #' that has been made accessible via the sharing dialog options. If the sheet
 #' you want to copy is visible in the listing provided by
-#' \code{\link{list_sheets}}, you can specify it by title (or any of the other
+#' \code{\link{gs_ls}}, you can specify it by title (or any of the other
 #' spreadsheet-identifying methods). Otherwise, you'll have to explicitly
 #' specify it by key.
 #'
@@ -599,7 +599,7 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
 
   gdrive_PUT(put_url, the_body = file)
 
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   success <- new_sheet_key %in% ss_df$sheet_key
 
   if(success) {

@@ -7,11 +7,11 @@ test_that("Spreadsheet can be created and deleted", {
   expect_message(new_ss <- new_ss(sheet_title), "created")
   expect_is(new_ss, "googlesheet")
   Sys.sleep(1)
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   expect_true(sheet_title %in% ss_df$sheet_title)
   expect_message(tmp <- delete_ss(sheet_title), "moved to trash")
   Sys.sleep(1)
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   expect_false(sheet_title %in% ss_df$sheet_title)
 
 })
@@ -24,20 +24,20 @@ test_that("Regexes work for deleting multiple sheets", {
   Sys.sleep(1)
   delete_ss(p_("cat"))
   Sys.sleep(1)
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   expect_false(p_("cat") %in% ss_df$sheet_title)
   expect_true(all(sheet_title[-1] %in% ss_df$sheet_title))
 
   delete_ss(regex = p_("[a-zA-Z]*cat[a-zA-Z]*$"))
   Sys.sleep(1)
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   expect_false(any(grepl("catherine|abdicate", ss_df$sheet_title) &
                      grepl(TEST, ss_df$sheet_title)))
   expect_true(all(p_(c("tomCAT", "FLYCATCHER")) %in% ss_df$sheet_title))
 
   delete_ss(regex = "[a-zA-Z]*cat[a-zA-Z]*$", ignore.case = TRUE)
   Sys.sleep(1)
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   expect_false(any(sheet_title %in% ss_df$sheet_title))
 
 })
@@ -52,7 +52,7 @@ test_that("Spreadsheet can be copied", {
   copy_ss_2 <- copy_ss(iris_pvt_key, to = eggplants)
   expect_is(copy_ss_2, "googlesheet")
 
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   expect_true(all(c(copy_of, eggplants) %in% ss_df$sheet_title))
 
   delete_ss(copy_of)

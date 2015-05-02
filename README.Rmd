@@ -74,10 +74,10 @@ suppressMessages(library("dplyr"))
 
 ### See some spreadsheets you can access
 
-The `list_sheets()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
 ```{r list-sheets}
-(my_sheets <- list_sheets())
+(my_sheets <- gs_ls())
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
 ```
@@ -111,7 +111,7 @@ gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 copy_ss(key = gap_key, to = "Gapminder")
 ```
 
-If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `list_sheets()` again and make sure the Gapminder sheet is listed.
+If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `gs_ls()` again and make sure the Gapminder sheet is listed.
 
 Now register your copy of the Gapminder sheet and you can follow along:
 
