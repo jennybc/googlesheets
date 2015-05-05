@@ -2,7 +2,7 @@ context("register sheets")
 
 test_that("Spreadsheets visible to authenticated user can be listed", {
   ss_list <- gs_ls()
-  expect_is(ss_list, "tbl_df")
+  expect_is(ss_list, "googlesheet_ls")
   expect_more_than(nrow(ss_list), 0)
 })
 

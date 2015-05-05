@@ -428,7 +428,7 @@ reshape_cf <- function(x, header = TRUE) {
     dplyr::select_(~ row, ~ col, ~ cell_text) %>%
     tidyr::spread_("col", "cell_text", convert = TRUE) %>%
     dplyr::select_(~ -row) %>%
-    setNames(var_names)
+    stats::setNames(var_names)
 }
 
 #' Simplify data from the cell feed

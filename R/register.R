@@ -284,20 +284,17 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     xml2::xml_find_one("./openSearch:totalResults", ns) %>% xml2::xml_text() %>%
     as.integer()
 
-  ss$ws_feed <- req$url               # same as sheet_id ... pick one?
-  ss$sheet_id <- req$content %>%      # same as ws_feed ... pick one?
-    # for that matter, this URL appears a third time as the "self" link below :(
-    xml2::xml_find_one("./feed:id", ns) %>% xml2::xml_text()
+  ss$ws_feed <- req$url          # same as the "self" link below  ... pick one?
 
   ss$updated <- req$headers$`last-modified` %>% httr::parse_http_date()
-  ss$get_date <- req$headers$date %>% httr::parse_http_date()
+  ss$reg_date <- req$headers$date %>% httr::parse_http_date()
 
   ss$visibility <- req$url %>% dirname() %>% basename()
   ss$is_public <- ss$visibility == "public"
 
-  ss$author_name <- req$content %>%
+  ss$author <- req$content %>%
     xml2::xml_find_one("./feed:author/feed:name", ns) %>% xml2::xml_text()
-  ss$author_email <- req$content %>%
+  ss$email <- req$content %>%
     xml2::xml_find_one("./feed:author/feed:email", ns) %>% xml2::xml_text()
 
   links <- req$content %>% xml2::xml_find_all("./feed:link", ns)

@@ -1,10 +1,10 @@
-#' Print information about a Google spreadsheet registered with googlesheets
-#' 
-#' Display information about a Google spreadsheet that has been registered with 
-#' \code{googlesheets}: the title of the spreadsheet, date-time of registration, 
-#' date-time of last update (at time of registration), the number of worksheets 
+#' Print information about a Google Sheet registered with \code{googlesheets}
+#'
+#' Display information about a Google spreadsheet that has been registered with
+#' \code{googlesheets}: the title of the spreadsheet, date-time of registration,
+#' date-time of last update (at time of registration), the number of worksheets
 #' contained, worksheet titles and extent, and sheet key.
-#' 
+#'
 #' @param x googlesheet object returned by \code{register_ss} and other
 #'   \code{googlesheets} functions
 #' @param ... potential further arguments (required for Method/Generic reasons)
@@ -17,11 +17,11 @@
 #' }
 #'
 #' @export
-print.googlesheet <- function(x, ...) {  
-  
+print.googlesheet <- function(x, ...) {
+
   sprintf("                  Spreadsheet title: %s\n", x$sheet_title) %>% cat()
   sprintf("  Date of googlesheets::register_ss: %s\n",
-          x$get_date %>% format.POSIXct(usetz = TRUE)) %>% cat()
+          x$reg_date %>% format.POSIXct(usetz = TRUE)) %>% cat()
   sprintf("    Date of last spreadsheet update: %s\n",
           x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat()
   sprintf("                         visibility: %s\n", x$visibility) %>% cat()
