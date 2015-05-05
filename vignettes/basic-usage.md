@@ -43,7 +43,7 @@ As an authenticated user, you can get a (partial) listing of accessible sheets. 
 
 
 ```r
-my_sheets <- list_sheets()
+my_sheets <- gs_ls()
 ```
 
 Explore the `my_sheets` object. Here's a look at the top of ours, where we've truncated the variables `sheet_title` and `sheet_key` and suppressed the variable `ws_id` for readability.
@@ -52,13 +52,13 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ```
 ## Source: local data frame [6 x 9]
 ## 
-##   sheet_title  sheet_key      owner perm        last_updated version
-## 1  Ari's Anch tQKSYVR...   anahmani    r 2015-04-05 21:46:18     old
-## 2  Public Tes 1hff6Az...   gspreadr   rw 2015-04-05 21:50:27     new
-## 3  Projects_2 1ET1NGc... david.orme    r 2015-04-01 15:21:36     new
-## 4  iris_publi 1cAYN-a...   gspreadr   rw 2015-03-30 18:24:06     new
-## 5  Flight Ris 1OvDq4_...       omid    r 2015-03-27 09:33:43     new
-## 6   Gapminder 1HT5B8S...   gspreadr   rw 2015-03-23 20:59:10     new
+##   sheet_title        owner perm version        last_updated  sheet_key
+## 1  Ari's Anch     anahmani    r     old 2015-05-02 00:56:31 tQKSYVR...
+## 2  gas_mileag     woo.kara    r     new 2015-05-01 23:37:42 1WH65aJ...
+## 3  #rhizo15 #    m.hawksey    r     new 2015-05-01 18:54:05 1oBQNns...
+## 4  EasyTweetS    m.hawksey    r     new 2015-05-02 00:38:33 14mAbIi...
+## 5  test-gs-ol     gspreadr   rw     old 2015-04-30 23:33:48 t0lmRSk...
+## 6  test-gs-mi rpackagetest    r     new 2015-04-25 18:25:43 1BMtx1V...
 ## Variables not shown: alternate (chr), self (chr), alt_key (chr)
 ```
 
@@ -87,8 +87,8 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-05 14:52:40 PDT
-##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##   Date of googlesheets::register_ss: 2015-05-02 01:38:07 GMT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
 ## Contains 5 worksheets:
@@ -135,8 +135,8 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-05 14:52:41 PDT
-##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##   Date of googlesheets::register_ss: 2015-05-02 01:38:08 GMT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
 ## Contains 5 worksheets:
@@ -168,8 +168,8 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets::register_ss: 2015-04-05 14:52:40 PDT
-##     Date of last spreadsheet update: 2015-03-23 20:34:08 UTC
+##   Date of googlesheets::register_ss: 2015-05-02 01:38:07 GMT
+##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
 ## Contains 5 worksheets:
@@ -343,7 +343,7 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 #### For private spreadsheets
 
-*this is the scenario when you can use `list_sheets()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title. kind of covered above, since it's what we do first*
+*this is the scenario when you can use `gs_ls()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title. kind of covered above, since it's what we do first*
 
 # Add, delete, rename spreadsheets and worksheets
 
@@ -364,20 +364,20 @@ new_ss("hi I am new here")
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1jvITM4n3BewIP8t9_wyOOyVKYTPSStakel90iHsZefE
+## sheet_key: 1OCtwyOb3K83Pyhpak2cMsH7jZbyUTrdq3soQT6t7ZTA
 ```
 
 ```r
-list_sheets() %>% filter(sheet_title == "hi I am new here")
+gs_ls() %>% filter(sheet_title == "hi I am new here")
 ```
 
 ```
 ## Source: local data frame [1 x 10]
 ## 
-##        sheet_title                                    sheet_key    owner
-## 1 hi I am new here 1jvITM4n3BewIP8t9_wyOOyVKYTPSStakel90iHsZefE gspreadr
-## Variables not shown: perm (chr), last_updated (time), version (chr),
-##   ws_feed (chr), alternate (chr), self (chr), alt_key (chr)
+##        sheet_title    owner perm version        last_updated
+## 1 hi I am new here gspreadr   rw     new 2015-05-02 01:38:11
+## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
+##   (chr), alt_key (chr)
 ```
 
 ```r
@@ -392,14 +392,14 @@ delete_ss("hi I am new here")
 ```
 
 ```r
-list_sheets() %>% filter(sheet_title == "hi I am new here")
+gs_ls() %>% filter(sheet_title == "hi I am new here")
 ```
 
 ```
 ## Source: local data frame [0 x 10]
 ## 
-## Variables not shown: sheet_title (chr), sheet_key (chr), owner (chr), perm
-##   (chr), last_updated (time), version (chr), ws_feed (chr), alternate
+## Variables not shown: sheet_title (chr), owner (chr), perm (chr), version
+##   (chr), last_updated (time), sheet_key (chr), ws_feed (chr), alternate
 ##   (chr), self (chr), alt_key (chr)
 ```
 
@@ -417,7 +417,7 @@ new_ss("hi I am new here")
 ## Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
+## sheet_key: 1AxDsu8P4akRfK1ORe9cw8OebiZb5-uZKXRg7hj48T5w
 ```
 
 ```r
@@ -427,7 +427,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
+## sheet_key: 1AxDsu8P4akRfK1ORe9cw8OebiZb5-uZKXRg7hj48T5w
 ```
 
 ```r
@@ -436,15 +436,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-05 14:52:52 PDT
-##     Date of last spreadsheet update: 2015-04-05 21:52:48 UTC
+##   Date of googlesheets::register_ss: 2015-05-02 01:38:18 GMT
+##     Date of last spreadsheet update: 2015-05-02 01:38:15 GMT
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
+## Key: 1AxDsu8P4akRfK1ORe9cw8OebiZb5-uZKXRg7hj48T5w
 ```
 
 ```r
@@ -461,8 +461,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-05 14:52:52 PDT
-##     Date of last spreadsheet update: 2015-04-05 21:52:52 UTC
+##   Date of googlesheets::register_ss: 2015-05-02 01:38:20 GMT
+##     Date of last spreadsheet update: 2015-05-02 01:38:19 GMT
 ##                          visibility: private
 ## 
 ## Contains 2 worksheets:
@@ -470,7 +470,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
+## Key: 1AxDsu8P4akRfK1ORe9cw8OebiZb5-uZKXRg7hj48T5w
 ```
 
 ```r
@@ -489,7 +489,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
+## sheet_key: 1AxDsu8P4akRfK1ORe9cw8OebiZb5-uZKXRg7hj48T5w
 ```
 
 ```r
@@ -498,15 +498,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets::register_ss: 2015-04-05 14:52:54 PDT
-##     Date of last spreadsheet update: 2015-04-05 21:52:53 UTC
+##   Date of googlesheets::register_ss: 2015-05-02 01:38:23 GMT
+##     Date of last spreadsheet update: 2015-05-02 01:38:20 GMT
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1XtZVTUaLCBDcT8zKGexWY8FQ-G1t2OhfFEdprvhOioE
+## Key: 1AxDsu8P4akRfK1ORe9cw8OebiZb5-uZKXRg7hj48T5w
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
@@ -578,4 +578,4 @@ Stuff from roxygen comments for a function that no longer exists: Given a Google
 
 Simple regexes are used to detect if the input is a worksheets feed or the URL one would see when visiting a spreadsheet in the browser. If it's a URL, we attempt to extract the spreadsheet's unique key, assuming the URL followsthe pattern characteristic of "new style" Google spreadsheets.
 
-Otherwise the input is assumed to be the spreadsheet's title or unique key. When we say title, we mean the name of the spreadsheet in, say, Google Drive or in the \code{sheet_title} variable of the data.frame returned by \code{\link{list_sheets}}. Spreadsheet title or key will be sought in the listing of spreadsheets visible to the authenticated user and, if a match is found, the associated worksheets feed is returned.
+Otherwise the input is assumed to be the spreadsheet's title or unique key. When we say title, we mean the name of the spreadsheet in, say, Google Drive or in the \code{sheet_title} variable of the data.frame returned by \code{\link{gs_ls}}. Spreadsheet title or key will be sought in the listing of spreadsheets visible to the authenticated user and, if a match is found, the associated worksheets feed is returned.

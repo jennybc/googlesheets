@@ -23,7 +23,7 @@ then the copy will be titled "Copy of ..."}
 You can copy a spreadsheet that you own or a sheet owned by a third party
 that has been made accessible via the sharing dialog options. If the sheet
 you want to copy is visible in the listing provided by
-\code{\link{list_sheets}}, you can specify it by title (or any of the other
+\code{\link{gs_ls}}, you can specify it by title (or any of the other
 spreadsheet-identifying methods). Otherwise, you'll have to explicitly
 specify it by key.
 }

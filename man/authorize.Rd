@@ -2,20 +2,24 @@
 % Please edit documentation in R/auth.R
 \name{authorize}
 \alias{authorize}
-\title{Authorize user using Oauth2.0 Credentials}
+\title{Authorize \code{googlesheets} to access user data from Google}
 \usage{
 authorize(new_user = FALSE)
 }
 \arguments{
-\item{new_user}{set to \code{TRUE} if you want to wipe the slate clean and
-  re-authenticate with the same or different Google account
-
-Based on \href{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}{this demo} from \code{httr}}
+\item{new_user}{logical, defaults to \code{FALSE}. Set to \code{TRUE} if you
+  want to wipe the slate clean and re-authenticate with the same or different
+  Google account.}
 }
 \description{
-User will be directed to web browser and asked to sign into their Google
-account and grant googlesheets access permission to user data for Google
-Spreadsheets and Google Drive. User credentials will be cached in .httr-oauth
-in the current working directory.
+The user will be directed to a web browser, asked to sign in to their Google
+account, and to grant \code{googlesheets} access to user data for Google
+Spreadsheets and Google Drive. User credentials will be cached in a file
+named \code{.httr-oauth} in the current working directory.
+}
+\details{
+Based on
+\href{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}{this
+demo} from \code{\link[httr]{httr}}.
 }
 

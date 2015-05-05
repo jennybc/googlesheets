@@ -5,9 +5,9 @@
 #'
 #' @param title the title for the new sheet
 #' @param verbose logical; do you want informative message?
-#'   
+#'
 #' @return a googlesheet object
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' foo <- new_ss("foo")
@@ -19,12 +19,12 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 
   ## TO DO? warn if sheet with same title alredy exists?
   ## right now we proceed quietly, because sheet is identified by key
-  
+
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
 
   req <-
-    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", 
+    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files",
                 body = the_body)
 
   new_sheet_key <- httr::content(req)$id
@@ -53,10 +53,10 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #' mistake, remain calm, and visit the
 #' \href{https://drive.google.com/drive/#trash}{trash in Google Drive}, find the
 #' sheet, and restore it.
-#' 
-#' @param x sheet-identifying information, either a googlesheet object or a 
-#'   character vector of length one, giving a URL, sheet title, key or 
-#'   worksheets feed; if \code{x} is specified, the \code{regex} argument will 
+#'
+#' @param x sheet-identifying information, either a googlesheet object or a
+#'   character vector of length one, giving a URL, sheet title, key or
+#'   worksheets feed; if \code{x} is specified, the \code{regex} argument will
 #'   be ignored
 #' @param regex character; a regular expression; sheets whose titles match will
 #'   be deleted
@@ -107,7 +107,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 
     } else {
 
-      ss_df <- list_sheets()
+      ss_df <- gs_ls()
       delete_me <- grepl(regex, ss_df$sheet_title, ...)
       keys_to_delete <-
         ifelse(ss_df$version == "new", ss_df$sheet_key,
@@ -135,7 +135,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
                    keys_to_delete, "trash", sep = "/")
 
   post <- lapply(the_url, gdrive_POST, body = NULL)
-  statii <- post %>% lapluck("status_code")
+  statii <- vapply(post, `[[`, FUN.VALUE = integer(1), "status_code")
   sitrep <-
     dplyr::data_frame_(list(ss_title = ~ titles_to_delete,
                             deleted = ~(statii == 200)))
@@ -161,12 +161,12 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 #' You can copy a spreadsheet that you own or a sheet owned by a third party
 #' that has been made accessible via the sharing dialog options. If the sheet
 #' you want to copy is visible in the listing provided by
-#' \code{\link{list_sheets}}, you can specify it by title (or any of the other
+#' \code{\link{gs_ls}}, you can specify it by title (or any of the other
 #' spreadsheet-identifying methods). Otherwise, you'll have to explicitly
 #' specify it by key.
-#' 
-#' @param from sheet-identifying information, either a googlesheet object or a 
-#'   character vector of length one, giving a URL, sheet title, key or 
+#'
+#' @param from sheet-identifying information, either a googlesheet object or a
+#'   character vector of length one, giving a URL, sheet title, key or
 #'   worksheets feed
 #' @param key character string guaranteed to provide unique key of the sheet;
 #'   overrides \code{from}
@@ -245,7 +245,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' @param nrow number of rows (default is 1000)
 #' @param ncol number of columns (default is 26)
 #' @param verbose logical; do you want informative message?
-#'   
+#'
 #' @return a googlesheet object, resulting from re-registering the host
 #'   spreadsheet after adding the new worksheet
 #'
@@ -368,7 +368,7 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 #' existing worksheet within the spreadsheet.
 #'
 #' @param ss a registered Google sheet
-#' @param from positive integer or character string specifying index or title, 
+#' @param from positive integer or character string specifying index or title,
 #' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param verbose logical; do you want informative message?
@@ -460,7 +460,7 @@ resize_ws <- function(ss, ws = 1,
   stopifnot(ss %>% inherits("googlesheet"))
 
   this_ws <- ss %>% get_ws(ws, verbose)
-  
+
   # if row or col extent not specified, make it the same as before
   if(is.null(row_extent)) {
     row_extent <- this_ws$row_extent
@@ -498,7 +498,7 @@ resize_ws <- function(ss, ws = 1,
 #' @inheritParams get_via_lf
 
 #' @param ss a registered Google sheet
-#' @param from positive integer or character string specifying index or title, 
+#' @param from positive integer or character string specifying index or title,
 #' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param new_dim list of length 2 specifying the row and column extent of the
@@ -511,12 +511,8 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
     this_ws <- ss %>% get_ws(from, verbose = FALSE)
 
-    # don't want return value converted to a list, keep as XML, make edits,send
-    # back via PUT
-    req <- gsheets_GET(this_ws$ws_id, to_list = FALSE)
-    contents <- req %>%
-      httr::content() %>%
-      XML::toString.XMLNode()
+    req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
+    contents <- req$content
 
     if(!is.null(to)) { # our purpose is to rename a worksheet
 
@@ -525,19 +521,19 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
                            "\"%s\". Please choose another worksheet title."),
                      to, ss$sheet_title))
       }
-      
+
       ## TO DO: we should probably be doing something more XML-y here, instead
       ## of doing XML --> string --> regex based subsitution --> XML
       title_replacement <- paste0("\\1", to, "\\3")
       the_body <- contents %>%
-        sub("(<title type=\"text\">)(.*)(</title>)", title_replacement, .)
+        sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
     }
 
     if(!is.null(new_dim)) { # our purpose is to resize a worksheet
-      
+
       row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
       col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
-      
+
       the_body <- contents %>%
         sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
         sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
@@ -590,8 +586,8 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
   }
 
   req <-
-    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files", 
-                body = list(title = sheet_title, 
+    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files",
+                body = list(title = sheet_title,
                             mimeType = "application/vnd.google-apps.spreadsheet"))
 
   new_sheet_key <- httr::content(req)$id
@@ -603,7 +599,7 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
 
   gdrive_PUT(put_url, the_body = file)
 
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   success <- new_sheet_key %in% ss_df$sheet_key
 
   if(success) {

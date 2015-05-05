@@ -2,7 +2,7 @@
 library(googlesheets)
 suppressMessages(library(dplyr))
 
-## ----authorize, include = FALSE------------------------------------------
+## ----auth, include = FALSE-----------------------------------------------
 
 ## look for .httr-oauth in pwd (assuming pwd is googlesheets) or two levels up
 ## (assuming pwd is googlesheets/tests/testthat)
@@ -30,7 +30,7 @@ delete_ss(regex = my_patterns, verbose = FALSE)
 #  copy_ss(key = gap_key, to = "Gapminder")
 
 ## ----list-sheets---------------------------------------------------------
-my_sheets <- list_sheets()
+my_sheets <- gs_ls()
 
 ## ----view-my-sheets, echo = FALSE----------------------------------------
 my_sheets %>% 
@@ -65,11 +65,11 @@ head(oceania_reshaped, 10)
 ## ----create and delete spreadsheet---------------------------------------
 # Create a new empty spreadsheet by title
 new_ss("hi I am new here")
-list_sheets() %>% filter(sheet_title == "hi I am new here")
+gs_ls() %>% filter(sheet_title == "hi I am new here")
 
 # Move spreadsheet to trash
 delete_ss("hi I am new here")
-list_sheets() %>% filter(sheet_title == "hi I am new here")
+gs_ls() %>% filter(sheet_title == "hi I am new here")
 
 ## ----new-sheet-new-ws-delete-ws------------------------------------------
 new_ss("hi I am new here")

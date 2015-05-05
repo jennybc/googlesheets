@@ -26,6 +26,10 @@ test_that("Spreadsheet can be exported", {
 
 test_that("Old Sheets can be exported", {
 
+  ## don't even bother if we can't see this sheet in the spreadsheets feed or if
+  ## it's been "helpfully" converted to a new sheet by google AGAIN :(
+  check_old_sheet()
+
   temp_dir <- tempdir()
   ## we must register by title, in order to get info from the spreadsheets feed,
   ## which, in turn, is the only way to populate the alt_key
@@ -33,10 +37,6 @@ test_that("Old Sheets can be exported", {
   ss <- register_ss(old_title)
 
   # csv should not work
-  # 2015-04-24 periodically google will forcibly convert an old sheet to new
-  # until they eradicate all of them, this means we have to go grab a fresh
-  # old sheet to test against
-  # https://github.com/jennybc/googlesheets/issues/107
   expect_error(ss %>% download_ss(to = file.path(temp_dir, "old.csv")),
                "not supported")
 

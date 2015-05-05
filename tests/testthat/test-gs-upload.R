@@ -24,7 +24,7 @@ test_that("Different file formats can be uploaded", {
                     c(5, 1, 1, 1, 5))
 
   Sys.sleep(1)
-  ss_df <- list_sheets()
+  ss_df <- gs_ls()
   expect_true(all(upload_titles %in% ss_df$sheet_title))
 
 })

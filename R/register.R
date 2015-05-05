@@ -1,103 +1,33 @@
 #' Get a listing of spreadsheets
 #'
-#' Lists spreadsheets that the authorized user would see in the Google Sheets
-#' home screen: \url{https://docs.google.com/spreadsheets/}. For these sheets,
-#' get sheet title, sheet key, owner, user's permission, date-time of last
-#' update, version (old vs new Sheets), various links, and an alternative key
-#' (only relevant to old Sheets).
+#' Please use \code{\link{gs_ls}} instead. This function is going away.
 #'
-#' This function returns the information available from the
-#' \href{https://developers.google.com/google-apps/spreadsheets/#retrieving_a_list_of_spreadsheets}{spreadsheets
-#' feed} of the Google Sheets API.
-#'
-#' This listing give the user a partial view of the sheets available for access
-#' (why just partial? see below). It also gives a map between readily available
-#' information, such as sheet title, and more obscure information you might use
-#' in scripts, such as the sheet key. This sort of "table lookup" is implemented
-#' in the \code{googlesheets} helper function \code{\link{identify_ss}}.
-#'
-#' Which sheets show up here? Certainly those owned by the authorized user. But
-#' also a subset of the sheets owned by others but visible to the authorized
-#' user. We have yet to find explicit Google documentation on this matter.
-#' Anecdotally, sheets shared by others seem to appear in this listing if the
-#' authorized user has visited them in the browser. This is an important point
-#' for usability because a sheet can be summoned by title instead of key only if
-#' it appears in this listing. For shared sheets that may not appear in this
-#' listing, a more robust workflow is to extract the key from the browser URL
-#' via \code{\link{extract_key_from_url}} and explicitly specify the sheet in
-#' \code{googlesheets} functions by key.
-#'
-#' @return a tbl_df, one row per sheet
+#' @return a \code{googlesheet_ls} object, which is a
+#'   \code{\link[dplyr]{tbl_df}} with one row per sheet
 #'
 #' @examples
 #' \dontrun{
-#' list_sheets()
+#' gs_ls()
 #' }
 #'
 #' @export
-list_sheets <- function() {
-
-  # only calling spreadsheets feed from here, so hardwiring url
-  the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
-
-  req <- gsheets_GET(the_url)
-
-  sheet_list <- req$content %>% lfilt("^entry$")
-
-  links <- plyr::ldply(sheet_list, function(x) {
-    links <- x %>%
-      lfilt("^link$") %>%
-      unname() %>%
-      do.call("cbind", .)
-    dplyr::data_frame(ws_feed =
-                        links["href",
-                              grepl("2006#worksheetsfeed", links["rel", ])],
-                      alternate_link =
-                        links["href",
-                              grepl("alternate", links["rel", ])],
-                      self_link = links["href",
-                                        grepl("self", links["rel", ])])
-  }) %>% dplyr::select_(quote(-.id))
-
-  dplyr::data_frame(
-    sheet_title = plyr::laply(sheet_list, function(x) x$title$text),
-    sheet_key = sheet_list %>%
-      lapluck("id") %>%
-      basename,
-    owner = plyr::laply(sheet_list,
-                        function(x) paste0(x$author$name, " <",
-                                           x$author$email, ">")),
-    perm = links$ws_feed %>%
-      stringr::str_detect("values") %>%
-      ifelse("r", "rw"),
-    last_updated = sheet_list %>%
-      lapluck("updated") %>%
-      as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
-    version = ifelse(grepl("^https://docs.google.com/spreadsheets/d",
-                           links$alternate_link), "new", "old"),
-    ws_feed = links$ws_feed,
-    alternate = links$alternate_link,
-    self = links$self_link,
-    alt_key = ifelse(version == "new", NA_character_,
-                     extract_key_from_url(links$alternate_link)))
-
-}
+list_sheets <- gs_ls
 
 #' Retrieve the identifiers for a spreadsheet
 #'
 #' Initialize a googlesheet object that holds identifying information for a
 #' specific spreadsheet. Intended primarily for internal use. Unless
 #' \code{verify = FALSE}, it calls \code{\link{list_sheets}} and attempts to
-#' return information from the row uniquely specified by input \code{x}. The
-#' listing provided by \code{\link{list_sheets}} is only available to an
-#' authorized user, so authorization will be required. A googlesheet object
-#' contains much more information than that available via
-#' \code{\link{list_sheets}}, so many components will not be populated until the
-#' sheet is registered properly, such as via \code{\link{register_ss}}, which is
-#' called internally in many \code{googlesheets} functions. If \code{verify =
-#' FALSE}, then user must provide either sheet key, URL or a worksheets feed, as
-#' opposed to sheet title. In this case, the information will be taken at face
-#' value, i.e. no proactive verification or look-up on Google Drive.
+#' return information from the row uniquely specified by input \code{x}. Since
+#' \code{\link{list_sheets}} fetches non-public user data, authorization will be
+#' required. A googlesheet object contains much more information than that
+#' available via \code{\link{list_sheets}}, so many components will not be
+#' populated until the sheet is registered properly, such as via
+#' \code{\link{register_ss}}, which is called internally in many
+#' \code{googlesheets} functions. If \code{verify = FALSE}, then user must
+#' provide either sheet key, URL or a worksheets feed, as opposed to sheet
+#' title. In this case, the information will be taken at face value, i.e. no
+#' proactive verification or look-up on Google Drive.
 #'
 #' This function is will be revised to be less dogmatic about only identifying
 #' ONE sheet.
@@ -155,7 +85,7 @@ identify_ss <- function(x, method = NULL, verify = TRUE,
       x <- x$sheet_key
       method <- 'key'
     } else { ## it's a googlesheet, no verification requested
-             ## so just pass it on through
+      ## so just pass it on through
       return(x)
     }
   } ## if x was ss, x is now a key
@@ -328,8 +258,7 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     if(is.null(key)) { # get ws_feed from x
       this_ss <- x %>%
         identify_ss(visibility = TRUE, verbose = verbose)
-      ws_feed <- this_ss %>%
-        `[[`("ws_feed")
+      ws_feed <- this_ss$ws_feed
     } else {           # take key at face value
       ws_feed <- construct_ws_feed_from_key(key, visibility)
     }
@@ -344,15 +273,21 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
     stop("Please check visibility settings.")
   }
 
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
+
   ss <- googlesheet()
 
   ss$sheet_key <- ws_feed %>% extract_key_from_url()
-  ss$sheet_title <- req$content[["title"]][["text"]]
-  ss$n_ws <- req$content[["totalResults"]] %>% as.integer()
+  ss$sheet_title <- req$content %>%
+    xml2::xml_find_one("./feed:title", ns) %>% xml2::xml_text()
+  ss$n_ws <- req$content %>%
+    xml2::xml_find_one("./openSearch:totalResults", ns) %>% xml2::xml_text() %>%
+    as.integer()
 
   ss$ws_feed <- req$url               # same as sheet_id ... pick one?
-  ss$sheet_id <- req$content[["id"]]  # same as ws_feed ... pick one?
-  # for that matter, this URL appears a third time as the "self" link below :(
+  ss$sheet_id <- req$content %>%      # same as ws_feed ... pick one?
+    # for that matter, this URL appears a third time as the "self" link below :(
+    xml2::xml_find_one("./feed:id", ns) %>% xml2::xml_text()
 
   ss$updated <- req$headers$`last-modified` %>% httr::parse_http_date()
   ss$get_date <- req$headers$date %>% httr::parse_http_date()
@@ -360,43 +295,65 @@ register_ss <- function(x, key = NULL, ws_feed = NULL,
   ss$visibility <- req$url %>% dirname() %>% basename()
   ss$is_public <- ss$visibility == "public"
 
-  ss$author_name <- req$content[["author"]][["name"]]
-  ss$author_email <- req$content[["author"]][["email"]]
+  ss$author_name <- req$content %>%
+    xml2::xml_find_one("./feed:author/feed:name", ns) %>% xml2::xml_text()
+  ss$author_email <- req$content %>%
+    xml2::xml_find_one("./feed:author/feed:email", ns) %>% xml2::xml_text()
 
-  ss$links <- req$content %>%
-    lfilt("^link$") %>%
-    plyr::ldply() %>% dplyr::select_(quote(-.id))
-  ## select_() will be unnecessary when this PR gets merged into plyr
-  ## https://github.com/hadley/plyr/pull/207
-  ## and ldply handles '.id = NULL' correctly
+  links <- req$content %>% xml2::xml_find_all("./feed:link", ns)
+  ss$links <- dplyr::data_frame_(list(
+    rel = ~ links %>% xml2::xml_attr("rel"),
+    type = ~ links %>% xml2::xml_attr("type"),
+    href = ~ links %>% xml2::xml_attr("href")
+  ))
 
-  ## if we have info from the spreadhsheet feed, use it
+  ## if we have info from the spreadsheet feed, use it
   ## that's the only way to populate alt_key
   if(exists("this_ss")) {
     ss$alt_key <- this_ss$alt_key
   }
 
-  ws_list <- req$content %>% lfilt("^entry$")
-  ws_info <-
-    dplyr::data_frame_(
-      list(ws_id = ~ ws_list %>% lapluck("id"),
-           ws_key = ~ ws_id %>% basename,
-           ws_title = ~ plyr::laply(ws_list, function(x) x$title$text),
-           row_extent = ~ ws_list %>%
-             lapluck("rowCount") %>%
-             as.integer(),
-           col_extent = ~ ws_list %>% lapluck("colCount") %>% as.integer()))
-  ws_links <- plyr::ldply(ws_list, function(x) {
-    links <- x %>%
-      lfilt("^link$") %>%
-      do.call("cbind", .)
-    links["href", ] %>%
-      setNames(links["rel", ] %>%
-                 basename %>%
-                 stringr::str_replace("[0-9]{4}#", ""))
+  ws <- req$content %>% xml2::xml_find_all("./feed:entry", ns)
+  ws_info <- dplyr::data_frame_(list(
+    ws_id = ~ ws %>% xml2::xml_find_all("feed:id", ns) %>% xml2::xml_text(),
+    ws_key = ~ ws_id %>% basename(),
+    ws_title =
+      ~ ws %>% xml2::xml_find_all("feed:title", ns) %>% xml2::xml_text(),
+    row_extent =
+      ~ ws %>% xml2::xml_find_all("gs:rowCount", ns) %>%
+      xml2::xml_text() %>% as.integer(),
+    col_extent =
+      ~ ws %>% xml2::xml_find_all("gs:colCount", ns) %>%
+      xml2::xml_text() %>% as.integer()
+  ))
+
+  ## use the first worksheet to learn about the links available why we do this?
+  ## because the 'edit' link will not be available for sheets accessed via
+  ## public visibility or to which user does not have write permission
+  link_rels <- ws[1] %>%
+    xml2::xml_find_all("feed:link", ns) %>%
+    xml2::xml_attrs() %>%
+    vapply(`[`, FUN.VALUE = character(1), "rel")
+  ## here's what we expect here
+  #   [1] "http://schemas.google.com/spreadsheets/2006#listfeed"
+  #   [2] "http://schemas.google.com/spreadsheets/2006#cellsfeed"
+  #   [3] "http://schemas.google.com/visualization/2008#visualizationApi"
+  #   [4] "http://schemas.google.com/spreadsheets/2006#exportcsv"
+  #   [5] "self"
+  #   [6] "edit"  <-- absent in some cases
+  names(link_rels) <-
+    link_rels %>% basename() %>% gsub("200[[:digit:]]\\#", '', .)
+  ## here's what we expect here
+  ## "listfeed" "cellsfeed" "visualizationApi" "exportcsv" "self" ?"edit"?
+
+  ws_links <- ws %>% xml2::xml_find_all("feed:link", ns)
+  ws_links <- lapply(link_rels, function(x) {
+    xpath <- paste0("../*[@rel='", x, "']")
+    ws_links %>%
+      xml2::xml_find_all(xpath, ns) %>%
+      xml2::xml_attr("href")
   }) %>%
-    dplyr::select_(quote(-.id))
-  ## see comment above about ldply(.id = NULL)
+    dplyr::as_data_frame()
 
   ss$ws <- dplyr::bind_cols(ws_info, ws_links)
   ss

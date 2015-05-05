@@ -74,10 +74,10 @@ suppressMessages(library("dplyr"))
 
 ### See some spreadsheets you can access
 
-The `list_sheets()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
 ```{r list-sheets}
-(my_sheets <- list_sheets())
+(my_sheets <- gs_ls())
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
 ```
@@ -111,7 +111,7 @@ gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 copy_ss(key = gap_key, to = "Gapminder")
 ```
 
-If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `list_sheets()` again and make sure the Gapminder sheet is listed.
+If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `gs_ls()` again and make sure the Gapminder sheet is listed.
 
 Now register your copy of the Gapminder sheet and you can follow along:
 
@@ -240,7 +240,7 @@ file.remove("iris.csv")
 Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ```{r new-sheet-from-xlsx}
-gap_xlsx <- upload_ss("tests/testthat/gap-data.xlsx")
+gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
 gap_xlsx
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 ```
@@ -249,7 +249,7 @@ And we clean up after ourselves on Google Drive.
 
 ```{r delete-moar-sheets}
 delete_ss("iris")
-delete_ss("gap-data")
+delete_ss("mini-gap")
 ```
 
 ### Download sheets as csv, pdf, or xlsx file
@@ -280,7 +280,7 @@ file.remove(file.path("~/tmp", c("gapminder.xlsx", "gapminder-africa.csv")))
  
 If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
  
-```{r authorize, eval = FALSE}
+```{r auth, eval = FALSE}
 # Give googlesheets permission to access your spreadsheets and google drive
 authorize() 
 ```

@@ -13,13 +13,15 @@ Depends:
 License: MIT + file LICENSE
 LazyData: true
 Imports:
+    cellranger,
     dplyr (>= 0.4.0),
+    ggplot2,
     httr (>= 0.6.1),
     plyr,
     stringr,
     tidyr,
     XML,
-    ggplot2
+    xml2
 Suggests:
     testthat,
     knitr
