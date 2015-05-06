@@ -200,7 +200,7 @@ gdrive_PUT <- function(url, the_body) {
 
 #' Make GET request to Google Drive API
 #'
-#' Used in download_ss()
+#' Used in gs_download()
 #'
 #' @param url URL for GET request
 #' @param ... optional; further named parameters, such as \code{query},

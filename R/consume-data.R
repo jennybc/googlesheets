@@ -41,7 +41,7 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
                "not offer the API access required by this function.",
                "Consider converting it from an old Sheet to a new Sheet.",
                "Or use another data consumption function, such as get_via_lf()",
-               "or get_via_cf(). Or use download_ss() to export it to a local",
+               "or get_via_cf(). Or use gs_download() to export it to a local",
                "file and then read it into R."))
   }
 

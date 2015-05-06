@@ -7,7 +7,7 @@ test_that("Spreadsheet can be exported", {
   temp_dir <- tempdir()
 
   # bad format
-  expect_error(download_ss(ss, to = "pts.txt"),
+  expect_error(gs_download(ss, to = "pts.txt"),
                "Cannot download Google spreadsheet as this format")
 
   # good formats
@@ -15,7 +15,7 @@ test_that("Spreadsheet can be exported", {
   to_files <- file.path(temp_dir, paste0("oceania.", fmts))
   for(to in to_files) {
     expect_message(ss %>%
-                     download_ss(ws = "Oceania", to = to, overwrite = TRUE),
+                     gs_download(ws = "Oceania", to = to, overwrite = TRUE),
                    "successfully downloaded")
   }
 
@@ -34,20 +34,20 @@ test_that("Old Sheets can be exported", {
   ## we must register by title, in order to get info from the spreadsheets feed,
   ## which, in turn, is the only way to populate the alt_key
   ## this means we must have visited the sheet in the browser at least once!
-  ss <- register_ss(old_title)
+  ss <- gs_title(old_title)
 
   # csv should not work
-  expect_error(ss %>% download_ss(to = file.path(temp_dir, "old.csv")),
+  expect_error(ss %>% gs_download(to = file.path(temp_dir, "old.csv")),
                "not supported")
 
   # good formats and different specifications
-  expect_message(ss %>% download_ss(to = file.path(temp_dir, "old.xlsx"),
+  expect_message(ss %>% gs_download(to = file.path(temp_dir, "old.xlsx"),
                                     overwrite = TRUE),
                  "successfully downloaded")
-  expect_message(ss %>% download_ss(to = file.path(temp_dir, "old.xlsx"),
+  expect_message(ss %>% gs_download(to = file.path(temp_dir, "old.xlsx"),
                                     overwrite = TRUE),
                  "successfully downloaded")
-  expect_message(ss %>% download_ss(to = file.path(temp_dir, "old.pdf"),
+  expect_message(ss %>% gs_download(to = file.path(temp_dir, "old.pdf"),
                              overwrite = TRUE),
                  "successfully downloaded")
 
