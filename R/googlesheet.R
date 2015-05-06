@@ -15,6 +15,8 @@ googlesheet <- function() {
                  is_public = logical(),
                  author = character(),
                  email = character(),
+                 perm = character(),
+                 version = character(),
                  links = character(), # initialize as data.frame?
                  ws = list(),
                  ## from the spreadsheets feed
@@ -60,12 +62,22 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL, verbose = TRUE, ...) {
   ss$email <- req$content %>%
     xml2::xml_find_one("./feed:author/feed:email", ns) %>% xml2::xml_text()
 
+  ss$perm <- ss$ws_feed %>%
+    stringr::str_detect("values") %>%
+    ifelse("r", "rw")
+  ss$version <- "old" ## we revise this once we get the links, below ...
+
   links <- req$content %>% xml2::xml_find_all("./feed:link", ns)
   ss$links <- dplyr::data_frame_(list(
     rel = ~ links %>% xml2::xml_attr("rel"),
     type = ~ links %>% xml2::xml_attr("type"),
     href = ~ links %>% xml2::xml_attr("href")
   ))
+
+  if(grepl("^https://docs.google.com/spreadsheets/d",
+           ss$links$href[ss$links$rel == "alternate"])) {
+    ss$version <- "new"
+  }
 
   ws <- req$content %>% xml2::xml_find_all("./feed:entry", ns)
   ws_info <- dplyr::data_frame_(list(
@@ -112,7 +124,9 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL, verbose = TRUE, ...) {
 
   ss$ws <- dplyr::bind_cols(ws_info, ws_links)
 
-  ## TO DO: use ssf if not null to populate more stuff
+  if(!is.null(ssf)) {
+    ss$alt_key <- ssf$alt_key
+  }
 
   ss
 

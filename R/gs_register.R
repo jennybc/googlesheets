@@ -77,7 +77,7 @@ gs_title <- function(x, verbose = TRUE) {
 
   x <- structure(ssf$ws_feed, class = "ws_feed")
   x %>%
-    as.googlesheet(x, ssf, verbose)
+    as.googlesheet(ssf, verbose)
 
 }
 
@@ -91,7 +91,6 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
   visibility <- set_visibility(visibility, lookup)
 
   if(lookup) {
-    ## TO DO? accomodate alt_key
     ssf <- x %>%
       gs_lookup("sheet_key", verbose)
     x <- ssf$ws_feed
@@ -106,7 +105,7 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
 
   x <- structure(x, class = "ws_feed")
   x %>%
-    as.googlesheet(x, ssf, verbose)
+    as.googlesheet(ssf, verbose)
 
 }
 
@@ -155,7 +154,7 @@ gs_ws_feed <- function(x, lookup = NULL, verbose = TRUE) {
 
   x <- structure(x, class = "ws_feed")
   x %>%
-    as.googlesheet(x, ssf, verbose)
+    as.googlesheet(ssf, verbose)
 
 }
 
