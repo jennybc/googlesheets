@@ -1,7 +1,8 @@
 context("edit cells")
 
 pts_copy <- p_("pts-copy")
-ss <- copy_ss(key = pts_key, to = pts_copy, verbose = FALSE)
+ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
+              to = pts_copy, verbose = FALSE)
 ws <- "for_updating"
 
 test_that("Input converts to character vector (or not)", {

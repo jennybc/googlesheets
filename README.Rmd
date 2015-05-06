@@ -113,7 +113,7 @@ If you don't have any suitable Google Sheets lying around, or if you just want t
 
 ```{r copy-gapminder, eval = FALSE}
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-copy_ss(key = gap_key, to = "Gapminder")
+gs_copy(gs_key(gap_key), to = "Gapminder")
 ```
 
 If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `gs_ls()` again and make sure the Gapminder sheet is listed.

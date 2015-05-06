@@ -1,7 +1,8 @@
 context("edit worksheets")
 
 pts_copy <- p_("pts-copy")
-ss <- copy_ss(key = pts_key, to = pts_copy, verbose = FALSE)
+ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
+              to = pts_copy, verbose = FALSE)
 
 test_that("Add a new worksheet", {
 

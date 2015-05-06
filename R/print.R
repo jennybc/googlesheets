@@ -2,8 +2,9 @@
 #'
 #' Display information about a Google spreadsheet that has been registered with
 #' \code{googlesheets}: the title of the spreadsheet, date-time of registration,
-#' date-time of last update (at time of registration), the number of worksheets
-#' contained, worksheet titles and extent, and sheet key.
+#' date-time of last update (at time of registration), visibility, permissions,
+#' version, the number of worksheets contained, worksheet titles and extent, and
+#' sheet key.
 #'
 #' @param x googlesheet object returned by \code{register_ss} and other
 #'   \code{googlesheets} functions
@@ -20,11 +21,13 @@
 print.googlesheet <- function(x, ...) {
 
   sprintf("                  Spreadsheet title: %s\n", x$sheet_title) %>% cat()
-  sprintf("  Date of googlesheets::register_ss: %s\n",
+  sprintf("  Date of googlesheets registration: %s\n",
           x$reg_date %>% format.POSIXct(usetz = TRUE)) %>% cat()
   sprintf("    Date of last spreadsheet update: %s\n",
           x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat()
   sprintf("                         visibility: %s\n", x$visibility) %>% cat()
+  sprintf("                        permissions: %s\n", x$perm) %>% cat()
+  sprintf("                            version: %s\n", x$version) %>% cat()
   cat("\n")
 
   ws_output <-

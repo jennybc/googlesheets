@@ -159,46 +159,34 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 #'
 #' You can copy a spreadsheet that you own or a sheet owned by a third party
 #' that has been made accessible via the sharing dialog options. If the sheet
-#' you want to copy is visible in the listing provided by
-#' \code{\link{gs_ls}}, you can specify it by title (or any of the other
-#' spreadsheet-identifying methods). Otherwise, you'll have to explicitly
-#' specify it by key.
+#' you want to copy is visible in the listing provided by \code{\link{gs_ls}},
+#' you can specify it by title (or any of the other spreadsheet-identifying
+#' methods). Otherwise, you'll have to explicitly specify it by key.
 #'
-#' @param from sheet-identifying information, either a googlesheet object or a
-#'   character vector of length one, giving a URL, sheet title, key or
-#'   worksheets feed
-#' @param key character string guaranteed to provide unique key of the sheet;
-#'   overrides \code{from}
+#' @param from a \code{\link{googlesheet}} object, i.e. a registered Google
+#'   sheet
 #' @param to character string giving the new title of the sheet; if \code{NULL},
 #'   then the copy will be titled "Copy of ..."
 #' @param verbose logical; do you want informative message?
 #'
-#' @note if two sheets with the same name exist in your Google drive then sheet
-#'   with the most recent "last updated" timestamp will be copied.
-#'
-#' @seealso \code{\link{identify_ss}}, \code{\link{extract_key_from_url}}
+#' @note If two sheets with the same name exist in your Google drive, then sheet
+#'   with the most recent "last updated" timestamp will be copied. If you don't
+#'   like that, then identify the target by something other than title.
 #'
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "Gapminder_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
 #' gap_ss
 #' }
 #'
 #' @export
-copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
+gs_copy <- function(from, to = NULL, verbose = TRUE) {
 
-  if(is.null(key)) { # figure out the sheet from 'from ='
-    from_ss <- from %>% identify_ss()
-    if(is.na(from_ss$alt_key)) { ## this is a "new" sheet
-      key <-  from_ss$sheet_key
-    } else {                     ## this is an "old" sheet
-      key <- from_ss$alt_key
-    }
-    title <- from_ss$sheet_title
-  } else {           # else ... take key at face value
-    title <- key
-  }
+  stopifnot(inherits(from, "googlesheet"))
+
+  key <- gs_get_alt_key(from)
+  title <- from$sheet_title
 
   the_body <- list("title" = to)
 
@@ -210,7 +198,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
   new_title <- httr::content(req)$title
 
   ## see gs_new() for why I set verbose = FALSE here
-  new_ss <- try(new_title %>% identify_ss(verbose = FALSE), silent = TRUE)
+  new_ss <- try(gs_title(new_title, verbose = FALSE), silent = TRUE)
 
   cannot_find_sheet <- inherits(new_ss, "try-error")
 
@@ -227,7 +215,6 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
     invisible(NULL)
   } else {
     new_ss %>%
-      register_ss(verbose = verbose) %>%
       invisible()
   }
 
@@ -252,7 +239,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 #' \dontrun{
 #' # get a copy of the Gapminder spreadsheet
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "Gapminder_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
 #' gap_ss <- add_ws(gap_ss, ws_title = "Atlantis")
 #' gap_ss
 #' }
@@ -316,7 +303,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' list_ws(gap_ss)
 #' gap_ss <- add_ws(gap_ss, "new_stuff")
 #' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
@@ -380,7 +367,7 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' list_ws(gap_ss)
 #' gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
 #' list_ws(gap_ss)

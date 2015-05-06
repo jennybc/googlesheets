@@ -30,7 +30,7 @@ be the same as any existing worksheets in the sheet.
 \dontrun{
 # get a copy of the Gapminder spreadsheet
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- copy_ss(key = gap_key, to = "Gapminder_copy")
+gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
 gap_ss <- add_ws(gap_ss, ws_title = "Atlantis")
 gap_ss
 }

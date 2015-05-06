@@ -27,7 +27,7 @@ delete_ss(regex = my_patterns, verbose = FALSE)
 
 ## ----copy-gapminder, eval = FALSE----------------------------------------
 #  gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
-#  copy_ss(key = gap_key, to = "Gapminder")
+#  gs_copy(gs_key(gap_key), to = "Gapminder")
 
 ## ----list-sheets---------------------------------------------------------
 my_sheets <- gs_ls()

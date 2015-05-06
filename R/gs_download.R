@@ -38,20 +38,7 @@ gs_download <-
 
   if(is.null(ws)) {
 
-    if(from$version == "new") {
-      key <-  from$sheet_key
-    } else {
-      if(is.na(from$alt_key)) {
-        paste("The incoming googlesheet object is missing the alternate sheet",
-              "key necessary to download an \"old\" Google Sheet. This can",
-              "can only be learned from the spreadsheets feed and, therefore",
-              "with authentication.") %>%
-          stop()
-      } else {
-        key <- from$alt_key
-      }
-    }
-
+    key <- gs_get_alt_key(from)
     the_url <-
       paste("https://www.googleapis.com/drive/v2/files", key, sep = "/")
 
@@ -60,6 +47,7 @@ gs_download <-
       csv = req$content$exportLinks$'text/csv', # first sheet only
       pdf = req$content$exportLinks$'application/pdf',
       xlsx = req$content$exportLinks$'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
   } else {
 
     this_ws <- from %>% get_ws(ws)

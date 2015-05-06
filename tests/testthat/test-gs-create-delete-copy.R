@@ -45,11 +45,11 @@ test_that("Regexes work for deleting multiple sheets", {
 test_that("Spreadsheet can be copied", {
 
   copy_of <- p_(paste("Copy of", iris_pvt_title))
-  copy_ss <- copy_ss(iris_pvt_key, to = copy_of)
+  copy_ss <- gs_copy(gs_key(iris_pvt_key), to = copy_of)
   expect_is(copy_ss, "googlesheet")
 
   eggplants <- p_("eggplants are purple")
-  copy_ss_2 <- copy_ss(iris_pvt_key, to = eggplants)
+  copy_ss_2 <- gs_copy(gs_key(iris_pvt_key), to = eggplants)
   expect_is(copy_ss_2, "googlesheet")
 
   ss_df <- gs_ls()
@@ -63,7 +63,7 @@ test_that("Spreadsheet can be copied", {
 test_that("Nonexistent spreadsheet can NOT be deleted or copied", {
 
   expect_error(delete_ss("flyingpig"), "doesn't match")
-  expect_error(copy_ss("flyingpig"),  "doesn't match")
+  expect_error(gs_copy(gs_title("flyingpig")),  "doesn't match")
 
 })
 
@@ -77,21 +77,22 @@ test_that("Old Sheets can be copied and deleted", {
 
   ## pre-register
   my_copy <- p_("test-old-sheet-copy")
-  expect_message(ss_copy <- ss %>% copy_ss(to = my_copy), "Successful copy!")
+  expect_message(ss_copy <- ss %>% gs_copy(to = my_copy), "Successful copy!")
   Sys.sleep(1)
   expect_message(delete_ss(ss_copy), "moved to trash")
   Sys.sleep(1)
 
   ## delete by title
   expect_message(ss_copy <-
-                   copy_ss(from = old_title, to = my_copy), "Successful copy!")
+                   gs_copy(gs_title(old_title), to = my_copy),
+                 "Successful copy!")
   Sys.sleep(1)
   expect_message(delete_ss(my_copy), "moved to trash")
   Sys.sleep(1)
 
   # delete by URL
   expect_message(ss_copy <-
-                   copy_ss(from = old_url, to = my_copy), "Successful copy!")
+                   gs_copy(gs_url(old_url), to = my_copy), "Successful copy!")
   Sys.sleep(1)
   expect_message(delete_ss(my_copy), "moved to trash")
 })
