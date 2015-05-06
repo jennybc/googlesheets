@@ -40,7 +40,7 @@ If there are multiple sheets with the same name and you don't want to
 }
 \examples{
 \dontrun{
-foo <- new_ss("foo")
+foo <- gs_new("foo")
 foo <- edit_cells(foo, input = head(iris))
 delete_ss("foo")
 }

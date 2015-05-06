@@ -14,7 +14,7 @@ gdrive_POST(url, ...)
   parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
-Used in new_ss(), delete_ss(), copy_ss()
+Used in gs_new(), delete_ss(), copy_ss()
 }
 \keyword{internal}
 

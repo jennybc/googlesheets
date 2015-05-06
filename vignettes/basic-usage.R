@@ -64,7 +64,7 @@ head(oceania_reshaped, 10)
 
 ## ----create and delete spreadsheet---------------------------------------
 # Create a new empty spreadsheet by title
-new_ss("hi I am new here")
+gs_new("hi I am new here")
 gs_ls() %>% filter(sheet_title == "hi I am new here")
 
 # Move spreadsheet to trash
@@ -72,7 +72,7 @@ delete_ss("hi I am new here")
 gs_ls() %>% filter(sheet_title == "hi I am new here")
 
 ## ----new-sheet-new-ws-delete-ws------------------------------------------
-new_ss("hi I am new here")
+gs_new("hi I am new here")
 x <- register_ss("hi I am new here")
 x
 x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)

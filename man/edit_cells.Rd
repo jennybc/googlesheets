@@ -45,7 +45,7 @@ from the anchor across a row or down a column.
 }
 \examples{
 \dontrun{
-yo <- new_ss("yo")
+yo <- gs_new("yo")
 yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 get_via_csv(yo)
 

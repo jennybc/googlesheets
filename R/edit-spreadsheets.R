@@ -6,16 +6,16 @@
 #' @param title the title for the new sheet
 #' @param verbose logical; do you want informative message?
 #'
-#' @return a googlesheet object
+#' @return a \code{\link{googlesheet}} object
 #'
 #' @examples
 #' \dontrun{
-#' foo <- new_ss("foo")
+#' foo <- gs_new("foo")
 #' foo
 #' }
 #'
 #' @export
-new_ss <- function(title = "my_sheet", verbose = TRUE) {
+gs_new <- function(title = "my_sheet", verbose = TRUE) {
 
   ## TO DO? warn if sheet with same title alredy exists?
   ## right now we proceed quietly, because sheet is identified by key
@@ -31,14 +31,13 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
   ## I set verbose = FALSE here because it seems weird to message "Spreadsheet
   ## identified!" in this context, esp. to do so *before* message confirming
   ## creation
-  ss <- identify_ss(new_sheet_key, verbose = FALSE)
+  ss <- gs_key(new_sheet_key, verbose = FALSE)
 
   if(verbose) {
     message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
   }
 
   ss %>%
-    register_ss() %>%
     invisible()
 
 }
@@ -72,7 +71,7 @@ new_ss <- function(title = "my_sheet", verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' foo <- new_ss("foo")
+#' foo <- gs_new("foo")
 #' foo <- edit_cells(foo, input = head(iris))
 #' delete_ss("foo")
 #' }
@@ -84,7 +83,7 @@ delete_ss <- function(x = NULL, regex = NULL, verbose = TRUE, ...) {
 
   if(!is.null(x)) {
 
-    ## I set verbose = FALSE here mostly for symmetry with new_ss
+    ## I set verbose = FALSE here mostly for symmetry with gs_new
     x_ss <- x %>%
       identify_ss(verbose = FALSE)
     # this will throw error if no sheet is uniquely identified; tolerate for
@@ -210,7 +209,7 @@ copy_ss <- function(from, key = NULL, to = NULL, verbose = TRUE) {
 
   new_title <- httr::content(req)$title
 
-  ## see new_ss() for why I set verbose = FALSE here
+  ## see gs_new() for why I set verbose = FALSE here
   new_ss <- try(new_title %>% identify_ss(verbose = FALSE), silent = TRUE)
 
   cannot_find_sheet <- inherits(new_ss, "try-error")
@@ -441,7 +440,7 @@ rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' yo <- new_ss("yo")
+#' yo <- gs_new("yo")
 #' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 #' get_via_csv(yo)
 #' yo <- resize_ws(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)

@@ -87,7 +87,7 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
 
   stopifnot(length(x) == 1L, is.character(x))
 
-  lookup <- set_lookup(lookup)
+  lookup <- set_lookup(lookup, verbose)
   visibility <- set_visibility(visibility, lookup)
 
   if(lookup) {
@@ -116,7 +116,7 @@ gs_url <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
   stopifnot(length(x) == 1L, is.character(x),
             stringr::str_detect(x, "^https://"))
 
-  lookup <- set_lookup(lookup)
+  lookup <- set_lookup(lookup, verbose)
   visibility <- set_visibility(visibility, lookup)
 
   if(verbose) {
@@ -143,7 +143,7 @@ gs_ws_feed <- function(x, lookup = NULL, verbose = TRUE) {
   stopifnot(length(x) == 1L, is.character(x),
             stringr::str_detect(x, ws_feed_regex))
 
-  lookup <- set_lookup(lookup)
+  lookup <- set_lookup(lookup, verbose)
 
   if(lookup) {
     ssf <- x %>%
@@ -158,7 +158,7 @@ gs_ws_feed <- function(x, lookup = NULL, verbose = TRUE) {
 
 }
 
-## TO DO: figure out how to handle googlesheets as input
+## TO DO: decide how to handle googlesheets as input
 # as.googlesheet.googlesheet <- function(x, ssf = NULL, verbose = TRUE, ...) {
 #
 #   x <- structure(x$ws_feed, class = "ws_feed")

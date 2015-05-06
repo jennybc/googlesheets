@@ -20,7 +20,7 @@ contained, worksheet titles and extent, and sheet key.
 }
 \examples{
 \dontrun{
-foo <- new_ss("foo")
+foo <- gs_new("foo")
 foo
 print(foo)
 }

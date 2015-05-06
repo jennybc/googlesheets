@@ -4,7 +4,7 @@ test_that("Spreadsheet can be created and deleted", {
 
   sheet_title <- p_("hello-bye")
 
-  expect_message(new_ss <- new_ss(sheet_title), "created")
+  expect_message(new_ss <- gs_new(sheet_title), "created")
   expect_is(new_ss, "googlesheet")
   Sys.sleep(1)
   ss_df <- gs_ls()
@@ -19,7 +19,7 @@ test_that("Spreadsheet can be created and deleted", {
 test_that("Regexes work for deleting multiple sheets", {
 
   sheet_title <- p_(c("cat", "catherine", "tomCAT", "abdicate", "FLYCATCHER"))
-  sapply(sheet_title, new_ss)
+  sapply(sheet_title, gs_new)
 
   Sys.sleep(1)
   delete_ss(p_("cat"))

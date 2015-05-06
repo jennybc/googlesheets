@@ -17,6 +17,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r make-clean, echo = FALSE, include = FALSE}
+## if previous compilation errored out, intended clean up may be incomplete
+suppressWarnings(
+  file.remove(c("~/tmp/gapminder-africa.csv", "~/tmp/gapminder.xlsx")))
+```
 ---
 
 Google Sheets R API
@@ -193,7 +198,7 @@ gap %>%
 You can use `googlesheets` to create new spreadsheets.
 
 ```{r new-sheet}
-foo <- new_ss("foo")
+foo <- gs_new("foo")
 foo
 ```
 
@@ -257,7 +262,8 @@ delete_ss("mini-gap")
 You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
 
 ```{r export-sheet-as-csv}
-download_ss("Gapminder", ws = "Africa", to = "~/tmp/gapminder-africa.csv")
+gs_download(gs_title("Gapminder"), ws = "Africa",
+            to = "~/tmp/gapminder-africa.csv")
 ## is it there? yes!
 read.csv("~/tmp/gapminder-africa.csv") %>% head()
 ```
@@ -265,7 +271,7 @@ read.csv("~/tmp/gapminder-africa.csv") %>% head()
 Download the entire spreadsheet as an Excel workbook.
 
 ```{r export-sheet-as-xlsx}
-download_ss("Gapminder", to = "~/tmp/gapminder.xlsx")
+gs_download(gs_title("Gapminder"), to = "~/tmp/gapminder.xlsx")
 ```
 
 Go check it out in Excel, if you wish!

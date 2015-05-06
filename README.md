@@ -62,36 +62,36 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 
 ``` r
 (my_sheets <- gs_ls())
-#> Source: local data frame [30 x 10]
+#> Source: local data frame [33 x 10]
 #> 
-#>                 sheet_title         owner perm version        last_updated
-#> 1               gas_mileage      woo.kara    r     new 2015-05-01 23:37:42
-#> 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-01 21:13:59
-#> 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-01 18:54:05
-#> 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-02 00:38:33
-#> 5        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
-#> 6    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
-#> 7      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
-#> 8  1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
-#> 9    gs-test-testing helper      gspreadr   rw     new 2015-04-25 02:31:42
-#> 10        test-gs-old-sheet  rpackagetest    r     new 2015-04-24 21:46:56
+#>                 sheet_title        author perm version             updated
+#> 1  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-06 15:47:22
+#> 2              #rhizo15 #tw     m.hawksey    r     new 2015-05-06 15:32:33
+#> 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-06 15:43:26
+#> 4               gas_mileage      woo.kara    r     new 2015-05-04 01:14:13
+#> 5                  gap_copy      gspreadr   rw     new 2015-05-03 05:08:36
+#> 6           #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
+#> 7        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
+#> 8    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
+#> 9      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
+#> 10 1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
 #> ..                      ...           ...  ...     ...                 ...
 #> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 #>   (chr), alt_key (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 30
+#> Observations: 33
 #> Variables:
-#> $ sheet_title  (chr) "gas_mileage", "Ari's Anchor Text Scraper", "#rhi...
-#> $ owner        (chr) "woo.kara", "anahmani", "m.hawksey", "m.hawksey",...
-#> $ perm         (chr) "r", "r", "r", "r", "rw", "r", "rw", "rw", "rw", ...
-#> $ version      (chr) "new", "old", "new", "new", "old", "new", "new", ...
-#> $ last_updated (time) 2015-05-01 23:37:42, 2015-05-01 21:13:59, 2015-0...
-#> $ sheet_key    (chr) "1WH65aJjlmhOWYMFkhDuKPcRa5mloOtsTCKxrF7erHgI", "...
-#> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
-#> $ alternate    (chr) "https://docs.google.com/spreadsheets/d/1WH65aJjl...
-#> $ self         (chr) "https://spreadsheets.google.com/feeds/spreadshee...
-#> $ alt_key      (chr) NA, "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc...
+#> $ sheet_title (chr) "Ari's Anchor Text Scraper", "#rhizo15 #tw", "Easy...
+#> $ author      (chr) "anahmani", "m.hawksey", "m.hawksey", "woo.kara", ...
+#> $ perm        (chr) "r", "r", "r", "r", "rw", "r", "rw", "r", "rw", "r...
+#> $ version     (chr) "old", "new", "new", "new", "new", "new", "old", "...
+#> $ updated     (time) 2015-05-06 15:47:22, 2015-05-06 15:32:33, 2015-05...
+#> $ sheet_key   (chr) "tQKSYVRwBXssUfYEaMdt-aw", "1oBQNnsMY8Qkuui6BAE8Tn...
+#> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
+#> $ alternate   (chr) "https://spreadsheets.google.com/ccc?key=0Av8m6X4c...
+#> $ self        (chr) "https://spreadsheets.google.com/feeds/spreadsheet...
+#> $ alt_key     (chr) "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc", NA...
 ```
 
 ### Register a spreadsheet
@@ -106,7 +106,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:03 GMT
+#>   Date of googlesheets::register_ss: 2015-05-06 16:01:36 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #> 
@@ -373,23 +373,19 @@ gap %>%
 You can use `googlesheets` to create new spreadsheets.
 
 ``` r
-foo <- new_ss("foo")
+foo <- gs_new("foo")
 #> Sheet "foo" created in Google Drive.
-#> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
-#> Sheet identified!
-#> sheet_title: foo
-#> sheet_key: 1PuKdPTW3Yu53w4SSGjv0pvIXx-b4IIj3bZD0rLs6ub4
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:12 GMT
-#>     Date of last spreadsheet update: 2015-05-02 00:52:10 GMT
+#>   Date of googlesheets::register_ss: 2015-05-06 16:01:43 GMT
+#>     Date of last spreadsheet update: 2015-05-06 16:01:41 GMT
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1PuKdPTW3Yu53w4SSGjv0pvIXx-b4IIj3bZD0rLs6ub4
+#> Key: 1f0lBSZD2EokhO10M0ByX15DW32dGiC2QNubOI4F4ZwI
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -447,15 +443,15 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:24 GMT
-#>     Date of last spreadsheet update: 2015-05-02 00:52:23 GMT
+#>   Date of googlesheets::register_ss: 2015-05-06 16:01:57 GMT
+#>     Date of last spreadsheet update: 2015-05-06 16:01:56 GMT
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1eVg35u6UEQrsoBLtZtbGTes4CKy8_sZ6jojGQC6pkN0
+#> Key: 17EUvWC87fCJadiUuJRp5Uldl4Y_iR-uRCGe84WsAbKw
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -477,8 +473,8 @@ gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
 #> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:28 GMT
-#>     Date of last spreadsheet update: 2015-05-02 00:52:27 GMT
+#>   Date of googlesheets::register_ss: 2015-05-06 16:02:03 GMT
+#>     Date of last spreadsheet update: 2015-05-06 16:01:59 GMT
 #>                          visibility: private
 #> 
 #> Contains 5 worksheets:
@@ -489,7 +485,7 @@ gap_xlsx
 #> Europe: 20 x 6
 #> Oceania: 20 x 6
 #> 
-#> Key: 1kLpGLJkhtIX3G8dxH9EVH6ZUDPUder0eDgAZmzCJi3E
+#> Key: 1VWNkqdgE2Ido2sRv8lstDMHKdRWe3qE3ZL1Ty4hhFV0
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [5 x 6]
@@ -520,10 +516,9 @@ delete_ss("mini-gap")
 You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
 
 ``` r
-download_ss("Gapminder", ws = "Africa", to = "~/tmp/gapminder-africa.csv")
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gs_download(gs_title("Gapminder"), ws = "Africa",
+            to = "~/tmp/gapminder-africa.csv")
+#> Sheet successfully identifed: "Gapminder"
 #> Accessing worksheet titled "Africa"
 #> Sheet successfully downloaded: /Users/jenny/tmp/gapminder-africa.csv
 ## is it there? yes!
@@ -540,10 +535,8 @@ read.csv("~/tmp/gapminder-africa.csv") %>% head()
 Download the entire spreadsheet as an Excel workbook.
 
 ``` r
-download_ss("Gapminder", to = "~/tmp/gapminder.xlsx")
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gs_download(gs_title("Gapminder"), to = "~/tmp/gapminder.xlsx")
+#> Sheet successfully identifed: "Gapminder"
 #> Sheet successfully downloaded: /Users/jenny/tmp/gapminder.xlsx
 ```
 

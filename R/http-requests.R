@@ -148,7 +148,7 @@ gsheets_PUT <- function(url, the_body) {
 
 #' Make POST request to Google Drive API
 #'
-#' Used in new_ss(), delete_ss(), copy_ss()
+#' Used in gs_new(), delete_ss(), copy_ss()
 #'
 #' @param url URL for POST request
 #' @param ... optional; further named parameters, such as \code{query},

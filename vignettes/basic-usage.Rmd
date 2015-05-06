@@ -185,11 +185,11 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ### Add or delete spreadsheet
 
-To add or delete a spreadsheet in your Google Drive, use `new_ss()` or `delete_ss()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1". Recall we demonstrate the use of `copy_ss()` at the start of this vignette.
+To add or delete a spreadsheet in your Google Drive, use `gs_new()` or `delete_ss()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1". Recall we demonstrate the use of `copy_ss()` at the start of this vignette.
 
 ```{r create and delete spreadsheet}
 # Create a new empty spreadsheet by title
-new_ss("hi I am new here")
+gs_new("hi I am new here")
 gs_ls() %>% filter(sheet_title == "hi I am new here")
 
 # Move spreadsheet to trash
@@ -202,7 +202,7 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to `x` after adding the worksheet. This is because adding a worksheet changes the information associate with a registered sheet and, within editing function like `add_ws()`, we re-register the sheet and return the current sheet info.
 
 ```{r new-sheet-new-ws-delete-ws}
-new_ss("hi I am new here")
+gs_new("hi I am new here")
 x <- register_ss("hi I am new here")
 x
 x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)

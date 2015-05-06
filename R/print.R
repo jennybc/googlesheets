@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' foo <- new_ss("foo")
+#' foo <- gs_new("foo")
 #' foo
 #' print(foo)
 #' }
