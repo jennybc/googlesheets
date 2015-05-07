@@ -1,5 +1,5 @@
 ## not exported
-## use prior to calls to Google Drive API, which needs a sheet's alternate key
+## use upstream of Google Drive API, which requires a sheet's alternate key
 gs_get_alt_key <- function(x) {
 
   if(x$version == "new") {

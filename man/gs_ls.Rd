@@ -9,7 +9,7 @@ gs_ls()
 \value{
 a \code{googlesheet_ls} object, which is a
   \code{\link[dplyr]{tbl_df}} with one row per sheet (we use a custom class
-  so we can provide a nicer print method)
+  only to control how this object is printed)
 }
 \description{
 Lists spreadsheets that the user would see in the Google Sheets home screen:

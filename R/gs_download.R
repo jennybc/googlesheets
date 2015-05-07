@@ -3,14 +3,16 @@
 #' Export a Google Sheet as a .csv, .pdf, or .xlsx file. You can download a
 #' sheet that you own or a sheet owned by a third party that has been made
 #' accessible via the sharing dialog options. You can download the entire
-#' spreadsheet (.pdf and .xlsx formats) or a single worksheet.
+#' spreadsheet (.pdf and .xlsx formats) or a single worksheet. This function
+#' calls the \href{https://developers.google.com/drive/v2/reference/}{Google
+#' Drive API}.
 #'
 #' @param from a \code{\link{googlesheet}} object, i.e. a registered Google
 #'   sheet
 #' @param ws positive integer or character string specifying index or title,
 #'   respectively, of the worksheet to export; if \code{NULL} then the entire
 #'   spreadsheet will be exported (.pdf and xlsx formats) or the first worksheet
-#'   will be exported (.csv format
+#'   will be exported (.csv format)
 #' @param to path to write file; file extension must be one of .csv, .pdf, or
 #'   .xlsx, which dictates the export format
 #' @param overwrite logical, indicating whether to overwrite an existing local

@@ -32,7 +32,7 @@
 #'
 #' @return a \code{googlesheet_ls} object, which is a
 #'   \code{\link[dplyr]{tbl_df}} with one row per sheet (we use a custom class
-#'   so we can provide a nicer print method)
+#'   only to control how this object is printed)
 #'
 #' @examples
 #' \dontrun{

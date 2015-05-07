@@ -1,8 +1,10 @@
 ## nothing here is exported
-## eventually, all sheet-identifying info is made into a ws_feed
+## where do googlesheet objects come from?
+## from the user-facing sheet registration functions in gs_register.R:
+## gs_title(), gs_key(), gs_url(), gs_ws_feed()
+## in all cases, sheet-identifying info is parlayed into a ws_feed
 ## then as.googlesheet.ws_feed() gets called to register the sheet
 ## and produce a googlesheet object
-## see gs_register.R for all user-facing stuff
 
 googlesheet <- function() {
   structure(list(sheet_key = character(),
