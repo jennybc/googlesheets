@@ -170,12 +170,7 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
   this_ws <- ss %>% gs_ws(from)
   from_title <- this_ws$ws_title
 
-  req <- modify_ws(ss, from = from, to = to)
-  ## req carries updated info about the affected worksheet ... but I find it
-  ## easier to just re-register the spreadsheet
-
-  Sys.sleep(1)
-  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
+  ss_refresh <- gs_ws_modify(ss, from = from, to = to)
 
   from_is_gone <- !(from_title %in% gs_ws_ls(ss_refresh))
   to_is_there <- to %in% gs_ws_ls(ss_refresh)
@@ -197,7 +192,8 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 #'
 #' Set the number of rows and columns of a worksheet. We use this function
 #' internally during cell updates, if the data would exceed the current
-#' worksheet extent. It is possible a user might want to use this directly?
+#' worksheet extent, and to trim worksheet down to fit the data exactly. Is it
+#' possible a user might want to use this directly?
 #'
 #' @inheritParams get_via_lf
 #' @param row_extent integer for new row extent
@@ -212,18 +208,18 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 #' yo <- gs_new("yo")
 #' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 #' get_via_csv(yo)
-#' yo <- resize_ws(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
+#' yo <- gs_ws_resize(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
 #' get_via_csv(yo)
-#' yo <- resize_ws(yo, ws = 1, row_extent = 3, col_extent = 3)
+#' yo <- gs_ws_resize(yo, ws = 1, row_extent = 3, col_extent = 3)
 #' get_via_csv(yo)
-#' yo <- resize_ws(yo, row_extent = 2, col_extent = 2)
+#' yo <- gs_ws_resize(yo, row_extent = 2, col_extent = 2)
 #' get_via_csv(yo)
 #' gs_delete(yo)
 #' }
 #'
 #' @keywords internal
-resize_ws <- function(ss, ws = 1,
-                      row_extent = NULL, col_extent = NULL, verbose = TRUE) {
+gs_ws_resize <- function(ss, ws = 1,
+                         row_extent = NULL, col_extent = NULL, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
@@ -237,12 +233,13 @@ resize_ws <- function(ss, ws = 1,
     col_extent <- this_ws$col_extent
   }
 
-  req <-
-    modify_ws(ss, ws,
-              new_dim = c(row_extent = row_extent, col_extent = col_extent))
+  ss_refresh <-
+    gs_ws_modify(ss, ws,
+                 new_dim = c(row_extent = row_extent, col_extent = col_extent))
+  this_ws <- ss_refresh  %>% gs_ws(ws, verbose)
 
-  new_row_extent <- req$content$rowCount %>% as.integer()
-  new_col_extent <- req$content$colCount %>% as.integer()
+  new_row_extent <- this_ws$row_extent %>% as.integer()
+  new_col_extent <- this_ws$col_extent %>% as.integer()
 
   success <- all.equal(c(new_row_extent, new_col_extent),
                        c(row_extent, col_extent))
@@ -252,62 +249,65 @@ resize_ws <- function(ss, ws = 1,
                     this_ws$ws_title, new_row_extent, new_col_extent))
   }
 
-  if(success) {
-    ss$sheet_key %>%
-      gs_key(verbose = FALSE) %>%
-      invisible()
-  } else{
-    NULL
-  }
+  ss_refresh %>%
+    invisible()
+
 }
 
 #' Modify a worksheet's title or size
 #'
 #' @inheritParams get_via_lf
 
-#' @param ss a registered Google sheet
+#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google
+#'   sheet
 #' @param from positive integer or character string specifying index or title,
 #' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param new_dim list of length 2 specifying the row and column extent of the
 #'   worksheet
 #'
+#' @return a \code{\link{googlesheet}} object
+#'
 #' @keywords internal
-modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
+gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL) {
 
-    stopifnot(ss %>% inherits("googlesheet"))
+  stopifnot(ss %>% inherits("googlesheet"))
 
-    this_ws <- ss %>% gs_ws(from, verbose = FALSE)
+  this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
-    req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
-    contents <- req$content
+  req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
+  contents <- req$content
 
-    if(!is.null(to)) { # our purpose is to rename a worksheet
+  if(!is.null(to)) { # our purpose is to rename a worksheet
 
-      if(to %in% gs_ws_ls(ss)) {
-        stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
-                           "\"%s\". Please choose another worksheet title."),
-                     to, ss$sheet_title))
-      }
-
-      ## TO DO: we should probably be doing something more XML-y here, instead
-      ## of doing XML --> string --> regex based subsitution --> XML
-      title_replacement <- paste0("\\1", to, "\\3")
-      the_body <- contents %>%
-        sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
+    if(to %in% gs_ws_ls(ss)) {
+      stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
+                         "\"%s\". Please choose another worksheet title."),
+                   to, ss$sheet_title))
     }
 
-    if(!is.null(new_dim)) { # our purpose is to resize a worksheet
+    ## TO DO: we should probably be doing something more XML-y here, instead
+    ## of doing XML --> string --> regex based subsitution --> XML
+    title_replacement <- paste0("\\1", to, "\\3")
+    the_body <- contents %>%
+      sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
+  }
 
-      row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
-      col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
+  if(!is.null(new_dim)) { # our purpose is to resize a worksheet
 
-      the_body <- contents %>%
-        sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
-        sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
-    }
+    row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
+    col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
 
-  gsheets_PUT(this_ws$edit, the_body)
+    the_body <- contents %>%
+      sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
+      sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
+  }
+
+  req <- gsheets_PUT(this_ws$edit, the_body)
+  ## TO DO (?): inspect req
+  req$url %>%
+    extract_key_from_url() %>%
+    gs_key()
 
 }
 

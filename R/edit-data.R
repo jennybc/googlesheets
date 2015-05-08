@@ -65,10 +65,10 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   if(limits$`max-row` > this_ws$row_extent ||
      limits$`max-col` > this_ws$col_extent) {
     ss <- ss %>%
-      resize_ws(this_ws$ws_title,
-                max(this_ws$row_extent, limits$`max-row`),
-                max(this_ws$col_extent, limits$`max-col`),
-                verbose)
+      gs_ws_resize(this_ws$ws_title,
+                   max(this_ws$row_extent, limits$`max-row`),
+                   max(this_ws$col_extent, limits$`max-col`),
+                   verbose)
     Sys.sleep(1)
 
   }
@@ -136,7 +136,8 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 
     Sys.sleep(1)
     ss <- ss %>%
-      resize_ws(this_ws$ws_title, limits$`max-row`, limits$`max-col`, verbose)
+      gs_ws_resize(this_ws$ws_title, limits$`max-row`,
+                   limits$`max-col`, verbose)
   }
 
   Sys.sleep(1)

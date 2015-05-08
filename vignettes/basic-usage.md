@@ -53,9 +53,9 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 9]
 ## 
 ##   sheet_title    author perm version             updated  sheet_key
-## 1  Ari's Anch  anahmani    r     old 2015-05-08 14:24:45 tQKSYVR...
-## 2  #rhizo15 # m.hawksey    r     new 2015-05-08 17:55:19 1oBQNns...
-## 3  EasyTweetS m.hawksey    r     new 2015-05-08 17:53:29 14mAbIi...
+## 1  Ari's Anch  anahmani    r     old 2015-05-08 18:24:16 tQKSYVR...
+## 2  #rhizo15 # m.hawksey    r     new 2015-05-08 18:51:36 1oBQNns...
+## 3  EasyTweetS m.hawksey    r     new 2015-05-08 18:28:47 14mAbIi...
 ## 4  gas_mileag  woo.kara    r     new 2015-05-04 01:14:13 1WH65aJ...
 ## 5  #TalkPay T  iskaldur    r     new 2015-05-02 06:25:14 1IK1an_...
 ## 6  test-gs-ol  gspreadr   rw     old 2015-04-30 23:33:48 t0lmRSk...
@@ -85,7 +85,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 18:00:29 GMT
+##   Date of googlesheets registration: 2015-05-08 18:52:29 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -134,7 +134,7 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 18:00:30 GMT
+##   Date of googlesheets registration: 2015-05-08 18:52:30 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -169,7 +169,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 18:00:29 GMT
+##   Date of googlesheets registration: 2015-05-08 18:52:29 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -377,7 +377,7 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-08 18:00:31
+## 1 hi I am new here gspreadr   rw     new 2015-05-08 18:52:31
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -434,8 +434,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 18:00:37 GMT
-##     Date of last spreadsheet update: 2015-05-08 18:00:35 GMT
+##   Date of googlesheets registration: 2015-05-08 18:52:38 GMT
+##     Date of last spreadsheet update: 2015-05-08 18:52:36 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -444,7 +444,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1CFKLPsNyGDzQKIlSnXWGSgu0LCpMc-YysefyQqgXb1k
+## Key: 1upwcrqWI9F8xQxnR2y8CGVElZP82eAezI_uZ4Mwtiz8
 ```
 
 ```r
@@ -461,8 +461,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 18:00:38 GMT
-##     Date of last spreadsheet update: 2015-05-08 18:00:37 GMT
+##   Date of googlesheets registration: 2015-05-08 18:52:39 GMT
+##     Date of last spreadsheet update: 2015-05-08 18:52:38 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -472,7 +472,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1CFKLPsNyGDzQKIlSnXWGSgu0LCpMc-YysefyQqgXb1k
+## Key: 1upwcrqWI9F8xQxnR2y8CGVElZP82eAezI_uZ4Mwtiz8
 ```
 
 ```r
@@ -498,8 +498,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 18:00:40 GMT
-##     Date of last spreadsheet update: 2015-05-08 18:00:39 GMT
+##   Date of googlesheets registration: 2015-05-08 18:52:40 GMT
+##     Date of last spreadsheet update: 2015-05-08 18:52:39 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -508,7 +508,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1CFKLPsNyGDzQKIlSnXWGSgu0LCpMc-YysefyQqgXb1k
+## Key: 1upwcrqWI9F8xQxnR2y8CGVElZP82eAezI_uZ4Mwtiz8
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
@@ -520,6 +520,8 @@ gs_ws_rename(x, "Sheet1", "First Sheet")
 
 ```
 ## Accessing worksheet titled "Sheet1"
+## Authentication will be used.
+## Sheet successfully identifed: "hi I am new here"
 ## Worksheet "Sheet1" renamed to "First Sheet".
 ```
 

@@ -49,7 +49,7 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
 
   req$content <- httr::content(req, as = "text", encoding = "UTF-8")
 
-  # This is only FALSE when calling modify_ws() where we are using regex
+  # This is only FALSE when calling gs_ws_modify() where we are using regex
   # substitution, waiting for xml2 to support changing xml_doc()
   if(to_xml) {
     req$content <- req$content %>% xml2::read_xml()

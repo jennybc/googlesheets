@@ -74,14 +74,14 @@ test_that("Worksheet is resized by title and index", {
   row <- sample(1:20, 2)
   col <- sample(1:10, 2)
 
-  ss_after <- resize_ws(ss_before, "for_resizing",
-                        row_extent = row[1], col_extent = col[1])
+  ss_after <- gs_ws_resize(ss_before, "for_resizing",
+                           row_extent = row[1], col_extent = col[1])
 
   expect_equal(ss_after$ws$row_extent[ws_title_pos], row[1])
   expect_equal(ss_after$ws$col_extent[ws_title_pos], col[1])
 
-  ss_final <- resize_ws(ss_after, ws_title_pos,
-                        row_extent = row[2], col_extent = col[2])
+  ss_final <- gs_ws_resize(ss_after, ws_title_pos,
+                           row_extent = row[2], col_extent = col[2])
 
   expect_equal(ss_final$ws$row_extent[ws_title_pos], row[2])
   expect_equal(ss_final$ws$col_extent[ws_title_pos], col[2])

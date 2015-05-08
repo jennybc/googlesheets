@@ -47,7 +47,7 @@ test_that("Single cell can be updated", {
 test_that("Cell update can force resize of worksheet", {
 
   ss <- gs_key(ss$sheet_key)
-  ss <- ss %>% resize_ws(ws, 20, 26)
+  ss <- ss %>% gs_ws_resize(ws, 20, 26)
   Sys.sleep(1)
 
   # force worksheet extent to be increased
@@ -57,7 +57,7 @@ test_that("Cell update can force resize of worksheet", {
   expect_equal(ss %>% gs_ws(ws) %>% `[[`("col_extent"), 30)
 
   # clean up
-  ss <- ss %>% resize_ws(ws, 22, 26)
+  ss <- ss %>% gs_ws_resize(ws, 22, 26)
 })
 
 iris_ish <- iris %>% head(3) %>% dplyr::as.tbl()
