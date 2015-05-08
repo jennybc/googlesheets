@@ -1,0 +1,63 @@
+---
+title: "Refresh Token Limit"
+output: html_document
+---
+
+### Summary 
+
+```{r include = FALSE}
+library(knitr)
+library(dplyr)
+
+token <- 
+  dplyr::data_frame(
+    Token = c("Access Token", "Refresh Token"), 
+    "Lifetime" = c("3600 seconds (1 hour)", 
+                          "A long time ..."),
+    "Note" = c("", "Valid until the user revokes it, token not in use > 6 months, or user exceeded 25 token requests"))
+```
+
+
+A token consists of an access token and a refresh token.
+```{r echo = FALSE}
+kable(token)
+```
+
+According to [Google - Using OAuth 2.0 to Access Google APIs](https://developers.google.com/identity/protocols/OAuth2#expiration), there is a 25 token limit per Google user account. **This limit applies to refresh tokens.** After 25 requests for new tokens, the 26th token will cause the oldest token to be invalidated without any user-visible warning. Using the expired refresh token returns HTTP 400 Bad Request.
+
+---
+
+### Testing this 25 token limit:
+
+To really find out if this limit is valid:
+ 
+1. Revoke all tokens to start with a clean slate. 
+
+2. Get 25 tokens: `httr-oauth_1`, `httr-oauth_2`, ... , `httr_oauth_25`, each containing an access token and refresh token pair. 
+
+3. Get a 26th token: `httr-oauth_26`.
+
+```{r echo = FALSE}
+
+token_table <- 
+  dplyr::data_frame(Token = c(1:25), 
+                    Refresh_1 = Token + 0.1, 
+                    Refresh_2 = Refresh_1 + 0.1, 
+                    "..." = "...",
+                    Refresh_X = paste(Token, "x", sep = "."))
+
+token_table %>% print(n = 25)
+```
+
+#### Result
+
+After getting the 26th token (`.httr-oauth_26`), the access token and refresh token of `.httr-oauth_1` no longer works and returns: 
+
+`Error in refresh_oauth2.0(self$endpoint, self$app, self$credentials) : 
+client error: (400) Bad Request`
+
+---
+
+#### Does retrieving access tokens affect this 25 token limit?
+
+After an access token expires, using the refresh token to get a new access token has no effect on the 25 limit, the `.httr-oauth` file just gets updated with the new access token and the refresh token remains the same. This 25 limit is only applied to refresh tokens. You can get as many access tokens as you want. 
