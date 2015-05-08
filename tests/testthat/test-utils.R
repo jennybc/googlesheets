@@ -4,7 +4,7 @@ ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE, verbose = FALSE)
 
 test_that("We can get list of worksheets in a spreadsheet", {
 
-  ws_listing <- ss %>% list_ws()
+  ws_listing <- ss %>% gs_ws_ls()
   expect_true(all(c('Asia', 'Africa', 'Americas', 'Europe', 'Oceania') %in%
                     ws_listing))
 
@@ -13,34 +13,34 @@ test_that("We can get list of worksheets in a spreadsheet", {
 test_that("We can obtain worksheet info from a registered spreadsheet", {
 
   ## retrieve by worksheet title
-  africa <- get_ws(ss, "Africa")
+  africa <- gs_ws(ss, "Africa")
   expect_equal(africa$ws_title, "Africa")
   expect_equal(africa$row_extent, 625L)
 
   ## retrieve by positive integer
-  europe <- get_ws(ss, 4)
+  europe <- gs_ws(ss, 4)
   expect_equal(europe$ws_title, "Europe")
   expect_equal(europe$col_extent, 6L)
 
   ## doubles get truncated, i.e. 1.3 --> 1
-  asia <- get_ws(ss, 3.3)
+  asia <- gs_ws(ss, 3.3)
   expect_equal(asia$ws_title, "Asia")
 
 })
 
 test_that("We throw error for bad worksheet request", {
 
-  expect_error(get_ws(ss, -3))
-  expect_error(get_ws(ss, factor(1)))
-  expect_error(get_ws(ss, LETTERS))
+  expect_error(gs_ws(ss, -3))
+  expect_error(gs_ws(ss, factor(1)))
+  expect_error(gs_ws(ss, LETTERS))
 
-  expect_error(get_ws(ss, "Mars"), "not found")
-  expect_error(get_ws(ss, 100L), "only contains")
+  expect_error(gs_ws(ss, "Mars"), "not found")
+  expect_error(gs_ws(ss, 100L), "only contains")
 
 })
 
 test_that("We can get list of worksheets in a spreadsheet", {
-  ws_listing <- ss %>% list_ws()
+  ws_listing <- ss %>% gs_ws_ls()
   expect_true(all(c('Asia', 'Africa', 'Americas', 'Europe', 'Oceania') %in%
                     ws_listing))
 })

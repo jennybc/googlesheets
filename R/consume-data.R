@@ -34,7 +34,7 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- get_ws(ss, ws, verbose)
+  this_ws <- gs_ws(ss, ws, verbose)
 
   if(is.null(this_ws$exportcsv)) {
     stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
@@ -105,7 +105,7 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- get_ws(ss, ws, verbose)
+  this_ws <- gs_ws(ss, ws, verbose)
   req <- gsheets_GET(this_ws$listfeed)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
@@ -195,7 +195,7 @@ get_via_cf <-
 
     stopifnot(ss %>% inherits("googlesheet"))
 
-    this_ws <- get_ws(ss, ws, verbose)
+    this_ws <- gs_ws(ss, ws, verbose)
 
     if(is.null(limits)) {
       limits <- list("min-row" = min_row, "max-row" = max_row,

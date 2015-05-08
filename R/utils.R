@@ -1,14 +1,14 @@
 #' Retrieve a worksheet-describing list from a googlesheet
 #'
-#' From a googlesheet, retrieve a list (actually a row of a data.frame) giving
-#' everything we know about a specific worksheet.
+#' From a \code{\link{googlesheet}}, retrieve a list (actually a row of a
+#' data.frame) giving everything we know about a specific worksheet.
 #'
 #' @inheritParams get_via_lf
 #' @param verbose logical, indicating whether to give a message re: title of the
 #'   worksheet being accessed
 #'
 #' @keywords internal
-get_ws <- function(ss, ws, verbose = TRUE) {
+gs_ws <- function(ss, ws, verbose = TRUE) {
 
   stopifnot(inherits(ss, "googlesheet"),
             length(ws) == 1L,
@@ -19,9 +19,10 @@ get_ws <- function(ss, ws, verbose = TRUE) {
     if(is.na(index)) {
       stop(sprintf("Worksheet %s not found.", ws))
     } else {
-      ws <- index %>% as.integer()
+      ws <- index
     }
   }
+  ws <- ws %>% as.integer()
   if(ws > ss$n_ws) {
     stop(sprintf("Spreadsheet only contains %d worksheets.", ss$n_ws))
   }
@@ -31,9 +32,9 @@ get_ws <- function(ss, ws, verbose = TRUE) {
   ss$ws[ws, ]
 }
 
-#' List the worksheets in a googlesheet
+#' List the worksheets in a Google Sheet
 #'
-#' Retrieve the titles of all the worksheets in a gpreadsheet.
+#' Retrieve the titles of all the worksheets in a \code{\link{googlesheet}}.
 #'
 #' @inheritParams get_via_lf
 #'
@@ -41,10 +42,10 @@ get_ws <- function(ss, ws, verbose = TRUE) {
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 #' gap_ss <- gs_key(gap_key)
-#' list_ws(gap_ss)
+#' gs_ws_ls(gap_ss)
 #' }
 #' @export
-list_ws <- function(ss) {
+gs_ws_ls <- function(ss) {
 
   stopifnot(inherits(ss, "googlesheet"))
 

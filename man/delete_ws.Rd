@@ -24,15 +24,15 @@ gap_ss <- gap_key \%>\%
   gs_key() \%>\%
   gs_copy(to = "gap_copy")
 # non-pipe equivalent: gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
-list_ws(gap_ss)
+gs_ws_ls(gap_ss)
 gap_ss <- gs_ws_new(gap_ss, "new_stuff")
 gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
                      trim = TRUE)
 gap_ss
 gap_ss <- delete_ws(gap_ss, "new_stuff")
-list_ws(gap_ss)
+gs_ws_ls(gap_ss)
 gap_ss <- delete_ws(gap_ss, ws = 3)
-list_ws(gap_ss)
+gs_ws_ls(gap_ss)
 gs_delete(gap_ss)
 }
 }

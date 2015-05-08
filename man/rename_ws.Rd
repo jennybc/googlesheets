@@ -30,11 +30,11 @@ Since the edit link is used in the PUT request, the version path in the
 \dontrun{
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
-list_ws(gap_ss)
+gs_ws_ls(gap_ss)
 gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
-list_ws(gap_ss)
+gs_ws_ls(gap_ss)
 gap_ss <- rename_ws(gap_ss, from = 1, to = "I am the first sheet!")
-list_ws(gap_ss)
+gs_ws_ls(gap_ss)
 gs_delete(gap_ss)
 }
 }

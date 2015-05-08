@@ -28,7 +28,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  ws_title_exist <- ws_title %in% list_ws(ss)
+  ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
   if(ws_title_exist) {
     stop(sprintf(paste("A worksheet titled \"%s\" already exists, please",
@@ -50,7 +50,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
-  ws_title_exist <- ws_title %in% list_ws(ss_refresh)
+  ws_title_exist <- ws_title %in% gs_ws_ls(ss_refresh)
 
   if(verbose) {
     if(ws_title_exist) {
@@ -85,15 +85,15 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #'   gs_key() %>%
 #'   gs_copy(to = "gap_copy")
 #' # non-pipe equivalent: gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
-#' list_ws(gap_ss)
+#' gs_ws_ls(gap_ss)
 #' gap_ss <- gs_ws_new(gap_ss, "new_stuff")
 #' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
 #'                      trim = TRUE)
 #' gap_ss
 #' gap_ss <- delete_ws(gap_ss, "new_stuff")
-#' list_ws(gap_ss)
+#' gs_ws_ls(gap_ss)
 #' gap_ss <- delete_ws(gap_ss, ws = 3)
-#' list_ws(gap_ss)
+#' gs_ws_ls(gap_ss)
 #' gs_delete(gap_ss)
 #' }
 #'
@@ -102,13 +102,13 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- ss %>% get_ws(ws)
+  this_ws <- ss %>% gs_ws(ws)
 
   req <- gsheets_DELETE(this_ws$ws_id)
 
   ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
-  ws_title_exist <- this_ws$ws_title %in% list_ws(ss_refresh)
+  ws_title_exist <- this_ws$ws_title %in% gs_ws_ls(ss_refresh)
 
   if(verbose) {
     if(ws_title_exist) {
@@ -149,11 +149,11 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 #' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
-#' list_ws(gap_ss)
+#' gs_ws_ls(gap_ss)
 #' gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
-#' list_ws(gap_ss)
+#' gs_ws_ls(gap_ss)
 #' gap_ss <- rename_ws(gap_ss, from = 1, to = "I am the first sheet!")
-#' list_ws(gap_ss)
+#' gs_ws_ls(gap_ss)
 #' gs_delete(gap_ss)
 #' }
 #'
@@ -162,7 +162,7 @@ rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- ss %>% get_ws(from)
+  this_ws <- ss %>% gs_ws(from)
   from_title <- this_ws$ws_title
 
   req <- modify_ws(ss, from = from, to = to)
@@ -172,8 +172,8 @@ rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
   Sys.sleep(1)
   ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
-  from_is_gone <- !(from_title %in% list_ws(ss_refresh))
-  to_is_there <- to %in% list_ws(ss_refresh)
+  from_is_gone <- !(from_title %in% gs_ws_ls(ss_refresh))
+  to_is_there <- to %in% gs_ws_ls(ss_refresh)
 
   if(verbose) {
     if(from_is_gone && to_is_there) {
@@ -226,7 +226,7 @@ resize_ws <- function(ss, ws = 1,
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- ss %>% get_ws(ws, verbose)
+  this_ws <- ss %>% gs_ws(ws, verbose)
 
   # if row or col extent not specified, make it the same as before
   if(is.null(row_extent)) {
@@ -276,14 +276,14 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
     stopifnot(ss %>% inherits("googlesheet"))
 
-    this_ws <- ss %>% get_ws(from, verbose = FALSE)
+    this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
     req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
     contents <- req$content
 
     if(!is.null(to)) { # our purpose is to rename a worksheet
 
-      if(to %in% list_ws(ss)) {
+      if(to %in% gs_ws_ls(ss)) {
         stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
                            "\"%s\". Please choose another worksheet title."),
                      to, ss$sheet_title))
@@ -309,4 +309,3 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
   gsheets_PUT(this_ws$edit, the_body)
 
 }
-

@@ -46,7 +46,7 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                        verbose = TRUE) {
 
   catch_hopeless_input(input)
-  this_ws <- get_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
 
 
   limits <-

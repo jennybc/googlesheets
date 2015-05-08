@@ -52,7 +52,7 @@ gs_download <-
 
   } else {
 
-    this_ws <- from %>% get_ws(ws)
+    this_ws <- from %>% gs_ws(ws)
     export_links <- c(
       csv = this_ws$exportcsv,
       pdf = httr::modify_url(this_ws$exportcsv, query = list(format = "pdf")),
