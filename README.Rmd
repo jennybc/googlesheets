@@ -294,10 +294,10 @@ If you use a function that requires authentication, it will be auto-triggered. B
  
 ```{r auth, eval = FALSE}
 # Give googlesheets permission to access your spreadsheets and google drive
-authorize() 
+gs_auth() 
 ```
  
-Use `authorize(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
+Use `gs_auth(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
 
 ### "Old" Google Sheets
 
