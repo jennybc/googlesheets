@@ -1,7 +1,5 @@
 context("download sheets")
 
-## TO DO: test with ws = NULL
-
 test_that("Spreadsheet can be exported", {
 
   ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)
@@ -25,6 +23,22 @@ test_that("Spreadsheet can be exported", {
   expect_true(all(file.remove(to_files)))
 
 })
+
+test_that("Spreadsheet can be exported w/o specifying the worksheet", {
+
+  ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)
+
+  temp_dir <- tempdir()
+
+  to <- file.path(temp_dir, "sheet_one.csv")
+  expect_message(ss %>% gs_download(to = to, overwrite = TRUE),
+                 "successfully downloaded")
+
+  expect_true(file.exists(to))
+  expect_true(file.remove(to))
+
+})
+
 
 test_that("Old Sheets can be exported", {
 

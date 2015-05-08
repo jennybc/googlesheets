@@ -1,7 +1,5 @@
 context("create, delete, copy sheets")
 
-## TO DO: gs_vecdel()
-
 test_that("Spreadsheet can be created and deleted", {
 
   sheet_title <- p_("hello-bye")
@@ -32,8 +30,8 @@ test_that("Spreadsheet can be copied and deleted", {
   ss_df <- gs_ls()
   expect_true(all(c(copy_of, eggplants) %in% ss_df$sheet_title))
 
-  gs_delete(copy_ss)
-  gs_delete(copy_ss_2)
+  tmp <- gs_vecdel(c(copy_of, eggplants))
+  expect_true(all(tmp))
 
 })
 
