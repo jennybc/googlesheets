@@ -1,6 +1,10 @@
-#' Extract sheet key from its browser URL
+#' Extract sheet key from a URL
 #'
-#' @param url URL seen in the browser when visiting the sheet
+#' Extract a sheet's unique key from a wide variety of URLs, i.e. a browser URL
+#' for both old and new Sheets, the "worksheets feed", and other links returned
+#' by the Sheets API.
+#'
+#' @param url character; a URL associated with a Google Sheet
 #'
 #' @examples
 #' \dontrun{

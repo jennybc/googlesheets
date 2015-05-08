@@ -2,15 +2,17 @@
 % Please edit documentation in R/utils.R
 \name{extract_key_from_url}
 \alias{extract_key_from_url}
-\title{Extract sheet key from its browser URL}
+\title{Extract sheet key from a URL}
 \usage{
 extract_key_from_url(url)
 }
 \arguments{
-\item{url}{URL seen in the browser when visiting the sheet}
+\item{url}{character; a URL associated with a Google Sheet}
 }
 \description{
-Extract sheet key from its browser URL
+Extract a sheet's unique key from a wide variety of URLs, i.e. a browser URL
+for both old and new Sheets, the "worksheets feed", and other links returned
+by the Sheets API.
 }
 \examples{
 \dontrun{

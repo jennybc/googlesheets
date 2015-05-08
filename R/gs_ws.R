@@ -1,4 +1,4 @@
-#' Add a new (empty) worksheet to spreadsheet
+#' Add a new worksheet to spreadsheet
 #'
 #' Add a new (empty) worksheet to spreadsheet: specify title and worksheet
 #' extent (number of rows and columns). The title of the new worksheet can not

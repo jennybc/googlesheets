@@ -1,4 +1,4 @@
-#' Make a copy of an existing spreadsheet
+#' Copy of an existing spreadsheet
 #'
 #' You can copy a spreadsheet that you own or a sheet owned by a third party
 #' that has been made accessible via the sharing dialog options. This function

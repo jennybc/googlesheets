@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_download.R
 \name{gs_download}
 \alias{gs_download}
-\title{Download a Google spreadsheet}
+\title{Download a spreadsheet}
 \usage{
 gs_download(from, ws = NULL, to = "my_sheet.xlsx", overwrite = FALSE,
   verbose = TRUE)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_ws.R
 \name{gs_ws_new}
 \alias{gs_ws_new}
-\title{Add a new (empty) worksheet to spreadsheet}
+\title{Add a new worksheet to spreadsheet}
 \usage{
 gs_ws_new(ss, ws_title = "Sheet1", nrow = 1000, ncol = 26,
   verbose = TRUE)

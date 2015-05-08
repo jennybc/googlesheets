@@ -1,4 +1,4 @@
-#' Download a Google spreadsheet
+#' Download a spreadsheet
 #'
 #' Export a Google Sheet as a .csv, .pdf, or .xlsx file. You can download a
 #' sheet that you own or a sheet owned by a third party that has been made
