@@ -10,7 +10,7 @@
 
 <meta name="author" content="Joanna Zhao, Jenny Bryan" />
 
-<meta name="date" content="2015-05-06" />
+<meta name="date" content="2015-05-07" />
 
 <title>googlesheets Basic Usage</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">googlesheets Basic Usage</h1>
 <h4 class="author"><em>Joanna Zhao, Jenny Bryan</em></h4>
-<h4 class="date"><em>2015-05-06</em></h4>
+<h4 class="date"><em>2015-05-07</em></h4>
 </div>
 
 <div id="TOC">
@@ -104,9 +104,9 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre><code>## Source: local data frame [6 x 9]
 ## 
 ##   sheet_title    author perm version             updated  sheet_key
-## 1  Ari's Anch  anahmani    r     old 2015-05-06 23:08:40 tQKSYVR...
-## 2  EasyTweetS m.hawksey    r     new 2015-05-06 22:40:34 14mAbIi...
-## 3  #rhizo15 # m.hawksey    r     new 2015-05-06 20:18:45 1oBQNns...
+## 1  Ari's Anch  anahmani    r     old 2015-05-08 00:55:02 tQKSYVR...
+## 2  #rhizo15 # m.hawksey    r     new 2015-05-08 01:28:25 1oBQNns...
+## 3  EasyTweetS m.hawksey    r     new 2015-05-08 00:23:20 14mAbIi...
 ## 4  gas_mileag  woo.kara    r     new 2015-05-04 01:14:13 1WH65aJ...
 ## 5  #TalkPay T  iskaldur    r     new 2015-05-02 06:25:14 1IK1an_...
 ## 6  test-gs-ol  gspreadr   rw     old 2015-04-30 23:33:48 t0lmRSk...
@@ -123,7 +123,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
 <pre><code>##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-06 23:09:54 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:40 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
@@ -151,7 +151,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">ss2</code></pre>
 <pre><code>##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-06 23:09:56 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:41 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
@@ -176,7 +176,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>Example of getting nice tabular data from the “list feed”:</p>
 <pre class="sourceCode r"><code class="sourceCode r">gap</code></pre>
 <pre><code>##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-06 23:09:54 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:40 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
@@ -301,7 +301,8 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p><em>needs updating; lots of this already in README</em></p>
 <div id="add-or-delete-spreadsheet" class="section level3">
 <h3>Add or delete spreadsheet</h3>
-<p>To add or delete a spreadsheet in your Google Drive, use <code>gs_new()</code> or <code>delete_ss()</code> and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled “Sheet1”. Recall we demonstrate the use of <code>copy_ss()</code> at the start of this vignette.</p>
+<p>To add a spreadsheet to your Google Drive, use <code>gs_new()</code> and simply pass in the title of the spreadsheet as a character string. The new spreadsheet will contain one worksheet titled “Sheet1” by default. Recall we demonstrate the use of <code>copy_ss()</code> at the start of this vignette, which is another common way to get a new sheet.</p>
+<p>or delete or <code>gs_delete()</code></p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Create a new empty spreadsheet by title</span>
 <span class="kw">gs_new</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet &quot;hi I am new here&quot; created in Google Drive.</code></pre>
@@ -309,14 +310,14 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre><code>## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-06 23:09:58
+## 1 hi I am new here gspreadr   rw     new 2015-05-08 01:35:43
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)</code></pre>
+<p>Delete a spreadsheet with <code>gs_delete()</code>. This function operates on a registered <code>googlesheet</code>, so enclose your sheet identifying information in a suitable function. Here we specify (and delete) the above sheet by title, then confirm it is no longer in our sheet listing.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Move spreadsheet to trash</span>
-<span class="kw">delete_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
-<pre><code>## Sheets found and slated for deletion:
-## hi I am new here
-## Success. All moved to trash in Google Drive.</code></pre>
+<span class="kw">gs_delete</span>(<span class="kw">gs_title</span>(<span class="st">&quot;hi I am new here&quot;</span>))</code></pre>
+<pre><code>## Sheet successfully identifed: &quot;hi I am new here&quot;
+## Success. &quot;hi I am new here&quot; moved to trash in Google Drive.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_ls</span>() %&gt;%<span class="st"> </span><span class="kw">filter</span>(sheet_title ==<span class="st"> &quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Source: local data frame [0 x 10]
 ## 
@@ -332,24 +333,24 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w</code></pre>
+## sheet_key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-06 23:10:05 GMT
-##     Date of last spreadsheet update: 2015-05-06 23:10:02 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:49 GMT
+##     Date of last spreadsheet update: 2015-05-08 01:35:47 GMT
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w</code></pre>
+## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">add_ws</span>(x, <span class="dt">ws_title =</span> <span class="st">&quot;foo&quot;</span>, <span class="dt">nrow =</span> <span class="dv">10</span>, <span class="dt">ncol =</span> <span class="dv">10</span>)</code></pre>
 <pre><code>## Worksheet &quot;foo&quot; added to sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-06 23:10:07 GMT
-##     Date of last spreadsheet update: 2015-05-06 23:10:06 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:50 GMT
+##     Date of last spreadsheet update: 2015-05-08 01:35:49 GMT
 ##                          visibility: private
 ## 
 ## Contains 2 worksheets:
@@ -357,34 +358,33 @@ code > span.er { color: #ff0000; font-weight: bold; }
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w</code></pre>
+## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">delete_ws</span>(x, <span class="dt">ws =</span> <span class="st">&quot;foo&quot;</span>)</code></pre>
 <pre><code>## Accessing worksheet titled &quot;foo&quot;
 ## Worksheet &quot;foo&quot; deleted from sheet &quot;hi I am new here&quot;.</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">register_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
 <pre><code>## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w</code></pre>
+## sheet_key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x</code></pre>
 <pre><code>##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-06 23:10:09 GMT
-##     Date of last spreadsheet update: 2015-05-06 23:10:07 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:52 GMT
+##     Date of last spreadsheet update: 2015-05-08 01:35:50 GMT
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w</code></pre>
+## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc</code></pre>
 <p>To rename a worksheet, pass in the spreadsheet object, the worksheet’s current name and the new name you want it to be.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rename_ws</span>(x, <span class="st">&quot;Sheet1&quot;</span>, <span class="st">&quot;First Sheet&quot;</span>)</code></pre>
 <pre><code>## Accessing worksheet titled &quot;Sheet1&quot;
 ## Worksheet &quot;Sheet1&quot; renamed to &quot;First Sheet&quot;.</code></pre>
 <p>Tidy up by getting rid of the sheet we’ve playing with.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">delete_ss</span>(<span class="st">&quot;hi I am new here&quot;</span>)</code></pre>
-<pre><code>## Sheets found and slated for deletion:
-## hi I am new here
-## Success. All moved to trash in Google Drive.</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_delete</span>(<span class="kw">gs_title</span>(<span class="st">&quot;hi I am new here&quot;</span>))</code></pre>
+<pre><code>## Sheet successfully identifed: &quot;hi I am new here&quot;
+## Success. &quot;hi I am new here&quot; moved to trash in Google Drive.</code></pre>
 </div>
 </div>
 <div id="worksheet-operations" class="section level1">

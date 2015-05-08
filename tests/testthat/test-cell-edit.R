@@ -118,4 +118,9 @@ test_that("We can trim worksheet extent to fit uploaded data", {
 
 })
 
-delete_ss(regex = TEST, verbose = FALSE)
+delete_me <- gs_ls(regex = TEST, verbose = FALSE)
+if(!is.null(delete_me)) {
+  lapply(delete_me$sheet_key, function(x) {
+    gs_delete(gs_key(x, verbose = FALSE), verbose = FALSE)
+  })
+}

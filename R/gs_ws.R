@@ -81,7 +81,10 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gap_key %>%
+#'   gs_key() %>%
+#'   gs_copy(to = "gap_copy")
+#' # non-pipe equivalent: gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' list_ws(gap_ss)
 #' gap_ss <- add_ws(gap_ss, "new_stuff")
 #' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
@@ -91,7 +94,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #' list_ws(gap_ss)
 #' gap_ss <- delete_ws(gap_ss, ws = 3)
 #' list_ws(gap_ss)
-#' delete_ss(gap_ss)
+#' gs_delete(gap_ss)
 #' }
 #'
 #' @export
@@ -151,7 +154,7 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 #' list_ws(gap_ss)
 #' gap_ss <- rename_ws(gap_ss, from = 1, to = "I am the first sheet!")
 #' list_ws(gap_ss)
-#' delete_ss(gap_ss)
+#' gs_delete(gap_ss)
 #' }
 #'
 #' @export
@@ -214,7 +217,7 @@ rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
 #' get_via_csv(yo)
 #' yo <- resize_ws(yo, row_extent = 2, col_extent = 2)
 #' get_via_csv(yo)
-#' delete_ss(yo)
+#' gs_delete(yo)
 #' }
 #'
 #' @keywords internal

@@ -88,4 +88,4 @@ test_that("Worksheet is resized by title and index", {
 
 })
 
-delete_ss(regex = TEST, verbose = FALSE)
+gs_grepdel(TEST, verbose = FALSE)

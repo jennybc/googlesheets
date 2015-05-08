@@ -30,6 +30,12 @@
 #' that may not appear in this listing, a more robust workflow is to specify the
 #' sheet via its browser URL or unique sheet key.
 #'
+#' @param regex character; a regular expression; if non-\code{NULL} only sheets
+#'   whose titles match will be listed
+#' @param ... optional arguments to be passed to \code{\link{grep}} when
+#'   matching \code{regex} to sheet titles
+#' @param verbose logical; do you want informative message?
+#'
 #' @return a \code{googlesheet_ls} object, which is a
 #'   \code{\link[dplyr]{tbl_df}} with one row per sheet (we use a custom class
 #'   only to control how this object is printed)
@@ -40,7 +46,7 @@
 #' }
 #'
 #' @export
-gs_ls <- function() {
+gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
 
   # only calling spreadsheets feed from here, so hardwiring url
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
@@ -90,7 +96,22 @@ gs_ls <- function() {
                        extract_key_from_url(link_dat$alternate))
   ))
 
-  structure(ret, class = c("googlesheet_ls", class(ret)))
+  ret <- structure(ret, class = c("googlesheet_ls", class(ret)))
+
+  if(is.null(regex)) {
+    return(ret)
+  }
+
+  keep_me <- grep(regex, ret$sheet_title, ...)
+
+  if(length(keep_me) == 0L) {
+    if(verbose) {
+      message("No matching sheets found.")
+    }
+    invisible(NULL)
+  } else {
+    ret[keep_me, ]
+  }
 
 }
 

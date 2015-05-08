@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 ## if previous compilation errored out, intended clean up may be incomplete
 suppressWarnings(
   file.remove(c("~/tmp/gapminder-africa.csv", "~/tmp/gapminder.xlsx")))
+googlesheets::gs_vecdel(c("foo", "mini-gap", "iris"), verbose = FALSE)
 ```
 ---
 
@@ -227,7 +228,9 @@ Read the function documentation for `edit_cells()` for how to specify where the 
 Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 ```{r delete-sheet}
-delete_ss("foo")
+## TEMPORARY WORKAROUND UNTIL I FULLY ADOPT NEW REGISTRATION FUNCTIONS
+foo <- gs_title("foo")
+gs_delete(foo)
 ```
 
 ### Upload delimited files or Excel workbooks
@@ -253,8 +256,11 @@ gap_xlsx %>% get_via_lf(ws = "Oceania")
 And we clean up after ourselves on Google Drive.
 
 ```{r delete-moar-sheets}
-delete_ss("iris")
-delete_ss("mini-gap")
+## TEMPORARY WORKAROUND UNTIL I FULLY ADOPT NEW REGISTRATION FUNCTIONS
+iris_ss <- gs_title("iris")
+gap_xlsx <- gs_title("mini-gap")
+gs_delete(iris_ss)
+gs_delete(gap_xlsx)
 ```
 
 ### Download sheets as csv, pdf, or xlsx file

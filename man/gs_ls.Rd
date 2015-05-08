@@ -4,7 +4,16 @@
 \alias{gs_ls}
 \title{List Sheets}
 \usage{
-gs_ls()
+gs_ls(regex = NULL, ..., verbose = TRUE)
+}
+\arguments{
+\item{regex}{character; a regular expression; if non-\code{NULL} only sheets
+whose titles match will be listed}
+
+\item{...}{optional arguments to be passed to \code{\link{grep}} when
+matching \code{regex} to sheet titles}
+
+\item{verbose}{logical; do you want informative message?}
 }
 \value{
 a \code{googlesheet_ls} object, which is a

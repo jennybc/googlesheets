@@ -39,7 +39,7 @@ yo <- resize_ws(yo, ws = 1, row_extent = 3, col_extent = 3)
 get_via_csv(yo)
 yo <- resize_ws(yo, row_extent = 2, col_extent = 2)
 get_via_csv(yo)
-delete_ss(yo)
+gs_delete(yo)
 }
 }
 \keyword{internal}

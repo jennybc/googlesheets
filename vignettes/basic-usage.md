@@ -53,9 +53,9 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 9]
 ## 
 ##   sheet_title    author perm version             updated  sheet_key
-## 1  Ari's Anch  anahmani    r     old 2015-05-06 23:08:40 tQKSYVR...
-## 2  EasyTweetS m.hawksey    r     new 2015-05-06 22:40:34 14mAbIi...
-## 3  #rhizo15 # m.hawksey    r     new 2015-05-06 20:18:45 1oBQNns...
+## 1  Ari's Anch  anahmani    r     old 2015-05-08 00:55:02 tQKSYVR...
+## 2  #rhizo15 # m.hawksey    r     new 2015-05-08 01:28:25 1oBQNns...
+## 3  EasyTweetS m.hawksey    r     new 2015-05-08 00:23:20 14mAbIi...
 ## 4  gas_mileag  woo.kara    r     new 2015-05-04 01:14:13 1WH65aJ...
 ## 5  #TalkPay T  iskaldur    r     new 2015-05-02 06:25:14 1IK1an_...
 ## 6  test-gs-ol  gspreadr   rw     old 2015-04-30 23:33:48 t0lmRSk...
@@ -87,7 +87,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-06 23:09:54 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:40 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
@@ -135,7 +135,7 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-06 23:09:56 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:41 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
@@ -168,7 +168,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-06 23:09:54 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:40 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ## 
@@ -351,7 +351,10 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ### Add or delete spreadsheet
 
-To add or delete a spreadsheet in your Google Drive, use `gs_new()` or `delete_ss()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1". Recall we demonstrate the use of `copy_ss()` at the start of this vignette.
+To add a spreadsheet to your Google Drive, use `gs_new()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet will contain one worksheet titled "Sheet1" by default. Recall we demonstrate the use of `copy_ss()` at the start of this vignette, which is another common way to get a new sheet.
+
+or delete 
+or `gs_delete()` 
 
 
 ```r
@@ -371,20 +374,22 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-06 23:09:58
+## 1 hi I am new here gspreadr   rw     new 2015-05-08 01:35:43
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
 
+Delete a spreadsheet with `gs_delete()`. This function operates on a registered `googlesheet`, so enclose your sheet identifying information in a suitable function. Here we specify (and delete) the above sheet by title, then confirm it is no longer in our sheet listing.
+
+
 ```r
 # Move spreadsheet to trash
-delete_ss("hi I am new here")
+gs_delete(gs_title("hi I am new here"))
 ```
 
 ```
-## Sheets found and slated for deletion:
-## hi I am new here
-## Success. All moved to trash in Google Drive.
+## Sheet successfully identifed: "hi I am new here"
+## Success. "hi I am new here" moved to trash in Google Drive.
 ```
 
 ```r
@@ -419,7 +424,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w
+## sheet_key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
 ```
 
 ```r
@@ -428,15 +433,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-06 23:10:05 GMT
-##     Date of last spreadsheet update: 2015-05-06 23:10:02 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:49 GMT
+##     Date of last spreadsheet update: 2015-05-08 01:35:47 GMT
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w
+## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
 ```
 
 ```r
@@ -453,8 +458,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-06 23:10:07 GMT
-##     Date of last spreadsheet update: 2015-05-06 23:10:06 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:50 GMT
+##     Date of last spreadsheet update: 2015-05-08 01:35:49 GMT
 ##                          visibility: private
 ## 
 ## Contains 2 worksheets:
@@ -462,7 +467,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w
+## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
 ```
 
 ```r
@@ -481,7 +486,7 @@ x <- register_ss("hi I am new here")
 ```
 ## Sheet identified!
 ## sheet_title: hi I am new here
-## sheet_key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w
+## sheet_key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
 ```
 
 ```r
@@ -490,15 +495,15 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-06 23:10:09 GMT
-##     Date of last spreadsheet update: 2015-05-06 23:10:07 GMT
+##   Date of googlesheets registration: 2015-05-08 01:35:52 GMT
+##     Date of last spreadsheet update: 2015-05-08 01:35:50 GMT
 ##                          visibility: private
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 14ZARXf8_YorrvswX9Zf5n2gWG0qCIVw8ZqeWnvrlK3w
+## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
@@ -517,13 +522,12 @@ Tidy up by getting rid of the sheet we've playing with.
 
 
 ```r
-delete_ss("hi I am new here")
+gs_delete(gs_title("hi I am new here"))
 ```
 
 ```
-## Sheets found and slated for deletion:
-## hi I am new here
-## Success. All moved to trash in Google Drive.
+## Sheet successfully identifed: "hi I am new here"
+## Success. "hi I am new here" moved to trash in Google Drive.
 ```
 
 # Worksheet Operations

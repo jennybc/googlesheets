@@ -1,11 +1,5 @@
 context("register sheets")
 
-test_that("Spreadsheets visible to authenticated user can be listed", {
-  ss_list <- gs_ls()
-  expect_is(ss_list, "googlesheet_ls")
-  expect_more_than(nrow(ss_list), 0)
-})
-
 test_that("Spreadsheet can be ID'd via URL, key, title, ws_feed or ss", {
 
   ## NOTE: we've got to look for stuff we (gspreadr) own here, because this is

@@ -18,7 +18,7 @@
 #' iris_ss
 #' get_via_lf(iris_ss)
 #' file.remove("iris.csv")
-#' delete_ss(iris_ss)
+#' gs_delete(iris_ss)
 #' }
 #'
 #' @export

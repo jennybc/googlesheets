@@ -4,7 +4,7 @@
 \alias{list_sheets}
 \title{Get a listing of spreadsheets}
 \usage{
-list_sheets()
+list_sheets(regex = NULL, ..., verbose = TRUE)
 }
 \value{
 a \code{googlesheet_ls} object, which is a

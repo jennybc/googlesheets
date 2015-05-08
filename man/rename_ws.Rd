@@ -35,7 +35,7 @@ gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
 list_ws(gap_ss)
 gap_ss <- rename_ws(gap_ss, from = 1, to = "I am the first sheet!")
 list_ws(gap_ss)
-delete_ss(gap_ss)
+gs_delete(gap_ss)
 }
 }
 

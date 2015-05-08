@@ -62,13 +62,12 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 
 ``` r
 (my_sheets <- gs_ls())
-#> Auto-refreshing stale OAuth token.
 #> Source: local data frame [32 x 10]
 #> 
 #>                 sheet_title        author perm version             updated
-#> 1  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-06 23:08:40
-#> 2   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-06 22:40:34
-#> 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-06 20:18:45
+#> 1  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-07 23:51:42
+#> 2              #rhizo15 #tw     m.hawksey    r     new 2015-05-08 00:37:17
+#> 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-08 00:23:20
 #> 4               gas_mileage      woo.kara    r     new 2015-05-04 01:14:13
 #> 5           #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
 #> 6        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
@@ -83,12 +82,12 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 my_sheets %>% glimpse()
 #> Observations: 32
 #> Variables:
-#> $ sheet_title (chr) "Ari's Anchor Text Scraper", "EasyTweetSheet - Sha...
+#> $ sheet_title (chr) "Ari's Anchor Text Scraper", "#rhizo15 #tw", "Easy...
 #> $ author      (chr) "anahmani", "m.hawksey", "m.hawksey", "woo.kara", ...
 #> $ perm        (chr) "r", "r", "r", "r", "r", "rw", "r", "rw", "rw", "r...
 #> $ version     (chr) "old", "new", "new", "new", "new", "old", "new", "...
-#> $ updated     (time) 2015-05-06 23:08:40, 2015-05-06 22:40:34, 2015-05...
-#> $ sheet_key   (chr) "tQKSYVRwBXssUfYEaMdt-aw", "14mAbIi1UyZtJTDuIa7iMb...
+#> $ updated     (time) 2015-05-07 23:51:42, 2015-05-08 00:37:17, 2015-05...
+#> $ sheet_key   (chr) "tQKSYVRwBXssUfYEaMdt-aw", "1oBQNnsMY8Qkuui6BAE8Tn...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://spreadsheets.google.com/ccc?key=0Av8m6X4c...
 #> $ self        (chr) "https://spreadsheets.google.com/feeds/spreadsheet...
@@ -107,7 +106,7 @@ gap <- register_ss("Gapminder")
 #> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-05-06 23:10:42 GMT
+#>   Date of googlesheets registration: 2015-05-08 00:40:25 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #> 
@@ -378,15 +377,17 @@ foo <- gs_new("foo")
 #> Sheet "foo" created in Google Drive.
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-05-06 23:10:48 GMT
-#>     Date of last spreadsheet update: 2015-05-06 23:10:46 GMT
+#>   Date of googlesheets registration: 2015-05-08 00:40:33 GMT
+#>     Date of last spreadsheet update: 2015-05-08 00:40:31 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1WS2aF8DSZItZCTYTI_Suc0SGwWUmEUIoVm3c33nE39A
+#> Key: 1imcUAGS28wlqDQpd6lYzAtLcERGxDd-uv9rWwwJ0fYc
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -428,10 +429,11 @@ Read the function documentation for `edit_cells()` for how to specify where the 
 Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 ``` r
-delete_ss("foo")
-#> Sheets found and slated for deletion:
-#> foo
-#> Success. All moved to trash in Google Drive.
+## TEMPORARY WORKAROUND UNTIL I FULLY ADOPT NEW REGISTRATION FUNCTIONS
+foo <- gs_title("foo")
+#> Sheet successfully identifed: "foo"
+gs_delete(foo)
+#> Success. "foo" moved to trash in Google Drive.
 ```
 
 ### Upload delimited files or Excel workbooks
@@ -444,15 +446,15 @@ iris_ss <- upload_ss("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-05-06 23:11:01 GMT
-#>     Date of last spreadsheet update: 2015-05-06 23:11:00 GMT
+#>   Date of googlesheets registration: 2015-05-08 00:40:51 GMT
+#>     Date of last spreadsheet update: 2015-05-08 00:40:49 GMT
 #>                          visibility: private
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1NAReXFnEBH2Nt6hopbW8GxN-fScmd7mp69MhKdyvbpc
+#> Key: 1X1xVgq1Qfixb2wZLgkuhBU5gakrrzS9pcYunU9R_DAk
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -474,8 +476,8 @@ gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
 #> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
-#>   Date of googlesheets::register_ss: 2015-05-06 23:11:06 GMT
-#>     Date of last spreadsheet update: 2015-05-06 23:11:04 GMT
+#>   Date of googlesheets registration: 2015-05-08 00:40:55 GMT
+#>     Date of last spreadsheet update: 2015-05-08 00:40:54 GMT
 #>                          visibility: private
 #> 
 #> Contains 5 worksheets:
@@ -486,7 +488,7 @@ gap_xlsx
 #> Europe: 20 x 6
 #> Oceania: 20 x 6
 #> 
-#> Key: 1gRkPpNA3Rekjp9cm5sCJ6M6qeA69KCJaQqdiB5Ow0KY
+#> Key: 1kux3YisUiJo_KBTL4kKskmGIlt9VMnvtaytndwX8lhE
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [5 x 6]
@@ -502,14 +504,15 @@ gap_xlsx %>% get_via_lf(ws = "Oceania")
 And we clean up after ourselves on Google Drive.
 
 ``` r
-delete_ss("iris")
-#> Sheets found and slated for deletion:
-#> iris
-#> Success. All moved to trash in Google Drive.
-delete_ss("mini-gap")
-#> Sheets found and slated for deletion:
-#> mini-gap
-#> Success. All moved to trash in Google Drive.
+## TEMPORARY WORKAROUND UNTIL I FULLY ADOPT NEW REGISTRATION FUNCTIONS
+iris_ss <- gs_title("iris")
+#> Sheet successfully identifed: "iris"
+gap_xlsx <- gs_title("mini-gap")
+#> Sheet successfully identifed: "mini-gap"
+gs_delete(iris_ss)
+#> Success. "iris" moved to trash in Google Drive.
+gs_delete(gap_xlsx)
+#> Success. "mini-gap" moved to trash in Google Drive.
 ```
 
 ### Download sheets as csv, pdf, or xlsx file

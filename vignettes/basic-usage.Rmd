@@ -51,9 +51,7 @@ if(length(HTTR_OAUTH) > 0) {
 ```{r pre-clean, include = FALSE}
 ## if a previous compilation of this document leaves anything behind, i.e. if it
 ## aborts, clean up Google Drive first
-my_patterns <- c("hi I am new here")
-my_patterns <- my_patterns %>% stringr::str_c(collapse = "|")
-delete_ss(regex = my_patterns, verbose = FALSE)
+gs_vecdel("hi I am new here", verbose = FALSE)
 ```
 
 
@@ -185,15 +183,22 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ### Add or delete spreadsheet
 
-To add or delete a spreadsheet in your Google Drive, use `gs_new()` or `delete_ss()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet by default will contain one worksheet titled "Sheet1". Recall we demonstrate the use of `copy_ss()` at the start of this vignette.
+To add a spreadsheet to your Google Drive, use `gs_new()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet will contain one worksheet titled "Sheet1" by default. Recall we demonstrate the use of `copy_ss()` at the start of this vignette, which is another common way to get a new sheet.
 
-```{r create and delete spreadsheet}
+or delete 
+or `gs_delete()` 
+
+```{r createspreadsheet}
 # Create a new empty spreadsheet by title
 gs_new("hi I am new here")
 gs_ls() %>% filter(sheet_title == "hi I am new here")
+```
 
+Delete a spreadsheet with `gs_delete()`. This function operates on a registered `googlesheet`, so enclose your sheet identifying information in a suitable function. Here we specify (and delete) the above sheet by title, then confirm it is no longer in our sheet listing.
+
+```{r delete spreadsheet}
 # Move spreadsheet to trash
-delete_ss("hi I am new here")
+gs_delete(gs_title("hi I am new here"))
 gs_ls() %>% filter(sheet_title == "hi I am new here")
 ```
 
@@ -221,7 +226,7 @@ rename_ws(x, "Sheet1", "First Sheet")
 Tidy up by getting rid of the sheet we've playing with.
 
 ```{r delete-sheet}
-delete_ss("hi I am new here")
+gs_delete(gs_title("hi I am new here"))
 ```
 
 # Worksheet Operations

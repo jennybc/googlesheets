@@ -29,4 +29,4 @@ test_that("Different file formats can be uploaded", {
 
 })
 
-delete_ss(regex = TEST, verbose = FALSE)
+gs_grepdel(TEST, verbose = FALSE)
