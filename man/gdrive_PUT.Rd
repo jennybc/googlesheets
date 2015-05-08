@@ -12,7 +12,7 @@ gdrive_PUT(url, the_body)
 \item{the_body}{body of PUT request}
 }
 \description{
-Used in upload_ss()
+Used in gs_upload()
 }
 \keyword{internal}
 

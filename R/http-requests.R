@@ -172,7 +172,7 @@ gdrive_POST <- function(url, ...) {
 
 #' Make PUT request to Google Drive API
 #'
-#' Used in upload_ss()
+#' Used in gs_upload()
 #'
 #' @param url URL for PUT request
 #' @param the_body body of PUT request

@@ -62,36 +62,36 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 
 ``` r
 (my_sheets <- gs_ls())
-#> Source: local data frame [32 x 10]
+#> Source: local data frame [33 x 10]
 #> 
 #>                 sheet_title        author perm version             updated
-#> 1  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-07 23:51:42
-#> 2              #rhizo15 #tw     m.hawksey    r     new 2015-05-08 00:37:17
-#> 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-08 00:23:20
-#> 4               gas_mileage      woo.kara    r     new 2015-05-04 01:14:13
-#> 5           #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
-#> 6        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
-#> 7    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
-#> 8      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
-#> 9  1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
-#> 10   gs-test-testing helper      gspreadr   rw     new 2015-04-25 02:31:42
+#> 1                  Untitled      gspreadr   rw     new 2015-05-08 05:17:28
+#> 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-08 05:12:37
+#> 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-08 05:04:36
+#> 4              #rhizo15 #tw     m.hawksey    r     new 2015-05-08 05:28:07
+#> 5               gas_mileage      woo.kara    r     new 2015-05-04 01:14:13
+#> 6           #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
+#> 7        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
+#> 8    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
+#> 9      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
+#> 10 1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
 #> ..                      ...           ...  ...     ...                 ...
 #> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 #>   (chr), alt_key (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 32
+#> Observations: 33
 #> Variables:
-#> $ sheet_title (chr) "Ari's Anchor Text Scraper", "#rhizo15 #tw", "Easy...
-#> $ author      (chr) "anahmani", "m.hawksey", "m.hawksey", "woo.kara", ...
-#> $ perm        (chr) "r", "r", "r", "r", "r", "rw", "r", "rw", "rw", "r...
-#> $ version     (chr) "old", "new", "new", "new", "new", "old", "new", "...
-#> $ updated     (time) 2015-05-07 23:51:42, 2015-05-08 00:37:17, 2015-05...
-#> $ sheet_key   (chr) "tQKSYVRwBXssUfYEaMdt-aw", "1oBQNnsMY8Qkuui6BAE8Tn...
+#> $ sheet_title (chr) "Untitled", "Ari's Anchor Text Scraper", "EasyTwee...
+#> $ author      (chr) "gspreadr", "anahmani", "m.hawksey", "m.hawksey", ...
+#> $ perm        (chr) "rw", "r", "r", "r", "r", "r", "rw", "r", "rw", "r...
+#> $ version     (chr) "new", "old", "new", "new", "new", "new", "old", "...
+#> $ updated     (time) 2015-05-08 05:17:28, 2015-05-08 05:12:37, 2015-05...
+#> $ sheet_key   (chr) "1ZsdC2V0kWqeOyich-qm_8DMoTFpGSIcRzFnaLBbpWCk", "t...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
-#> $ alternate   (chr) "https://spreadsheets.google.com/ccc?key=0Av8m6X4c...
+#> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1ZsdC2V0kW...
 #> $ self        (chr) "https://spreadsheets.google.com/feeds/spreadsheet...
-#> $ alt_key     (chr) "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc", NA...
+#> $ alt_key     (chr) NA, "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc"...
 ```
 
 ### Register a spreadsheet
@@ -100,15 +100,15 @@ If you plan to consume data from a sheet or edit it, you must first register it.
 
 ``` r
 # Hey let's look at the Gapminder data
-gap <- register_ss("Gapminder")
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gap <- gs_title("Gapminder")
+#> Sheet successfully identifed: "Gapminder"
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets registration: 2015-05-08 00:40:25 GMT
+#>   Date of googlesheets registration: 2015-05-08 05:28:58 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -123,21 +123,20 @@ gap
 # Need to access a sheet you do not own?
 # Access it by key if you know it!
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap <- gap_key %>% register_ss
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gap <- gap_key %>% gs_key
+#> Authentication will be used.
+#> Sheet successfully identifed: "Gapminder"
 
 # googlesheets may be able to determine the key from the browser URL
 # may not work (yet) for old sheets ... open an issue if have problem
 gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-gap <- gap_url %>% register_ss
-#> Identifying info will be processed as a URL.
+gap <- gap_url %>% gs_url
+#> Authentication will be used.
+#> Sheet-identifying info appears to be a browser URL.
 #> googlesheets will attempt to extract sheet key from the URL.
 #> Putative key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> Authentication will be used.
+#> Sheet successfully identifed: "Gapminder"
 ```
 
 ### Get a Google spreadsheet to practice with
@@ -154,7 +153,7 @@ If that seems to have worked, go check that you see a sheet named Gapminder list
 Now register your copy of the Gapminder sheet and you can follow along:
 
 ``` r
-gap <- register_ss("Gapminder")
+gap <- gs_title("Gapminder")
 gap
 ```
 
@@ -377,8 +376,8 @@ foo <- gs_new("foo")
 #> Sheet "foo" created in Google Drive.
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets registration: 2015-05-08 00:40:33 GMT
-#>     Date of last spreadsheet update: 2015-05-08 00:40:31 GMT
+#>   Date of googlesheets registration: 2015-05-08 05:29:04 GMT
+#>     Date of last spreadsheet update: 2015-05-08 05:29:03 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -387,7 +386,7 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1imcUAGS28wlqDQpd6lYzAtLcERGxDd-uv9rWwwJ0fYc
+#> Key: 1y70p7wmu3Lwpr8RjGZpRruwo-TmAVzj4ZzxC0Dy5tPg
 ```
 
 By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
@@ -442,19 +441,21 @@ Here's how we can create a new spreadsheet from a suitable local file. First, we
 
 ``` r
 iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
-iris_ss <- upload_ss("iris.csv")
+iris_ss <- gs_upload("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets registration: 2015-05-08 00:40:51 GMT
-#>     Date of last spreadsheet update: 2015-05-08 00:40:49 GMT
+#>   Date of googlesheets registration: 2015-05-08 05:29:14 GMT
+#>     Date of last spreadsheet update: 2015-05-08 05:29:13 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1X1xVgq1Qfixb2wZLgkuhBU5gakrrzS9pcYunU9R_DAk
+#> Key: 1B6BqKP9JFy9QiaZHwwpg2CAwAdcEjOjDl2Wuit1wTSo
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -472,13 +473,15 @@ file.remove("iris.csv")
 Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ``` r
-gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
+gap_xlsx <- gs_upload("tests/testthat/mini-gap.xlsx")
 #> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
-#>   Date of googlesheets registration: 2015-05-08 00:40:55 GMT
-#>     Date of last spreadsheet update: 2015-05-08 00:40:54 GMT
+#>   Date of googlesheets registration: 2015-05-08 05:29:17 GMT
+#>     Date of last spreadsheet update: 2015-05-08 05:29:16 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -488,7 +491,7 @@ gap_xlsx
 #> Europe: 20 x 6
 #> Oceania: 20 x 6
 #> 
-#> Key: 1kux3YisUiJo_KBTL4kKskmGIlt9VMnvtaytndwX8lhE
+#> Key: 1AKic9Nn3UPjC1IJ_Dl0bGQ-jSQs-5p0YNQN9MxVqrj4
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [5 x 6]

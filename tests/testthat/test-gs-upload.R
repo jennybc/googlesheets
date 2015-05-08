@@ -2,9 +2,9 @@ context("upload sheets")
 
 test_that("Nonexistent or wrong-extension files throw error", {
 
-  expect_error(upload_ss("I dont exist.csv"), "does not exist")
+  expect_error(gs_upload("I dont exist.csv"), "does not exist")
   ## note this expects working directory to be tests/testthat/ !!
-  expect_error(upload_ss("test-gs-upload.R"),
+  expect_error(gs_upload("test-gs-upload.R"),
                "Cannot convert file with this extension")
 
 })
@@ -15,7 +15,7 @@ test_that("Different file formats can be uploaded", {
     paste("mini-gap", c("xlsx", "tsv", "csv", "txt", "ods"), sep = ".")
   upload_titles <- p_(files_to_upload)
 
-  tmp <- mapply(upload_ss, file = files_to_upload, sheet_title = upload_titles,
+  tmp <- mapply(gs_upload, file = files_to_upload, sheet_title = upload_titles,
                 SIMPLIFY = FALSE)
 
   Sys.sleep(1)

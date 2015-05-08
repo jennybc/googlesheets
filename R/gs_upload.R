@@ -14,7 +14,7 @@
 #' @examples
 #' \dontrun{
 #' write.csv(head(iris, 5), "iris.csv", row.names = FALSE)
-#' iris_ss <- upload_ss("iris.csv")
+#' iris_ss <- gs_upload("iris.csv")
 #' iris_ss
 #' get_via_lf(iris_ss)
 #' file.remove("iris.csv")
@@ -22,7 +22,7 @@
 #' }
 #'
 #' @export
-upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
+gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
 
   if(!file.exists(file)) {
     stop(sprintf("\"%s\" does not exist!", file))
@@ -40,28 +40,29 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
     sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
   }
 
-  req <-
-    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files",
-                body = list(title = sheet_title,
-                            mimeType = "application/vnd.google-apps.spreadsheet"))
+  req <- gdrive_POST(
+    url = "https://www.googleapis.com/drive/v2/files",
+    body = list(title = sheet_title,
+                mimeType = "application/vnd.google-apps.spreadsheet"))
 
   new_sheet_key <- httr::content(req)$id
 
-  # append sheet_key to put_url
   put_url <- httr::modify_url("https://www.googleapis.com/",
                               path = paste0("upload/drive/v2/files/",
                                             new_sheet_key))
 
-  gdrive_PUT(put_url, the_body = file)
+  ret <- gdrive_PUT(put_url, the_body = file)
+  ## TO DO: use ret to assess success?
 
   ss_df <- gs_ls()
   success <- new_sheet_key %in% ss_df$sheet_key
 
   if(success) {
     if(verbose) {
-      message(sprintf(paste("\"%s\" uploaded to Google Drive and converted",
-                            "to a Google Sheet named \"%s\""),
-                      basename(file), sheet_title))
+      sprintf(paste("\"%s\" uploaded to Google Drive and converted",
+                    "to a Google Sheet named \"%s\""),
+              basename(file), sheet_title) %>%
+        message()
     }
   } else {
     stop(sprintf("Cannot confirm the file upload :("))

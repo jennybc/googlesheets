@@ -94,18 +94,18 @@ If you plan to consume data from a sheet or edit it, you must first register it.
 
 ```{r register-sheet}
 # Hey let's look at the Gapminder data
-gap <- register_ss("Gapminder")
+gap <- gs_title("Gapminder")
 gap
 
 # Need to access a sheet you do not own?
 # Access it by key if you know it!
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap <- gap_key %>% register_ss
+gap <- gap_key %>% gs_key
 
 # googlesheets may be able to determine the key from the browser URL
 # may not work (yet) for old sheets ... open an issue if have problem
 gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-gap <- gap_url %>% register_ss
+gap <- gap_url %>% gs_url
 ```
 
 ### Get a Google spreadsheet to practice with
@@ -122,7 +122,7 @@ If that seems to have worked, go check that you see a sheet named Gapminder list
 Now register your copy of the Gapminder sheet and you can follow along:
 
 ```{r register-gapminder, eval = FALSE}
-gap <- register_ss("Gapminder")
+gap <- gs_title("Gapminder")
 gap
 ```
 
@@ -239,7 +239,7 @@ Here's how we can create a new spreadsheet from a suitable local file. First, we
 
 ```{r new-sheet-from-file}
 iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
-iris_ss <- upload_ss("iris.csv")
+iris_ss <- gs_upload("iris.csv")
 iris_ss
 iris_ss %>% get_via_lf()
 file.remove("iris.csv")
@@ -248,7 +248,7 @@ file.remove("iris.csv")
 Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ```{r new-sheet-from-xlsx}
-gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
+gap_xlsx <- gs_upload("tests/testthat/mini-gap.xlsx")
 gap_xlsx
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 ```
