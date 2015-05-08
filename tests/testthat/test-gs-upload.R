@@ -15,8 +15,9 @@ test_that("Different file formats can be uploaded", {
     paste("mini-gap", c("xlsx", "tsv", "csv", "txt", "ods"), sep = ".")
   upload_titles <- p_(files_to_upload)
 
-  tmp <- mapply(gs_upload, file = files_to_upload, sheet_title = upload_titles,
-                SIMPLIFY = FALSE)
+  tmp <- mapply(gs_upload,
+                file = system.file(files_to_upload, package = "googlesheets"),
+                sheet_title = upload_titles, SIMPLIFY = FALSE)
 
   Sys.sleep(1)
   expect_true(all(vapply(tmp, class, character(2))[1, ] == "googlesheet"))
