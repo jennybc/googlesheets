@@ -228,8 +228,6 @@ Read the function documentation for `edit_cells()` for how to specify where the 
 Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 ```{r delete-sheet}
-## TEMPORARY WORKAROUND UNTIL I FULLY ADOPT NEW REGISTRATION FUNCTIONS
-foo <- gs_title("foo")
 gs_delete(foo)
 ```
 
@@ -256,9 +254,6 @@ gap_xlsx %>% get_via_lf(ws = "Oceania")
 And we clean up after ourselves on Google Drive.
 
 ```{r delete-moar-sheets}
-## TEMPORARY WORKAROUND UNTIL I FULLY ADOPT NEW REGISTRATION FUNCTIONS
-iris_ss <- gs_title("iris")
-gap_xlsx <- gs_title("mini-gap")
 gs_delete(iris_ss)
 gs_delete(gap_xlsx)
 ```

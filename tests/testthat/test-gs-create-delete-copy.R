@@ -1,5 +1,7 @@
 context("create, delete, copy sheets")
 
+## TO DO: gs_vecdel()
+
 test_that("Spreadsheet can be created and deleted", {
 
   sheet_title <- p_("hello-bye")

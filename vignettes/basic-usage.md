@@ -53,9 +53,9 @@ Explore the `my_sheets` object. Here's a look at the top of ours, where we've tr
 ## Source: local data frame [6 x 9]
 ## 
 ##   sheet_title    author perm version             updated  sheet_key
-## 1  Ari's Anch  anahmani    r     old 2015-05-08 00:55:02 tQKSYVR...
-## 2  #rhizo15 # m.hawksey    r     new 2015-05-08 01:28:25 1oBQNns...
-## 3  EasyTweetS m.hawksey    r     new 2015-05-08 00:23:20 14mAbIi...
+## 1  Ari's Anch  anahmani    r     old 2015-05-08 05:12:37 tQKSYVR...
+## 2  EasyTweetS m.hawksey    r     new 2015-05-08 05:35:23 14mAbIi...
+## 3  #rhizo15 # m.hawksey    r     new 2015-05-08 05:50:26 1oBQNns...
 ## 4  gas_mileag  woo.kara    r     new 2015-05-04 01:14:13 1WH65aJ...
 ## 5  #TalkPay T  iskaldur    r     new 2015-05-02 06:25:14 1IK1an_...
 ## 6  test-gs-ol  gspreadr   rw     old 2015-04-30 23:33:48 t0lmRSk...
@@ -72,13 +72,11 @@ Let's register the Gapminder spreadsheet we spied in the list above and that you
 
 
 ```r
-gap <- register_ss("Gapminder")
+gap <- gs_title("Gapminder")
 ```
 
 ```
-## Sheet identified!
-## sheet_title: Gapminder
-## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+## Sheet successfully identifed: "Gapminder"
 ```
 
 ```r
@@ -87,9 +85,11 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 01:35:40 GMT
+##   Date of googlesheets registration: 2015-05-08 05:57:44 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
+##                         permissions: rw
+##                             version: new
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -120,13 +120,12 @@ Here's an example of using the sheet title to retrieve the key, then registering
 ```
 
 ```r
-ss2 <- register_ss(gap_key)
+ss2 <- gs_key(gap_key)
 ```
 
 ```
-## Sheet identified!
-## sheet_title: Gapminder
-## sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+## Authentication will be used.
+## Sheet successfully identifed: "Gapminder"
 ```
 
 ```r
@@ -135,9 +134,11 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 01:35:41 GMT
+##   Date of googlesheets registration: 2015-05-08 05:57:45 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
+##                         permissions: rw
+##                             version: new
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -168,9 +169,11 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 01:35:40 GMT
+##   Date of googlesheets registration: 2015-05-08 05:57:44 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
+##                         permissions: rw
+##                             version: new
 ## 
 ## Contains 5 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
@@ -374,7 +377,7 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-08 01:35:43
+## 1 hi I am new here gspreadr   rw     new 2015-05-08 05:57:47
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -418,13 +421,11 @@ gs_new("hi I am new here")
 ```
 
 ```r
-x <- register_ss("hi I am new here")
+x <- gs_title("hi I am new here")
 ```
 
 ```
-## Sheet identified!
-## sheet_title: hi I am new here
-## sheet_key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
+## Sheet successfully identifed: "hi I am new here"
 ```
 
 ```r
@@ -433,19 +434,21 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 01:35:49 GMT
-##     Date of last spreadsheet update: 2015-05-08 01:35:47 GMT
+##   Date of googlesheets registration: 2015-05-08 05:57:52 GMT
+##     Date of last spreadsheet update: 2015-05-08 05:57:50 GMT
 ##                          visibility: private
+##                         permissions: rw
+##                             version: new
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
+## Key: 1p2QT3jjUeFkVZ7JAbbC1bJuP_AHeHRld6jNeVD0aGQY
 ```
 
 ```r
-x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
+x <- gs_ws_new(x, ws_title = "foo", nrow = 10, ncol = 10)
 ```
 
 ```
@@ -458,16 +461,18 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 01:35:50 GMT
-##     Date of last spreadsheet update: 2015-05-08 01:35:49 GMT
+##   Date of googlesheets registration: 2015-05-08 05:57:54 GMT
+##     Date of last spreadsheet update: 2015-05-08 05:57:53 GMT
 ##                          visibility: private
+##                         permissions: rw
+##                             version: new
 ## 
 ## Contains 2 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
+## Key: 1p2QT3jjUeFkVZ7JAbbC1bJuP_AHeHRld6jNeVD0aGQY
 ```
 
 ```r
@@ -480,13 +485,11 @@ delete_ws(x, ws = "foo")
 ```
 
 ```r
-x <- register_ss("hi I am new here")
+x <- gs_title("hi I am new here")
 ```
 
 ```
-## Sheet identified!
-## sheet_title: hi I am new here
-## sheet_key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
+## Sheet successfully identifed: "hi I am new here"
 ```
 
 ```r
@@ -495,15 +498,17 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 01:35:52 GMT
-##     Date of last spreadsheet update: 2015-05-08 01:35:50 GMT
+##   Date of googlesheets registration: 2015-05-08 05:57:55 GMT
+##     Date of last spreadsheet update: 2015-05-08 05:57:54 GMT
 ##                          visibility: private
+##                         permissions: rw
+##                             version: new
 ## 
 ## Contains 1 worksheets:
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1f7nRCs7aVQ7ASRsEpnOrHSB214dJGK2er7PH-9wDuMc
+## Key: 1p2QT3jjUeFkVZ7JAbbC1bJuP_AHeHRld6jNeVD0aGQY
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

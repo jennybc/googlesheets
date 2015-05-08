@@ -1,5 +1,7 @@
 context("download sheets")
 
+## TO DO: test with ws = NULL
+
 test_that("Spreadsheet can be exported", {
 
   ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)

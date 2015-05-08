@@ -38,12 +38,12 @@ my_sheets %>%
   select(-ws_feed)
 
 ## ------------------------------------------------------------------------
-gap <- register_ss("Gapminder")
+gap <- gs_title("Gapminder")
 gap
 
 ## ------------------------------------------------------------------------
 (gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
-ss2 <- register_ss(gap_key)
+ss2 <- gs_key(gap_key)
 ss2
 
 ## ------------------------------------------------------------------------
@@ -72,12 +72,12 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 
 ## ----new-sheet-new-ws-delete-ws------------------------------------------
 gs_new("hi I am new here")
-x <- register_ss("hi I am new here")
+x <- gs_title("hi I am new here")
 x
-x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
+x <- gs_ws_new(x, ws_title = "foo", nrow = 10, ncol = 10)
 x
 delete_ws(x, ws = "foo")
-x <- register_ss("hi I am new here")
+x <- gs_title("hi I am new here")
 x
 
 ## ----new-ws-rename-ws-delete-ws------------------------------------------

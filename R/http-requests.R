@@ -85,7 +85,7 @@ gsheets_POST <- function(url, the_body) {
     req$content <- httr::content(req, as = "text", encoding = "UTF-8")
 
     if(!is.null(req$content)) {
-      ## known example of this: POST request triggered by add_ws()
+      ## known example of this: POST request triggered by gs_ws_new()
       req$content <- req$content %>% xml2::read_xml()
     }
 
@@ -137,7 +137,7 @@ gsheets_PUT <- function(url, the_body) {
 
   req$content <- httr::content(req, type = "text/xml")
   if(!is.null(req$content)) {
-    ## known example of this: POST request triggered by add_ws()
+    ## known example of this: POST request triggered by gs_ws_new()
     req$content <- XML::xmlToList(req$content)
   }
 

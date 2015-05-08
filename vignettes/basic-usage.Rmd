@@ -91,7 +91,7 @@ Before you can access a spreadsheet, you must first __register__ it. This return
 Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We can use `str()` to get an overview of the spreadsheet.
 
 ```{r}
-gap <- register_ss("Gapminder")
+gap <- gs_title("Gapminder")
 gap
 ```
 
@@ -105,7 +105,7 @@ Here's an example of using the sheet title to retrieve the key, then registering
 
 ```{r}
 (gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
-ss2 <- register_ss(gap_key)
+ss2 <- gs_key(gap_key)
 ss2
 ```
 
@@ -208,12 +208,12 @@ To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of ne
 
 ```{r new-sheet-new-ws-delete-ws}
 gs_new("hi I am new here")
-x <- register_ss("hi I am new here")
+x <- gs_title("hi I am new here")
 x
-x <- add_ws(x, ws_title = "foo", nrow = 10, ncol = 10)
+x <- gs_ws_new(x, ws_title = "foo", nrow = 10, ncol = 10)
 x
 delete_ws(x, ws = "foo")
-x <- register_ss("hi I am new here")
+x <- gs_title("hi I am new here")
 x
 ```
 

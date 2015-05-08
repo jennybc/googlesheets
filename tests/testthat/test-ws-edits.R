@@ -8,7 +8,7 @@ test_that("Add a new worksheet", {
 
   ss_before <- ss
 
-  ss_after <- add_ws(ss_before, "Test Sheet")
+  ss_after <- gs_ws_new(ss_before, "Test Sheet")
 
   expect_is(ss_after, "googlesheet")
 
@@ -34,7 +34,7 @@ test_that("Delete a worksheet by title and index", {
   expect_equal(ss_before$n_ws - 1, ss_after$n_ws)
   expect_false("Test Sheet" %in% ss_after$ws$ws_title)
 
-  expect_message(ss_after <- add_ws(ss_after, "one more to delete"), "added")
+  expect_message(ss_after <- gs_ws_new(ss_after, "one more to delete"), "added")
   ws_pos <- match("one more to delete", ss_after$ws$ws_title)
   expect_message(ss_final <- delete_ws(ss_after, ws_pos), "deleted")
 

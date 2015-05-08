@@ -4,27 +4,27 @@
 #' extent (number of rows and columns). The title of the new worksheet can not
 #' be the same as any existing worksheets in the sheet.
 #'
-#' @param ss a registered Google sheet
+#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google
+#'   sheet
 #' @param ws_title character string for title of new worksheet
 #' @param nrow number of rows (default is 1000)
 #' @param ncol number of columns (default is 26)
 #' @param verbose logical; do you want informative message?
 #'
-#' @return a googlesheet object, resulting from re-registering the host
-#'   spreadsheet after adding the new worksheet
+#' @return a \code{\link{googlesheet}} object
 #'
 #' @examples
 #' \dontrun{
 #' # get a copy of the Gapminder spreadsheet
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 #' gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
-#' gap_ss <- add_ws(gap_ss, ws_title = "Atlantis")
+#' gap_ss <- gs_ws_new(gap_ss, ws_title = "Atlantis")
 #' gap_ss
 #' }
 #'
 #' @export
-add_ws <- function(ss, ws_title = "Sheet1",
-                   nrow = 1000, ncol = 26, verbose = TRUE) {
+gs_ws_new <- function(ss, ws_title = "Sheet1",
+                      nrow = 1000, ncol = 26, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
@@ -86,7 +86,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
 #'   gs_copy(to = "gap_copy")
 #' # non-pipe equivalent: gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' list_ws(gap_ss)
-#' gap_ss <- add_ws(gap_ss, "new_stuff")
+#' gap_ss <- gs_ws_new(gap_ss, "new_stuff")
 #' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
 #'                      trim = TRUE)
 #' gap_ss

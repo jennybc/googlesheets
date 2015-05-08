@@ -49,11 +49,11 @@ yo <- gs_new("yo")
 yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 get_via_csv(yo)
 
-yo <- add_ws(yo, "byrow_FALSE")
+yo <- gs_ws_new(yo, "byrow_FALSE")
 yo <- edit_cells(yo, ws = "byrow_FALSE", LETTERS[1:5], "A8")
 get_via_cf(yo, ws = "byrow_FALSE", min_row = 7) \%>\% simplify_cf()
 
-yo <- add_ws(yo, "byrow_TRUE")
+yo <- gs_ws_new(yo, "byrow_TRUE")
 yo <- edit_cells(yo, ws = "byrow_TRUE", LETTERS[1:5], "A8", byrow = TRUE)
 get_via_cf(yo, ws = "byrow_TRUE", min_row = 7) \%>\% simplify_cf()
 }
