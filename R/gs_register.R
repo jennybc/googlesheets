@@ -1,3 +1,5 @@
+## TO DO: gs_gs
+
 #' Register a Google Sheet
 #'
 #' The \code{googlesheets} package must gather information on a Google Sheet

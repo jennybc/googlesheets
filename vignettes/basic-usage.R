@@ -76,12 +76,12 @@ x <- gs_title("hi I am new here")
 x
 x <- gs_ws_new(x, ws_title = "foo", nrow = 10, ncol = 10)
 x
-delete_ws(x, ws = "foo")
+gs_ws_delete(x, ws = "foo")
 x <- gs_title("hi I am new here")
 x
 
 ## ----new-ws-rename-ws-delete-ws------------------------------------------
-rename_ws(x, "Sheet1", "First Sheet")
+gs_ws_rename(x, "Sheet1", "First Sheet")
 
 ## ----delete-sheet--------------------------------------------------------
 gs_delete(gs_title("hi I am new here"))

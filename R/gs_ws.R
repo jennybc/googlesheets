@@ -78,6 +78,8 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #' @inheritParams get_via_lf
 #' @param verbose logical; do you want informative message?
 #'
+#' @return a \code{\link{googlesheet}} object
+#'
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
@@ -90,15 +92,15 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
 #'                      trim = TRUE)
 #' gap_ss
-#' gap_ss <- delete_ws(gap_ss, "new_stuff")
+#' gap_ss <- gs_ws_delete(gap_ss, "new_stuff")
 #' gs_ws_ls(gap_ss)
-#' gap_ss <- delete_ws(gap_ss, ws = 3)
+#' gap_ss <- gs_ws_delete(gap_ss, ws = 3)
 #' gs_ws_ls(gap_ss)
 #' gs_delete(gap_ss)
 #' }
 #'
 #' @export
-delete_ws <- function(ss, ws = 1, verbose = TRUE) {
+gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
@@ -134,11 +136,14 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 #' Give a worksheet a new title that does not duplicate the title of any
 #' existing worksheet within the spreadsheet.
 #'
-#' @param ss a registered Google sheet
+#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google
+#'   sheet
 #' @param from positive integer or character string specifying index or title,
 #' respectively, of the worksheet
 #' @param to character string for new title of worksheet
 #' @param verbose logical; do you want informative message?
+#'
+#' @return a \code{\link{googlesheet}} object
 #'
 #' @note Since the edit link is used in the PUT request, the version path in the
 #'   url changes everytime changes are made to the worksheet, hence consecutive
@@ -150,15 +155,15 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
 #' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' gs_ws_ls(gap_ss)
-#' gap_ss <- rename_ws(gap_ss, from = "Oceania", to = "ANZ")
+#' gap_ss <- gs_ws_rename(gap_ss, from = "Oceania", to = "ANZ")
 #' gs_ws_ls(gap_ss)
-#' gap_ss <- rename_ws(gap_ss, from = 1, to = "I am the first sheet!")
+#' gap_ss <- gs_ws_rename(gap_ss, from = 1, to = "I am the first sheet!")
 #' gs_ws_ls(gap_ss)
 #' gs_delete(gap_ss)
 #' }
 #'
 #' @export
-rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
+gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
@@ -184,11 +189,7 @@ rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
     }
   }
 
-  if(from_is_gone && to_is_there) {
-    ss_refresh %>% invisible()
-  } else {
-    NULL
-  }
+  ss_refresh %>% invisible()
 
 }
 
@@ -308,4 +309,58 @@ modify_ws <- function(ss, from, to = NULL, new_dim = NULL) {
 
   gsheets_PUT(this_ws$edit, the_body)
 
+}
+
+#' Retrieve a worksheet-describing list from a googlesheet
+#'
+#' From a \code{\link{googlesheet}}, retrieve a list (actually a row of a
+#' data.frame) giving everything we know about a specific worksheet.
+#'
+#' @inheritParams get_via_lf
+#' @param verbose logical, indicating whether to give a message re: title of the
+#'   worksheet being accessed
+#'
+#' @keywords internal
+gs_ws <- function(ss, ws, verbose = TRUE) {
+
+  stopifnot(inherits(ss, "googlesheet"),
+            length(ws) == 1L,
+            is.character(ws) || (is.numeric(ws) && ws > 0))
+
+  if(is.character(ws)) {
+    index <- match(ws, ss$ws$ws_title)
+    if(is.na(index)) {
+      stop(sprintf("Worksheet %s not found.", ws))
+    } else {
+      ws <- index
+    }
+  }
+  ws <- ws %>% as.integer()
+  if(ws > ss$n_ws) {
+    stop(sprintf("Spreadsheet only contains %d worksheets.", ss$n_ws))
+  }
+  if(verbose) {
+    message(sprintf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws]))
+  }
+  ss$ws[ws, ]
+}
+
+#' List the worksheets in a Google Sheet
+#'
+#' Retrieve the titles of all the worksheets in a \code{\link{googlesheet}}.
+#'
+#' @inheritParams get_via_lf
+#'
+#' @examples
+#' \dontrun{
+#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+#' gap_ss <- gs_key(gap_key)
+#' gs_ws_ls(gap_ss)
+#' }
+#' @export
+gs_ws_ls <- function(ss) {
+
+  stopifnot(inherits(ss, "googlesheet"))
+
+  ss$ws$ws_title
 }

@@ -27,7 +27,7 @@ test_that("Delete a worksheet by title and index", {
 
   ss_before <- gs_key(ss$sheet_key)
 
-  expect_message(ss_after <- delete_ws(ss_before, "Test Sheet"), "deleted")
+  expect_message(ss_after <- gs_ws_delete(ss_before, "Test Sheet"), "deleted")
 
   expect_is(ss_after, "googlesheet")
 
@@ -36,31 +36,31 @@ test_that("Delete a worksheet by title and index", {
 
   expect_message(ss_after <- gs_ws_new(ss_after, "one more to delete"), "added")
   ws_pos <- match("one more to delete", ss_after$ws$ws_title)
-  expect_message(ss_final <- delete_ws(ss_after, ws_pos), "deleted")
+  expect_message(ss_final <- gs_ws_delete(ss_after, ws_pos), "deleted")
 
   expect_equal(ss_after$n_ws - 1, ss_final$n_ws)
   expect_false("one more to delete" %in% ss_final$ws$ws_title)
 
   ## can't delete a non-existent worksheet
-  expect_error(delete_ws(ss_before, "Hello World"))
+  expect_error(gs_ws_delete(ss_before, "Hello World"))
 })
 
 test_that("Worksheet is renamed by title and index", {
 
   ss_before <- gs_key(ss$sheet_key)
-  ss_after <- rename_ws(ss_before, "shipwrecks", "oops")
+  ss_after <- gs_ws_rename(ss_before, "shipwrecks", "oops")
 
   expect_is(ss_after, "googlesheet")
   expect_true("oops" %in% ss_after$ws$ws_title)
   expect_false("shipwrecks" %in% ss_after$ws$ws_title)
 
-  ss_final <- rename_ws(ss_after, 4, "shipwrecks")
+  ss_final <- gs_ws_rename(ss_after, 4, "shipwrecks")
   expect_is(ss_final, "googlesheet")
   expect_false("oops" %in% ss_final$ws$ws_title)
   expect_true("shipwrecks" %in% ss_final$ws$ws_title)
 
   ## renaming not allowed to cause duplication of a worksheet name
-  expect_error(rename_ws(ss_final, "shipwrecks", "embedded_empty_cells"),
+  expect_error(gs_ws_rename(ss_final, "shipwrecks", "embedded_empty_cells"),
                "already exists")
 
 })
