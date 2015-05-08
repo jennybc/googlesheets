@@ -29,13 +29,7 @@ gs_vecdel("hi I am new here", verbose = FALSE)
 
 ## ----list-sheets---------------------------------------------------------
 my_sheets <- gs_ls()
-
-## ----view-my-sheets, echo = FALSE----------------------------------------
-my_sheets %>% 
-  head %>% 
-  mutate(sheet_title = substr(sheet_title, 1, 10),
-         sheet_key = sheet_key %>% substr(1, 7) %>% stringr::str_c("...")) %>% 
-  select(-ws_feed)
+my_sheets
 
 ## ------------------------------------------------------------------------
 gap <- gs_title("Gapminder")

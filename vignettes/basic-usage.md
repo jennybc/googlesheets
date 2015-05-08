@@ -2,7 +2,7 @@
 Joanna Zhao, Jenny Bryan  
 `r Sys.Date()`  
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten alot more love recently, so you might want to read that instead or in addition to this (2015-03-23).
+__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten __alot more love recently__, so you should read that instead or in addition to this (2015-05-08). Seriously, we've only been making sure this thing compiles, but not updating the text.
 
 
 ```r
@@ -16,9 +16,9 @@ This vignette shows the basic functionality of `googlesheets`.
 
 In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `googlesheets` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
 
-The `authorize()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
+The `gs_auth()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
 
-If you want to switch to a different Google account, run `authorize(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
+If you want to switch to a different Google account, run `gs_auth(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
 
 *In a hidden chunk, we are logging into Google as a user associated with this package, so we can work with some Google spreadsheets later in this vignette.*
 
@@ -44,31 +44,35 @@ As an authenticated user, you can get a (partial) listing of accessible sheets. 
 
 ```r
 my_sheets <- gs_ls()
+my_sheets
 ```
 
-Explore the `my_sheets` object. Here's a look at the top of ours, where we've truncated the variables `sheet_title` and `sheet_key` and suppressed the variable `ws_id` for readability.
-
-
 ```
-## Source: local data frame [6 x 9]
+## Source: local data frame [33 x 10]
 ## 
-##   sheet_title    author perm version             updated  sheet_key
-## 1  Ari's Anch  anahmani    r     old 2015-05-08 18:24:16 tQKSYVR...
-## 2  #rhizo15 # m.hawksey    r     new 2015-05-08 18:51:36 1oBQNns...
-## 3  EasyTweetS m.hawksey    r     new 2015-05-08 18:28:47 14mAbIi...
-## 4  gas_mileag  woo.kara    r     new 2015-05-04 01:14:13 1WH65aJ...
-## 5  #TalkPay T  iskaldur    r     new 2015-05-02 06:25:14 1IK1an_...
-## 6  test-gs-ol  gspreadr   rw     old 2015-04-30 23:33:48 t0lmRSk...
-## Variables not shown: alternate (chr), self (chr), alt_key (chr)
+##                 sheet_title        author perm version             updated
+## 1                       foo      gspreadr   rw     new 2015-05-08 22:14:30
+## 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-08 18:24:16
+## 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-08 20:00:01
+## 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-08 21:58:48
+## 5               gas_mileage      woo.kara    r     new 2015-05-04 01:14:13
+## 6           #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
+## 7        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
+## 8    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
+## 9      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
+## 10 1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
+## ..                      ...           ...  ...     ...                 ...
+## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
+##   (chr), alt_key (chr)
 ```
 
-This provides a nice overview of the spreadsheets you can access and is useful for looking up the __key__ of a spreadsheet (see below).
+This provides a nice overview of the spreadsheets you can access.
 
 # Register a spreadsheet
 
-Before you can access a spreadsheet, you must first __register__ it. This returns an object that is of little interest to the user, but is needed by various `googlesheets` functions in order to retrieve or edit spreadsheet data.
+Before you can access a spreadsheet, you must first __register__ it. This returns a `googlesheets` object that is needed by downstream functions in order to retrieve or edit spreadsheet data.
 
-Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We can use `str()` to get an overview of the spreadsheet.
+Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We have a nice `print` method for these objects, so print to screen for some basic info.
 
 
 ```r
@@ -85,7 +89,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 18:52:29 GMT
+##   Date of googlesheets registration: 2015-05-08 22:14:37 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -108,7 +112,7 @@ Besides using the spreadsheet title, you can also specify a spreadsheet in three
   * By URL: copy and paste the URL in your browser while visiting the spreadsheet.
   * By the "worksheets feed": under the hood, this is how `googlesheets` actually gets spreadsheet information from the API. Unlikely to be relevant to a regular user.
 
-Here's an example of using the sheet title to retrieve the key, then registering the sheet by key. While registration by title is handy for interactive use, registration by key is preferred for scripts.
+Here's an example of registering a sheet via key. While registration by title is handy for interactive use, registration by key might be preferred when programming.
 
 
 ```r
@@ -134,7 +138,7 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 18:52:30 GMT
+##   Date of googlesheets registration: 2015-05-08 22:14:37 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -155,8 +159,9 @@ ss2
 
 Spreadsheet data is parcelled out into __worksheets__. To consume data from a Google spreadsheet, you'll need to specify a registered spreadsheet and, within that, a worksheet. Specify the worksheet either by name or positive integer index.
 
-There are two ways to consume data.
+There are three ways to consume data.
 
+  * *The csv way ... bring this over from README*
   * The "list feed": only suitable for well-behaved tabular data. Think: data that looks like an R data.frame
   * The "cell feed": for everything else. Of course, you can get well-behaved tabular data with the cell feed but it's up to 3x slower and will require post-processing (reshaping and coercion).
   
@@ -169,7 +174,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 18:52:29 GMT
+##   Date of googlesheets registration: 2015-05-08 22:14:37 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -332,7 +337,7 @@ There are two basic modes of consuming data stored in a worksheet (quotes taken 
 
 *Rework this for the new era.*
 
-Under the hood, `gspread` functions must access a spreadsheet with either public or private __visiblity__. Visibility determines whether or not authorization will be used for a request.
+Under the hood, `googlesheets` functions must access a spreadsheet with either public or private __visiblity__. Visibility determines whether or not authorization will be used for a request.
 
 No authorization is used when visibility is set to "public", which will only work for spreadsheets that have been "Published to the Web". Note that requests with visibility set to "public" __will not work__ for spreadsheets that are made "Public on the web" from the "Visibility options" portion of the sharing dialog of a Google Sheets file. In summary, "Published to the web" and "Public on the web" are __different__ ways to share a spreadsheet.
 
@@ -354,7 +359,7 @@ To access public spreadsheets, you will either need the key of the spreadsheet (
 
 ### Add or delete spreadsheet
 
-To add a spreadsheet to your Google Drive, use `gs_new()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet will contain one worksheet titled "Sheet1" by default. Recall we demonstrate the use of `copy_ss()` at the start of this vignette, which is another common way to get a new sheet.
+To add a spreadsheet to your Google Drive, use `gs_new()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet will contain one worksheet titled "Sheet1" by default. Recall we demonstrate the use of `gs_copy()` at the start of this vignette, which is another common way to get a new sheet.
 
 or delete 
 or `gs_delete()` 
@@ -377,7 +382,7 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-08 18:52:31
+## 1 hi I am new here gspreadr   rw     new 2015-05-08 22:14:39
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -409,7 +414,7 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 
 ### Add, delete, or rename a worksheet
 
-To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local spreadsheet object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to `x` after adding the worksheet. This is because adding a worksheet changes the information associate with a registered sheet and, within editing function like `add_ws()`, we re-register the sheet and return the current sheet info.
+To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local `googlesheet` object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to `x` after adding the worksheet. This is because adding a worksheet changes the information associated with a registered sheet and, within editing functions like `gs_ws_new()`, we re-register the sheet and return the current sheet info.
 
 
 ```r
@@ -434,8 +439,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 18:52:38 GMT
-##     Date of last spreadsheet update: 2015-05-08 18:52:36 GMT
+##   Date of googlesheets registration: 2015-05-08 22:14:49 GMT
+##     Date of last spreadsheet update: 2015-05-08 22:14:46 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -444,7 +449,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1upwcrqWI9F8xQxnR2y8CGVElZP82eAezI_uZ4Mwtiz8
+## Key: 1t5RJT_v6fmljtJXVd01Me9bL6vGHJ11q1-XrSo2KvWM
 ```
 
 ```r
@@ -461,8 +466,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 18:52:39 GMT
-##     Date of last spreadsheet update: 2015-05-08 18:52:38 GMT
+##   Date of googlesheets registration: 2015-05-08 22:14:49 GMT
+##     Date of last spreadsheet update: 2015-05-08 22:14:49 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -472,7 +477,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1upwcrqWI9F8xQxnR2y8CGVElZP82eAezI_uZ4Mwtiz8
+## Key: 1t5RJT_v6fmljtJXVd01Me9bL6vGHJ11q1-XrSo2KvWM
 ```
 
 ```r
@@ -498,8 +503,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 18:52:40 GMT
-##     Date of last spreadsheet update: 2015-05-08 18:52:39 GMT
+##   Date of googlesheets registration: 2015-05-08 22:14:51 GMT
+##     Date of last spreadsheet update: 2015-05-08 22:14:50 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -508,7 +513,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1upwcrqWI9F8xQxnR2y8CGVElZP82eAezI_uZ4Mwtiz8
+## Key: 1t5RJT_v6fmljtJXVd01Me9bL6vGHJ11q1-XrSo2KvWM
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
