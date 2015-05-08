@@ -1,1 +1,1 @@
-delete_ss(regex = TEST, verbose = FALSE)
+gs_grepdel(TEST, verbose = FALSE)

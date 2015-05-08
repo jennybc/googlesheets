@@ -1,7 +1,7 @@
 context("consume data with public visibility, selectively")
 
 ## consuming data owned by someone else, namely rpackagetest
-ss <- register_ss(ws_feed = gap_ws_feed)
+ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE, verbose = FALSE)
 
 test_that("We can get data from specific cells using limits", {
 

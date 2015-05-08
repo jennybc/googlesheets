@@ -25,7 +25,7 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
             req$headers[["content-type"]], fixed = TRUE)) {
 
     # DIAGNOSTIC EXPERIMENT: If I always call gs_ls() here, which seems to
-    # trigger token refresh more reliably when needed (vs register_ss), does
+    # trigger token refresh more reliably when needed (vs registration), does
     # this problem go away? If so, I'll put that info to good use with a less
     # stupid fix.
     if(grepl("public", url)) {
@@ -49,7 +49,7 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
 
   req$content <- httr::content(req, as = "text", encoding = "UTF-8")
 
-  # This is only FALSE when calling modify_ws() where we are using regex
+  # This is only FALSE when calling gs_ws_modify() where we are using regex
   # substitution, waiting for xml2 to support changing xml_doc()
   if(to_xml) {
     req$content <- req$content %>% xml2::read_xml()
@@ -85,7 +85,7 @@ gsheets_POST <- function(url, the_body) {
     req$content <- httr::content(req, as = "text", encoding = "UTF-8")
 
     if(!is.null(req$content)) {
-      ## known example of this: POST request triggered by add_ws()
+      ## known example of this: POST request triggered by gs_ws_new()
       req$content <- req$content %>% xml2::read_xml()
     }
 
@@ -137,7 +137,7 @@ gsheets_PUT <- function(url, the_body) {
 
   req$content <- httr::content(req, type = "text/xml")
   if(!is.null(req$content)) {
-    ## known example of this: POST request triggered by add_ws()
+    ## known example of this: POST request triggered by gs_ws_new()
     req$content <- XML::xmlToList(req$content)
   }
 
@@ -148,7 +148,7 @@ gsheets_PUT <- function(url, the_body) {
 
 #' Make POST request to Google Drive API
 #'
-#' Used in new_ss(), delete_ss(), copy_ss()
+#' Used in gs_new(), gs_delete(), gs_copy()
 #'
 #' @param url URL for POST request
 #' @param ... optional; further named parameters, such as \code{query},
@@ -172,7 +172,7 @@ gdrive_POST <- function(url, ...) {
 
 #' Make PUT request to Google Drive API
 #'
-#' Used in upload_ss()
+#' Used in gs_upload()
 #'
 #' @param url URL for PUT request
 #' @param the_body body of PUT request
@@ -200,7 +200,7 @@ gdrive_PUT <- function(url, the_body) {
 
 #' Make GET request to Google Drive API
 #'
-#' Used in download_ss()
+#' Used in gs_download()
 #'
 #' @param url URL for GET request
 #' @param ... optional; further named parameters, such as \code{query},
