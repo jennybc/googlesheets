@@ -140,7 +140,7 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   }
 
   Sys.sleep(1)
-  ss <- ss %>% register_ss(verbose = FALSE)
+  ss <- ss$sheet_key %>% gs_key(verbose = FALSE)
   invisible(ss)
 }
 

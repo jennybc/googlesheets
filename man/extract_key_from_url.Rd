@@ -16,7 +16,7 @@ Extract sheet key from its browser URL
 \dontrun{
 gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
 gap_key <- extract_key_from_url(gap_url)
-gap_ss <- register_ss(gap_key)
+gap_ss <- gs_key(gap_key)
 gap_ss
 }
 }

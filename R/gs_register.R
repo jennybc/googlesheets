@@ -131,7 +131,7 @@ gs_url <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
   }
 
   x %>%
-    gs_key(lookup, verbose)
+    gs_key(lookup, visibility, verbose)
 
 }
 

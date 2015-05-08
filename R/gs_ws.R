@@ -48,7 +48,7 @@ add_ws <- function(ss, ws_title = "Sheet1",
 
   req <- gsheets_POST(ss$ws_feed, the_body)
 
-  ss_refresh <- ss %>% register_ss(verbose = FALSE)
+  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
   ws_title_exist <- ws_title %in% list_ws(ss_refresh)
 
@@ -106,7 +106,7 @@ delete_ws <- function(ss, ws = 1, verbose = TRUE) {
 
   req <- gsheets_DELETE(this_ws$ws_id)
 
-  ss_refresh <- ss %>% register_ss(verbose = FALSE)
+  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
   ws_title_exist <- this_ws$ws_title %in% list_ws(ss_refresh)
 
@@ -170,7 +170,7 @@ rename_ws <- function(ss, from = 1, to, verbose = TRUE) {
   ## easier to just re-register the spreadsheet
 
   Sys.sleep(1)
-  ss_refresh <- ss %>% register_ss(verbose = FALSE)
+  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
   from_is_gone <- !(from_title %in% list_ws(ss_refresh))
   to_is_there <- to %in% list_ws(ss_refresh)
@@ -252,8 +252,8 @@ resize_ws <- function(ss, ws = 1,
   }
 
   if(success) {
-    ss %>%
-      register_ss(verbose = FALSE) %>%
+    ss$sheet_key %>%
+      gs_key(verbose = FALSE) %>%
       invisible()
   } else{
     NULL

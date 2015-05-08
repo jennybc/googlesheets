@@ -40,7 +40,7 @@ get_ws <- function(ss, ws, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- register_ss(gap_key)
+#' gap_ss <- gs_key(gap_key)
 #' list_ws(gap_ss)
 #' }
 #' @export
@@ -59,7 +59,7 @@ list_ws <- function(ss) {
 #' \dontrun{
 #' gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
 #' gap_key <- extract_key_from_url(gap_url)
-#' gap_ss <- register_ss(gap_key)
+#' gap_ss <- gs_key(gap_key)
 #' gap_ss
 #' }
 #'

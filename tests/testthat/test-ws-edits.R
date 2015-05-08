@@ -25,7 +25,7 @@ test_that("Add a new worksheet", {
 
 test_that("Delete a worksheet by title and index", {
 
-  ss_before <- register_ss(ss)
+  ss_before <- gs_key(ss$sheet_key)
 
   expect_message(ss_after <- delete_ws(ss_before, "Test Sheet"), "deleted")
 
@@ -47,7 +47,7 @@ test_that("Delete a worksheet by title and index", {
 
 test_that("Worksheet is renamed by title and index", {
 
-  ss_before <- register_ss(ss)
+  ss_before <- gs_key(ss$sheet_key)
   ss_after <- rename_ws(ss_before, "shipwrecks", "oops")
 
   expect_is(ss_after, "googlesheet")
@@ -67,7 +67,7 @@ test_that("Worksheet is renamed by title and index", {
 
 test_that("Worksheet is resized by title and index", {
 
-  ss_before <- register_ss(ss)
+  ss_before <- gs_key(ss$sheet_key)
 
   ws_title_pos <- match("for_resizing", ss_before$ws$ws_title)
 

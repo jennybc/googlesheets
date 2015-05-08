@@ -46,7 +46,7 @@ test_that("Single cell can be updated", {
 
 test_that("Cell update can force resize of worksheet", {
 
-  ss <- register_ss(ss)
+  ss <- gs_key(ss$sheet_key)
   ss <- ss %>% resize_ws(ws, 20, 26)
   Sys.sleep(1)
 
@@ -93,7 +93,7 @@ test_that("2-dimensional things can be uploaded", {
 
 test_that("Vectors can be uploaded", {
 
-  ss <- register_ss(ss)
+  ss <- gs_key(ss$sheet_key)
 
   # byrow = FALSE
   ss <- ss %>% edit_cells(ws, LETTERS[1:5], "A8")

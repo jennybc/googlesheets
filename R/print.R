@@ -6,8 +6,7 @@
 #' version, the number of worksheets contained, worksheet titles and extent, and
 #' sheet key.
 #'
-#' @param x googlesheet object returned by \code{register_ss} and other
-#'   \code{googlesheets} functions
+#' @param x \code{\link{googlesheet}} object returned by functions such as \code{\link{gs_title}}, \code{\link{gs_key}}, and friends
 #' @param ... potential further arguments (required for Method/Generic reasons)
 #'
 #' @examples

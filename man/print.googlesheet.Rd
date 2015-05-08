@@ -7,8 +7,7 @@
 \method{print}{googlesheet}(x, ...)
 }
 \arguments{
-\item{x}{googlesheet object returned by \code{register_ss} and other
-\code{googlesheets} functions}
+\item{x}{\code{\link{googlesheet}} object returned by functions such as \code{\link{gs_title}}, \code{\link{gs_key}}, and friends}
 
 \item{...}{potential further arguments (required for Method/Generic reasons)}
 }

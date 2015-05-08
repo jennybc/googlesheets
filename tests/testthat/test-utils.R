@@ -1,6 +1,6 @@
 context("utility functions")
 
-ss <- register_ss(ws_feed = gap_ws_feed)
+ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE, verbose = FALSE)
 
 test_that("We can get list of worksheets in a spreadsheet", {
 

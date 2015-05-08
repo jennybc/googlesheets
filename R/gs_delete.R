@@ -97,13 +97,13 @@ gs_grepdel <- function(regex, ..., verbose = TRUE) {
 
   stopifnot(is.character(regex))
 
-  delete_me <- gs_ls(regex, ..., verbose = TRUE)
+  delete_me <- gs_ls(regex, ..., verbose = verbose)
 
   if(is.null(delete_me)) {
     invisible(NULL)
   } else {
     lapply(delete_me$sheet_key, function(x) {
-      gs_delete(gs_key(x, verbose = TRUE), verbose = TRUE)
+      gs_delete(gs_key(x, verbose = verbose), verbose = verbose)
     }) %>%
       unlist()
   }

@@ -41,7 +41,7 @@ test_that("Old Sheets can be copied and deleted", {
   ## it's been "helpfully" converted to a new sheet by google AGAIN :(
   check_old_sheet()
 
-  ss <- register_ss(old_title)
+  ss <- gs_title(old_title)
 
   my_copy <- p_("test-old-sheet-copy")
   expect_message(ss_copy <- ss %>% gs_copy(to = my_copy), "Successful copy!")

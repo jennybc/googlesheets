@@ -25,7 +25,7 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
             req$headers[["content-type"]], fixed = TRUE)) {
 
     # DIAGNOSTIC EXPERIMENT: If I always call gs_ls() here, which seems to
-    # trigger token refresh more reliably when needed (vs register_ss), does
+    # trigger token refresh more reliably when needed (vs registration), does
     # this problem go away? If so, I'll put that info to good use with a less
     # stupid fix.
     if(grepl("public", url)) {

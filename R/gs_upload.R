@@ -68,7 +68,7 @@ upload_ss <- function(file, sheet_title = NULL, verbose = TRUE) {
   }
 
   new_sheet_key %>%
-    register_ss(verbose = FALSE) %>%
+    gs_key(verbose = FALSE) %>%
     invisible()
 
 }
