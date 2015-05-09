@@ -14,7 +14,7 @@ gdrive_GET(url, ...)
   parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
-Used in download_ss()
+Used in gs_download()
 }
 \keyword{internal}
 

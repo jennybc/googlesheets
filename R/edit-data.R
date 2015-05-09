@@ -27,15 +27,15 @@
 #'
 #' @examples
 #' \dontrun{
-#' yo <- new_ss("yo")
+#' yo <- gs_new("yo")
 #' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
 #' get_via_csv(yo)
 #'
-#' yo <- add_ws(yo, "byrow_FALSE")
+#' yo <- gs_ws_new(yo, "byrow_FALSE")
 #' yo <- edit_cells(yo, ws = "byrow_FALSE", LETTERS[1:5], "A8")
 #' get_via_cf(yo, ws = "byrow_FALSE", min_row = 7) %>% simplify_cf()
 #'
-#' yo <- add_ws(yo, "byrow_TRUE")
+#' yo <- gs_ws_new(yo, "byrow_TRUE")
 #' yo <- edit_cells(yo, ws = "byrow_TRUE", LETTERS[1:5], "A8", byrow = TRUE)
 #' get_via_cf(yo, ws = "byrow_TRUE", min_row = 7) %>% simplify_cf()
 #' }
@@ -46,7 +46,7 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                        verbose = TRUE) {
 
   catch_hopeless_input(input)
-  this_ws <- get_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
 
 
   limits <-
@@ -65,10 +65,10 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   if(limits$`max-row` > this_ws$row_extent ||
      limits$`max-col` > this_ws$col_extent) {
     ss <- ss %>%
-      resize_ws(this_ws$ws_title,
-                max(this_ws$row_extent, limits$`max-row`),
-                max(this_ws$col_extent, limits$`max-col`),
-                verbose)
+      gs_ws_resize(this_ws$ws_title,
+                   max(this_ws$row_extent, limits$`max-row`),
+                   max(this_ws$col_extent, limits$`max-col`),
+                   verbose)
     Sys.sleep(1)
 
   }
@@ -136,11 +136,12 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 
     Sys.sleep(1)
     ss <- ss %>%
-      resize_ws(this_ws$ws_title, limits$`max-row`, limits$`max-col`, verbose)
+      gs_ws_resize(this_ws$ws_title, limits$`max-row`,
+                   limits$`max-col`, verbose)
   }
 
   Sys.sleep(1)
-  ss <- ss %>% register_ss(verbose = FALSE)
+  ss <- ss$sheet_key %>% gs_key(verbose = FALSE)
   invisible(ss)
 }
 

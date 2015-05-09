@@ -1,20 +1,20 @@
 #' Create GET request
-#' 
+#'
 #' Make GET request to Google Sheets API.
-#' 
+#'
 #' @param url the url of the page to retrieve
-#' @param to_xml whether to convert response contents to xml_doc() or leave as 
+#' @param to_xml whether to convert response contents to xml_doc() or leave as
 #'    character string
-#' @param ... optional; further named parameters, such as \code{query}, 
-#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
+#' @param ... optional; further named parameters, such as \code{query},
+#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
 #'   parameters will be combined with \code{\link[httr]{config}}.
 #'
 #' @keywords internal
 gsheets_GET <- function(url, to_xml = TRUE, ...) {
-  
+
   if(grepl("public", url)) {
     req <- httr::GET(url, ...)
-  } else { 
+  } else {
     req <- httr::GET(url, get_google_token(), ...)
   }
   httr::stop_for_status(req)
@@ -23,14 +23,14 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
   ## Bad Request" ... can we confidently say what the problem is?
   if(!grepl("application/atom+xml; charset=UTF-8",
             req$headers[["content-type"]], fixed = TRUE)) {
-    
-    # DIAGNOSTIC EXPERIMENT: If I always call list_sheets() here, which seems to
-    # trigger token refresh more reliably when needed (vs register_ss), does 
+
+    # DIAGNOSTIC EXPERIMENT: If I always call gs_ls() here, which seems to
+    # trigger token refresh more reliably when needed (vs registration), does
     # this problem go away? If so, I'll put that info to good use with a less
     # stupid fix.
     if(grepl("public", url)) {
       req <- httr::GET(url, ...)
-    } else { 
+    } else {
       req <- httr::GET(url, get_google_token(), ...)
     }
     httr::stop_for_status(req)
@@ -42,19 +42,19 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
                    req$headers[["content-type"]]))
     }
   }
-  # usually when the content-type is unexpectedly binary, it means we need to 
+  # usually when the content-type is unexpectedly binary, it means we need to
   # refresh the token ... we should have a better message or do something
   # constructive when this happens ... sort of waiting til I can review all the
   # auth stuff
 
-  req$content <- httr::content(req, as = "text", encoding = "UTF-8") 
-  
-  # This is only FALSE when calling modify_ws() where we are using regex 
+  req$content <- httr::content(req, as = "text", encoding = "UTF-8")
+
+  # This is only FALSE when calling gs_ws_modify() where we are using regex
   # substitution, waiting for xml2 to support changing xml_doc()
-  if(to_xml) { 
+  if(to_xml) {
     req$content <- req$content %>% xml2::read_xml()
   }
-  
+
   req
 
 }
@@ -65,34 +65,34 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
 #'
 #' @param url the url of the page to retrieve
 #' @param the_body body of POST request
-#' 
+#'
 #' @keywords internal
 gsheets_POST <- function(url, the_body) {
-  
+
   token <- get_google_token()
-  
+
   if(is.null(token)) {
     stop("Must be authorized user in order to perform request")
   } else {
     # send xml to sheets api
     content_type <- "application/atom+xml"
-    
-    req <- 
-      httr::POST(url, 
-                 config = c(token, 
+
+    req <-
+      httr::POST(url,
+                 config = c(token,
                             httr::add_headers("Content-Type" = content_type)),
                  body = the_body)
     req$content <- httr::content(req, as = "text", encoding = "UTF-8")
-   
+
     if(!is.null(req$content)) {
-      ## known example of this: POST request triggered by add_ws()
+      ## known example of this: POST request triggered by gs_ws_new()
       req$content <- req$content %>% xml2::read_xml()
     }
-    
+
     httr::stop_for_status(req)
-    
+
     req
-    
+
   }
 }
 
@@ -101,7 +101,7 @@ gsheets_POST <- function(url, the_body) {
 #' Make DELETE request to Google Sheets API.
 #'
 #' @param url the url of the page to retrieve
-#' 
+#'
 #' @keywords internal
 gsheets_DELETE <- function(url) {
   req <- httr::DELETE(url, get_google_token())
@@ -120,50 +120,50 @@ gsheets_DELETE <- function(url) {
 #'
 #' @keywords internal
 gsheets_PUT <- function(url, the_body) {
-  
+
   token <- get_google_token()
-  
+
   if(is.null(token)) {
     stop("Must be authorized in order to perform request")
   }
-  
+
   req <-
-    httr::PUT(url, 
+    httr::PUT(url,
               config = c(token,
-                         httr::add_headers("Content-Type" = "application/atom+xml")), 
+                         httr::add_headers("Content-Type" = "application/atom+xml")),
               body = the_body)
-  
+
   httr::stop_for_status(req)
-  
+
   req$content <- httr::content(req, type = "text/xml")
   if(!is.null(req$content)) {
-    ## known example of this: POST request triggered by add_ws()
+    ## known example of this: POST request triggered by gs_ws_new()
     req$content <- XML::xmlToList(req$content)
-  }  
-  
+  }
+
   req
-  
+
 }
 
 
 #' Make POST request to Google Drive API
 #'
-#' Used in new_ss(), delete_ss(), copy_ss()
-#' 
+#' Used in gs_new(), gs_delete(), gs_copy()
+#'
 #' @param url the url of the page to retrieve
-#' @param ... optional; further named parameters, such as \code{query}, 
-#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed 
+#' @param ... optional; further named parameters, such as \code{query},
+#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
 #'   parameters will be combined with \code{\link[httr]{config}}.
-#' 
+#'
 #' @keywords internal
 gdrive_POST <- function(url, ...) {
-  
+
   token <- get_google_token()
-  
+
   if(is.null(token)) {
     stop("Must be authorized user in order to perform request")
   } else {
-    
+
     req <- httr::POST(url, config = token, encode = "json", ...)
     httr::stop_for_status(req)
     req
@@ -172,50 +172,50 @@ gdrive_POST <- function(url, ...) {
 
 #' Make PUT request to Google Drive API
 #'
-#' Used in upload_ss() 
+#' Used in gs_upload()
 #'
 #' @inheritParams gdrive_POST
-#' 
+#'
 #' @keywords internal
 gdrive_PUT <- function(url, ...) {
-  
+
   token <- get_google_token()
-  
+
   if(is.null(token)) {
     stop("Must be authorized in order to perform request")
   } else {
-    
+
     req <- httr::PUT(url, config = token, ...)
   }
-  
+
   httr::stop_for_status(req)
-  
+
   req
-  
+
 }
 
 
 #' Make GET request to Google Drive API
 #'
-#' Used in download_ss() 
+#' Used in gs_download()
 #'
 #' @inheritParams gdrive_POST
-#'   
+#'
 #' @keywords internal
 gdrive_GET <- function(url, ...) {
-  
+
   token <- get_google_token()
-  
+
   if(is.null(token)) {
     stop("Must be authorized in order to perform request")
   } else {
     req <- httr::GET(url, config = token, ...)
   }
-  
+
   httr::stop_for_status(req)
-  
+
   req$content <- httr::content(req)
-  
+
   req
-  
+
 }

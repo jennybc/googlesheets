@@ -14,7 +14,7 @@ gdrive_PUT(url, ...)
   parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
-Used in upload_ss()
+Used in gs_upload()
 }
 \keyword{internal}
 

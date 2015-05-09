@@ -1,65 +1,16 @@
-#' Retrieve a worksheet-describing list from a googlesheet
+#' Extract sheet key from a URL
 #'
-#' From a googlesheet, retrieve a list (actually a row of a data.frame) giving
-#' everything we know about a specific worksheet.
+#' Extract a sheet's unique key from a wide variety of URLs, i.e. a browser URL
+#' for both old and new Sheets, the "worksheets feed", and other links returned
+#' by the Sheets API.
 #'
-#' @inheritParams get_via_lf
-#' @param verbose logical, indicating whether to give a message re: title of the
-#'   worksheet being accessed
-#'
-#' @keywords internal
-get_ws <- function(ss, ws, verbose = TRUE) {
-
-  stopifnot(inherits(ss, "googlesheet"),
-            length(ws) == 1L,
-            is.character(ws) || (is.numeric(ws) && ws > 0))
-
-  if(is.character(ws)) {
-    index <- match(ws, ss$ws$ws_title)
-    if(is.na(index)) {
-      stop(sprintf("Worksheet %s not found.", ws))
-    } else {
-      ws <- index %>% as.integer()
-    }
-  }
-  if(ws > ss$n_ws) {
-    stop(sprintf("Spreadsheet only contains %d worksheets.", ss$n_ws))
-  }
-  if(verbose) {
-    message(sprintf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws]))
-  }
-  ss$ws[ws, ]
-}
-
-#' List the worksheets in a googlesheet
-#'
-#' Retrieve the titles of all the worksheets in a gpreadsheet.
-#'
-#' @inheritParams get_via_lf
-#'
-#' @examples
-#' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- register_ss(gap_key)
-#' list_ws(gap_ss)
-#' }
-#' @export
-list_ws <- function(ss) {
-
-  stopifnot(inherits(ss, "googlesheet"))
-
-  ss$ws$ws_title
-}
-
-#' Extract sheet key from its browser URL
-#'
-#' @param url URL seen in the browser when visiting the sheet
+#' @param url character; a URL associated with a Google Sheet
 #'
 #' @examples
 #' \dontrun{
 #' gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
 #' gap_key <- extract_key_from_url(gap_url)
-#' gap_ss <- register_ss(gap_key)
+#' gap_ss <- gs_key(gap_key)
 #' gap_ss
 #' }
 #'
