@@ -24,7 +24,7 @@
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
 #' str(oceania_csv)
 #' oceania_csv
@@ -34,14 +34,14 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- get_ws(ss, ws, verbose)
+  this_ws <- gs_ws(ss, ws, verbose)
 
   if(is.null(this_ws$exportcsv)) {
     stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
                "not offer the API access required by this function.",
                "Consider converting it from an old Sheet to a new Sheet.",
                "Or use another data consumption function, such as get_via_lf()",
-               "or get_via_cf(). Or use download_ss() to export it to a local",
+               "or get_via_cf(). Or use gs_download() to export it to a local",
                "file and then read it into R."))
   }
 
@@ -94,7 +94,7 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' oceania_lf <- get_via_lf(gap_ss, ws = "Oceania")
 #' str(oceania_lf)
 #' oceania_lf
@@ -105,7 +105,7 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
-  this_ws <- get_ws(ss, ws, verbose)
+  this_ws <- gs_ws(ss, ws, verbose)
   req <- gsheets_GET(this_ws$listfeed)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
@@ -178,7 +178,7 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' get_via_cf(gap_ss, "Asia", max_row = 4)
 #' reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
 #' reshape_cf(get_via_cf(gap_ss, "Asia",
@@ -195,7 +195,7 @@ get_via_cf <-
 
     stopifnot(ss %>% inherits("googlesheet"))
 
-    this_ws <- get_ws(ss, ws, verbose)
+    this_ws <- gs_ws(ss, ws, verbose)
 
     if(is.null(limits)) {
       limits <- list("min-row" = min_row, "max-row" = max_row,
@@ -303,7 +303,7 @@ get_via_cf <-
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' get_row(gap_ss, "Europe", row = 1)
 #' simplify_cf(get_row(gap_ss, "Europe", row = 1))
 #' }
@@ -329,7 +329,7 @@ get_row <- function(ss, ws = 1, row, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' get_col(gap_ss, "Oceania", col = 1:2)
 #' reshape_cf(get_col(gap_ss, "Oceania", col = 1:2))
 #' }
@@ -356,7 +356,7 @@ get_col <- function(ss, ws = 1, col, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' get_cells(gap_ss, "Europe", range = "B3:D7")
 #' simplify_cf(get_cells(gap_ss, "Europe", range = "A1:F1"))
 #' }
@@ -382,7 +382,7 @@ get_cells <- function(ss, ws = 1, range, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 #' get_via_cf(gap_ss, "Asia", max_row = 4)
 #' reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
 #' }
@@ -428,7 +428,7 @@ reshape_cf <- function(x, header = TRUE) {
     dplyr::select_(~ row, ~ col, ~ cell_text) %>%
     tidyr::spread_("col", "cell_text", convert = TRUE) %>%
     dplyr::select_(~ -row) %>%
-    setNames(var_names)
+    stats::setNames(var_names)
 }
 
 #' Simplify data from the cell feed
@@ -460,7 +460,7 @@ reshape_cf <- function(x, header = TRUE) {
 #' @examples
 #' \dontrun{
 #' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- register_ss(gap_key)
+#' gap_ss <- gs_key(gap_key)
 #' get_row(gap_ss, row = 1)
 #' simplify_cf(get_row(gap_ss, row = 1))
 #' simplify_cf(get_row(gap_ss, row = 1), notation = "R1C1")

@@ -17,7 +17,7 @@
 #'   Google account.
 #'
 #' @export
-authorize <- function(new_user = FALSE) {
+gs_auth <- function(new_user = FALSE) {
 
   if(new_user && file.exists(".httr-oauth")) {
     message("Removing old credentials ...")
@@ -58,7 +58,7 @@ authorize <- function(new_user = FALSE) {
 get_google_token <- function() {
   
   if(is.null(.state$token)) {
-    authorize()
+    gs_auth()
   }
   
   httr::config(token = .state$token)

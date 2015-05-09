@@ -1,7 +1,8 @@
 context("edit cells")
 
 pts_copy <- p_("pts-copy")
-ss <- copy_ss(key = pts_key, to = pts_copy, verbose = FALSE)
+ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
+              to = pts_copy, verbose = FALSE)
 ws <- "for_updating"
 
 test_that("Input converts to character vector (or not)", {
@@ -45,18 +46,18 @@ test_that("Single cell can be updated", {
 
 test_that("Cell update can force resize of worksheet", {
 
-  ss <- register_ss(ss)
-  ss <- ss %>% resize_ws(ws, 20, 26)
+  ss <- gs_key(ss$sheet_key)
+  ss <- ss %>% gs_ws_resize(ws, 20, 26)
   Sys.sleep(1)
 
   # force worksheet extent to be increased
   expect_message(ss <- edit_cells(ss, ws, "Way out there!", "R1C30"),
                  "dimensions changed")
   Sys.sleep(1)
-  expect_equal(ss %>% get_ws(ws) %>% `[[`("col_extent"), 30)
+  expect_equal(ss %>% gs_ws(ws) %>% `[[`("col_extent"), 30)
 
   # clean up
-  ss <- ss %>% resize_ws(ws, 22, 26)
+  ss <- ss %>% gs_ws_resize(ws, 22, 26)
 })
 
 iris_ish <- iris %>% head(3) %>% dplyr::as.tbl()
@@ -92,7 +93,7 @@ test_that("2-dimensional things can be uploaded", {
 
 test_that("Vectors can be uploaded", {
 
-  ss <- register_ss(ss)
+  ss <- gs_key(ss$sheet_key)
 
   # byrow = FALSE
   ss <- ss %>% edit_cells(ws, LETTERS[1:5], "A8")
@@ -117,4 +118,9 @@ test_that("We can trim worksheet extent to fit uploaded data", {
 
 })
 
-delete_ss(regex = TEST, verbose = FALSE)
+delete_me <- gs_ls(regex = TEST, verbose = FALSE)
+if(!is.null(delete_me)) {
+  lapply(delete_me$sheet_key, function(x) {
+    gs_delete(gs_key(x, verbose = FALSE), verbose = FALSE)
+  })
+}

@@ -1,6 +1,6 @@
 context("consume tricky data")
 
-ss <- register_ss(key = pts_key, visibility = "public")
+ss <- gs_key(pts_key, lookup = FALSE, visibility = "public", verbose = FALSE)
 
 test_that("We can handle embedded empty cells via csv", {
 

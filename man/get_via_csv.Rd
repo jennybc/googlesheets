@@ -37,7 +37,7 @@ data, this is the fastest way to get it.
 \examples{
 \dontrun{
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
+gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
 oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
 str(oceania_csv)
 oceania_csv

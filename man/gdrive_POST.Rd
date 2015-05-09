@@ -7,14 +7,14 @@
 gdrive_POST(url, ...)
 }
 \arguments{
-\item{url}{URL for POST request}
+\item{url}{the url of the page to retrieve}
 
 \item{...}{optional; further named parameters, such as \code{query},
   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
   parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
-Used in new_ss(), delete_ss(), copy_ss()
+Used in gs_new(), gs_delete(), gs_copy()
 }
 \keyword{internal}
 

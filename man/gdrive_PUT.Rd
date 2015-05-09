@@ -4,15 +4,17 @@
 \alias{gdrive_PUT}
 \title{Make PUT request to Google Drive API}
 \usage{
-gdrive_PUT(url, the_body)
+gdrive_PUT(url, ...)
 }
 \arguments{
-\item{url}{URL for PUT request}
+\item{url}{the url of the page to retrieve}
 
-\item{the_body}{body of PUT request}
+\item{...}{optional; further named parameters, such as \code{query},
+  \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
+  parameters will be combined with \code{\link[httr]{config}}.}
 }
 \description{
-Used in upload_ss()
+Used in gs_upload()
 }
 \keyword{internal}
 
