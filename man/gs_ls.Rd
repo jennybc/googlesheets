@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_ls.R
 \name{gs_ls}
 \alias{gs_ls}
-\title{List spreadsheets à la Google Sheets home screen}
+\title{List spreadsheets a la Google Sheets home screen}
 \usage{
 gs_ls(regex = NULL, ..., verbose = TRUE)
 }
