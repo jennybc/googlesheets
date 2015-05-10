@@ -1,5 +1,4 @@
-google_token <- readRDS("googlesheets_token.rds")
-.state$token <- google_token
+gs_auth(token = "googlesheets_token.rds")
 
 ## "RAIN DANCE"
 ## RELIABLY FORCES AUTO-REFRESH OF STALE OAUTH TOKEN
