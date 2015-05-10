@@ -56,34 +56,34 @@ gs_auth <- function(new_user = FALSE) {
 #'
 #' @keywords internal
 get_google_token <- function() {
-  
+
   if(is.null(.state$token)) {
     gs_auth()
   }
-  
+
   httr::config(token = .state$token)
 }
 
-#' Retrieve User data 
+#' Retrieve User data
 #'
-#' Store user name, email address and datetime of request in environment 
+#' Store user name, email address and datetime of request in environment
 #' variable .state$user
 #'
 #' @keywords internal
 get_user_info <- function() {
   req <- gdrive_GET("https://www.googleapis.com/drive/v2/about")
-  
+
   .state$user$name <- req$content$name
   .state$user$emailAddress <- req$content$user$emailAddress
-  
-  .state$user$datetime <- req$date 
+
+  .state$user$datetime <- req$date
 }
 
-#' Print information about authorized user 
-#' 
-#' Display information about a user that has been authorized via 
-#' \code{authorize}: the name of the user, the Google account of the user, the 
-#' date-time of authorization for the current session, date-time of access 
+#' Print information about authorized user
+#'
+#' Display information about a user that has been authorized via
+#' \code{authorize}: the name of the user, the Google account of the user, the
+#' date-time of authorization for the current session, date-time of access
 #' token expiry, and the validity of the current access token.
 #'
 #' @export
@@ -94,10 +94,10 @@ get_user_info <- function() {
 #'
 #' @export
 gs_user <- function() {
-  
+
   if(is.null(.state$token)) {
     message("Credentials were not found in this session.")
-    
+
     if(file.exists(".httr-oauth")) {
       stop(paste(".httr-oauth found in the current working directory.",
                  "Run authorize() to use the",
@@ -106,19 +106,19 @@ gs_user <- function() {
       stop(paste(".httr-oauth not found in the current working directory.",
                  "Run authorize() to obtain credentials."))
     }
-    
+
   } else {
-    
+
     token <- .state$token
     token_ok <- token$validate()
-    
+
     sprintf("User: %s\n", .state$user$name) %>% cat()
     sprintf("Google account: %s\n", .state$user$emailAddress) %>% cat()
     # time when authorize() is run to store token in env
-    sprintf("Date-time of session authorization: %s\n", 
+    sprintf("Date-time of session authorization: %s\n",
             .state$user$datetime) %>% cat()
-    sprintf("Date-time of access token expiry: %s\n", 
-            file.mtime(".httr-oauth") + 3600) %>% cat()
+    sprintf("Date-time of access token expiry: %s\n",
+            file.info(".httr-oauth")$mtime + 3600) %>% cat()
     if(token_ok) {
       message("Access token is valid.")
     } else {
