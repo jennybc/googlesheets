@@ -79,7 +79,7 @@ If you insist, [check out the current state of the vignette](http://htmlpreview.
 
 ```{r load-package}
 library("googlesheets")
-suppressMessages(library("dplyr"))
+suppressPackageStartupMessages(library("dplyr"))
 ```
 
 ### Function naming convention
@@ -308,6 +308,13 @@ gs_auth()
 ```
  
 Use `gs_auth(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
+
+The function `gs_user()` will print and return some information about the current authenticated user and session.
+
+```{r gs_user}
+user_session_info <- gs_user()
+user_session_info
+```
 
 ### "Old" Google Sheets
 
