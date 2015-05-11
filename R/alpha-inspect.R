@@ -1,8 +1,11 @@
 #' Visual overview of populated cells
 #'
-#' This function plots a data frame and is much like a visual representation of
+#' \emph{This function is still experimental. Expect it to change!} This
+#' function plots a data frame and is much like a visual representation of
 #' \code{str} a data frame. You can inspect your data for populated and empty
-#' cells. Empty cells (ie. \code{NA}'s) are represented by no colour fill.
+#' cells. Empty cells (ie. \code{NA}'s) are represented by no colour fill. The
+#' purpose is to get oriented to sheets that contain more than one data
+#' rectangle.
 #'
 #'
 #' @param x data.frame or tbl_df
@@ -12,10 +15,11 @@
 #' \dontrun{
 #' gs_inspect(iris)
 #'
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- copy_ss(key = gap_key, to = "gap_copy")
-#' oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
-#' gs_inspect(oceania_csv)
+#' # data recorded from a game of ultimate frisbee
+#' ulti_key <- "1223dpf3vnjZUYUnCM8rBSig3JlGrAu1Qu6VmPvdEn4M"
+#' ulti_ss <- ulti_key %>% gs_key()
+#' ulti_csv <- ulti_ss %>% get_col(ws = 2, col = 1:6)  %>% reshape_cf()
+#' gs_inspect(ulti_csv)
 #'
 #' }
 #' @export
