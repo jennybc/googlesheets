@@ -89,4 +89,12 @@ test_that("We get correct number and titles of worksheets", {
   expect_true(all(c("Asia", "Africa", "Americas", "Europe", "Oceania") %in%
                     ss$ws$ws_title))
 
-  })
+})
+
+test_that("Print method for googlesheet works", {
+
+  ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)
+  expect_output(print(ss), paste("Spreadsheet title:", gap_title))
+  expect_output(print(ss), paste("Key:", gap_key))
+
+})
