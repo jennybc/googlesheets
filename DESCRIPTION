@@ -1,6 +1,6 @@
 Package: googlesheets
 Title: Manage your Google spreadsheets in R
-Version: 0.1.1
+Version: 0.0.0.9001
 Description: R API for Google Spreadsheets
 Authors@R: c(
     person("Jennifer", "Bryan", , "jenny@stat.ubc.ca", c("aut", "cre")),

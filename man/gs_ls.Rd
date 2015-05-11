@@ -2,13 +2,23 @@
 % Please edit documentation in R/gs_ls.R
 \name{gs_ls}
 \alias{gs_ls}
-\title{List available spreadsheets}
+\title{List spreadsheets a la Google Sheets home screen}
 \usage{
-gs_ls()
+gs_ls(regex = NULL, ..., verbose = TRUE)
+}
+\arguments{
+\item{regex}{character; a regular expression; if non-\code{NULL} only sheets
+whose titles match will be listed}
+
+\item{...}{optional arguments to be passed to \code{\link{grep}} when
+matching \code{regex} to sheet titles}
+
+\item{verbose}{logical; do you want informative message?}
 }
 \value{
 a \code{googlesheet_ls} object, which is a
-  \code{\link[dplyr]{tbl_df}} with one row per sheet
+  \code{\link[dplyr]{tbl_df}} with one row per sheet (we use a custom class
+  only to control how this object is printed)
 }
 \description{
 Lists spreadsheets that the user would see in the Google Sheets home screen:
@@ -20,25 +30,27 @@ feed} of the Google Sheets API. Since this is non-public user data, use of
 }
 \details{
 This listing gives a \emph{partial} view of the sheets available for access
-(why just partial? see below). For these sheets, get sheet title, sheet key,
-owner, user's permission, date-time of last update, version (old vs new
-sheet?), various links, and an alternate key (only relevant to old sheets).
+(why just partial? see below). For these sheets, we retrieve sheet title,
+sheet key, author, user's permission, date-time of last update, version (old
+vs new sheet?), various links, and an alternate key (only relevant to old
+sheets).
 
 The resulting table provides a map between readily available information,
 such as sheet title, and more obscure information you might use in scripts,
-such as the sheet key. This sort of "table lookup" is implemented in the
-helper function \code{\link{identify_ss}}.
+such as the sheet key. This sort of "table lookup" is exploited in the
+functions \code{\link{gs_title}}, \code{\link{gs_key}}, \code{\link{gs_url}},
+and \code{\link{gs_ws_feed}}, which register a sheet based on various forms
+of user input.
 
-Which sheets show up here? Certainly those owned by the user. But also a
-subset of the sheets owned by others but visible to the user. We have yet to
-find explicit Google documentation on this matter. Anecdotally, sheets owned
-by a third party but for which the user has read access seem to appear in
-this listing if the user has visited them in the browser. This is an
+Which sheets show up in this table? Certainly those owned by the user. But
+also a subset of the sheets owned by others but visible to the user. We have
+yet to find explicit Google documentation on this matter. Anecdotally, sheets
+owned by a third party but for which the user has read access seem to appear
+in this listing if the user has visited them in the browser. This is an
 important point for usability because a sheet can be summoned by title
 instead of key \emph{only} if it appears in this listing. For shared sheets
-that may not appear in this listing, a more robust workflow is to extract the
-key from the browser URL via \code{\link{extract_key_from_url}} and
-explicitly specify the sheet in \code{googlesheets} functions by key.
+that may not appear in this listing, a more robust workflow is to specify the
+sheet via its browser URL or unique sheet key.
 }
 \examples{
 \dontrun{

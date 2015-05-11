@@ -4,7 +4,7 @@ test_that("Ranges can be converted to a cell limit list", {
 
   jfun <- function(x) x %>%
     as.list() %>%
-    setNames(c("min-row", "max-row", "min-col", "max-col"))
+    stats::setNames(c("min-row", "max-row", "min-col", "max-col"))
 
   expect_equal("C1" %>% cellranger::as.cell_limits() %>% limit_list(),
                jfun(c(1 , 1, 3, 3)))

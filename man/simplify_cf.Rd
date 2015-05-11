@@ -43,7 +43,7 @@ present in the data from the cell feed, i.e. if the original call to
 \examples{
 \dontrun{
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- register_ss(gap_key)
+gap_ss <- gs_key(gap_key)
 get_row(gap_ss, row = 1)
 simplify_cf(get_row(gap_ss, row = 1))
 simplify_cf(get_row(gap_ss, row = 1), notation = "R1C1")

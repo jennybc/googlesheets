@@ -14,7 +14,7 @@ a ggplot object
 }
 \description{
 This function plots a data frame and is much like a visual representation of
-\code{str} on a data frame. You can inspect your data for populated and empty
+\code{str} a data frame. You can inspect your data for populated and empty
 cells. Empty cells (ie. \code{NA}'s) are represented by no colour fill.
 }
 \examples{

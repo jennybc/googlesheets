@@ -43,72 +43,94 @@ What other ideas do you have?
 devtools::install_github("jennybc/googlesheets")
 ```
 
+*We plan to submit to CRAN in late May or early June 2015, so feedback on functionality and usability is especially valuable to us now!*
+
 ### Take a look at the vignette
 
-This README is arguably as or more useful as the vignette and both are still under development. But feel free to [check out the current state of the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html).
+No, actually, **don't**. This README is much more current than the vignette, though that will have to change soon!
+
+If you insist, [check out the current state of the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html).
 
 ### Load googlesheets
 
-`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of `dplyr`. The examples here use both, but we'll soon develop a vignette that shows usage with plain vanilla R. `googlesheets` uses `dplyr` internally but does not require the user to do so.
+`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator availble in your own work by loading [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html) or [`magrittr`](http://cran.r-project.org/web/packages/magrittr/index.html).
 
 ``` r
 library("googlesheets")
-suppressMessages(library("dplyr"))
+suppressPackageStartupMessages(library("dplyr"))
 ```
+
+### Function naming convention
+
+*implementation not yet 100% complete ... but we'll get there soon*
+
+All functions start with `gs_`, which plays nicely with tab completion in RStudio, for example. If the function has something to do with worksheets or tabs within a spreadsheet, it will start with `gs_ws_`.
 
 ### See some spreadsheets you can access
 
-The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, especially if you have clicked on a link shared by the owner. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
 ``` r
 (my_sheets <- gs_ls())
-#> Source: local data frame [30 x 10]
+#> Source: local data frame [35 x 10]
 #> 
-#>                 sheet_title         owner perm version        last_updated
-#> 1               gas_mileage      woo.kara    r     new 2015-05-01 23:37:42
-#> 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-01 21:13:59
-#> 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-01 18:54:05
-#> 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-02 00:38:33
-#> 5        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
-#> 6    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
-#> 7      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
-#> 8  1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
-#> 9    gs-test-testing helper      gspreadr   rw     new 2015-04-25 02:31:42
-#> 10        test-gs-old-sheet  rpackagetest    r     new 2015-04-24 21:46:56
+#>                 sheet_title        author perm version             updated
+#> 1  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-10 22:49:06
+#> 2   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-10 22:33:35
+#> 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-10 21:17:00
+#> 4  test-gs-jenny-bbed27c8b…      gspreadr   rw     new 2015-05-09 06:01:38
+#> 5     additional-roles-test         jenny    r     new 2015-05-08 23:52:34
+#> 6       test-gs-permissions      gspreadr   rw     new 2015-05-08 23:08:59
+#> 7               gas_mileage      woo.kara    r     new 2015-05-04 01:14:13
+#> 8           #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
+#> 9        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
+#> 10   test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
 #> ..                      ...           ...  ...     ...                 ...
 #> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 #>   (chr), alt_key (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 30
+#> Observations: 35
 #> Variables:
-#> $ sheet_title  (chr) "gas_mileage", "Ari's Anchor Text Scraper", "#rhi...
-#> $ owner        (chr) "woo.kara", "anahmani", "m.hawksey", "m.hawksey",...
-#> $ perm         (chr) "r", "r", "r", "r", "rw", "r", "rw", "rw", "rw", ...
-#> $ version      (chr) "new", "old", "new", "new", "old", "new", "new", ...
-#> $ last_updated (time) 2015-05-01 23:37:42, 2015-05-01 21:13:59, 2015-0...
-#> $ sheet_key    (chr) "1WH65aJjlmhOWYMFkhDuKPcRa5mloOtsTCKxrF7erHgI", "...
-#> $ ws_feed      (chr) "https://spreadsheets.google.com/feeds/worksheets...
-#> $ alternate    (chr) "https://docs.google.com/spreadsheets/d/1WH65aJjl...
-#> $ self         (chr) "https://spreadsheets.google.com/feeds/spreadshee...
-#> $ alt_key      (chr) NA, "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc...
+#> $ sheet_title (chr) "Ari's Anchor Text Scraper", "EasyTweetSheet - Sha...
+#> $ author      (chr) "anahmani", "m.hawksey", "m.hawksey", "gspreadr", ...
+#> $ perm        (chr) "r", "r", "r", "rw", "r", "rw", "r", "r", "rw", "r...
+#> $ version     (chr) "old", "new", "new", "new", "new", "new", "new", "...
+#> $ updated     (time) 2015-05-10 22:49:06, 2015-05-10 22:33:35, 2015-05...
+#> $ sheet_key   (chr) "tQKSYVRwBXssUfYEaMdt-aw", "14mAbIi1UyZtJTDuIa7iMb...
+#> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
+#> $ alternate   (chr) "https://spreadsheets.google.com/ccc?key=0Av8m6X4c...
+#> $ self        (chr) "https://spreadsheets.google.com/feeds/spreadsheet...
+#> $ alt_key     (chr) "0Av8m6X4cYe9hdFFLU1lWUndCWHNzVWZZRWFNZHQtYXc", NA...
 ```
+
+### Get a Google spreadsheet to practice with
+
+If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+
+``` r
+gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
+gs_copy(gs_key(gap_key), to = "Gapminder")
+```
+
+If that seems to have worked, go check that you see a sheet named "Gapminder" listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
 
 ### Register a spreadsheet
 
-If you plan to consume data from a sheet or edit it, you must first register it. Basically this is where `googlesheets` makes a note of important info about the sheet that's needed to access via the Sheets API. Once registered, you can print the result to get some basic info about the sheet.
+If you plan to consume data from a sheet or edit it, you must first **register** it. This is how `googlesheets` records important info about the sheet that is required downstream by the Google Sheets or Google Drive APIs. Once registered, you can print the result to get some basic info about the sheet.
+
+`googlesheets` provides several registration functions. Specifying the sheet by title? Use `gs_title()`. By key? Use `gs_key()`. You get the idea.
 
 ``` r
-# Hey let's look at the Gapminder data
-gap <- register_ss("Gapminder")
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gap <- gs_title("Gapminder")
+#> Sheet successfully identifed: "Gapminder"
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:03 GMT
+#>   Date of googlesheets registration: 2015-05-10 23:30:04 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -123,47 +145,37 @@ gap
 # Need to access a sheet you do not own?
 # Access it by key if you know it!
 gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap <- gap_key %>% register_ss
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gap <- gap_key %>% gs_key
+#> Authentication will be used.
+#> Sheet successfully identifed: "Gapminder"
 
-# googlesheets may be able to determine the key from the browser URL
-# may not work (yet) for old sheets ... open an issue if have problem
+# Have a sharing link?
+# Access it by URL!
 gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-gap <- gap_url %>% register_ss
-#> Identifying info will be processed as a URL.
+gap <- gap_url %>% gs_url
+#> Authentication will be used.
+#> Sheet-identifying info appears to be a browser URL.
 #> googlesheets will attempt to extract sheet key from the URL.
 #> Putative key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> Authentication will be used.
+#> Sheet successfully identifed: "Gapminder"
+# note: registration via URL may not work for "old" sheets
 ```
 
-### Get a Google spreadsheet to practice with
-
-If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
-
-``` r
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-copy_ss(key = gap_key, to = "Gapminder")
-```
-
-If that seems to have worked, go check that you see a sheet named Gapminder listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also try `gs_ls()` again and make sure the Gapminder sheet is listed.
-
-Now register your copy of the Gapminder sheet and you can follow along:
-
-``` r
-gap <- register_ss("Gapminder")
-gap
-```
+These functions return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
 ### Consume data
+
+#### Ignorance is bliss
+
+*coming soon: a wrapper for the functions described below that just gets the data you want, while you remain blissfully ignorant of how we're doing it*
+
+#### Specify the consumption method
 
 There are three ways to consume data from a worksheet within a Google spreadsheet. The order goes from fastest-but-more-limited to slowest-but-most-flexible:
 
 -   `get_via_csv()`: Don't let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the "exportcsv" link. For cases where `get_via_csv()` and `get_via_lf()` both work, we see that `get_via_csv()` is around **50 times faster**. Use this when your data occupies a nice rectangle in the sheet and you're willing to consume all of it. You will get a `tbl_df` back, which is basically just a `data.frame`.
--   `get_via_lf()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `get_via_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support in the near future (\#17).
+-   `get_via_lf()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `get_via_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support (\#17).
 -   `get_via_cf()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It works great for small amounts of data but can be rather slow otherwise. `get_via_cf()` returns a `tbl_df` with **one row per cell**. You can specify cell limits directly in `get_via_cf()` or use convenience wrappers `get_row()`, `get_col()` or `get_cells()` for some common special cases. See below for demos of `reshape_cf()` and `simplify_cf()` which help with post-processing.
 
 ``` r
@@ -373,42 +385,45 @@ gap %>%
 You can use `googlesheets` to create new spreadsheets.
 
 ``` r
-foo <- new_ss("foo")
+foo <- gs_new("foo")
 #> Sheet "foo" created in Google Drive.
-#> Identifying info is a googlesheet object; googlesheets will re-identify the sheet based on sheet key.
-#> Sheet identified!
-#> sheet_title: foo
-#> sheet_key: 1PuKdPTW3Yu53w4SSGjv0pvIXx-b4IIj3bZD0rLs6ub4
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:12 GMT
-#>     Date of last spreadsheet update: 2015-05-02 00:52:10 GMT
+#>   Date of googlesheets registration: 2015-05-10 23:30:10 GMT
+#>     Date of last spreadsheet update: 2015-05-10 23:30:09 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1PuKdPTW3Yu53w4SSGjv0pvIXx-b4IIj3bZD0rLs6ub4
+#> Key: 1UlC5YpVCbbL4awbn--vNOnIukOvXDWoRtST1krTWQC8
 ```
 
-By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `add_ws()`, `rename_ws()`, and `delete_ws()`. Copy an entire spreadsheet with `copy_ss()`.
+By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
+
+*`gs_new()` and `gs_ws_new()` will soon gain the ability to populate with data upon creation (\#116)*
 
 ### Edit cells
 
-You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns).
+You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
 
 ``` r
 foo <- foo %>% edit_cells(input = head(iris), header = TRUE, trim = TRUE)
 #> Range affected by the update: "A1:E7"
 #> Worksheet "Sheet1" successfully updated with 35 new value(s).
 #> Accessing worksheet titled "Sheet1"
+#> Authentication will be used.
+#> Sheet successfully identifed: "foo"
+#> Accessing worksheet titled "Sheet1"
 #> Worksheet "Sheet1" dimensions changed to 7 x 5.
 ```
 
-Go to [your spreadsheets home page](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by consuming `foo` via the list feed.
+Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by consuming `foo` via the list feed.
 
-Note that we always store the returned value from `edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
+Note how we always store the returned value from `edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
 ``` r
 foo %>% get_via_lf()
@@ -431,10 +446,8 @@ Read the function documentation for `edit_cells()` for how to specify where the 
 Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 ``` r
-delete_ss("foo")
-#> Sheets found and slated for deletion:
-#> foo
-#> Success. All moved to trash in Google Drive.
+gs_delete(foo)
+#> Success. "foo" moved to trash in Google Drive.
 ```
 
 ### Upload delimited files or Excel workbooks
@@ -443,19 +456,21 @@ Here's how we can create a new spreadsheet from a suitable local file. First, we
 
 ``` r
 iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
-iris_ss <- upload_ss("iris.csv")
+iris_ss <- gs_upload("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:24 GMT
-#>     Date of last spreadsheet update: 2015-05-02 00:52:23 GMT
+#>   Date of googlesheets registration: 2015-05-10 23:30:23 GMT
+#>     Date of last spreadsheet update: 2015-05-10 23:30:21 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 1 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1eVg35u6UEQrsoBLtZtbGTes4CKy8_sZ6jojGQC6pkN0
+#> Key: 1ICmyshCOiL7Xaq0S-tligT5lMP1NkJHxFt_65SvAz_A
 iris_ss %>% get_via_lf()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -473,13 +488,15 @@ file.remove("iris.csv")
 Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ``` r
-gap_xlsx <- upload_ss("tests/testthat/mini-gap.xlsx")
+gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 #> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
-#>   Date of googlesheets::register_ss: 2015-05-02 00:52:28 GMT
-#>     Date of last spreadsheet update: 2015-05-02 00:52:27 GMT
+#>   Date of googlesheets registration: 2015-05-10 23:30:28 GMT
+#>     Date of last spreadsheet update: 2015-05-10 23:30:26 GMT
 #>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
 #> 
 #> Contains 5 worksheets:
 #> (Title): (Nominal worksheet extent as rows x columns)
@@ -489,7 +506,7 @@ gap_xlsx
 #> Europe: 20 x 6
 #> Oceania: 20 x 6
 #> 
-#> Key: 1kLpGLJkhtIX3G8dxH9EVH6ZUDPUder0eDgAZmzCJi3E
+#> Key: 1OnlPeWAk-Qh4G5gSFMlakx-m_Hyif96pveXfKsHynMY
 gap_xlsx %>% get_via_lf(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [5 x 6]
@@ -505,14 +522,10 @@ gap_xlsx %>% get_via_lf(ws = "Oceania")
 And we clean up after ourselves on Google Drive.
 
 ``` r
-delete_ss("iris")
-#> Sheets found and slated for deletion:
-#> iris
-#> Success. All moved to trash in Google Drive.
-delete_ss("mini-gap")
-#> Sheets found and slated for deletion:
-#> mini-gap
-#> Success. All moved to trash in Google Drive.
+gs_delete(iris_ss)
+#> Success. "iris" moved to trash in Google Drive.
+gs_delete(gap_xlsx)
+#> Success. "mini-gap" moved to trash in Google Drive.
 ```
 
 ### Download sheets as csv, pdf, or xlsx file
@@ -520,10 +533,9 @@ delete_ss("mini-gap")
 You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
 
 ``` r
-download_ss("Gapminder", ws = "Africa", to = "~/tmp/gapminder-africa.csv")
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gs_title("Gapminder") %>%
+  gs_download(ws = "Africa", to = "~/tmp/gapminder-africa.csv")
+#> Sheet successfully identifed: "Gapminder"
 #> Accessing worksheet titled "Africa"
 #> Sheet successfully downloaded: /Users/jenny/tmp/gapminder-africa.csv
 ## is it there? yes!
@@ -540,10 +552,9 @@ read.csv("~/tmp/gapminder-africa.csv") %>% head()
 Download the entire spreadsheet as an Excel workbook.
 
 ``` r
-download_ss("Gapminder", to = "~/tmp/gapminder.xlsx")
-#> Sheet identified!
-#> sheet_title: Gapminder
-#> sheet_key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+gs_title("Gapminder") %>% 
+  gs_download(to = "~/tmp/gapminder.xlsx")
+#> Sheet successfully identifed: "Gapminder"
 #> Sheet successfully downloaded: /Users/jenny/tmp/gapminder.xlsx
 ```
 
@@ -562,10 +573,33 @@ If you use a function that requires authentication, it will be auto-triggered. B
 
 ``` r
 # Give googlesheets permission to access your spreadsheets and google drive
-authorize() 
+gs_auth() 
 ```
 
-Use `authorize(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
+Use `gs_auth(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
+
+The function `gs_user()` will print and return some information about the current authenticated user and session.
+
+``` r
+user_session_info <- gs_user()
+#>                        displayName: google sheets
+#>                       emailAddress: gspreadr@gmail.com
+#> Date-time of session authorization: 2015-05-10 23:30:02
+#>   Date-time of access token expiry: 2015-05-10 17:10:07
+#> Access token is valid.
+user_session_info
+#> $displayName
+#> [1] "google sheets"
+#> 
+#> $emailAddress
+#> [1] "gspreadr@gmail.com"
+#> 
+#> $auth_date
+#> [1] "2015-05-10 23:30:02 GMT"
+#> 
+#> $exp_date
+#> [1] "2015-05-10 17:10:07 PDT"
+```
 
 ### "Old" Google Sheets
 

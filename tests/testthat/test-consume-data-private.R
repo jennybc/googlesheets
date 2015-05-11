@@ -1,7 +1,7 @@
 context("consume data with private visibility")
 
 ## consuming data owned by authorized user, namely gspreadr
-ss <- register_ss(ws_feed = iris_pvt_ws_feed)
+ss <- gs_ws_feed(iris_pvt_ws_feed, verbose = FALSE)
 
 ## tests here are very minimal; more detailed data consumption tests are done
 ## with public visiblity, i.e. on Sheets authorized user does not own, which
