@@ -24,7 +24,6 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
   stopifnot(inherits(from, "googlesheet"))
 
   key <- gs_get_alt_key(from)
-  title <- from$sheet_title
 
   the_body <- list("title" = to)
 
