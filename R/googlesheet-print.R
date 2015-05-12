@@ -32,11 +32,12 @@ print.googlesheet <- function(x, ...) {
   ws_output <-
     sprintf("%s: %d x %d",
             x$ws$ws_title, x$ws$row_extent, x$ws$col_extent)
-  sprintf("Contains %d worksheets:\n", x$n_ws) %>% cat
+  sprintf("Contains %d worksheets:\n", x$n_ws) %>% cat()
   cat("(Title): (Nominal worksheet extent as rows x columns)\n")
   cat(ws_output, sep = "\n")
 
   cat("\n")
-  sprintf("Key: %s\n", x$sheet_key) %>% cat
+  sprintf("Key: %s\n", x$sheet_key) %>% cat()
+  if(!is.na(x$alt_key)) sprintf("Alternate key: %s\n", x$alt_key) %>% cat()
   #sprintf("Worksheets feed: %s\n", x$ws_feed) %>% cat
 }

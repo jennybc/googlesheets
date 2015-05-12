@@ -3,5 +3,5 @@
 .RData
 .httr-oauth
 googlesheets.Rproj
-jenny-tmp.R
+jenny-scratch/*
 tests/testthat/googlesheets_token.rds
