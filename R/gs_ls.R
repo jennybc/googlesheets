@@ -30,8 +30,9 @@
 #' that may not appear in this listing, a more robust workflow is to specify the
 #' sheet via its browser URL or unique sheet key.
 #'
-#' @param regex character; a regular expression; if non-\code{NULL} only sheets
-#'   whose titles match will be listed
+#' @param regex character; one or more regular expressions; if non-\code{NULL}
+#'   only sheets whose titles match will be listed; multiple regular expressions
+#'   are concatenated with the vertical bar
 #' @param ... optional arguments to be passed to \code{\link{grep}} when
 #'   matching \code{regex} to sheet titles
 #' @param verbose logical; do you want informative message?
@@ -43,6 +44,21 @@
 #' @examples
 #' \dontrun{
 #' gs_ls()
+#'
+#' yo_names <- paste0(c("yo", "YO"), c("", 1:3))
+#' yo_ret <- yo_names %>% lapply(gs_new)
+#' gs_ls("yo")
+#' gs_ls("yo", ignore.case = TRUE)
+#' gs_ls("yo[23]", ignore.case = TRUE)
+#' gs_grepdel("yo", ignore.case = TRUE)
+#' gs_ls("yo", ignore.case = TRUE)
+#'
+#' c("foo", "yo") %>% lapply(gs_new)
+#' gs_ls("yo")
+#' gs_ls("yo|foo")
+#' gs_ls(c("foo", "yo"))
+#' gs_vecdel(c("foo", "yo"))
+#'
 #' }
 #'
 #' @export
@@ -100,8 +116,13 @@ gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
 
   if(is.null(regex)) {
     return(ret)
+  } else {
+    stopifnot(inherits(regex, "character"))
   }
 
+  if(length(regex) > 1) {
+    regex <- regex %>% paste(collapse = "|")
+  }
   keep_me <- grep(regex, ret$sheet_title, ...)
 
   if(length(keep_me) == 0L) {

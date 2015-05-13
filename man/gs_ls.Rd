@@ -7,8 +7,9 @@
 gs_ls(regex = NULL, ..., verbose = TRUE)
 }
 \arguments{
-\item{regex}{character; a regular expression; if non-\code{NULL} only sheets
-whose titles match will be listed}
+\item{regex}{character; one or more regular expressions; if non-\code{NULL}
+only sheets whose titles match will be listed; multiple regular expressions
+are concatenated with the vertical bar}
 
 \item{...}{optional arguments to be passed to \code{\link{grep}} when
 matching \code{regex} to sheet titles}
@@ -55,6 +56,21 @@ sheet via its browser URL or unique sheet key.
 \examples{
 \dontrun{
 gs_ls()
+
+yo_names <- paste0(c("yo", "YO"), c("", 1:3))
+yo_ret <- yo_names \%>\% lapply(gs_new)
+gs_ls("yo")
+gs_ls("yo", ignore.case = TRUE)
+gs_ls("yo[23]", ignore.case = TRUE)
+gs_grepdel("yo", ignore.case = TRUE)
+gs_ls("yo", ignore.case = TRUE)
+
+c("foo", "yo") \%>\% lapply(gs_new)
+gs_ls("yo")
+gs_ls("yo|foo")
+gs_ls(c("foo", "yo"))
+gs_vecdel(c("foo", "yo"))
+
 }
 }
 
