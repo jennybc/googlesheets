@@ -1,0 +1,58 @@
+---
+title: "Hacky way to get exportcsv to work for old sheets"
+output: html_document
+---
+
+Old style sheets do not return an exportcsv link, however it is possible to 
+**manually** create one using the export links returned by the Drive API.
+
+```{r}
+
+library("googlesheets")
+suppressPackageStartupMessages(library("dplyr"))
+
+if (getwd() %>% basename == "data-for-demo") {
+  setwd("..")
+  }
+
+devtools::load_all()
+
+# register a old style sheet
+ss <- gs_title("ari copy")
+
+ss
+
+# get alternate key to access Google Drive
+key <- gs_get_alt_key(ss)
+
+key
+```
+
+
+To get an export link with the correct url format, use one that is readily available from the Drive API and change the export extension to csv.
+
+
+```{r}
+the_url <- paste("https://www.googleapis.com/drive/v2/files", key, sep = "/")
+
+req <- gdrive_GET(the_url)
+
+# extract one of the exportLinks
+pdf_export_link <- req$content$exportLinks[[1]]
+
+pdf_export_link
+# remove pdf extension and replace with csv
+csv_export_link <- stringr::str_replace(pdf_export_link, "pdf", "csv") 
+
+csv_export_link
+
+# use modded link as exportcsv link
+req <- httr::GET(csv_export_link, get_google_token())
+
+dat <- req %>%
+  httr::content(na.strings = c("", "NA"), encoding = "UTF-8") %>%
+  dplyr::as_data_frame()
+
+head(dat)
+```
+
