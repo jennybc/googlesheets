@@ -53,16 +53,19 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
   }
 
   if(is.null(httr::content(req))) {
-    stop("Worksheet is empty. There are no cells that contain data.")
+    dplyr::data_frame()
+    message(
+      sprintf(paste("Worksheet titled \"%s\" is empty.",
+                    "There are no cells that contain data."), this_ws$ws_title))
+  } else {
+    ## content() will process with read.csv, because req$headers$content-type is
+    ## "text/csv"
+    ## for empty cells, numeric columns returned as NA vs "" for chr
+    ## columns so set all "" to NA
+    req %>%
+      httr::content(na.strings = c("", "NA"), encoding = "UTF-8", ...) %>%
+      dplyr::as_data_frame()
   }
-
-  ## content() will process with read.csv, because req$headers$content-type is
-  ## "text/csv"
-  ## for empty cells, numeric columns returned as NA vs "" for chr
-  ## columns so set all "" to NA
-  req %>%
-    httr::content(na.strings = c("", "NA"), encoding = "UTF-8", ...) %>%
-    dplyr::as_data_frame()
 }
 
 #' Get data from a rectangular worksheet as a tbl_df or data.frame
