@@ -52,6 +52,12 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
     req <- httr::GET(this_ws$exportcsv, get_google_token())
   }
 
+  if(req$headers$`content-type` == "text/html; charset=UTF-8") {
+    stop(paste("You do not have permission to access this Google Sheet.",
+               "This Google Sheet has not been made accessible", 
+               "in the sharing dialog options."))
+  }
+  
   if(is.null(httr::content(req))) {
     dplyr::data_frame()
     message(
