@@ -376,7 +376,8 @@ wsf_stuff <-
 ```
 
 ```{r as.is = TRUE}
-knitr::kable(wsf_stuff %>% select(title, updated, author, email))
+knitr::kable(wsf_stuff %>% select(title, updated, author, email),
+             format = "html", table.attr = "style='width:80%;'")
 #knitr::kable(wsf_stuff %>% select(title, totalResults, startIndex))
 ```
 
@@ -397,7 +398,7 @@ date_stuff <-
 ```
 
 ```{r as.is = TRUE}
-knitr::kable(date_stuff)
+knitr::kable(date_stuff, format = "html", table.attr = "style='width:80%;'")
 ```
 
 Strictly "by eye" and for these examples only, I see this:
@@ -416,7 +417,7 @@ author_stuff <-
 ```
 
 ```{r as.is = TRUE}
-knitr::kable(author_stuff)
+knitr::kable(author_stuff, format = "html", table.attr = "style='width:80%;'")
 ```
 
 They agree ... well, except for the *case*. Weird.
@@ -433,7 +434,7 @@ more_stuff <-
 ```
 
 ```{r as.is = TRUE}
-knitr::kable(more_stuff)
+knitr::kable(more_stuff, format = "html", table.attr = "style='width:80%;'")
 ```
 
 YES `totalResults` appears to be the number of `entry` elements, which is the number of worksheets or tabs. `startIndex` remains a useless mystery. From some unrelated fiddling, I think it's a feature common to various Google APIs? I wonder if it only becomes meaningful in a paginated context?
@@ -467,7 +468,8 @@ wsf_links_table <- wsf_links %>%
 ```
 
 ```{r as.is = TRUE}
-knitr::kable(wsf_links_table)
+knitr::kable(wsf_links_table, format = "html",
+             table.attr = "style='width:30%;'")
 ```
 
 So we always have links with these `rel` attributes: "alternate", "self", and "http://schemas.google.com/g/2005#feed". We also have a link with `rel` attribute "http://schemas.google.com/g/2005#post" for all but `unitables2010final copy`, which is an old sheet for which we only have read access. Note: the link with `rel = NA` here is the `id` link from the top-level of the worksheets feed.
@@ -662,7 +664,8 @@ one_ws_links_table <- one_ws_links %>%
 ```
 
 ```{r as.is = TRUE}
-knitr::kable(one_ws_links_table)
+knitr::kable(one_ws_links_table, format = "html",
+             table.attr = "style='width:30%;'")
 ```
 
 The old sheets (`ari copy` and `unitables2010final copy`) are lacking the 2006#exportcsv, a fact we know all too well. And the "read only" sheets are missing the "edit" link, which stands to reason.

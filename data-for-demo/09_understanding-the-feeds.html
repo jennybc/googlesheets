@@ -662,8 +662,8 @@ req_list %&gt;% str(max.level = 1)</code></pre>
 ##  $ cookies    :List of 1
 ##  $ content    :List of 2
 ##   ..- attr(*, &quot;class&quot;)= chr [1:2] &quot;xml_document&quot; &quot;xml_node&quot;
-##  $ date       : POSIXct[1:1], format: &quot;2015-05-19 16:01:29&quot;
-##  $ times      : Named num [1:6] 0 0.000018 0.00002 0.000074 0.43489 ...
+##  $ date       : POSIXct[1:1], format: &quot;2015-05-19 16:16:34&quot;
+##  $ times      : Named num [1:6] 0 0.000018 0.00002 0.000084 0.637948 ...
 ##   ..- attr(*, &quot;names&quot;)= chr [1:6] &quot;redirect&quot; &quot;namelookup&quot; &quot;connect&quot; &quot;pretransfer&quot; ...
 ##  $ request    :List of 5
 ##  - attr(*, &quot;class&quot;)= chr &quot;response&quot;</code></pre>
@@ -922,40 +922,81 @@ wsf_stuff &lt;-
              email = sapply(content, f, &quot;feed:author//feed:email&quot;),
              totalResults = sapply(content, f, &quot;openSearch:totalResults&quot;),
              startIndex = sapply(content, f, &quot;openSearch:startIndex&quot;))</code></pre>
-<pre class="r"><code>knitr::kable(wsf_stuff %&gt;% select(title, updated, author, email))</code></pre>
-<table>
+<pre class="r"><code>knitr::kable(wsf_stuff %&gt;% select(title, updated, author, email),
+             format = &quot;html&quot;, table.attr = &quot;style='width:80%;'&quot;)</code></pre>
+<table style="width:80%;">
 <thead>
-<tr class="header">
-<th align="left">title</th>
-<th align="left">updated</th>
-<th align="left">author</th>
-<th align="left">email</th>
+<tr>
+<th style="text-align:left;">
+title
+</th>
+<th style="text-align:left;">
+updated
+</th>
+<th style="text-align:left;">
+author
+</th>
+<th style="text-align:left;">
+email
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">WI15 ARCHY 499</td>
-<td align="left">2015-04-13T20:14:47.253Z</td>
-<td align="left">gayoungp</td>
-<td align="left"><a href="mailto:gayoungp@uw.edu">gayoungp@uw.edu</a></td>
+<tr>
+<td style="text-align:left;">
+WI15 ARCHY 499
+</td>
+<td style="text-align:left;">
+2015-04-13T20:14:47.253Z
+</td>
+<td style="text-align:left;">
+gayoungp
+</td>
+<td style="text-align:left;">
+<a href="mailto:gayoungp@uw.edu">gayoungp@uw.edu</a>
+</td>
 </tr>
-<tr class="even">
-<td align="left">Gapminder</td>
-<td align="left">2015-03-23T20:34:08.979Z</td>
-<td align="left">gspreadr</td>
-<td align="left"><a href="mailto:gspreadr@gmail.com">gspreadr@gmail.com</a></td>
+<tr>
+<td style="text-align:left;">
+Gapminder
+</td>
+<td style="text-align:left;">
+2015-03-23T20:34:08.979Z
+</td>
+<td style="text-align:left;">
+gspreadr
+</td>
+<td style="text-align:left;">
+<a href="mailto:gspreadr@gmail.com">gspreadr@gmail.com</a>
+</td>
 </tr>
-<tr class="odd">
-<td align="left">unitables2010final copy</td>
-<td align="left">2009-06-02T09:31:06.582Z</td>
-<td align="left">Guardian.facts</td>
-<td align="left"><a href="mailto:guardian.facts@googlemail.com">guardian.facts@googlemail.com</a></td>
+<tr>
+<td style="text-align:left;">
+unitables2010final copy
+</td>
+<td style="text-align:left;">
+2009-06-02T09:31:06.582Z
+</td>
+<td style="text-align:left;">
+Guardian.facts
+</td>
+<td style="text-align:left;">
+<a href="mailto:guardian.facts@googlemail.com">guardian.facts@googlemail.com</a>
+</td>
 </tr>
-<tr class="even">
-<td align="left">ari copy</td>
-<td align="left">2015-05-19T23:00:13.476Z</td>
-<td align="left">gspreadr</td>
-<td align="left"><a href="mailto:gspreadr@gmail.com">gspreadr@gmail.com</a></td>
+<tr>
+<td style="text-align:left;">
+ari copy
+</td>
+<td style="text-align:left;">
+2015-05-19T23:00:13.476Z
+</td>
+<td style="text-align:left;">
+gspreadr
+</td>
+<td style="text-align:left;">
+<a href="mailto:gspreadr@gmail.com">gspreadr@gmail.com</a>
+</td>
 </tr>
 </tbody>
 </table>
@@ -972,45 +1013,95 @@ wsf_stuff &lt;-
                as.POSIXct(format = &quot;%Y-%m-%dT%H:%M:%S&quot;, tz = &quot;UTC&quot;),
              wsf_header_date = sapply(req_list, function(x) x$headers$date) %&gt;%
                httr::parse_http_date())</code></pre>
-<pre class="r"><code>knitr::kable(date_stuff)</code></pre>
-<table>
+<pre class="r"><code>knitr::kable(date_stuff, format = &quot;html&quot;, table.attr = &quot;style='width:80%;'&quot;)</code></pre>
+<table style="width:80%;">
 <thead>
-<tr class="header">
-<th align="left">sheet_title</th>
-<th align="left">ssf_up</th>
-<th align="left">wsf_header_last_mod</th>
-<th align="left">wsf_up</th>
-<th align="left">wsf_header_date</th>
+<tr>
+<th style="text-align:left;">
+sheet_title
+</th>
+<th style="text-align:left;">
+ssf_up
+</th>
+<th style="text-align:left;">
+wsf_header_last_mod
+</th>
+<th style="text-align:left;">
+wsf_up
+</th>
+<th style="text-align:left;">
+wsf_header_date
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">WI15 ARCHY 499</td>
-<td align="left">2015-04-13 20:14:47</td>
-<td align="left">2015-04-13 20:14:47</td>
-<td align="left">2015-04-13 20:14:47</td>
-<td align="left">2015-05-19 23:01:18</td>
+<tr>
+<td style="text-align:left;">
+WI15 ARCHY 499
+</td>
+<td style="text-align:left;">
+2015-04-13 20:14:47
+</td>
+<td style="text-align:left;">
+2015-04-13 20:14:47
+</td>
+<td style="text-align:left;">
+2015-04-13 20:14:47
+</td>
+<td style="text-align:left;">
+2015-05-19 23:16:23
+</td>
 </tr>
-<tr class="even">
-<td align="left">Gapminder</td>
-<td align="left">2015-03-23 20:59:10</td>
-<td align="left">2015-03-23 20:34:08</td>
-<td align="left">2015-03-23 20:34:08</td>
-<td align="left">2015-05-19 23:01:19</td>
+<tr>
+<td style="text-align:left;">
+Gapminder
+</td>
+<td style="text-align:left;">
+2015-03-23 20:59:10
+</td>
+<td style="text-align:left;">
+2015-03-23 20:34:08
+</td>
+<td style="text-align:left;">
+2015-03-23 20:34:08
+</td>
+<td style="text-align:left;">
+2015-05-19 23:16:24
+</td>
 </tr>
-<tr class="odd">
-<td align="left">unitables2010final copy</td>
-<td align="left">2009-06-02 09:31:06</td>
-<td align="left">2009-06-02 09:31:06</td>
-<td align="left">2009-06-02 09:31:06</td>
-<td align="left">2015-05-19 23:01:19</td>
+<tr>
+<td style="text-align:left;">
+unitables2010final copy
+</td>
+<td style="text-align:left;">
+2009-06-02 09:31:06
+</td>
+<td style="text-align:left;">
+2009-06-02 09:31:06
+</td>
+<td style="text-align:left;">
+2009-06-02 09:31:06
+</td>
+<td style="text-align:left;">
+2015-05-19 23:16:24
+</td>
 </tr>
-<tr class="even">
-<td align="left">ari copy</td>
-<td align="left">2015-05-19 23:00:13</td>
-<td align="left">2015-05-19 23:00:13</td>
-<td align="left">2015-05-19 23:00:13</td>
-<td align="left">2015-05-19 23:01:19</td>
+<tr>
+<td style="text-align:left;">
+ari copy
+</td>
+<td style="text-align:left;">
+2015-05-19 23:00:13
+</td>
+<td style="text-align:left;">
+2015-05-19 23:00:13
+</td>
+<td style="text-align:left;">
+2015-05-19 23:00:13
+</td>
+<td style="text-align:left;">
+2015-05-19 23:16:25
+</td>
 </tr>
 </tbody>
 </table>
@@ -1025,35 +1116,65 @@ wsf_stuff &lt;-
   data_frame(sheet_title = examples$sheet_title,
              ssf_author = examples$author,
              wsf_author_name = wsf_stuff$author)</code></pre>
-<pre class="r"><code>knitr::kable(author_stuff)</code></pre>
-<table>
+<pre class="r"><code>knitr::kable(author_stuff, format = &quot;html&quot;, table.attr = &quot;style='width:80%;'&quot;)</code></pre>
+<table style="width:80%;">
 <thead>
-<tr class="header">
-<th align="left">sheet_title</th>
-<th align="left">ssf_author</th>
-<th align="left">wsf_author_name</th>
+<tr>
+<th style="text-align:left;">
+sheet_title
+</th>
+<th style="text-align:left;">
+ssf_author
+</th>
+<th style="text-align:left;">
+wsf_author_name
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">WI15 ARCHY 499</td>
-<td align="left">gayoungp</td>
-<td align="left">gayoungp</td>
+<tr>
+<td style="text-align:left;">
+WI15 ARCHY 499
+</td>
+<td style="text-align:left;">
+gayoungp
+</td>
+<td style="text-align:left;">
+gayoungp
+</td>
 </tr>
-<tr class="even">
-<td align="left">Gapminder</td>
-<td align="left">gspreadr</td>
-<td align="left">gspreadr</td>
+<tr>
+<td style="text-align:left;">
+Gapminder
+</td>
+<td style="text-align:left;">
+gspreadr
+</td>
+<td style="text-align:left;">
+gspreadr
+</td>
 </tr>
-<tr class="odd">
-<td align="left">unitables2010final copy</td>
-<td align="left">guardian.facts</td>
-<td align="left">Guardian.facts</td>
+<tr>
+<td style="text-align:left;">
+unitables2010final copy
+</td>
+<td style="text-align:left;">
+guardian.facts
+</td>
+<td style="text-align:left;">
+Guardian.facts
+</td>
 </tr>
-<tr class="even">
-<td align="left">ari copy</td>
-<td align="left">gspreadr</td>
-<td align="left">gspreadr</td>
+<tr>
+<td style="text-align:left;">
+ari copy
+</td>
+<td style="text-align:left;">
+gspreadr
+</td>
+<td style="text-align:left;">
+gspreadr
+</td>
 </tr>
 </tbody>
 </table>
@@ -1065,40 +1186,80 @@ wsf_stuff &lt;-
                lapply(xml_find_all,&quot;feed:entry&quot;, ns_ws) %&gt;% sapply(length),
              wsf_totalResults = wsf_stuff$totalResults,
              wsf_startIndex = wsf_stuff$startIndex)</code></pre>
-<pre class="r"><code>knitr::kable(more_stuff)</code></pre>
-<table>
+<pre class="r"><code>knitr::kable(more_stuff, format = &quot;html&quot;, table.attr = &quot;style='width:80%;'&quot;)</code></pre>
+<table style="width:80%;">
 <thead>
-<tr class="header">
-<th align="left">sheet_title</th>
-<th align="right">n_entries</th>
-<th align="left">wsf_totalResults</th>
-<th align="left">wsf_startIndex</th>
+<tr>
+<th style="text-align:left;">
+sheet_title
+</th>
+<th style="text-align:right;">
+n_entries
+</th>
+<th style="text-align:left;">
+wsf_totalResults
+</th>
+<th style="text-align:left;">
+wsf_startIndex
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">WI15 ARCHY 499</td>
-<td align="right">8</td>
-<td align="left">8</td>
-<td align="left">1</td>
+<tr>
+<td style="text-align:left;">
+WI15 ARCHY 499
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">Gapminder</td>
-<td align="right">5</td>
-<td align="left">5</td>
-<td align="left">1</td>
+<tr>
+<td style="text-align:left;">
+Gapminder
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">unitables2010final copy</td>
-<td align="right">48</td>
-<td align="left">48</td>
-<td align="left">1</td>
+<tr>
+<td style="text-align:left;">
+unitables2010final copy
+</td>
+<td style="text-align:right;">
+48
+</td>
+<td style="text-align:left;">
+48
+</td>
+<td style="text-align:left;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">ari copy</td>
-<td align="right">1</td>
-<td align="left">1</td>
-<td align="left">1</td>
+<tr>
+<td style="text-align:left;">
+ari copy
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+1
+</td>
 </tr>
 </tbody>
 </table>
@@ -1128,52 +1289,113 @@ wsf_links &lt;- content %&gt;% lapply(jfun) %&gt;% bind_rows()
 wsf_links_table &lt;- wsf_links %&gt;%
   count(rel, sheet_title) %&gt;%
   tidyr::spread(sheet_title, n)</code></pre>
-<pre class="r"><code>knitr::kable(wsf_links_table)</code></pre>
-<table>
+<pre class="r"><code>knitr::kable(wsf_links_table, format = &quot;html&quot;,
+             table.attr = &quot;style='width:30%;'&quot;)</code></pre>
+<table style="width:30%;">
 <thead>
-<tr class="header">
-<th align="left">rel</th>
-<th align="right">ari copy</th>
-<th align="right">Gapminder</th>
-<th align="right">unitables2010final copy</th>
-<th align="right">WI15 ARCHY 499</th>
+<tr>
+<th style="text-align:left;">
+rel
+</th>
+<th style="text-align:right;">
+ari copy
+</th>
+<th style="text-align:right;">
+Gapminder
+</th>
+<th style="text-align:right;">
+unitables2010final copy
+</th>
+<th style="text-align:right;">
+WI15 ARCHY 499
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">alternate</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+alternate
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left"><a href="http://schemas.google.com/g/2005#feed" class="uri">http://schemas.google.com/g/2005#feed</a></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+<a href="http://schemas.google.com/g/2005#feed" class="uri">http://schemas.google.com/g/2005#feed</a>
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left"><a href="http://schemas.google.com/g/2005#post" class="uri">http://schemas.google.com/g/2005#post</a></td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+<a href="http://schemas.google.com/g/2005#post" class="uri">http://schemas.google.com/g/2005#post</a>
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">self</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+self
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">NA</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 </tbody>
 </table>
@@ -1505,59 +1727,130 @@ one_ws_links &lt;-
 one_ws_links_table &lt;- one_ws_links %&gt;%
   count(rel, sheet_title) %&gt;%
   tidyr::spread(sheet_title, n)</code></pre>
-<pre class="r"><code>knitr::kable(one_ws_links_table)</code></pre>
-<table>
+<pre class="r"><code>knitr::kable(one_ws_links_table, format = &quot;html&quot;,
+             table.attr = &quot;style='width:30%;'&quot;)</code></pre>
+<table style="width:30%;">
 <thead>
-<tr class="header">
-<th align="left">rel</th>
-<th align="right">ari copy</th>
-<th align="right">Gapminder</th>
-<th align="right">unitables2010final copy</th>
-<th align="right">WI15 ARCHY 499</th>
+<tr>
+<th style="text-align:left;">
+rel
+</th>
+<th style="text-align:right;">
+ari copy
+</th>
+<th style="text-align:right;">
+Gapminder
+</th>
+<th style="text-align:right;">
+unitables2010final copy
+</th>
+<th style="text-align:right;">
+WI15 ARCHY 499
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">2006#cellsfeed</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+2006#cellsfeed
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">2006#exportcsv</td>
-<td align="right">NA</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+2006#exportcsv
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">2006#listfeed</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+2006#listfeed
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">2008#visualizationApi</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+2008#visualizationApi
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">edit</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">NA</td>
-<td align="right">NA</td>
+<tr>
+<td style="text-align:left;">
+edit
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
 </tr>
-<tr class="even">
-<td align="left">self</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+self
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 </tbody>
 </table>

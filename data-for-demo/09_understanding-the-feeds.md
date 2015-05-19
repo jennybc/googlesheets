@@ -735,8 +735,8 @@ req_list[[1]] %>% str(max.level = 1)
 ##  $ cookies    :List of 1
 ##  $ content    :List of 2
 ##   ..- attr(*, "class")= chr [1:2] "xml_document" "xml_node"
-##  $ date       : POSIXct[1:1], format: "2015-05-19 16:01:29"
-##  $ times      : Named num [1:6] 0 0.000018 0.00002 0.000074 0.43489 ...
+##  $ date       : POSIXct[1:1], format: "2015-05-19 16:16:34"
+##  $ times      : Named num [1:6] 0 0.000018 0.00002 0.000084 0.637948 ...
 ##   ..- attr(*, "names")= chr [1:6] "redirect" "namelookup" "connect" "pretransfer" ...
 ##  $ request    :List of 5
 ##  - attr(*, "class")= chr "response"
@@ -943,17 +943,46 @@ wsf_stuff <-
 
 
 ```r
-knitr::kable(wsf_stuff %>% select(title, updated, author, email))
+knitr::kable(wsf_stuff %>% select(title, updated, author, email),
+             format = "html", table.attr = "style='width:80%;'")
 ```
 
-
-
-title                     updated                    author           email                         
-------------------------  -------------------------  ---------------  ------------------------------
-WI15 ARCHY 499            2015-04-13T20:14:47.253Z   gayoungp         gayoungp@uw.edu               
-Gapminder                 2015-03-23T20:34:08.979Z   gspreadr         gspreadr@gmail.com            
-unitables2010final copy   2009-06-02T09:31:06.582Z   Guardian.facts   guardian.facts@googlemail.com 
-ari copy                  2015-05-19T23:00:13.476Z   gspreadr         gspreadr@gmail.com            
+<table style='width:80%;'>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> title </th>
+   <th style="text-align:left;"> updated </th>
+   <th style="text-align:left;"> author </th>
+   <th style="text-align:left;"> email </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> WI15 ARCHY 499 </td>
+   <td style="text-align:left;"> 2015-04-13T20:14:47.253Z </td>
+   <td style="text-align:left;"> gayoungp </td>
+   <td style="text-align:left;"> gayoungp@uw.edu </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Gapminder </td>
+   <td style="text-align:left;"> 2015-03-23T20:34:08.979Z </td>
+   <td style="text-align:left;"> gspreadr </td>
+   <td style="text-align:left;"> gspreadr@gmail.com </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> unitables2010final copy </td>
+   <td style="text-align:left;"> 2009-06-02T09:31:06.582Z </td>
+   <td style="text-align:left;"> Guardian.facts </td>
+   <td style="text-align:left;"> guardian.facts@googlemail.com </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ari copy </td>
+   <td style="text-align:left;"> 2015-05-19T23:00:13.476Z </td>
+   <td style="text-align:left;"> gspreadr </td>
+   <td style="text-align:left;"> gspreadr@gmail.com </td>
+  </tr>
+</tbody>
+</table>
 
 ```r
 #knitr::kable(wsf_stuff %>% select(title, totalResults, startIndex))
@@ -978,17 +1007,50 @@ date_stuff <-
 
 
 ```r
-knitr::kable(date_stuff)
+knitr::kable(date_stuff, format = "html", table.attr = "style='width:80%;'")
 ```
 
-
-
-sheet_title               ssf_up                wsf_header_last_mod   wsf_up                wsf_header_date     
-------------------------  --------------------  --------------------  --------------------  --------------------
-WI15 ARCHY 499            2015-04-13 20:14:47   2015-04-13 20:14:47   2015-04-13 20:14:47   2015-05-19 23:01:18 
-Gapminder                 2015-03-23 20:59:10   2015-03-23 20:34:08   2015-03-23 20:34:08   2015-05-19 23:01:19 
-unitables2010final copy   2009-06-02 09:31:06   2009-06-02 09:31:06   2009-06-02 09:31:06   2015-05-19 23:01:19 
-ari copy                  2015-05-19 23:00:13   2015-05-19 23:00:13   2015-05-19 23:00:13   2015-05-19 23:01:19 
+<table style='width:80%;'>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> sheet_title </th>
+   <th style="text-align:left;"> ssf_up </th>
+   <th style="text-align:left;"> wsf_header_last_mod </th>
+   <th style="text-align:left;"> wsf_up </th>
+   <th style="text-align:left;"> wsf_header_date </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> WI15 ARCHY 499 </td>
+   <td style="text-align:left;"> 2015-04-13 20:14:47 </td>
+   <td style="text-align:left;"> 2015-04-13 20:14:47 </td>
+   <td style="text-align:left;"> 2015-04-13 20:14:47 </td>
+   <td style="text-align:left;"> 2015-05-19 23:16:23 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Gapminder </td>
+   <td style="text-align:left;"> 2015-03-23 20:59:10 </td>
+   <td style="text-align:left;"> 2015-03-23 20:34:08 </td>
+   <td style="text-align:left;"> 2015-03-23 20:34:08 </td>
+   <td style="text-align:left;"> 2015-05-19 23:16:24 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> unitables2010final copy </td>
+   <td style="text-align:left;"> 2009-06-02 09:31:06 </td>
+   <td style="text-align:left;"> 2009-06-02 09:31:06 </td>
+   <td style="text-align:left;"> 2009-06-02 09:31:06 </td>
+   <td style="text-align:left;"> 2015-05-19 23:16:24 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ari copy </td>
+   <td style="text-align:left;"> 2015-05-19 23:00:13 </td>
+   <td style="text-align:left;"> 2015-05-19 23:00:13 </td>
+   <td style="text-align:left;"> 2015-05-19 23:00:13 </td>
+   <td style="text-align:left;"> 2015-05-19 23:16:25 </td>
+  </tr>
+</tbody>
+</table>
 
 Strictly "by eye" and for these examples only, I see this:
 
@@ -1008,17 +1070,40 @@ author_stuff <-
 
 
 ```r
-knitr::kable(author_stuff)
+knitr::kable(author_stuff, format = "html", table.attr = "style='width:80%;'")
 ```
 
-
-
-sheet_title               ssf_author       wsf_author_name 
-------------------------  ---------------  ----------------
-WI15 ARCHY 499            gayoungp         gayoungp        
-Gapminder                 gspreadr         gspreadr        
-unitables2010final copy   guardian.facts   Guardian.facts  
-ari copy                  gspreadr         gspreadr        
+<table style='width:80%;'>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> sheet_title </th>
+   <th style="text-align:left;"> ssf_author </th>
+   <th style="text-align:left;"> wsf_author_name </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> WI15 ARCHY 499 </td>
+   <td style="text-align:left;"> gayoungp </td>
+   <td style="text-align:left;"> gayoungp </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Gapminder </td>
+   <td style="text-align:left;"> gspreadr </td>
+   <td style="text-align:left;"> gspreadr </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> unitables2010final copy </td>
+   <td style="text-align:left;"> guardian.facts </td>
+   <td style="text-align:left;"> Guardian.facts </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ari copy </td>
+   <td style="text-align:left;"> gspreadr </td>
+   <td style="text-align:left;"> gspreadr </td>
+  </tr>
+</tbody>
+</table>
 
 They agree ... well, except for the *case*. Weird.
 
@@ -1036,17 +1121,45 @@ more_stuff <-
 
 
 ```r
-knitr::kable(more_stuff)
+knitr::kable(more_stuff, format = "html", table.attr = "style='width:80%;'")
 ```
 
-
-
-sheet_title                n_entries  wsf_totalResults   wsf_startIndex 
-------------------------  ----------  -----------------  ---------------
-WI15 ARCHY 499                     8  8                  1              
-Gapminder                          5  5                  1              
-unitables2010final copy           48  48                 1              
-ari copy                           1  1                  1              
+<table style='width:80%;'>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> sheet_title </th>
+   <th style="text-align:right;"> n_entries </th>
+   <th style="text-align:left;"> wsf_totalResults </th>
+   <th style="text-align:left;"> wsf_startIndex </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> WI15 ARCHY 499 </td>
+   <td style="text-align:right;"> 8 </td>
+   <td style="text-align:left;"> 8 </td>
+   <td style="text-align:left;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Gapminder </td>
+   <td style="text-align:right;"> 5 </td>
+   <td style="text-align:left;"> 5 </td>
+   <td style="text-align:left;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> unitables2010final copy </td>
+   <td style="text-align:right;"> 48 </td>
+   <td style="text-align:left;"> 48 </td>
+   <td style="text-align:left;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> ari copy </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:left;"> 1 </td>
+   <td style="text-align:left;"> 1 </td>
+  </tr>
+</tbody>
+</table>
 
 YES `totalResults` appears to be the number of `entry` elements, which is the number of worksheets or tabs. `startIndex` remains a useless mystery. From some unrelated fiddling, I think it's a feature common to various Google APIs? I wonder if it only becomes meaningful in a paginated context?
 
@@ -1081,18 +1194,58 @@ wsf_links_table <- wsf_links %>%
 
 
 ```r
-knitr::kable(wsf_links_table)
+knitr::kable(wsf_links_table, format = "html",
+             table.attr = "style='width:30%;'")
 ```
 
-
-
-rel                                      ari copy   Gapminder   unitables2010final copy   WI15 ARCHY 499
---------------------------------------  ---------  ----------  ------------------------  ---------------
-alternate                                       1           1                         1                1
-http://schemas.google.com/g/2005#feed           1           1                         1                1
-http://schemas.google.com/g/2005#post           1           1                        NA                1
-self                                            1           1                         1                1
-NA                                              1           1                         1                1
+<table style='width:30%;'>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> rel </th>
+   <th style="text-align:right;"> ari copy </th>
+   <th style="text-align:right;"> Gapminder </th>
+   <th style="text-align:right;"> unitables2010final copy </th>
+   <th style="text-align:right;"> WI15 ARCHY 499 </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> alternate </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> http://schemas.google.com/g/2005#feed </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> http://schemas.google.com/g/2005#post </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> NA </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> self </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+</tbody>
+</table>
 
 So we always have links with these `rel` attributes: "alternate", "self", and "http://schemas.google.com/g/2005#feed". We also have a link with `rel` attribute "http://schemas.google.com/g/2005#post" for all but `unitables2010final copy`, which is an old sheet for which we only have read access. Note: the link with `rel = NA` here is the `id` link from the top-level of the worksheets feed.
 
@@ -1428,18 +1581,64 @@ one_ws_links_table <- one_ws_links %>%
 
 
 ```r
-knitr::kable(one_ws_links_table)
+knitr::kable(one_ws_links_table, format = "html",
+             table.attr = "style='width:30%;'")
 ```
 
-
-
-rel                      ari copy   Gapminder   unitables2010final copy   WI15 ARCHY 499
-----------------------  ---------  ----------  ------------------------  ---------------
-2006#cellsfeed                  1           1                         1                1
-2006#exportcsv                 NA           1                        NA                1
-2006#listfeed                   1           1                         1                1
-2008#visualizationApi           1           1                         1                1
-edit                            1           1                        NA               NA
-self                            1           1                         1                1
+<table style='width:30%;'>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> rel </th>
+   <th style="text-align:right;"> ari copy </th>
+   <th style="text-align:right;"> Gapminder </th>
+   <th style="text-align:right;"> unitables2010final copy </th>
+   <th style="text-align:right;"> WI15 ARCHY 499 </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> 2006#cellsfeed </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2006#exportcsv </td>
+   <td style="text-align:right;"> NA </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> NA </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2006#listfeed </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2008#visualizationApi </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> edit </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> NA </td>
+   <td style="text-align:right;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> self </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+   <td style="text-align:right;"> 1 </td>
+  </tr>
+</tbody>
+</table>
 
 The old sheets (`ari copy` and `unitables2010final copy`) are lacking the 2006#exportcsv, a fact we know all too well. And the "read only" sheets are missing the "edit" link, which stands to reason.
