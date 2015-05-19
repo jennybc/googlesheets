@@ -2,14 +2,15 @@
 title: "Understanding the feeds"
 output:
   html_document:
-    keep_md: true
-    toc: true
+    keep_md: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 4
 ---
 
 ```{r}
-library("plyr")
 suppressPackageStartupMessages(library("dplyr"))
-library("rlist")
+library("xml2")
 library("stringr")
 ## I want to use unexported functions here
 devtools::load_all(pkg = "~/research/googlesheets/")
@@ -32,134 +33,169 @@ if(!file.exists(".httr-oauth")) {
 }
 ```
 
-There's some stuff I want to do that requires better documentation of what we can get our hands on via the different feeds. This needs to be written down, in detail, in one place. Here we go.
-
-Thinking out loud prior to refactoring the `list_sheets()` + `identify_ss()` + `register_ss()` trio of functions. What's on my mind:
-
-  * It is annoying that `identify_ss()` is so rigid about identifying exactly one Sheet. I need to relax that.
-  * Currently `identify_ss()` returns a sparsely populated `googlesheets` object and I'm not fond of the idea of returning ... a list of multiple such objects? So simply allowing `identify_ss()` to return info on multiple Sheets does not sound like a good idea.
-  * `list_sheets()` returns a `tbl` already and thus seems to more naturally fit the "multiple sheets" mandate. Maybe it should get some arguments to give the user control over which sheets will be listed, as opposed to always listing all of them.
-  * Old sheets present a vexing problem where the alternate key needed downstream for `delete_ss()`, `copy_ss()`, and `download_ss()` is not available from the sheet's worksheets feed but can be dug out of the spreadsheets feed.
-  * `identify_ss()` creates a `googlesheets` object but gets its info from the spreadsheets feed. `register_ss()` creates a `googlesheets` object but gets its info from the worksheets feed. I'd prefer these things be better aligned.
+We need better documentation of what we can get our hands on via the different feeds. Here we go.
 
 ## Spreadsheets feed
 
-The interesting info that comes back from the spreadsheet feed consists of the `entry` nodes, one per sheet. These nodes appear to have the same structure for each sheet and we'll get an overview for the first sheet as well.
+### `entry` nodes are where it's at
+
+The most useful info from the spreadsheet feed consists of the `entry` nodes, one per sheet.
 
 ```{r}
 the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
 req <- gsheets_GET(the_url)
-sheet_list <- req %>%
-  list.extract("content") %>%
-  list.match("entry")
-sheet_list %>% str1
-sheet_list[[1]] %>% str
+
+ns <- xml_ns_rename(xml_ns(req$content), d1 = "feed")
+entries <- req$content %>% 
+  xml_find_all(".//feed:entry", ns) %>% 
+  xml_path()
+length(entries)
+req$content %>%
+  xml_find_one(entries[1])
 ```
 
-What is all this stuff?
+The `entry` nodes have same structure for each sheet, which we explore via the first entry = sheet. What is all this stuff?
 
-  * `id` and `updated` ... check.
+  * `id` is a URL.
+  * `updated` is date-time of last update (not clear exactly what that means)
   * `category` seems utterly useless to me.
-  * `title/text` and `content/text` ... we check below if they are always the same.
-  * The 3 links are worth keeping. We'll come back to them.
-  * `author/name` and `author/email` are worth keeping.
+  * `title/text` and `content/text` both give the sheet's title. Below we confirm they are redundant.
+  * The 3 links are arguably the most valuable stuff. Much study of those below.
+  * `author/name` and `author/email` are self-explanatory.
   
-Let's compare `title/text` and `content/text`.
+#### Sheet title
+
+Is the info in `title/text` identical to that in `content/text`?
 
 ```{r}
 title_stuff <-
-#   data_frame(title = laply(sheet_list, function(x) x$title$text),
-#              content = laply(sheet_list, function(x) x$content$text))
-  data_frame(title = sheet_list %>% list.map(title) %>% list.mapv(text),
-             content = sheet_list %>% list.map(content) %>% list.mapv(text))
+  data_frame(text = req$content %>%
+               xml_find_all(".//feed:entry//feed:title", ns) %>% 
+               xml_text(),
+             content = req$content %>%
+               xml_find_all(".//feed:entry//feed:content", ns) %>% 
+               xml_text())
 title_stuff
-with(title_stuff, identical(title, content))
+with(title_stuff, identical(text, content))
 ```
 
-For this set of sheets, at least, YES this info is redundant. Set the names for  `sheet_list` to the sheet titles.
+YES. At least for this set of sheets.
+
+Let's set the names for `entries` to the sheet titles.
 
 ```{r}
-names(sheet_list) <- title_stuff$title
+names(entries) <- title_stuff$text
 ```
 
-### Links returned by the spreadsheets feed
+### Marshall all links returned by the spreadsheets feed
 
-Each `entry` node has an `id` element containing a link plus 3 additional nodes named `link`. I gather all 4 into a `tbl` for further inspection.
+Each `entry` node has an `id` element containing a URL plus 3 additional nodes named `link`. I gather all 4 into a `tbl_df` for systematic exploration
 
 ```{r}
-jfun <- function(x) { # lots o' gymnastics required here
-  links <- x %>%
-    list.match("^link$") %>%
-    unname %>% 
-    list.rbind %>%
-    as.data.frame
-  links$source <- "content/entry/link"
-  links <- links %>%
-    rbind(data.frame(rel = NA, type = NA, href = x$id,
-                     source = "content/entry/id"))
+jfun <- function(x) { # gymnastics required for one sheet's worth of links
+  x <- req$content %>% xml_find_one(x)
+  links <- x %>% 
+    xml_find_all("feed:link", ns) %>% 
+    lapply(xml_attrs) %>% 
+    lapply(as.list) %>%
+    lapply(as_data_frame) %>% 
+    bind_rows() %>% 
+    mutate(source = "content/entry/link")
   links %>%
-    mutate(sheet_title = x[["title"]][["text"]],
-           feed = "ss") %>%
-    select(feed, sheet_title, source, href, rel, type)
+    rbind(data.frame(rel = NA, type = NA,
+                     href = x %>% xml_find_one("feed:id", ns) %>% xml_text(),
+                     source = "content/entry/id")) %>% 
+    mutate(feed = "ss",
+           sheet_title = x %>% xml_find_one("feed:title", ns) %>% xml_text()) %>% 
+    select(sheet_title, feed, source, href, rel, type)
 }
-ss_links <- sheet_list %>%
-  list.map(jfun(.))
-links <- ss_links %>%
-  bind_rows
-links
+links <- entries %>% lapply(jfun) %>% 
+  bind_rows()
 ```
 
-From previous inspections, I know the "self" and `id` links look the same. Is that generally true?
+#### Are the "self" and `id` links the same?
 
 ```{r}
 links %>%
   filter(rel == "self" | source == "content/entry/id") %>%
   group_by(sheet_title) %>%
   summarize(query = n_distinct(href) == 1) %>%
-  list.extract("query") %>%
+  `[[`("query") %>%
   all
 ```
 
-Yes they are exactly the same. Duly noted. Let's see the overall structure of the links, starting with the "self" or `id` link.
+YES, they are exactly the same, at least for these sheets.
+
+#### Structure of the "self" link
 
 ```{r}
 links %>%
   filter(rel == "self") %>%
-  list.extract("href") %>%
+  `[[`("href") %>%
   str_split_fixed("//*", n = 7)
 ```
 
-Do same for the worksheets feed, which I happen to know is the link with `"rel"` equal to `http://schemas.google.com/spreadsheets/2006#worksheetsfeed`.
+Here's what I see:
+
+```
+https://spreadsheets.google.com/feeds/spreadsheets/private/full/KEY
+```
+
+#### Structure of the worksheets feed
+
+I happen to know that the worksheets feed is the link with attribute `"rel"` equal to `http://schemas.google.com/spreadsheets/2006#worksheetsfeed`.
 
 ```{r}
 links %>%
   filter(str_detect(rel, "2006#worksheetsfeed")) %>%
-  list.extract("href") %>%
+  `[[`("href") %>%
   str_split_fixed("//*", n = 7)
 ```
 
-Do same for the "alternate" link:
+Here's what I see:
+
+```
+https://spreadsheets.google.com/feeds/worksheets/KEY/VISIBILITY/FOO
+```
+
+where `VISIBILITY` always equals `private` when URL comes from the spreadsheets feed and `FOO` is `values` when user has only read permission and `full` when user
+is also allowed to write.
+
+#### Structure of the "alternate" link
+
+Note: I arranged the rows here for clarity.
 
 ```{r}
 links %>%
   filter(rel == "alternate") %>%
-  list.extract("href") %>%
+  arrange(href) %>% 
+  `[[`("href") %>%
   str_split_fixed("//*", n = 6)
 ```
 
-We've got more variety here, due to old sheets vs new. Note that, in addition to the obvious difference in domain and overall URL structure, the old sheets present an alternative key in the "alternate" link.
+We've got more variety here, due to old sheets vs new. Note that, in addition to the obvious difference in domain and overall URL structure, the old sheets present an alternative key in the "alternate" link (verified explicitly below).
 
-### Structure and content of spreadsheets feed links
+Here's what I see:
 
-```sh
+```
+new Sheets:
+https://docs.google.com/spreadsheets/d/KEY/edit
+
+old Sheets:
+"https://spreadsheets.google.com/ccc?key=ALT_KEY"
+```
+
+### Summary of structure and content of spreadsheets feed links
+
+```
 id = "self" link:
 https://spreadsheets.google.com/feeds/spreadsheets/VISIBILITY/PROJECTION/KEY
-VISIBILITY = {private (default), public}
+VISIBILITY = {private (always in spreadsheets feed?), public}
 PROJECTION = {full (default), basic}
 
 worksheets feed:
 https://spreadsheets.google.com/feeds/worksheets/KEY/VISIBILITY/PERMISSION
-VISIBILITY = {private (default), public}
+VISIBILITY = {private (always in spreadsheets feed?), public}
 PERMISSION = {full (read and write), values (read only)}
 
 "alternate" link, new sheets:
@@ -169,7 +205,7 @@ https://docs.google.com/spreadsheets/d/KEY/edit
 https://spreadsheets.google.com/ccc?key=ALT_KEY
 ```
 
-### Old sheets vs new, sheet permissions
+### New variables for old sheets vs new, sheet permissions
 
 Create new variables to hold info about whether a sheet is old or new and whether current user is allowed to read only or to read and write.
 
@@ -188,23 +224,23 @@ links <- links %>%
   left_join(perm_df)
 ```
 
-### Keys in the links
+### Extract the keys in the links
 
-Extract the key from each link.
+Store the keys in these links as a variable.
 
 ```{r}
 links <- links %>%
   mutate(link_key = extract_key_from_url(href))
 ```
 
-Hypothesis: all link keys are uniform for a new sheet.
+Hypothesis: all link keys are uniform for a new sheet ("self" = `id` agrees with worksheets feed agrees with "alternate").
 
 ```{r}
 links %>%
   filter(version == "new") %>%
   group_by(sheet_title) %>%
   summarize(query = n_distinct(link_key) == 1) %>%
-  list.extract("query") %>%
+  `[[`("query") %>%
   all
 ```
 
@@ -219,9 +255,11 @@ links %>%
   summarize(min = min(query), max = max(query))
 ```
 
-This alternative key -- only defined for old sheets and only available through the "alternative" link found in the spreadsheets feed -- is ultimately useful to us for any operations that require the Drive API. Empirically, I note it can also be extracted from the URL seen in the browser when visiting such a sheet.
+This "alternate" key -- only defined for old sheets and only available through the "alternate" link found in the spreadsheets feed -- is ultimately useful to us for any operations that require the Drive API. Empirically, I note it can also be extracted from the URL seen in the browser when visiting such a sheet.
 
-Formalize this notion of the (default) key versus the alternative key, which is only defined for old sheets and is damned hard to get.
+#### Capture the "alternate" key for old sheets
+
+Formalize this notion of the (default) key versus the "alternate" key, which is only defined for old sheets and is damned hard to get.
 
 ```{r}
 alt_keys <- links %>%
@@ -237,11 +275,21 @@ links <- links %>%
   left_join(sheet_keys)
 ```
 
-### Parting look at links and keys from spreadsheets feed
+### Summary of the spreadsheets feed
+
+Note the keys shown below are truncated! Wanted to fit more variables and show that `alt_key` is `NA` for new Sheets and that `alt_key` != `sheet_key` for old Sheets.
 
 ```{r}
 links %>%
   glimpse
+
+links %>%
+  filter(source == "content/entry/id") %>% 
+  #arrange(version, perm, sheet_title) %>% 
+  mutate(sheet_title = substr(sheet_title, 1, 15),
+         sheet_key = substr(sheet_key, 1, 15),
+         alt_key = substr(alt_key, 1, 15)) %>% 
+  select(sheet_title, perm, version, sheet_key, alt_key)
 ```
 
 ## Worksheets feed
@@ -249,11 +297,10 @@ links %>%
 Now we turn to the worksheets feed. Hand-picked 4 example sheets: all possible combinations of new vs old sheets and sheets for which I do and do not have write permission.
 
 ```{r}
-my_sheets <- list_sheets()
-example_sheets <- c("unitables2010final copy", "Old School Google Sheet",
-                    "WI15 ARCHY 499", "Gapminder")
-examples <- my_sheets %>%
-  filter(sheet_title %in% example_sheets) %>%
+example_sheets <- c("unitables2010final copy", "ari copy",
+                    "WI15 ARCHY 499", "^Gapminder$")
+examples <- example_sheets %>%
+  gs_ls() %>% 
   arrange(version, perm)
 examples %>%
   select(sheet_title, version, perm)
@@ -263,28 +310,29 @@ Get the worksheets feed for each example sheet. Use sheet names to name the resu
 
 ```{r}
 req_list <- examples$ws_feed %>%
-  list.map(gsheets_GET(.))
+  lapply(gsheets_GET)
 #names(req_list) <- substr(examples$sheet_title, 1, 12)
 names(req_list) <- examples$sheet_title
-req_list %>% str1
-req_list[[1]] %>% str1
+req_list %>% str(max.level = 1)
+req_list[[1]] %>% str(max.level = 1)
+ns_ws <- xml_ns_rename(xml_ns(req_list[[1]]$content), d1 = "feed")
 ```
 
-A worksheet feed request return 9 components:
+A worksheet feed request returns 9 components:
 
-  * `url` is just the worksheets feed URL itself (will be checked explicitly later once all the links are extracted)
-  * `status_code`, `date`, `times` are fairly self-explanatory
+  * `url` is the URL of the worksheets feed itself (this is true by definition; it's an `httr` thing)
+  * `status_code`, `date`, `times` are semi-self-explanatory and/or off-topic
   * `headers` + `all_headers`, `cookies`, `request` call for some inspection (below)
   * `content` is, of course, where it's really at (next subsection)
 
-```{r}
-req_list %>% list.mapv(cookies)
-req_list %>% list.map(headers)
-req_list %>% list.map(all_headers)
-req_list %>% list.map(request)
-```
+*I have executed and inspected the below but it's not very interesting, nor is it related to our inventory of links. Remove chunk option `eval = FALSE` if you want to bring it back.*
 
-I don't really have anything insightful to say about the above. Err, duly noted?
+```{r eval = FALSE}
+req_list %>% lapply(`[[`, "cookies")
+req_list %>% lapply(`[[`, "headers")
+req_list %>% lapply(`[[`, "all_headers")
+req_list %>% lapply(`[[`, "request")
+```
 
 ### Content from the worksheets feed
 
@@ -292,119 +340,157 @@ It is convenient to create a named list holding just the content.
 
 ```{r}
 content <- req_list %>%
-  list.map(content)
-content %>% str1
+  lapply(`[[`,"content")
+content %>% str(max.level = 1)
+#xml2::xml_structure(content[[1]])
+content[[1]]
+content %>% lapply(xml_children) %>% lapply(length)
 ```
 
-Interesting! There is variability in the number of list elements. What varies?
+Interesting! There is variability in the number of nodes. What varies?
 
 ```{r}
-all_content_names <- content %>%
-  list.cases(names(.))
-sapply(content, function(x) table(factor(names(x), levels = all_content_names)))
+f <- . %>% xml_children %>% xml_name
+possible_nodes <- content %>% lapply(f) %>% unlist() %>% unique()
+g <- . %>% xml_children %>% xml_name %>%
+  factor(levels = possible_nodes) %>% table
 ```
 
-The variation is in the multiplicity of `link` and `entry` elements.  We'll come back to this, but let's inspect the more boring components before we move on. Most contain familiar info from the spreadsheets feed.
+```{r as.is = TRUE}
+#knitr::kable(sapply(content, g))
+knitr::kable(sapply(content, g), format = "html",
+             table.attr = "style='width:30%;'")
+```
+
+The variation is in the multiplicity of `link` and `entry` elements.  We pursue that below, but let's inspect the more boring components before we move on. We can predict what some of this stuff is based on what we saw in the spreadsheets feed. I'm also going to check if the info here agrees with the spreadsheets feed.
 
 ```{r}
-## author name and email
-## this not good because sheet_titleis lost :(
-#content %>% list.map(author) %>% list.stack
-wsf <-
-  content %>%
-  list.map(author) %>%
-  ldply(as.data.frame, .id = "sheet_title")
-ssf <- sheet_list %>%
-  list.match(paste0("^", example_sheets, "$", collapse = "|")) %>%
-  list.map(author) %>%
-  ldply(as.data.frame, .id = "sheet_title")
-full_join(ssf, wsf, by = "sheet_title") %>%
-  mutate_each(funs("as.character")) %>%
-  mutate(name_agree = name.x == name.y,
-         email_agree = email.x == email.y)
-
-## title
-(tmp <- content %>% list.map(title) %>% list.mapv(text))
-all.equal(tmp, names(content), check.names = FALSE)
-
-## time of last update
-data_frame(ws_updated = content %>% list.mapv(updated) %>%
-            as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
-           ss_updated = examples$last_updated,
-           same = ws_updated == ss_updated)
-
-## totalResults = number of worksheets
-content %>% list.mapv(totalResults)
-content %>%
-  list.map(list.match(., "entry")) %>%
-  list.map(length(.))
-
-## useless to me, I think
-content %>% list.map(category) %>% list.rbind
-content %>% list.mapv(startIndex)
+f <- function(x, xpath) xml_find_one(x, xpath, ns_ws) %>% xml_text()
+wsf_stuff <-
+  data_frame(title = sapply(content, f, "feed:title"),
+             updated = sapply(content, f, "feed:updated"),
+             author = sapply(content, f, "feed:author//feed:name"),
+             email = sapply(content, f, "feed:author//feed:email"),
+             totalResults = sapply(content, f, "openSearch:totalResults"),
+             startIndex = sapply(content, f, "openSearch:startIndex"))
 ```
 
-  * The `author`, and `title` components contain same information as we get from the spreadsheets feed (up to capitalization?!).
-  * Apparently `updated` in the worksheets feed is not necessarily the same as the date-time reported in the spreadsheets feed. Odd.
-  * `totalResults` appears to be the number of `entry` elements, which is the number of worksheets or tabs. `startIndex` remains a useless mystery.
-  * `category` remains useless to me.
+```{r as.is = TRUE}
+knitr::kable(wsf_stuff %>% select(title, updated, author, email))
+#knitr::kable(wsf_stuff %>% select(title, totalResults, startIndex))
+```
 
-#### Links in the worksheets feed
+So does `updated` from a sheet's worksheets feed match `updated` from a sheet's entry in the spreadsheets feed?
 
-```{r eval = FALSE}
-jfun <- function(x) { # lots o' gymnastics required here
-  links <- x %>%
-    list.match("^link$") %>%
-    unname %>% 
-    list.rbind %>%
-    as.data.frame
-  links$source <- "content/link"
-  links <- links %>%
-    rbind(data.frame(rel = NA, type = NA, href = x$id,
-                     source = "content/entry/id"))
+```{r}
+date_stuff <-
+  data_frame(sheet_title = examples$sheet_title,
+             ssf_up = examples$updated %>%
+               as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
+             wsf_header_last_mod =
+               sapply(req_list, function(x) x$headers$`last-modified`) %>%
+               httr::parse_http_date(),
+             wsf_up = wsf_stuff$updated %>%
+               as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
+             wsf_header_date = sapply(req_list, function(x) x$headers$date) %>%
+               httr::parse_http_date())
+```
+
+```{r as.is = TRUE}
+knitr::kable(date_stuff)
+```
+
+Strictly "by eye" and for these examples only, I see this:
+
+  * from the worksheets feed, `updated` is the same as the `last-modified` field of the header
+  * from the worksheets feed, `date` field of the header refers to the date-time of the `GET` request to the worksheets feed
+  * `updated` from the spreadsheets feed is *usually* equal to `updated` from the worksheets feed, but not always (see `ari copy` for a slight difference)
+
+Let's compare `author` name between the spreadsheets and worksheets feed.
+
+```{r}
+author_stuff <-
+  data_frame(sheet_title = examples$sheet_title,
+             ssf_author = examples$author,
+             wsf_author_name = wsf_stuff$author)
+```
+
+```{r as.is = TRUE}
+knitr::kable(author_stuff)
+```
+
+They agree ... well, except for the *case*. Weird.
+
+Now let's look at `totalResults` and `startIndex`. I already imagine that `totalResults` refers to the number of worksheets and will therefore compare it to the number of `entry` nodes.
+
+```{r}
+more_stuff <- 
+  data_frame(sheet_title = examples$sheet_title,
+             n_entries = content %>%
+               lapply(xml_find_all,"feed:entry", ns_ws) %>% sapply(length),
+             wsf_totalResults = wsf_stuff$totalResults,
+             wsf_startIndex = wsf_stuff$startIndex)
+```
+
+```{r as.is = TRUE}
+knitr::kable(more_stuff)
+```
+
+YES `totalResults` appears to be the number of `entry` elements, which is the number of worksheets or tabs. `startIndex` remains a useless mystery. From some unrelated fiddling, I think it's a feature common to various Google APIs? I wonder if it only becomes meaningful in a paginated context?
+
+### Links in the worksheets feed
+
+For each example sheet, we grab the `id` and the `link` nodes and prepare as we did all the links from the spreadsheets feed.
+
+```{r}
+jfun <- function(x) { # gymnastics required for one sheet's worth of links
+  links <- x %>% 
+    xml_find_all("feed:link", ns_ws) %>% 
+    lapply(xml_attrs) %>% 
+    lapply(as.list) %>%
+    lapply(as_data_frame) %>% 
+    bind_rows() %>% 
+    mutate(source = "content/entry/link")
   links %>%
-    mutate(sheet_title = x[["title"]][["text"]],
-           feed = "ss") %>%
-    select(feed, sheet_title, source, href, rel, type)
+    rbind(data.frame(rel = NA, type = NA,
+                     href = x %>% xml_find_one("feed:id", ns_ws) %>% xml_text(),
+                     source = "content/entry/id")) %>% 
+    mutate(feed = "ws",
+           sheet_title = x %>% xml_find_one("feed:title", ns_ws)
+           %>% xml_text()) %>% 
+    select(sheet_title, feed, source, href, rel, type)
 }
-ss_links <- sheet_list %>%
-  list.map(jfun(.))
-links <- ss_links %>%
-  bind_rows
-links
-
-content_links <- content %>%
-  list.map(list.match(., "link")) %>%
-  list.map(list.rbind(.)) %>%
-  list.map(as.data.frame(., stringsAsFactors = FALSE))
-content_links[[1]] %>% str1
-content_links %>% ldply
-## i am here ... revise the below now that it's a tabulation task within a data.frame
-all_link_names <- Reduce(union, lapply(content_links, names))
-sapply(content_links,
-       function(x) table(factor(names(x), levels = all_link_names)))
+wsf_links <- content %>% lapply(jfun) %>% bind_rows()
+wsf_links_table <- wsf_links %>%
+  count(rel, sheet_title) %>%
+  tidyr::spread(sheet_title, n)
 ```
 
-So we always have links named "alternate", "self", and "http://schemas.google.com/g/2005#feed". But there is no link named "http://schemas.google.com/g/2005#post" for the old sheet for which we only have read access.
+```{r as.is = TRUE}
+knitr::kable(wsf_links_table)
+```
 
-```{r eval = FALSE}
-identical(content_links %>% lapluck("self"), examples$ws_feed)
-identical(req_list %>% lapluck("url"), examples$ws_feed)
+So we always have links with these `rel` attributes: "alternate", "self", and "http://schemas.google.com/g/2005#feed". We also have a link with `rel` attribute "http://schemas.google.com/g/2005#post" for all but `unitables2010final copy`, which is an old sheet for which we only have read access. Note: the link with `rel = NA` here is the `id` link from the top-level of the worksheets feed.
+
+What relationship do these links have to those from the top-level of the worksheets feed and from the spreadsheets feed?
+
+```{r}
+identical(wsf_links$href[wsf_links$rel %in% "self"], examples$ws_feed)
+all.equal(req_list %>% sapply(`[[`, "url"),
+          examples$ws_feed, check.names = FALSE)
 ```
 
 The "self" link in the worksheets feed gives the URL of the sheet's worksheets feed (the link labelled as "http://schemas.google.com/spreadsheets/2006#worksheetsfeed" in the spreadsheets feed), which is also the `url` component of the worksheets feed. Confused yet?
 
-```{r eval = FALSE}
-content_links %>% lapluck("alternate")
-examples$alternate
-content_links %>% lapluck("alternate") == examples$alternate
+```{r}
+wsf_links$href[wsf_links$rel %in% "alternate"] == examples$alternate
 ```
 
 It gets worse! The "alternate" link in the worksheets feed is the same as the "alternate" link in the spreadsheet feed __for new sheets_. For old sheets, these two links have the same structure but the sheet key differs. The "alternate" link from the spreadsheets feed contains what I call the *alternate key*, which is needed for the Google Drive API, whereas the "alternate" link from the worksheets feed uses what I just call the sheet's key. Which is what we use when talking to the Sheets API.
 
-I have run out of energy for this. I can find no references in the package's current code to the worksheet feed links labelled as "http://schemas.google.com/g/2005#feed" and "http://schemas.google.com/g/2005#post", so I'm not going to delve into them.
+I can find no references in the package's current code to the worksheet feed links labelled as "http://schemas.google.com/g/2005#feed" and "http://schemas.google.com/g/2005#post", so I'm not going to delve into them.
 
-### Structure and content of worksheets feed links
+### Summary of structure and content of worksheets feed links
 
 ```sh
 the "worksheets feed" can be found in ...
@@ -418,8 +504,8 @@ VISIBILITY = {private (default), public}
 PERMISSION = {full (read and write), values (read only)}
 
 the "alternate" link can be found in ...
-  link named "alternate" in the corresponding entry inside the content of the spreadsheets feed
-  link named "alternate" inside the content of the worksheets feed
+  link with `rel` attribute "alternate" in the corresponding `entry` inside the content of the spreadsheets feed
+  link with `rel` attribute "alternate" inside the content of the worksheets feed
 
 for new sheets, the "alternate" link looks like this in both places:
 https://docs.google.com/spreadsheets/d/KEY/edit
@@ -430,55 +516,153 @@ where SOME_SORT_OF_KEY = ALT_KEY in the spreadsheets feed and
       SOME_SORT_OF_KEY = KEY in the worksheets feed
 ```
 
+### Collecting links from the spreadsheets and worksheets feed
+
+Add some info from the spreadsheets feed to the worksheets feed links. Then row bind into one large table of links.
+
+```{r}
+wsf_links <- wsf_links %>%
+  left_join(links %>%
+              filter(source == "content/entry/id") %>% 
+              select(sheet_title, version, perm,
+                     link_key, alt_key, sheet_key),
+            by = "sheet_title")
+links <- bind_rows(links %>% filter(sheet_title %in% examples$sheet_title), 
+                   wsf_links) %>% 
+  arrange(version, perm, sheet_title, feed, source, rel)
+```
+
+Explore.
+
+```{r}
+links %>% 
+  group_by(sheet_title) %>% 
+  summarise(n = n(), ss = sum(feed == "ss"), ws = sum(feed == "ws"),
+            ndist = n_distinct(href), version = version[1], perm = perm[1])
+```
+
+Among these examples, there are only 3 distinct URLs (new sheets) or 4 (old sheets). What are they?
+
+```{r eval = FALSE}
+plyr::dlply(links, ~ sheet_title + href, function(x) {
+  x %>% select(feed, source, rel, version, perm)
+})
+```
+
+*I'm struggling to make this presentable in this report. For now, just reporting what I see in these results.*
+
+For a new sheet, the three URLs are:
+
+```
+the "alternate" link, found in content/entry/link of ss and ws feeds:
+https://docs.google.com/spreadsheets/d/KEY/edit
+this link is never really used for anything
+
+the spreadsheets link:
+https://spreadsheets.google.com/feeds/spreadsheets/private/full/KEY
+this link is never really used for anything
+
+the worksheets feed:
+https://spreadsheets.google.com/feeds/worksheets/KEY/private/full
+this link is critical and is stored redundantly in several places
+feed             source                                   rel
+  ss content/entry/link         http://...2006#worksheetsfeed
+  ws   content/entry/id                                  <NA>
+  ws content/entry/link http://schemas.google.com/g/2005#feed
+  ws content/entry/link http://schemas.google.com/g/2005#post
+  ws content/entry/link                                  self
+```
+
+For an old sheet, there are four URLs instead of three, because the "alternate" links in the spreadsheets and worksheets feed contain different keys:
+
+```
+two "alternate" links, found in content/entry/link of ss and ws feeds:
+spreadsheets feed: https://spreadsheets.google.com/ccc?key=ALT_KEY
+worksheets feed: https://spreadsheets.google.com/ccc?key=KEY
+we use the alternate link from the spreadsheets feed to get ALT_KEY
+
+the spreadsheets link:
+https://spreadsheets.google.com/feeds/spreadsheets/private/full/KEY
+this link is never really used for anything
+
+the worksheets feed:
+https://spreadsheets.google.com/feeds/worksheets/KEY/private/full
+this link is critical and is stored redundantly in several places
+(there is no 2005#post link for a real-only old sheet)
+feed             source                                   rel
+  ss content/entry/link         http://...2006#worksheetsfeed
+  ws   content/entry/id                                  <NA>
+  ws content/entry/link http://schemas.google.com/g/2005#feed
+  ws content/entry/link http://schemas.google.com/g/2005#post
+  ws content/entry/link                                  self
+```
+
 #### Entries in the worksheets feed
 
-The `entry` components correspond to worksheets within the sheet. As we did with content and link, we make a list with one component per spreadsheet, each containing another list of the sheet's `entry` elements.
+The `entry` components correspond to worksheets within the sheet. As we did with `content`, we make a list with one component per spreadsheet, each containing another list of the sheet's `entry` elements.
 
-```{r eval = FALSE}
-content_entries <- llply(content, lfilt, "^entry$")
-content_entries %>% str1
-first_ws <- content_entries %>% lapply(`[[`, 1)
-all_ws_names <- Reduce(union, lapply(first_ws, names))
-sapply(first_ws,
-       function(x) table(factor(names(x), levels = all_ws_names)))
+```{r}
+ws_entries <- content %>% lapply(xml_find_all, "feed:entry", ns_ws)
+ws_entries %>% lapply(length)
+
+f <- . %>% xml_children %>% xml_name
+possible_nodes <- ws_entries %>% lapply(f) %>% unlist() %>% unique()
+g <- . %>% xml_children %>% xml_name %>%
+  factor(levels = possible_nodes) %>% table
 ```
 
-The links are our main interest. But first let's look at the titles.
-
-```{r eval = FALSE}
-content_entries %>% lapply(lapluck, "title") %>%
-  lapply(function(x) unlist(x)) %>% lapply(function(x) x[seq_len(length(x)/2)])
-foo <- content_entries %>% lapply(lfilt, "link")
-ldply(foo, function(x) as.data.frame(x[ , c(1, 3)]))
+```{r as.is = TRUE}
+knitr::kable(sapply(ws_entries, g), format = "html",
+             table.attr = "style='width:30%;'")
 ```
 
-Let me try to get the links now
+The links are our main interest. But first let's look at the titles, colCounts, and rowCounts.
 
 ```{r eval = FALSE}
-jfun <- function(x) lfilt(x, "link")
-content_entries %>% lapply(jfun)
-
+ws_entries %>% lapply(xml_find_all, "feed:title", ns_ws) %>% lapply(xml_text)
+ws_entries %>% lapply(xml_find_all, "gs:rowCount", ns_ws) %>% lapply(xml_text)
+ws_entries %>% lapply(xml_find_all, "gs:colCount", ns_ws) %>% lapply(xml_text)
 ```
 
-```{r eval = FALSE}
-req <- gsheets_GET(ws_feed)
-req_list <- lapply(examples$ws_feed, gsheets_GET)
+Let's look at the links now. I'm going to work with the links for the **first** worksheet from each spreadsheet and count on the rest to have similar structure.
 
+```{r}
+ws_links <- ws_entries %>%
+  lapply(`[`, 1) %>% 
+  lapply(xml_find_all, "feed:link", ns_ws)
+ws_links %>% sapply(length)
+examples %>% select(sheet_title, perm, version)
 ```
 
-Let's verify that the `url` reported in worksheets feed is, in fact, the worksheets feed link from the spreadsheets feed.
+The number of links per worksheet is maximized for a "read and write" new sheet: 6 links per worksheet. There are 5 links per worksheet in the cases of a "read only" new sheet and a "read and write" old sheet. There are only 4 links per worksheet for a "read only" old sheet.
 
-* With much abuse of notation, we see that `<worksheets_feed>/content/id` is the same as `<worksheets_feed>/url` is the same as `<spreadsheets_feed>/content/ws_feed`.
-
-
-```{r eval = FALSE}
-ssf <- links %>%
-  filter(sheet_title %in% example_sheets,
-         rel %>% str_detect("2006#worksheetsfeed")) %>%
-  select(sheet_title, href)
-wsf <- req_list %>% list.mapv(url)
-wsf <- data_frame(sheet_title = names(wsf),
-                  href = wsf)
-full_join(ssf, wsf, by = "sheet_title") %>%
-  with(., identical(href.x, href.y))
+```{r}
+jfun <- function(x) { # gymnastics required for one sheet's worth of links
+  links <- x %>% 
+    xml_find_all("feed:entry", ns_ws) %>% 
+    `[`(1) %>% 
+    xml_find_all("feed:link", ns_ws) %>% 
+    lapply(xml_attrs) %>% 
+    lapply(as.list) %>%
+    lapply(as_data_frame) %>% 
+    bind_rows()
+  links %>%
+    mutate(sheet_title = x %>%
+             xml_find_one("feed:title", ns_ws) %>% xml_text()) %>% 
+    select(sheet_title, href, rel, type)
+}
+one_ws_links <-
+  content %>%
+  lapply(jfun) %>% 
+  bind_rows() %>% 
+  mutate(rel = rel %>% basename)
+one_ws_links_table <- one_ws_links %>%
+  count(rel, sheet_title) %>%
+  tidyr::spread(sheet_title, n)
 ```
+
+```{r as.is = TRUE}
+knitr::kable(one_ws_links_table)
+```
+
+The old sheets (`ari copy` and `unitables2010final copy`) are lacking the 2006#exportcsv, a fact we know all too well. And the "read only" sheets are missing the "edit" link, which stands to reason.
