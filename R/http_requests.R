@@ -22,7 +22,7 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
   ## ws_feed for a non-existent spreadsheet will trigger "client error: (400)
   ## Bad Request" ... can we confidently say what the problem is?
 
-  ok_content_types <- c("application/atom+xml; charset=UTF-8")
+  ok_content_types <- c("application/atom+xml; charset=UTF-8", "text/csv")
   if(!(req$headers$`content-type` %in% ok_content_types)) {
 
     # DIAGNOSTIC EXPERIMENT: If I always call gs_ls() here, which seems to

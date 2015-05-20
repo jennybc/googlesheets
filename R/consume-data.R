@@ -45,12 +45,7 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
                "file and then read it into R."))
   }
 
-  ## since gsheets_GET expects xml back, just using GET for now
-  if(ss$is_public) {
-    req <- httr::GET(this_ws$exportcsv)
-  } else {
-    req <- httr::GET(this_ws$exportcsv, get_google_token())
-  }
+  req <- gsheets_GET(this_ws$exportcsv, to_xml = FALSE)
 
   if(req$headers$`content-type` != "text/csv") {
     stop1 <- "Cannot access this sheet via csv."
