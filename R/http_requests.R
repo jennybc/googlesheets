@@ -21,24 +21,24 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
   ## TO DO: interpret some common problems for user? for example, a well-formed
   ## ws_feed for a non-existent spreadsheet will trigger "client error: (400)
   ## Bad Request" ... can we confidently say what the problem is?
-  if(!grepl("application/atom+xml; charset=UTF-8",
-            req$headers[["content-type"]], fixed = TRUE)) {
+
+  ok_content_types <- c("application/atom+xml; charset=UTF-8", "text/csv")
+  if(!(req$headers$`content-type` %in% ok_content_types)) {
 
     # DIAGNOSTIC EXPERIMENT: If I always call gs_ls() here, which seems to
     # trigger token refresh more reliably when needed (vs registration), does
     # this problem go away? If so, I'll put that info to good use with a less
-    # stupid fix.
+    # stupid fix. NOTE added later: I am NOT calling gs_ls() here, but am simply
+    # trying the GET a second time. Can this be ripped out now?
     if(grepl("public", url)) {
       req <- httr::GET(url, ...)
     } else {
       req <- httr::GET(url, get_google_token(), ...)
     }
     httr::stop_for_status(req)
-    if(!grepl("application/atom+xml; charset=UTF-8",
-              req$headers[["content-type"]], fixed = TRUE)) {
-      stop(sprintf(paste("Was expecting content-type to be:\n%s\nbut instead",
-                         "it's:\n%s\n"),
-                   "application/atom+xml; charset=UTF-8",
+    if(!any(req$headers[["content-type"]] %>%
+            stringr::str_detect(ok_content_types))) {
+      stop(sprintf(paste("Not expecting content-type to be:\n%s"),
                    req$headers[["content-type"]]))
     }
   }
@@ -47,12 +47,12 @@ gsheets_GET <- function(url, to_xml = TRUE, ...) {
   # constructive when this happens ... sort of waiting til I can review all the
   # auth stuff
 
-  req$content <- httr::content(req, as = "text", encoding = "UTF-8")
-
   # This is only FALSE when calling gs_ws_modify() where we are using regex
   # substitution, waiting for xml2 to support changing xml_doc()
   if(to_xml) {
-    req$content <- req$content %>% xml2::read_xml()
+    req$content <- req %>%
+      httr::content(as = "text", encoding = "UTF-8") %>%
+      xml2::read_xml()
   }
 
   req

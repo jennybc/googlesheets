@@ -45,24 +45,29 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
                "file and then read it into R."))
   }
 
-  ## since gsheets_GET expects xml back, just using GET for now
-  if(ss$is_public) {
-    req <- httr::GET(this_ws$exportcsv)
+  req <- gsheets_GET(this_ws$exportcsv, to_xml = FALSE)
+
+  if(req$headers$`content-type` != "text/csv") {
+    stop1 <- "Cannot access this sheet via csv."
+    stop2 <- "Are you sure you have permission to access this Sheet?"
+    stop3 <- "If this Sheet is supposed to be public, make sure it is \"published to the web\", which is NOT the same as \"public on the web\"."
+    stop4 <- sprintf("status_code: %s", req$status_code)
+    stop5 <- sprintf("content-type: %s", req$headers$`content-type`)
+    stop(paste(stop1, stop2, stop3, stop4, stop5, sep = "\n"))
+  }
+
+  if(httr::content(req) %>% is.null()) {
+    sprintf("Worksheet \"%s\" is empty.", this_ws$ws_title) %>%
+      message()
+    dplyr::data_frame()
   } else {
-    req <- httr::GET(this_ws$exportcsv, get_google_token())
+    ## for empty cells, numeric columns returned as NA vs "" for chr
+    ## columns so set all "" to NA
+    req %>%
+      httr::content(type = "text/csv", na.strings = c("", "NA"),
+                    encoding = "UTF-8", ...) %>%
+      dplyr::as_data_frame()
   }
-
-  if(is.null(httr::content(req))) {
-    stop("Worksheet is empty. There are no cells that contain data.")
-  }
-
-  ## content() will process with read.csv, because req$headers$content-type is
-  ## "text/csv"
-  ## for empty cells, numeric columns returned as NA vs "" for chr
-  ## columns so set all "" to NA
-  req %>%
-    httr::content(na.strings = c("", "NA"), encoding = "UTF-8", ...) %>%
-    dplyr::as_data_frame()
 }
 
 #' Get data from a rectangular worksheet as a tbl_df or data.frame
