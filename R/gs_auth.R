@@ -66,12 +66,21 @@ gs_auth <- function(new_user = FALSE, token = NULL) {
 #'
 #' @keywords internal
 get_google_token <- function() {
-
-  if(is.null(.state$token)) {
-    gs_auth()
+  
+  if(shiny_token_exists()) {
+    
+    httr::add_headers("Authorization" = paste(.shiny$token$token_type,
+                                              .shiny$token$access_token))
+    
+  } else {
+    
+    if(is.null(.state$token)) {
+      gs_auth()
+    }
+    
+    httr::config(token = .state$token)
+    
   }
-
-  httr::config(token = .state$token)
 }
 
 #' Retrieve Google user data
@@ -80,24 +89,24 @@ get_google_token <- function() {
 #'
 #' @keywords internal
 google_user <- function() {
-
+  
   ## require pre-existing token, to avoid recursion that would arise if
   ## gdrive_GET() called gs_auth()
-  if(token_exists()) {
-
+  if(token_exists() | shiny_token_exists()) {
+    
     req <- gdrive_GET("https://www.googleapis.com/drive/v2/about")
-
+    
     user_stuff <- req$content$user
     list(displayName = user_stuff$displayName,
          emailAddress = user_stuff$emailAddress,
          auth_date = req$headers$date %>% httr::parse_http_date())
-
+    
   } else {
-
+    
     NULL
-
+    
   }
-
+  
 }
 
 #' Retrieve and print information about authorized user
@@ -121,21 +130,30 @@ google_user <- function() {
 #'
 #' @export
 gs_user <- function(verbose = TRUE) {
-
-  if(token_exists()) {
-
-    token <- .state$token
-    token_ok <- token$validate()
-
-    ret <- list(displayName = .state$user$displayName,
-                emailAddress = .state$user$emailAddress,
-                auth_date = .state$user$auth_date)
-    if(token_ok) {
-      ret$exp_date <- file.info(".httr-oauth")$mtime + 3600
+  
+  if(token_exists() | shiny_token_exists()) {
+    
+    if(shiny_token_exists()) {
+      ret <- google_user()
+      token_ok <- TRUE # just hardcoding it to match above
+      ret$exp_date <- Sys.time() + .shiny$token$expires_in
     } else {
-      ret$exp_date <- NA_character_ %>% as.POSIXct()
+      
+      token <- .state$token
+      token_ok <- token$validate()
+      
+      ret <- list(displayName = .state$user$displayName,
+                  emailAddress = .state$user$emailAddress,
+                  auth_date = .state$user$auth_date)
+      
+      if(token_ok) {
+        ret$exp_date <- file.info(".httr-oauth")$mtime + 3600
+      } else {
+        ret$exp_date <- NA_character_ %>% as.POSIXct()
+      }
+      
     }
-
+    
     if(verbose) {
       sprintf("                       displayName: %s\n",
               ret$displayName) %>% cat()
@@ -150,13 +168,14 @@ gs_user <- function(verbose = TRUE) {
       } else {
         message(paste("Access token has expired and will be auto-refreshed."))
       }
-
+      
     }
-
-  } else if(verbose) cat("No user currently authorized.")
-
+  }
+  
+  else if(verbose) cat("No user currently authorized.")
+  
   invisible(ret)
-
+  
 }
 
 #' Check if authorization currently in force
@@ -165,10 +184,10 @@ gs_user <- function(verbose = TRUE) {
 #'
 #' @keywords internal
 token_exists <- function() {
-
+  
   if(is.null(.state$token)) {
     message("No authorization yet in this session!\n")
-
+    
     if(file.exists(".httr-oauth")) {
       message(paste("NOTE: a .httr-oauth file exists in current working",
                     "directory.\n Run gs_auth() to use the",
@@ -177,13 +196,27 @@ token_exists <- function() {
       message(paste("No .httr-oauth file exists in current working directory.",
                     "Run gs_auth() to provide credentials."))
     }
-
+    
     invisible(FALSE)
-
+    
   } else {
-
+    
     invisible(TRUE)
-
+    
   }
+  
+}
 
+
+
+#' Check if authorization was done through shiny app
+#'
+#' @return logical
+#'
+#' @keywords internal
+shiny_token_exists <- function() {
+  
+  ifelse(exists(".shiny", mode = "environment"), 
+         exists("token", envir = .shiny), 
+         FALSE)
 }
