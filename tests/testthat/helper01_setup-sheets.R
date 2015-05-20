@@ -18,6 +18,12 @@ pts_title <- "test-gs-public-testing-sheet"
 pts_key <- "1amnxLg9VVDoE6KSIZvutYkEGNgQyJSnLJgHthehruy8"
 pts_ws_feed <- construct_ws_feed_from_key(pts_key, "public")
 
+## Public on the web, but not published on the web (owned by rpackagetest)
+gotcha_url <- "https://docs.google.com/spreadsheets/d/1B0ug4WvaU175Nrz4JSyBoTSQ5HSZXrGRUQLq-8M3uaA/edit#gid=1167867454"
+gotcha_title <- "test-gs-public-not-published"
+gotcha_key <- "1B0ug4WvaU175Nrz4JSyBoTSQ5HSZXrGRUQLq-8M3uaA"
+gotcha_ws_feed <- construct_ws_feed_from_key(gotcha_key, "public")
+
 ## Old sheet (owned by rpackagetest)
 # old_url <- "https://docs.google.com/spreadsheet/ccc?key=0Ai6OdwH-k_ZcdElYSWIxNkhwRkMzdnJTenowazFSS3c"
 # old_key <- "tIXIb16HpFC3vrSzz0k1RKw"
