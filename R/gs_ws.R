@@ -276,7 +276,7 @@ gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL) {
   this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
   req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
-  contents <- req$content
+  contents <- req %>% httr::content(as = "text", encoding = "UTF-8")
 
   if(!is.null(to)) { # our purpose is to rename a worksheet
 
