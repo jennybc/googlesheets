@@ -45,3 +45,10 @@ test_that("We can reshape data from the cell feed", {
 
 })
 
+test_that("We get no error from get_via_csv on an empty sheet (pub)", {
+
+  pts_ss <- pts_key %>% gs_key(lookup = FALSE)
+  expect_is(tmp <- pts_ss %>% get_via_csv(ws = "empty"), "data.frame")
+  expect_identical(dim(tmp), rep(0L, 2))
+
+})
