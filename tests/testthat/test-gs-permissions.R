@@ -1,7 +1,7 @@
 context("Different permissions are set")
 
 new_ss <- gs_new(p_("test-gs-permissions"), verbose = FALSE)
-gap_ss <- gs_key(gap_key, verbose = FALSE)
+gap_ss <- gs_gap()
 
 test_that("Permissions for a spreadsheet are listed", {
 

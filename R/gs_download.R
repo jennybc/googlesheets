@@ -21,8 +21,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gs_download(gs_key(gap_key), to = "gapminder.xlsx")
+#' gs_download(gs_gap(), to = "gapminder.xlsx")
 #' file.remove("gapminder.xlsx")
 #' }
 #'

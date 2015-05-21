@@ -24,8 +24,8 @@ if(length(HTTR_OAUTH) > 0) {
 gs_vecdel("hi I am new here", verbose = FALSE)
 
 ## ----copy-gapminder, eval = FALSE----------------------------------------
-#  gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
-#  gs_copy(gs_key(gap_key), to = "Gapminder")
+#  gs_gap() %>%
+#    gs_copy(to = "Gapminder")
 
 ## ----list-sheets---------------------------------------------------------
 my_sheets <- gs_ls()
@@ -36,8 +36,10 @@ gap <- gs_title("Gapminder")
 gap
 
 ## ------------------------------------------------------------------------
-(gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
-ss2 <- gs_key(gap_key)
+just_gap <- gs_ls("^Gapminder$")
+just_gap$sheet_key
+ss2 <- just_gap$sheet_key %>%
+  gs_key()
 ss2
 
 ## ------------------------------------------------------------------------
@@ -80,7 +82,7 @@ gs_ws_rename(x, "Sheet1", "First Sheet")
 ## ----delete-sheet--------------------------------------------------------
 gs_delete(gs_title("hi I am new here"))
 
-## ----, fig.width=7, fig.height=7, eval = FALSE---------------------------
+## ---- fig.width=7, fig.height=7, eval = FALSE----------------------------
 #  
 #  view(ws)
 #  

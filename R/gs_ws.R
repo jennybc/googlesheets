@@ -16,10 +16,10 @@
 #' @examples
 #' \dontrun{
 #' # get a copy of the Gapminder spreadsheet
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
+#' gap_ss <- gs_copy(gs_gap(), to = "Gapminder_copy")
 #' gap_ss <- gs_ws_new(gap_ss, ws_title = "Atlantis")
 #' gap_ss
+#' gs_delete(gap_ss)
 #' }
 #'
 #' @export
@@ -82,11 +82,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gap_key %>%
-#'   gs_key() %>%
-#'   gs_copy(to = "gap_copy")
-#' # non-pipe equivalent: gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_copy(gs_gap(), to = "gap_copy")
 #' gs_ws_ls(gap_ss)
 #' gap_ss <- gs_ws_new(gap_ss, "new_stuff")
 #' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
@@ -152,8 +148,7 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_copy(gs_gap(), to = "gap_copy")
 #' gs_ws_ls(gap_ss)
 #' gap_ss <- gs_ws_rename(gap_ss, from = "Oceania", to = "ANZ")
 #' gs_ws_ls(gap_ss)
@@ -353,9 +348,7 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_key(gap_key)
-#' gs_ws_ls(gap_ss)
+#' gs_ws_ls(gs_gap())
 #' }
 #' @export
 gs_ws_ls <- function(ss) {

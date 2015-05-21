@@ -22,11 +22,7 @@ The worksheet and all of its contents will be removed from the spreadsheet.
 }
 \examples{
 \dontrun{
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gap_key \%>\%
-  gs_key() \%>\%
-  gs_copy(to = "gap_copy")
-# non-pipe equivalent: gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+gap_ss <- gs_copy(gs_gap(), to = "gap_copy")
 gs_ws_ls(gap_ss)
 gap_ss <- gs_ws_new(gap_ss, "new_stuff")
 gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,

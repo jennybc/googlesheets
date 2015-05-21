@@ -60,8 +60,8 @@ gs_vecdel("hi I am new here", verbose = FALSE)
 If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
 ```{r copy-gapminder, eval = FALSE}
-gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
-gs_copy(gs_key(gap_key), to = "Gapminder")
+gs_gap() %>% 
+  gs_copy(to = "Gapminder")
 ```
 
 # List your spreadsheets
@@ -95,8 +95,10 @@ Besides using the spreadsheet title, you can also specify a spreadsheet in three
 Here's an example of registering a sheet via key. While registration by title is handy for interactive use, registration by key might be preferred when programming.
 
 ```{r}
-(gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
-ss2 <- gs_key(gap_key)
+just_gap <- gs_ls("^Gapminder$")
+just_gap$sheet_key
+ss2 <- just_gap$sheet_key %>%
+  gs_key()
 ss2
 ```
 

@@ -33,8 +33,8 @@ If you don't have any Google Sheets yet, or if you just want to follow along ver
 
 
 ```r
-gap_key <- "1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE"
-gs_copy(gs_key(gap_key), to = "Gapminder")
+gs_gap() %>% 
+  gs_copy(to = "Gapminder")
 ```
 
 # List your spreadsheets
@@ -48,19 +48,19 @@ my_sheets
 ```
 
 ```
-## Source: local data frame [33 x 10]
+## Source: local data frame [37 x 10]
 ## 
 ##                 sheet_title        author perm version             updated
-## 1                       foo      gspreadr   rw     new 2015-05-08 22:14:30
-## 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-08 18:24:16
-## 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-08 20:00:01
-## 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-08 21:58:48
-## 5               gas_mileage      woo.kara    r     new 2015-05-04 01:14:13
-## 6           #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
-## 7        test-gs-old-sheet2      gspreadr   rw     old 2015-04-30 23:33:48
-## 8    test-gs-mini-gapminder  rpackagetest    r     new 2015-04-25 18:25:43
-## 9      test-gs-iris-private      gspreadr   rw     new 2015-04-25 15:18:05
-## 10 1F0iNuYW4v_oG69s7c5Nzdo…      gspreadr   rw     new 2015-04-25 02:32:24
+## 1  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-21 05:05:47
+## 2   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-21 02:40:50
+## 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-21 05:21:27
+## 4     All R Phylo Functions  omeara.brian    r     new 2015-05-20 18:34:43
+## 5                  ari copy      gspreadr   rw     old 2015-05-19 23:00:13
+## 6               gas_mileage      woo.kara    r     new 2015-05-17 00:00:12
+## 7  2014-05-10_seaRM-at-van…      gspreadr   rw     new 2015-05-11 04:19:08
+## 8  2014-05-10_seaRM-at-van…         jenny    r     new 2015-05-11 03:51:57
+## 9       test-gs-permissions      gspreadr   rw     new 2015-05-08 23:08:59
+## 10          #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
 ## ..                      ...           ...  ...     ...                 ...
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
@@ -89,7 +89,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 22:14:37 GMT
+##   Date of googlesheets registration: 2015-05-21 05:23:31 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -116,7 +116,8 @@ Here's an example of registering a sheet via key. While registration by title is
 
 
 ```r
-(gap_key <- my_sheets$sheet_key[my_sheets$sheet_title == "Gapminder"])
+just_gap <- gs_ls("^Gapminder$")
+just_gap$sheet_key
 ```
 
 ```
@@ -124,7 +125,8 @@ Here's an example of registering a sheet via key. While registration by title is
 ```
 
 ```r
-ss2 <- gs_key(gap_key)
+ss2 <- just_gap$sheet_key %>%
+  gs_key()
 ```
 
 ```
@@ -138,7 +140,7 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 22:14:37 GMT
+##   Date of googlesheets registration: 2015-05-21 05:23:34 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -174,7 +176,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-08 22:14:37 GMT
+##   Date of googlesheets registration: 2015-05-21 05:23:31 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -382,7 +384,7 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-08 22:14:39
+## 1 hi I am new here gspreadr   rw     new 2015-05-21 05:23:36
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -439,8 +441,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 22:14:49 GMT
-##     Date of last spreadsheet update: 2015-05-08 22:14:46 GMT
+##   Date of googlesheets registration: 2015-05-21 05:23:43 GMT
+##     Date of last spreadsheet update: 2015-05-21 05:23:41 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -449,7 +451,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1t5RJT_v6fmljtJXVd01Me9bL6vGHJ11q1-XrSo2KvWM
+## Key: 1Xj5_l6jQJY2BI2qxD8vm7mZ9lS8aucO2a0qtnLGQDzM
 ```
 
 ```r
@@ -466,8 +468,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 22:14:49 GMT
-##     Date of last spreadsheet update: 2015-05-08 22:14:49 GMT
+##   Date of googlesheets registration: 2015-05-21 05:23:45 GMT
+##     Date of last spreadsheet update: 2015-05-21 05:23:43 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -477,7 +479,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1t5RJT_v6fmljtJXVd01Me9bL6vGHJ11q1-XrSo2KvWM
+## Key: 1Xj5_l6jQJY2BI2qxD8vm7mZ9lS8aucO2a0qtnLGQDzM
 ```
 
 ```r
@@ -503,8 +505,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-08 22:14:51 GMT
-##     Date of last spreadsheet update: 2015-05-08 22:14:50 GMT
+##   Date of googlesheets registration: 2015-05-21 05:23:47 GMT
+##     Date of last spreadsheet update: 2015-05-21 05:23:45 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -513,7 +515,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1t5RJT_v6fmljtJXVd01Me9bL6vGHJ11q1-XrSo2KvWM
+## Key: 1Xj5_l6jQJY2BI2qxD8vm7mZ9lS8aucO2a0qtnLGQDzM
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

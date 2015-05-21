@@ -14,9 +14,7 @@ Retrieve the titles of all the worksheets in a \code{\link{googlesheet}}.
 }
 \examples{
 \dontrun{
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gs_key(gap_key)
-gs_ws_ls(gap_ss)
+gs_ws_ls(gs_gap())
 }
 }
 

@@ -84,7 +84,7 @@ test_that("Spreadsheet can be registered via URL, key, title, ws_feed or ss", {
 
 test_that("We get correct number and titles of worksheets", {
 
-  ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)
+  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
   expect_equal(ss$n_ws, 5L)
   expect_true(all(c("Asia", "Africa", "Americas", "Europe", "Oceania") %in%
                     ss$ws$ws_title))
@@ -93,8 +93,8 @@ test_that("We get correct number and titles of worksheets", {
 
 test_that("Print method for googlesheet works", {
 
-  ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)
-  expect_output(print(ss), paste("Spreadsheet title:", gap_title))
-  expect_output(print(ss), paste("Key:", gap_key))
+  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
+  expect_output(print(ss), paste("Spreadsheet title:", GAP_TITLE))
+  expect_output(print(ss), paste("Key:", GAP_KEY))
 
 })
