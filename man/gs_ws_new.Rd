@@ -30,10 +30,10 @@ be the same as any existing worksheets in the sheet.
 \examples{
 \dontrun{
 # get a copy of the Gapminder spreadsheet
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
+gap_ss <- gs_copy(gs_gap(), to = "Gapminder_copy")
 gap_ss <- gs_ws_new(gap_ss, ws_title = "Atlantis")
 gap_ss
+gs_delete(gap_ss)
 }
 }
 

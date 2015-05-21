@@ -2,7 +2,7 @@ context("download sheets")
 
 test_that("Spreadsheet can be exported", {
 
-  ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)
+  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
 
   temp_dir <- tempdir()
 
@@ -26,7 +26,7 @@ test_that("Spreadsheet can be exported", {
 
 test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 
-  ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE)
+  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
 
   temp_dir <- tempdir()
 

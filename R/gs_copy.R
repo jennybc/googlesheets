@@ -13,9 +13,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
+#' # copy the Gapminder example sheet
+#' gap_ss <- gs_copy(gs_gap(), to = "Gapminder_copy")
 #' gap_ss
+#' gs_delete(gap_ss)
 #' }
 #'
 #' @export
@@ -32,24 +33,26 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
 
   req <- gdrive_POST(the_url, body = the_body)
 
-  new_title <- httr::content(req)$title
+  new_key <- httr::content(req)$id
 
-  new_ss <- try(gs_title(new_title, verbose = FALSE), silent = TRUE)
+  new_ss <- try(gs_key(new_key, verbose = FALSE), silent = TRUE)
 
   cannot_find_sheet <- inherits(new_ss, "try-error")
 
-  if(verbose) {
-    if(cannot_find_sheet) {
+  if(cannot_find_sheet) {
+    if(verbose) {
       message("Cannot verify whether spreadsheet copy was successful.")
-    } else {
+    }
+    invisible(NULL)
+  } else {
+    ## this looks crazy but unless I sleep for several seconds, new_ss reflects
+    ## the default "copy of ..." title instead of sheet title requested in `to
+    ## =`
+    new_ss$sheet_title <- to
+    if(verbose) {
       message(sprintf("Successful copy! New sheet is titled \"%s\".",
                       new_ss$sheet_title))
     }
-  }
-
-  if(cannot_find_sheet) {
-    invisible(NULL)
-  } else {
     new_ss %>%
       invisible()
   }

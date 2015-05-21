@@ -23,9 +23,10 @@ Drive API}.
 }
 \examples{
 \dontrun{
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
+# copy the Gapminder example sheet
+gap_ss <- gs_copy(gs_gap(), to = "Gapminder_copy")
 gap_ss
+gs_delete(gap_ss)
 }
 }
 

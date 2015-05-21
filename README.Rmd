@@ -103,9 +103,7 @@ my_sheets %>% glimpse()
 If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
 
 ```{r copy-gapminder, eval = FALSE}
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_key %>% 
-  gs_key() %>% 
+gs_gap() %>% 
   gs_copy(to = "Gapminder")
 ```
 
@@ -123,14 +121,14 @@ gap
 
 # Need to access a sheet you do not own?
 # Access it by key if you know it!
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap <- gap_key %>%
+(GAP_KEY <- gs_gap_key())
+third_party_gap <- GAP_KEY %>%
   gs_key()
 
 # Have a sharing link?
 # Access it by URL!
-gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-gap <- gap_url %>%
+(GAP_URL <- gs_gap_url())
+third_party_gap <- GAP_URL %>%
   gs_url()
 # note: registration via URL may not work for "old" sheets
 ```
