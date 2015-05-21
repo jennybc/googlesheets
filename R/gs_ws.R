@@ -160,12 +160,14 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 #' @export
 gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("googlesheet"))
+  stopifnot(ss %>% inherits("googlesheet"),
+            to %>% is.character(),
+            length(to) == 1L)
 
-  this_ws <- ss %>% gs_ws(from)
+  this_ws <- ss %>% gs_ws(from, verbose)
   from_title <- this_ws$ws_title
 
-  ss_refresh <- gs_ws_modify(ss, from = from, to = to)
+  ss_refresh <- gs_ws_modify(ss, from = from, to = to, verbose)
 
   from_is_gone <- !(from_title %in% gs_ws_ls(ss_refresh))
   to_is_there <- to %in% gs_ws_ls(ss_refresh)
@@ -264,7 +266,7 @@ gs_ws_resize <- function(ss, ws = 1,
 #' @return a \code{\link{googlesheet}} object
 #'
 #' @keywords internal
-gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL) {
+gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
@@ -302,7 +304,7 @@ gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL) {
   ## TO DO (?): inspect req
   req$url %>%
     extract_key_from_url() %>%
-    gs_key()
+    gs_key(verbose = verbose)
 
 }
 
