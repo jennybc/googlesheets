@@ -102,7 +102,7 @@ my_sheets %>% glimpse()
 
 ### Get a Google spreadsheet to practice with
 
-Don't worry if you don't have any suitable Google Sheets lying around! We've published a sheet for you to practice with and have built functions into `googlesheets` to help you access it. The example sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder); feel free to [visit the Sheet in the browser](https://w3id.org/people/jennybc/googlesheets_gap_url). The code below will get put a copy of this sheet into your Drive, titled "Gapminder".
+Don't worry if you don't have any suitable Google Sheets lying around! We've published a sheet for you to practice with and have built functions into `googlesheets` to help you access it. The example sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder); feel free to [visit the Sheet in the browser](https://w3id.org/people/jennybc/googlesheets_gap_url). The code below will put a copy of this sheet into your Drive, titled "Gapminder".
 
 ```{r copy-gapminder, eval = FALSE}
 gs_gap() %>% 
@@ -117,7 +117,7 @@ If you plan to consume data from a sheet or edit it, you must first __register__
 
 `googlesheets` provides several registration functions. Specifying the sheet by title? Use `gs_title()`. By key? Use `gs_key()`. You get the idea.
 
-*We're using the built-in functions `gap_key()` and `gap_url()` to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.*
+*We're using the built-in functions `gs_gap_key()` and `gs_gap_url()` to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.*
 
 ```{r register-sheet}
 gap <- gs_title("Gapminder")
