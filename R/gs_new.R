@@ -12,6 +12,14 @@
 #' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
 #' API}.
 #'
+#' We anticipate the user will control the extent of the new worksheet either by
+#' providing some input data and specifying `trim = TRUE` (see
+#' \code{\link{edit_cells}}) or by specifying \code{row_extent} and
+#' \code{col_extent} directly. But not both ... although it's technically
+#' possible. In that case, note that sheet resizing occurs after inserting the
+#' data and, if the requested size is smaller than the data extent, that data
+#' will be lost.
+#'
 #' @param title the title for the new spreadsheet
 #' @param ws_title the title for the new, sole worksheet; if unspecified, the
 #'   Google Sheets default is "Sheet1"
@@ -19,9 +27,16 @@
 #'   Sheets default is 1000
 #' @param col_extent integer for new column extent; if unspecified, the Google
 #'   Sheets default is 26
+#' @param ... optional arguments passed along to \code{\link{edit_cells}} in
+#'   order to populate the new worksheet with data
 #' @param verbose logical; do you want informative message?
 #'
 #' @return a \code{\link{googlesheet}} object
+#'
+#' @seealso \code{\link{edit_cells}} for specifics on populating the new sheet
+#'   with some data and \code{\link{gs_upload}} for creating a new spreadsheet
+#'   by uploading data from a local file. Note that \code{\link{gs_upload}} is
+#'   likely much faster than using \code{gs_new} and \code{\link{edit_cells}}.
 #'
 #' @examples
 #' \dontrun{
@@ -32,11 +47,16 @@
 #' foo <- gs_new("foo", ws_title = "numero uno", 4, 15)
 #' foo
 #' gs_delete(foo)
+#'
+#' foo <- gs_new("foo", ws = "I know my ABCs", input = letters, trim = TRUE)
+#' foo
+#' gs_delete(foo)
 #' }
 #'
 #' @export
 gs_new <- function(title = "my_sheet", ws_title = NULL,
                    row_extent = NULL, col_extent = NULL,
+                   ...,
                    verbose = TRUE) {
 
   ## TO DO? warn if sheet with same title alredy exists?
@@ -58,6 +78,13 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
     }
   } else {
     stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
+  }
+
+  dotdotdot <- list(...)
+  if(length(dotdotdot)) {
+    edit_cells_arg_list <- c(list(ss = ss), dotdotdot, list(verbose = verbose))
+    #print(edit_cells_arg_list)
+    ss <- do.call(edit_cells, edit_cells_arg_list)
   }
 
   if(!is.null(ws_title) || !is.null(row_extent) || !is.null(col_extent)) {

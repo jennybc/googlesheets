@@ -48,7 +48,8 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   catch_hopeless_input(input)
   this_ws <- gs_ws(ss, ws, verbose = FALSE)
 
-
+  ## TO DO: I need to let the cellranger::anchored defaults rule the day here
+  ## (vs the ones above)
   limits <-
     cellranger::anchored(anchor, input = input, header = header,
                          byrow = byrow) %>%
@@ -137,7 +138,7 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
     Sys.sleep(1)
     ss <- ss %>%
       gs_ws_resize(this_ws$ws_title, limits$`max-row`,
-                   limits$`max-col`, verbose)
+                   limits$`max-col`, verbose = FALSE)
   }
 
   Sys.sleep(1)
