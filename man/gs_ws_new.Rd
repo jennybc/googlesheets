@@ -4,18 +4,20 @@
 \alias{gs_ws_new}
 \title{Add a new worksheet to spreadsheet}
 \usage{
-gs_ws_new(ss, ws_title = "Sheet1", nrow = 1000, ncol = 26,
+gs_ws_new(ss, ws_title = "Sheet1", row_extent = 1000, col_extent = 26,
   verbose = TRUE)
 }
 \arguments{
-\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google
-sheet}
+\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google sheet}
 
-\item{ws_title}{character string for title of new worksheet}
+\item{ws_title}{the title for the new, sole worksheet; if unspecified, the
+Google Sheets default is "Sheet1"}
 
-\item{nrow}{number of rows (default is 1000)}
+\item{row_extent}{integer for new row extent; if unspecified, the Google
+Sheets default is 1000}
 
-\item{ncol}{number of columns (default is 26)}
+\item{col_extent}{integer for new column extent; if unspecified, the Google
+Sheets default is 26}
 
 \item{verbose}{logical; do you want informative message?}
 }
@@ -23,9 +25,17 @@ sheet}
 a \code{\link{googlesheet}} object
 }
 \description{
-Add a new (empty) worksheet to spreadsheet: specify title and worksheet
-extent (number of rows and columns). The title of the new worksheet can not
-be the same as any existing worksheets in the sheet.
+Add a new worksheet to an existing spreadsheet. By default, it will [1] have
+1000 rows and 26 columns, [2] contain no data, and [3] be titled "Sheet1".
+Use the \code{ws_title}, \code{row_extent}, \code{col_extent}, and \code{...}
+arguments to give the worksheet a different title or extent or to populate it
+with some data. This function calls the
+\href{https://developers.google.com/drive/v2/reference/}{Google Drive API} to
+create the worksheet and edit its title or extent. If you provide data for
+the sheet, then this function also calls the
+\href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
+API}. The title of the new worksheet can not be the same as any existing
+worksheets in the sheet.
 }
 \examples{
 \dontrun{

@@ -36,6 +36,7 @@ gs_delete(gs_title("new_sheet"))
 }
 \seealso{
 \code{\link{gs_grepdel}} and \code{\link{gs_vecdel}} for handy
-  wrappers to help you delete multiple sheets at once by title
+  wrappers that help you delete sheets by title, with the ability to delete
+  multiple sheets at once
 }
 
