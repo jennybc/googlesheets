@@ -88,4 +88,26 @@ test_that("Worksheet is resized by title and index", {
 
 })
 
+test_that("Worksheet modification errors for invalid args", {
+
+  expect_error(ss %>% gs_ws_rename(to = ss))
+  expect_error(ss %>% gs_ws_rename(from = 1:3, to = "yo"))
+  expect_error(ss %>% gs_ws_rename(to = LETTERS[1:2]))
+  expect_error(ss %>% gs_ws_rename(to = 3))
+  expect_error(ss %>% gs_ws_rename(from = ss, to = "yo"))
+
+  expect_error(ss %>% gs_ws_resize(ws = ss))
+  expect_error(ss %>% gs_ws_resize(ws = 1:2))
+  expect_error(ss %>% gs_ws_resize(ws = LETTERS[1:2]))
+  expect_error(ss %>% gs_ws_resize(row_extent = "yo"))
+  expect_error(ss %>% gs_ws_resize(row_extent = 1:10))
+  expect_error(ss %>% gs_ws_resize(col_extent = exp(1)))
+
+  expect_error(ss %>% gs_ws_modify(from = 1, to = ss))
+  expect_error(ss %>% gs_ws_modify(from = 1, to = LETTERS[1:2]))
+  expect_error(ss %>% gs_ws_modify(from = 1, new_dim = 1L))
+  expect_error(ss %>% gs_ws_modify(from = 1, new_dim = "yo"))
+
+})
+
 gs_grepdel(TEST, verbose = FALSE)

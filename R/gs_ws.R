@@ -161,13 +161,15 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"),
+            from %>% is.numeric() || from %>% is.character(),
+            length(from) == 1L,
             to %>% is.character(),
             length(to) == 1L)
 
   this_ws <- ss %>% gs_ws(from, verbose)
   from_title <- this_ws$ws_title
 
-  ss_refresh <- gs_ws_modify(ss, from = from, to = to, verbose)
+  ss_refresh <- gs_ws_modify(ss, from = from, to = to, verbose = verbose)
 
   from_is_gone <- !(from_title %in% gs_ws_ls(ss_refresh))
   to_is_there <- to %in% gs_ws_ls(ss_refresh)
@@ -218,7 +220,9 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 gs_ws_resize <- function(ss, ws = 1,
                          row_extent = NULL, col_extent = NULL, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("googlesheet"))
+  stopifnot(ss %>% inherits("googlesheet"),
+            ws %>% is.numeric() || ws %>% is.character(),
+            length(ws) == 1L)
 
   this_ws <- ss %>% gs_ws(ws, verbose)
 
@@ -230,9 +234,13 @@ gs_ws_resize <- function(ss, ws = 1,
     col_extent <- this_ws$col_extent
   }
 
+  stopifnot(row_extent %>% is.numeric(), length(row_extent) == 1L,
+            col_extent %>% is.numeric(), length(col_extent) == 1L)
+
   ss_refresh <-
     gs_ws_modify(ss, ws,
-                 new_dim = c(row_extent = row_extent, col_extent = col_extent))
+                 new_dim = c(row_extent = row_extent, col_extent = col_extent),
+                 verbose = verbose)
   this_ws <- ss_refresh  %>% gs_ws(ws, verbose)
 
   new_row_extent <- this_ws$row_extent %>% as.integer()
@@ -266,16 +274,19 @@ gs_ws_resize <- function(ss, ws = 1,
 #' @return a \code{\link{googlesheet}} object
 #'
 #' @keywords internal
-gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL, verbose = TRUE) {
+gs_ws_modify <- function(ss, from = NULL, to = NULL,
+                         new_dim = NULL, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
   this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
   req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
-  contents <- req %>% httr::content(as = "text", encoding = "UTF-8")
+  the_body <- req %>% httr::content(as = "text", encoding = "UTF-8")
 
-  if(!is.null(to)) { # our purpose is to rename a worksheet
+  if(!is.null(to)) { # rename a worksheet
+
+    stopifnot(to %>% is.character(), length(to) == 1L)
 
     if(to %in% gs_ws_ls(ss)) {
       stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
@@ -286,16 +297,19 @@ gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL, verbose = TRUE) {
     ## TO DO: we should probably be doing something more XML-y here, instead
     ## of doing XML --> string --> regex based subsitution --> XML
     title_replacement <- paste0("\\1", to, "\\3")
-    the_body <- contents %>%
+    the_body <- the_body %>%
       sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
   }
 
-  if(!is.null(new_dim)) { # our purpose is to resize a worksheet
+  if(!is.null(new_dim)) { # resize a worksheet
+
+    stopifnot(new_dim %>% is.numeric(),
+              identical(new_dim %>% names(), c("row_extent", "col_extent")))
 
     row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
     col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
 
-    the_body <- contents %>%
+    the_body <- the_body %>%
       sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
       sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
   }
