@@ -67,10 +67,10 @@ gs_auth <- function(new_user = FALSE, token = NULL) {
 #' @keywords internal
 get_google_token <- function() {
   
-  if(shiny_token_exists()) {
+  if(exists("shiny_access_token", envir = .state)) {
     
-    httr::add_headers("Authorization" = paste(.shiny$token$token_type,
-                                              .shiny$token$access_token))
+    httr::add_headers("Authorization" = paste(.state$shiny_access_token$token_type,
+                                              .state$shiny_access_token$access_token))
     
   } else {
     
@@ -92,7 +92,7 @@ google_user <- function() {
   
   ## require pre-existing token, to avoid recursion that would arise if
   ## gdrive_GET() called gs_auth()
-  if(token_exists() | shiny_token_exists()) {
+  if(token_exists() | exists("shiny_access_token", envir = .state)) {
     
     req <- gdrive_GET("https://www.googleapis.com/drive/v2/about")
     
@@ -131,12 +131,12 @@ google_user <- function() {
 #' @export
 gs_user <- function(verbose = TRUE) {
   
-  if(token_exists() | shiny_token_exists()) {
+  if(token_exists() | exists("shiny_access_token", envir = .state)) {
     
-    if(shiny_token_exists()) {
+    if(exists("shiny_access_token", envir = .state)) {
       ret <- google_user()
-      token_ok <- TRUE # just hardcoding it to match above
-      ret$exp_date <- Sys.time() + .shiny$token$expires_in
+      token_ok <- TRUE # should be valid, hardcoding for now
+      ret$exp_date <- Sys.time() + .state$shiny_access_token$expires_in
     } else {
       
       token <- .state$token
@@ -207,16 +207,3 @@ token_exists <- function() {
   
 }
 
-
-
-#' Check if authorization was done through shiny app
-#'
-#' @return logical
-#'
-#' @keywords internal
-shiny_token_exists <- function() {
-  
-  ifelse(exists(".shiny", mode = "environment"), 
-         exists("token", envir = .shiny), 
-         FALSE)
-}
