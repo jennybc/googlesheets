@@ -13,9 +13,9 @@
 #' API}.
 #'
 #' @param title the title for the new spreadsheet
-#' @param ws the title for the new, sole worksheet; if unspecified, the Google
-#'   Sheets default is "Sheet1"
-#' @param row_extent integer for new row extent;if unspecified, the Google
+#' @param ws_title the title for the new, sole worksheet; if unspecified, the
+#'   Google Sheets default is "Sheet1"
+#' @param row_extent integer for new row extent; if unspecified, the Google
 #'   Sheets default is 1000
 #' @param col_extent integer for new column extent; if unspecified, the Google
 #'   Sheets default is 26
@@ -29,13 +29,13 @@
 #' foo
 #' gs_delete(foo)
 #'
-#' foo <- gs_new("foo", ws = "numero uno", 4, 15)
+#' foo <- gs_new("foo", ws_title = "numero uno", 4, 15)
 #' foo
 #' gs_delete(foo)
 #' }
 #'
 #' @export
-gs_new <- function(title = "my_sheet", ws = NULL,
+gs_new <- function(title = "my_sheet", ws_title = NULL,
                    row_extent = NULL, col_extent = NULL,
                    verbose = TRUE) {
 
@@ -60,17 +60,19 @@ gs_new <- function(title = "my_sheet", ws = NULL,
     stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
   }
 
-  if(!is.null(ws) || !is.null(row_extent) || !is.null(col_extent)) {
+  if(!is.null(ws_title) || !is.null(row_extent) || !is.null(col_extent)) {
     ss <- ss %>%
-      gs_ws_modify(from = 1, to = ws,
+      gs_ws_modify(from = 1, to = ws_title,
                    new_dim = c(row_extent = row_extent,
                                col_extent = col_extent), verbose = FALSE)
     if(verbose) {
-      if(ws %in% ss$ws$ws_title) {
-        message(sprintf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws))
+      if(ws_title %in% ss$ws$ws_title) {
+        sprintf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title) %>%
+          message()
       } else {
-        message(sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                              "renamed to \"%s\"."), "Sheet1", ws))
+        sprintf(paste("Cannot verify whether worksheet \"%s\" was",
+                      "renamed to \"%s\"."), "Sheet1", ws_title) %>%
+          message()
       }
       message(sprintf("Worksheet dimensions: %d x %d.",
                       ss$ws$row_extent, ss$ws$col_extent))
