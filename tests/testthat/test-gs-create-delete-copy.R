@@ -64,4 +64,11 @@ test_that("Old Sheets can be copied and deleted", {
 
 })
 
+test_that("gs_delete() throws error on non-googlesheet input", {
+
+  expect_error(gs_delete("yo"))
+
+})
+
+
 gs_grepdel(TEST, verbose = FALSE)
