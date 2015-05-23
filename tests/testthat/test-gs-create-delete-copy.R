@@ -17,6 +17,37 @@ test_that("Spreadsheet can be created and deleted", {
 
 })
 
+test_that("Spreadsheet can be created with custom ws name and size", {
+
+  sheet_title <- p_("hello-bye")
+
+  expect_message(new_ss <- gs_new(sheet_title, "yo!", 3, 3), "created")
+  expect_is(new_ss, "googlesheet")
+  expect_identical(new_ss %>% gs_ws_ls(), "yo!")
+  expect_identical(new_ss$ws$row_extent, 3L)
+  expect_identical(new_ss$ws$col_extent, 3L)
+  Sys.sleep(1)
+  gs_delete(new_ss)
+
+})
+
+test_that("Spreadsheet can be created and populated at once", {
+
+  sheet_title <- p_("hello-bye")
+
+  expect_message(
+    new_ss <-
+      gs_new(sheet_title, "yo!", input = head(iris),
+             trim = TRUE, header = TRUE), "created")
+  expect_is(new_ss, "googlesheet")
+  expect_identical(new_ss %>% gs_ws_ls(), "yo!")
+  expect_identical(new_ss$ws$row_extent, 7L)
+  expect_identical(new_ss$ws$col_extent, 5L)
+  Sys.sleep(1)
+  gs_delete(new_ss)
+
+})
+
 test_that("Spreadsheet can be copied and deleted", {
 
   copy_of <- p_(paste("Copy of", iris_pvt_title))
@@ -49,5 +80,12 @@ test_that("Old Sheets can be copied and deleted", {
   expect_message(gs_delete(ss_copy), "moved to trash")
 
 })
+
+test_that("gs_delete() throws error on non-googlesheet input", {
+
+  expect_error(gs_delete("yo"))
+
+})
+
 
 gs_grepdel(TEST, verbose = FALSE)

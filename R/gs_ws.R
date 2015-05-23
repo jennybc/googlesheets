@@ -1,15 +1,27 @@
 #' Add a new worksheet to spreadsheet
 #'
-#' Add a new (empty) worksheet to spreadsheet: specify title and worksheet
-#' extent (number of rows and columns). The title of the new worksheet can not
-#' be the same as any existing worksheets in the sheet.
+#' Add a new worksheet to an existing spreadsheet. By default, it will [1] have
+#' 1000 rows and 26 columns, [2] contain no data, and [3] be titled "Sheet1".
+#' Use the \code{ws_title}, \code{row_extent}, \code{col_extent}, and \code{...}
+#' arguments to give the worksheet a different title or extent or to populate it
+#' with some data. This function calls the
+#' \href{https://developers.google.com/drive/v2/reference/}{Google Drive API} to
+#' create the worksheet and edit its title or extent. If you provide data for
+#' the sheet, then this function also calls the
+#' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
+#' API}. The title of the new worksheet can not be the same as any existing
+#' worksheet in the sheet.
 #'
-#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google
-#'   sheet
-#' @param ws_title character string for title of new worksheet
-#' @param nrow number of rows (default is 1000)
-#' @param ncol number of columns (default is 26)
-#' @param verbose logical; do you want informative message?
+#' We anticipate that \strong{if} the user wants to control the extent of the
+#' new worksheet, it will be by providing input data and specifying `trim =
+#' TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
+#' \code{col_extent} directly. But not both ... although we won't stop you. In
+#' that case, note that explicit worksheet sizing occurs before data insertion.
+#' If data insertion triggers any worksheet resizing, that will override any
+#' usage of \code{row_extent} or \code{col_extent}.
+#'
+#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google sheet
+#' @inheritParams gs_new
 #'
 #' @return a \code{\link{googlesheet}} object
 #'
@@ -17,14 +29,17 @@
 #' \dontrun{
 #' # get a copy of the Gapminder spreadsheet
 #' gap_ss <- gs_copy(gs_gap(), to = "Gapminder_copy")
-#' gap_ss <- gs_ws_new(gap_ss, ws_title = "Atlantis")
+#' gap_ss <- gs_ws_new(gap_ss)
+#' gap_ss <- gs_ws_delete(gap_ss, ws = "Sheet1")
+#' gap_ss <-
+#'   gs_ws_new(gap_ss, ws_title = "Atlantis", input = head(iris), trim = TRUE)
 #' gap_ss
 #' gs_delete(gap_ss)
 #' }
 #'
 #' @export
 gs_ws_new <- function(ss, ws_title = "Sheet1",
-                      nrow = 1000, ncol = 26, verbose = TRUE) {
+                      row_extent = 1000, col_extent = 26, ..., verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
@@ -41,33 +56,46 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
                    c("http://www.w3.org/2005/Atom",
                      gs = "http://schemas.google.com/spreadsheets/2006"),
                  XML::xmlNode("title", ws_title),
-                 XML::xmlNode("gs:rowCount", nrow),
-                 XML::xmlNode("gs:colCount", ncol))
+                 XML::xmlNode("gs:rowCount", row_extent),
+                 XML::xmlNode("gs:colCount", col_extent))
 
   the_body <- XML::toString.XMLNode(the_body)
 
   req <- gsheets_POST(ss$ws_feed, the_body)
 
-  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
+  ss <- req$url %>%
+    extract_key_from_url() %>%
+    gs_key(verbose = FALSE)
 
-  ws_title_exist <- ws_title %in% gs_ws_ls(ss_refresh)
-
-  if(verbose) {
-    if(ws_title_exist) {
-      message(sprintf("Worksheet \"%s\" added to sheet \"%s\".",
-                      ws_title, ss_refresh$sheet_title))
-    } else {
-      message(sprintf(paste("Cannot verify whether worksheet \"%s\" was added",
-                            "to sheet \"%s\"."), ws_title,
-                      ss_refresh$sheet_title))
-    }
-  }
+  ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
   if(ws_title_exist) {
-    ss_refresh %>% invisible()
+    this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
+    if(verbose) {
+      message(sprintf("Worksheet \"%s\" added to sheet \"%s\".",
+                      this_ws$ws_title, ss$sheet_title))
+    }
   } else {
-    NULL
+    message(sprintf(paste("Cannot verify whether worksheet \"%s\" was added",
+                          "to sheet \"%s\"."), ws_title, ss$sheet_title))
+    return(invisible(NULL))
   }
+
+  dotdotdot <- list(...)
+  if(length(dotdotdot)) {
+    edit_cells_arg_list <-
+      c(list(ss = ss), list(ws = this_ws$ws_title),
+        dotdotdot, list(verbose = verbose))
+    ss <- do.call(edit_cells, edit_cells_arg_list)
+  }
+
+  if(verbose) {
+    this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
+    message(sprintf("Worksheet dimensions: %d x %d.",
+                    this_ws$row_extent, this_ws$col_extent))
+  }
+
+  invisible(ss)
 
 }
 
@@ -160,12 +188,16 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 #' @export
 gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("googlesheet"))
+  stopifnot(ss %>% inherits("googlesheet"),
+            from %>% is.numeric() || from %>% is.character(),
+            length(from) == 1L,
+            to %>% is.character(),
+            length(to) == 1L)
 
-  this_ws <- ss %>% gs_ws(from)
+  this_ws <- ss %>% gs_ws(from, verbose)
   from_title <- this_ws$ws_title
 
-  ss_refresh <- gs_ws_modify(ss, from = from, to = to)
+  ss_refresh <- gs_ws_modify(ss, from = from, to = to, verbose = verbose)
 
   from_is_gone <- !(from_title %in% gs_ws_ls(ss_refresh))
   to_is_there <- to %in% gs_ws_ls(ss_refresh)
@@ -216,7 +248,9 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 gs_ws_resize <- function(ss, ws = 1,
                          row_extent = NULL, col_extent = NULL, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("googlesheet"))
+  stopifnot(ss %>% inherits("googlesheet"),
+            ws %>% is.numeric() || ws %>% is.character(),
+            length(ws) == 1L)
 
   this_ws <- ss %>% gs_ws(ws, verbose)
 
@@ -228,9 +262,13 @@ gs_ws_resize <- function(ss, ws = 1,
     col_extent <- this_ws$col_extent
   }
 
+  stopifnot(row_extent %>% is.numeric(), length(row_extent) == 1L,
+            col_extent %>% is.numeric(), length(col_extent) == 1L)
+
   ss_refresh <-
     gs_ws_modify(ss, ws,
-                 new_dim = c(row_extent = row_extent, col_extent = col_extent))
+                 new_dim = c(row_extent = row_extent, col_extent = col_extent),
+                 verbose = verbose)
   this_ws <- ss_refresh  %>% gs_ws(ws, verbose)
 
   new_row_extent <- this_ws$row_extent %>% as.integer()
@@ -264,16 +302,19 @@ gs_ws_resize <- function(ss, ws = 1,
 #' @return a \code{\link{googlesheet}} object
 #'
 #' @keywords internal
-gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL) {
+gs_ws_modify <- function(ss, from = NULL, to = NULL,
+                         new_dim = NULL, verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
   this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
   req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
-  contents <- req %>% httr::content(as = "text", encoding = "UTF-8")
+  the_body <- req %>% httr::content(as = "text", encoding = "UTF-8")
 
-  if(!is.null(to)) { # our purpose is to rename a worksheet
+  if(!is.null(to)) { # rename a worksheet
+
+    stopifnot(to %>% is.character(), length(to) == 1L)
 
     if(to %in% gs_ws_ls(ss)) {
       stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
@@ -284,16 +325,19 @@ gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL) {
     ## TO DO: we should probably be doing something more XML-y here, instead
     ## of doing XML --> string --> regex based subsitution --> XML
     title_replacement <- paste0("\\1", to, "\\3")
-    the_body <- contents %>%
+    the_body <- the_body %>%
       sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
   }
 
-  if(!is.null(new_dim)) { # our purpose is to resize a worksheet
+  if(!is.null(new_dim)) { # resize a worksheet
+
+    stopifnot(new_dim %>% is.numeric(),
+              identical(new_dim %>% names(), c("row_extent", "col_extent")))
 
     row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
     col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
 
-    the_body <- contents %>%
+    the_body <- the_body %>%
       sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
       sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
   }
@@ -302,7 +346,7 @@ gs_ws_modify <- function(ss, from, to = NULL, new_dim = NULL) {
   ## TO DO (?): inspect req
   req$url %>%
     extract_key_from_url() %>%
-    gs_key()
+    gs_key(verbose = verbose)
 
 }
 

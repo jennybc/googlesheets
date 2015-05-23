@@ -16,7 +16,8 @@
 #' @return logical indicating if the deletion was successful
 #'
 #' @seealso \code{\link{gs_grepdel}} and \code{\link{gs_vecdel}} for handy
-#'   wrappers to help you delete multiple sheets at once by title
+#'   wrappers that help you delete sheets by title, with the ability to delete
+#'   multiple sheets at once
 #'
 #' @examples
 #' \dontrun{
@@ -29,6 +30,14 @@
 #'
 #' @export
 gs_delete <- function(x, verbose = TRUE) {
+
+  if(!inherits(x, "googlesheet")) {
+    mess <-
+      paste("Input must be a 'googlesheet'.",
+            "Trying to delete by title? See gs_grepdel() and gs_vecdel().",
+            sep = "\n")
+    stop(mess)
+  }
 
   key <- gs_get_alt_key(x)
   the_url <- paste("https://www.googleapis.com/drive/v2/files",

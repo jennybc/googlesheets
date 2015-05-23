@@ -223,8 +223,6 @@ foo
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()`. You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
 
-*`gs_new()` and `gs_ws_new()` will soon gain the ability to populate with data upon creation (#116)*
-
 ### Edit cells
 
 You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.

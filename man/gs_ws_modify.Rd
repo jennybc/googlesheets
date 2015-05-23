@@ -4,7 +4,7 @@
 \alias{gs_ws_modify}
 \title{Modify a worksheet's title or size}
 \usage{
-gs_ws_modify(ss, from, to = NULL, new_dim = NULL)
+gs_ws_modify(ss, from = NULL, to = NULL, new_dim = NULL, verbose = TRUE)
 }
 \arguments{
 \item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google
@@ -17,6 +17,8 @@ respectively, of the worksheet}
 
 \item{new_dim}{list of length 2 specifying the row and column extent of the
   worksheet}
+
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
 a \code{\link{googlesheet}} object

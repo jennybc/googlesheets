@@ -48,12 +48,12 @@ my_sheets
 ```
 
 ```
-## Source: local data frame [37 x 10]
+## Source: local data frame [36 x 10]
 ## 
 ##                 sheet_title        author perm version             updated
-## 1  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-21 05:05:47
-## 2   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-21 02:40:50
-## 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-21 05:21:27
+## 1   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-23 05:33:43
+## 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-22 23:01:31
+## 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-22 19:43:33
 ## 4     All R Phylo Functions  omeara.brian    r     new 2015-05-20 18:34:43
 ## 5                  ari copy      gspreadr   rw     old 2015-05-19 23:00:13
 ## 6               gas_mileage      woo.kara    r     new 2015-05-17 00:00:12
@@ -89,7 +89,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-21 05:23:31 GMT
+##   Date of googlesheets registration: 2015-05-23 05:54:27 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -140,7 +140,7 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-21 05:23:34 GMT
+##   Date of googlesheets registration: 2015-05-23 05:54:28 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -176,7 +176,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-21 05:23:31 GMT
+##   Date of googlesheets registration: 2015-05-23 05:54:27 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -374,6 +374,7 @@ gs_new("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
+## Worksheet dimensions: 1000 x 26.
 ```
 
 ```r
@@ -384,7 +385,7 @@ gs_ls() %>% filter(sheet_title == "hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-21 05:23:36
+## 1 hi I am new here gspreadr   rw     new 2015-05-23 05:54:30
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -425,6 +426,7 @@ gs_new("hi I am new here")
 
 ```
 ## Sheet "hi I am new here" created in Google Drive.
+## Worksheet dimensions: 1000 x 26.
 ```
 
 ```r
@@ -441,8 +443,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-21 05:23:43 GMT
-##     Date of last spreadsheet update: 2015-05-21 05:23:41 GMT
+##   Date of googlesheets registration: 2015-05-23 05:54:36 GMT
+##     Date of last spreadsheet update: 2015-05-23 05:54:34 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -451,15 +453,16 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1Xj5_l6jQJY2BI2qxD8vm7mZ9lS8aucO2a0qtnLGQDzM
+## Key: 1UhIFltdnN2516Z9CZJYQAT9jLl6VEYhT1FQ4aHBpEoc
 ```
 
 ```r
-x <- gs_ws_new(x, ws_title = "foo", nrow = 10, ncol = 10)
+x <- gs_ws_new(x, ws_title = "foo", row_extent = 10, col_extent = 10)
 ```
 
 ```
 ## Worksheet "foo" added to sheet "hi I am new here".
+## Worksheet dimensions: 10 x 10.
 ```
 
 ```r
@@ -468,8 +471,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-21 05:23:45 GMT
-##     Date of last spreadsheet update: 2015-05-21 05:23:43 GMT
+##   Date of googlesheets registration: 2015-05-23 05:54:37 GMT
+##     Date of last spreadsheet update: 2015-05-23 05:54:36 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -479,7 +482,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1Xj5_l6jQJY2BI2qxD8vm7mZ9lS8aucO2a0qtnLGQDzM
+## Key: 1UhIFltdnN2516Z9CZJYQAT9jLl6VEYhT1FQ4aHBpEoc
 ```
 
 ```r
@@ -505,8 +508,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-21 05:23:47 GMT
-##     Date of last spreadsheet update: 2015-05-21 05:23:45 GMT
+##   Date of googlesheets registration: 2015-05-23 05:54:39 GMT
+##     Date of last spreadsheet update: 2015-05-23 05:54:37 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -515,7 +518,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1Xj5_l6jQJY2BI2qxD8vm7mZ9lS8aucO2a0qtnLGQDzM
+## Key: 1UhIFltdnN2516Z9CZJYQAT9jLl6VEYhT1FQ4aHBpEoc
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
