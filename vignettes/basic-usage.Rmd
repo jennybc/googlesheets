@@ -204,7 +204,7 @@ To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of ne
 gs_new("hi I am new here")
 x <- gs_title("hi I am new here")
 x
-x <- gs_ws_new(x, ws_title = "foo", nrow = 10, ncol = 10)
+x <- gs_ws_new(x, ws_title = "foo", row_extent = 10, col_extent = 10)
 x
 gs_ws_delete(x, ws = "foo")
 x <- gs_title("hi I am new here")
