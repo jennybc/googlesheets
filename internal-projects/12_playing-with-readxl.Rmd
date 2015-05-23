@@ -1,0 +1,85 @@
+---
+title: "Playing with readxl"
+output:
+  html_document:
+    keep_md: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 4
+---
+
+```{r}
+suppressPackageStartupMessages(library("dplyr"))
+library("readxl")
+library("googlesheets")
+```
+
+```{r authorize, include = FALSE}
+if(!file.exists(".httr-oauth")) {
+  ## look for .httr-oauth in pwd (assuming pwd is googlesheets) or one level up
+  ## (assuming pwd is googlesheets/data-for-demo
+  pwd <- getwd()
+  one_up <- pwd %>% dirname()
+  HTTR_OAUTH <- c(one_up, pwd) %>% file.path(".httr-oauth")
+  HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
+  
+  if(length(HTTR_OAUTH) > 0) {
+    HTTR_OAUTH <- HTTR_OAUTH[1]
+    file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
+  }
+}
+```
+
+I'm about to rework our data consumption functions and want to keep the `readxl` UI in mind.
+
+```{r}
+mini_gap <-
+  read_excel(system.file("mini-gap.xlsx", package = "googlesheets"))
+str(mini_gap)
+```
+
+The `sheet` argument: "Sheet to read. Either a string (the name of a sheet), or an integer (the position of the sheet). Defaults to the first sheet."
+
+*Note: at the moment, the sheet argument and this sheet don't play nicely together, i.e. I'm getting Europe above but should be getting Africa. Let's just pretend this isn't happening and do our thing anyway.*
+
+```{r}
+mini_gap <-
+  read_excel(system.file("mini-gap.xlsx", package = "googlesheets"),
+             sheet = 3)
+str(mini_gap)
+```
+
+The `col_names` argument:  "Either TRUE to use the first row as column names, FALSE to number columns sequentially from X1 to Xn, or a character vector giving a name for each column."
+
+```{r}
+mini_gap <-
+  read_excel(system.file("mini-gap.xlsx", package = "googlesheets"),
+             col_names = FALSE)
+str(mini_gap)
+mini_gap <-
+  read_excel(system.file("mini-gap.xlsx", package = "googlesheets"),
+             col_names = paste0("yo", 1:6))
+str(mini_gap)
+```
+
+The `col_types` argument:  "Either NULL to guess from the spreadsheet or a character vector containing "blank", "numeric", "date" or "text"."
+
+```{r}
+mini_gap <-
+  read_excel(system.file("mini-gap.xlsx", package = "googlesheets"),
+             col_types = c("text", "text", "text", "numeric", "numeric", "numeric"))
+str(mini_gap)
+```
+
+The `na` argument:  "Missing value. By default readxl converts blank cells to missing data. Set this value if you have used a sentinel value for missing values."
+
+*Note: hard to demo with mini-gap, skipping.*
+
+The `skip` argument:  "Number of rows to skip before reading any data."
+
+```{r}
+mini_gap <-
+  read_excel(system.file("mini-gap.xlsx", package = "googlesheets"),
+             skip = 3, col_names = FALSE)
+str(mini_gap)
+```
