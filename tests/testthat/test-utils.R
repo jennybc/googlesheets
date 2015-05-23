@@ -57,6 +57,9 @@ test_that("We can a extract a key from a URL", {
   expect_equal(extract_key_from_url(c(pts_url, pts_ws_feed)),
                c(pts_key, pts_key))
 
+  # Google Apps for Work, see issue #131
+  expect_identical(extract_key_from_url("https://docs.google.com/a/example.com/spreadsheets/d/KEY/pubhtml"), "KEY")
+
 })
 
 test_that("We can a extract a key from an old URL", {
