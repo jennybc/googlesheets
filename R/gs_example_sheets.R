@@ -8,11 +8,8 @@
 assign("gap_purl",
        "https://w3id.org/people/jennybc/googlesheets_gap_url",
        envir = .gs_exsheets)
-assign("gap_key", "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ",
+assign("gap_fallback_key", "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ",
        envir = .gs_exsheets)
-## see .onAttach() in zzz.R for how the persistent URLs above are used to
-## determine current sheet keys at session start or, failing that, the fallback
-## keys above will be used
 
 #' Examples of Google Sheets
 #'
@@ -47,7 +44,12 @@ NULL
 
 #' @rdname example-sheets
 #' @export
-gs_gap_key <- function() get("gap_key", envir = .gs_exsheets)
+gs_gap_key <- function() {
+
+  if(is.null(get0("gap_key", .gs_exsheets))) gs_example_resolve("gap")
+  get("gap_key", envir = .gs_exsheets)
+
+}
 
 #' @rdname example-sheets
 #' @export
@@ -65,4 +67,25 @@ gs_gap_ws_feed <- function(visibility = "public") {
 gs_gap <- function() {
   gs_gap_key() %>%
     gs_key(lookup = FALSE, verbose = FALSE)
+}
+
+## not exported
+## attempt to resolve the persistent URL of an example sheet
+gs_example_resolve <- function(ex) {
+
+  ex_purl <- paste(ex, "purl", sep = "_")
+  ex_key <- paste(ex, "key", sep = "_")
+  ex_fallback_key <- paste(ex, "fallback_key", sep = "_")
+  req <- try(httr::GET(get(ex_purl, envir = .gs_exsheets)), silent = TRUE)
+  if(inherits(req, "response") && httr::status_code(req) == 200) {
+    assign(ex_key, extract_key_from_url(req$url), envir = .gs_exsheets)
+    return(invisible(TRUE))
+  } else {
+    paste("googlesheets: can't resolve persistent URL for example sheet",
+          "\"%s\" online; falling back to static default.") %>%
+      sprintf(ex) %>%
+      message()
+    assign(ex_key, ex_fallback_key, envir = .gs_exsheets)
+    return(invisible(FALSE))
+  }
 }
