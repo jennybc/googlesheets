@@ -10,7 +10,15 @@
 #' the sheet, then this function also calls the
 #' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
 #' API}. The title of the new worksheet can not be the same as any existing
-#' worksheets in the sheet.
+#' worksheet in the sheet.
+#'
+#' We anticipate that \strong{if} the user wants to control the extent of the
+#' new worksheet, it will be by providing input data and specifying `trim =
+#' TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
+#' \code{col_extent} directly. But not both ... although we won't stop you. In
+#' that case, note that explicit worksheet sizing occurs before data insertion.
+#' If data insertion triggers any worksheet resizing, that will override any
+#' usage of \code{row_extent} or \code{col_extent}.
 #'
 #' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google sheet
 #' @inheritParams gs_new
@@ -21,14 +29,17 @@
 #' \dontrun{
 #' # get a copy of the Gapminder spreadsheet
 #' gap_ss <- gs_copy(gs_gap(), to = "Gapminder_copy")
-#' gap_ss <- gs_ws_new(gap_ss, ws_title = "Atlantis")
+#' gap_ss <- gs_ws_new(gap_ss)
+#' gap_ss <- gs_ws_delete(gap_ss, ws = "Sheet1")
+#' gap_ss <-
+#'   gs_ws_new(gap_ss, ws_title = "Atlantis", input = head(iris), trim = TRUE)
 #' gap_ss
 #' gs_delete(gap_ss)
 #' }
 #'
 #' @export
 gs_ws_new <- function(ss, ws_title = "Sheet1",
-                      row_extent = 1000, col_extent = 26, verbose = TRUE) {
+                      row_extent = 1000, col_extent = 26, ..., verbose = TRUE) {
 
   stopifnot(ss %>% inherits("googlesheet"))
 
@@ -52,29 +63,39 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   req <- gsheets_POST(ss$ws_feed, the_body)
 
-  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
+  ss <- req$url %>%
+    extract_key_from_url() %>%
+    gs_key(verbose = FALSE)
 
-  ws_title_exist <- ws_title %in% gs_ws_ls(ss_refresh)
-
-  if(verbose) {
-    if(ws_title_exist) {
-      this_ws <- ss_refresh %>% gs_ws(ws_title, verbose = FALSE)
-      message(sprintf("Worksheet \"%s\" added to sheet \"%s\".",
-                      this_ws$ws_title, ss_refresh$sheet_title))
-      message(sprintf("Worksheet dimensions: %d x %d.",
-                      this_ws$row_extent, this_ws$col_extent))
-    } else {
-      message(sprintf(paste("Cannot verify whether worksheet \"%s\" was added",
-                            "to sheet \"%s\"."), ws_title,
-                      ss_refresh$sheet_title))
-    }
-  }
+  ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
   if(ws_title_exist) {
-    ss_refresh %>% invisible()
+    this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
+    if(verbose) {
+      message(sprintf("Worksheet \"%s\" added to sheet \"%s\".",
+                      this_ws$ws_title, ss$sheet_title))
+    }
   } else {
-    NULL
+    message(sprintf(paste("Cannot verify whether worksheet \"%s\" was added",
+                          "to sheet \"%s\"."), ws_title, ss$sheet_title))
+    return(invisible(NULL))
   }
+
+  dotdotdot <- list(...)
+  if(length(dotdotdot)) {
+    edit_cells_arg_list <-
+      c(list(ss = ss), list(ws = this_ws$ws_title),
+        dotdotdot, list(verbose = verbose))
+    ss <- do.call(edit_cells, edit_cells_arg_list)
+  }
+
+  if(verbose) {
+    this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
+    message(sprintf("Worksheet dimensions: %d x %d.",
+                    this_ws$row_extent, this_ws$col_extent))
+  }
+
+  invisible(ss)
 
 }
 

@@ -5,7 +5,7 @@
 \title{Create a new spreadsheet}
 \usage{
 gs_new(title = "my_sheet", ws_title = NULL, row_extent = NULL,
-  col_extent = NULL, verbose = TRUE)
+  col_extent = NULL, ..., verbose = TRUE)
 }
 \arguments{
 \item{title}{the title for the new spreadsheet}
@@ -19,6 +19,9 @@ Sheets default is 1000}
 \item{col_extent}{integer for new column extent; if unspecified, the Google
 Sheets default is 26}
 
+\item{...}{optional arguments passed along to \code{\link{edit_cells}} in
+order to populate the new worksheet with data}
+
 \item{verbose}{logical; do you want informative message?}
 }
 \value{
@@ -27,7 +30,7 @@ a \code{\link{googlesheet}} object
 \description{
 Create a new spreadsheet in your Google Drive. It will contain a single
 worksheet which, by default, will [1] have 1000 rows and 26 columns, [2]
-contain no data, and [3] be titled "Sheet1". Use the \code{ws},
+contain no data, and [3] be titled "Sheet1". Use the \code{ws_title},
 \code{row_extent}, \code{col_extent}, and \code{...} arguments to give the
 worksheet a different title or extent or to populate it with some data. This
 function calls the
@@ -36,6 +39,15 @@ create the sheet and edit the worksheet name or extent. If you provide data
 for the sheet, then this function also calls the
 \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
 API}.
+}
+\details{
+We anticipate that \strong{if} the user wants to control the extent of the
+new worksheet, it will be by providing input data and specifying `trim =
+TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
+\code{col_extent} directly. But not both ... although we won't stop you. In
+that case, note that explicit worksheet sizing occurs before data insertion.
+If data insertion triggers any worksheet resizing, that will override any
+usage of \code{row_extent} or \code{col_extent}.
 }
 \examples{
 \dontrun{
@@ -46,6 +58,17 @@ gs_delete(foo)
 foo <- gs_new("foo", ws_title = "numero uno", 4, 15)
 foo
 gs_delete(foo)
+
+foo <- gs_new("foo", ws = "I know my ABCs", input = letters, trim = TRUE)
+foo
+gs_delete(foo)
 }
+}
+\seealso{
+\code{\link{edit_cells}} for specifics on populating the new sheet
+  with some data and \code{\link{gs_upload}} for creating a new spreadsheet
+  by uploading a local file. Note that \code{\link{gs_upload}} is likely much
+  faster than using \code{gs_new} and \code{\link{edit_cells}}, so try both
+  if speed is a concern.
 }
 

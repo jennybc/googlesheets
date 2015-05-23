@@ -7,16 +7,14 @@ ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
 test_that("Add a new worksheet", {
 
   ss_before <- ss
-
-  ss_after <- gs_ws_new(ss_before, "Test Sheet")
-
+  ss_after <-
+    gs_ws_new(ss_before, "Test Sheet", input = head(iris), trim = TRUE)
   expect_is(ss_after, "googlesheet")
 
   new_ws_index <- ss_before$n_ws + 1
-
   expect_equal(new_ws_index, ss_after$n_ws)
-  expect_equal(ss_after$ws[new_ws_index, "row_extent"], 1000)
-  expect_equal(ss_after$ws[new_ws_index, "col_extent"], 26)
+  expect_equal(ss_after$ws[new_ws_index, "row_extent"], 6L)
+  expect_equal(ss_after$ws[new_ws_index, "col_extent"], 5L)
   expect_equal(ss_after$ws[new_ws_index, "ws_title"], "Test Sheet")
 
   ## this worksheet gets deleted below

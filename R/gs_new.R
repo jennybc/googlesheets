@@ -2,7 +2,7 @@
 #'
 #' Create a new spreadsheet in your Google Drive. It will contain a single
 #' worksheet which, by default, will [1] have 1000 rows and 26 columns, [2]
-#' contain no data, and [3] be titled "Sheet1". Use the \code{ws},
+#' contain no data, and [3] be titled "Sheet1". Use the \code{ws_title},
 #' \code{row_extent}, \code{col_extent}, and \code{...} arguments to give the
 #' worksheet a different title or extent or to populate it with some data. This
 #' function calls the
@@ -12,13 +12,13 @@
 #' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
 #' API}.
 #'
-#' We anticipate the user will control the extent of the new worksheet either by
-#' providing some input data and specifying `trim = TRUE` (see
-#' \code{\link{edit_cells}}) or by specifying \code{row_extent} and
-#' \code{col_extent} directly. But not both ... although it's technically
-#' possible. In that case, note that sheet resizing occurs after inserting the
-#' data and, if the requested size is smaller than the data extent, that data
-#' will be lost.
+#' We anticipate that \strong{if} the user wants to control the extent of the
+#' new worksheet, it will be by providing input data and specifying `trim =
+#' TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
+#' \code{col_extent} directly. But not both ... although we won't stop you. In
+#' that case, note that explicit worksheet sizing occurs before data insertion.
+#' If data insertion triggers any worksheet resizing, that will override any
+#' usage of \code{row_extent} or \code{col_extent}.
 #'
 #' @param title the title for the new spreadsheet
 #' @param ws_title the title for the new, sole worksheet; if unspecified, the
@@ -35,8 +35,9 @@
 #'
 #' @seealso \code{\link{edit_cells}} for specifics on populating the new sheet
 #'   with some data and \code{\link{gs_upload}} for creating a new spreadsheet
-#'   by uploading data from a local file. Note that \code{\link{gs_upload}} is
-#'   likely much faster than using \code{gs_new} and \code{\link{edit_cells}}.
+#'   by uploading a local file. Note that \code{\link{gs_upload}} is likely much
+#'   faster than using \code{gs_new} and \code{\link{edit_cells}}, so try both
+#'   if speed is a concern.
 #'
 #' @examples
 #' \dontrun{
@@ -59,8 +60,13 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
                    ...,
                    verbose = TRUE) {
 
-  ## TO DO? warn if sheet with same title alredy exists?
-  ## right now we proceed quietly, because sheet is identified by key
+  current_sheets <- gs_ls(regex = title, fixed = TRUE, verbose = FALSE)
+  if(!is.null(current_sheets)) {
+    mess <- paste("At least one sheet named \"%s\" already exists, so you",
+                  "may need to identify by key, not title, in future.") %>%
+      sprintf(title)
+    warning(mess)
+  }
 
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
@@ -80,13 +86,6 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
     stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
   }
 
-  dotdotdot <- list(...)
-  if(length(dotdotdot)) {
-    edit_cells_arg_list <- c(list(ss = ss), dotdotdot, list(verbose = verbose))
-    #print(edit_cells_arg_list)
-    ss <- do.call(edit_cells, edit_cells_arg_list)
-  }
-
   if(!is.null(ws_title) || !is.null(row_extent) || !is.null(col_extent)) {
     ss <- ss %>%
       gs_ws_modify(from = 1, to = ws_title,
@@ -101,12 +100,21 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
                       "renamed to \"%s\"."), "Sheet1", ws_title) %>%
           message()
       }
-      message(sprintf("Worksheet dimensions: %d x %d.",
-                      ss$ws$row_extent, ss$ws$col_extent))
     }
   }
 
-  ss %>%
-    invisible()
+  dotdotdot <- list(...)
+  if(length(dotdotdot)) {
+    edit_cells_arg_list <- c(list(ss = ss), dotdotdot, list(verbose = verbose))
+    #print(edit_cells_arg_list)
+    ss <- do.call(edit_cells, edit_cells_arg_list)
+  }
+
+  if(verbose) {
+    message(sprintf("Worksheet dimensions: %d x %d.",
+                    ss$ws$row_extent, ss$ws$col_extent))
+  }
+
+  invisible(ss)
 
 }
