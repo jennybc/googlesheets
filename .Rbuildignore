@@ -5,7 +5,7 @@
 ^tests/testthat/\.httr-oauth$
 vignettes/basic-usage.Rmd
 ^\.travis\.yml$
-^data-for-demo$
+^internal-projects$
 ^jenny-scratch$
 ^README\.Rmd$
 ^README-.*\.png$

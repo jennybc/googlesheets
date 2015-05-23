@@ -10,7 +10,7 @@ assign("gap_purl",
        envir = .gs_exsheets)
 assign("gap_key", "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ",
        envir = .gs_exsheets)
-## see .onLoad() in zzz.R for how the persistent URLs above are used to
+## see .onAttach() in zzz.R for how the persistent URLs above are used to
 ## determine current sheet keys at session start or, failing that, the fallback
 ## keys above will be used
 
