@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_ws.R
 \name{gs_ws_rename}
 \alias{gs_ws_rename}
-\title{Rename a worksheet}
+\title{Rename a worksheet within a spreadsheet}
 \usage{
 gs_ws_rename(ss, from = 1, to, verbose = TRUE)
 }

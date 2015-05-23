@@ -1,4 +1,4 @@
-#' Add a new worksheet to spreadsheet
+#' Add a new worksheet within a spreadsheet
 #'
 #' Add a new worksheet to an existing spreadsheet. By default, it will [1] have
 #' 1000 rows and 26 columns, [2] contain no data, and [3] be titled "Sheet1".
@@ -155,7 +155,7 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
 }
 
-#' Rename a worksheet
+#' Rename a worksheet within a spreadsheet
 #'
 #' Give a worksheet a new title that does not duplicate the title of any
 #' existing worksheet within the spreadsheet.
@@ -350,7 +350,7 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
 }
 
-#' Retrieve a worksheet-describing list from a googlesheet
+#' Retrieve a worksheet-describing list from a \code{googlesheet}
 #'
 #' From a \code{\link{googlesheet}}, retrieve a list (actually a row of a
 #' data.frame) giving everything we know about a specific worksheet.
@@ -384,7 +384,7 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
   ss$ws[ws, ]
 }
 
-#' List the worksheets in a Google Sheet
+#' List the worksheets in a spreadsheet
 #'
 #' Retrieve the titles of all the worksheets in a \code{\link{googlesheet}}.
 #'

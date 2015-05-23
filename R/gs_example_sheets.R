@@ -14,7 +14,7 @@ assign("gap_key", "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ",
 ## determine current sheet keys at session start or, failing that, the fallback
 ## keys above will be used
 
-#' Examples of Google Sheets.
+#' Examples of Google Sheets
 #'
 #' These functions return information on some public Google Sheets we've made
 #' available for examples and testing. For example, function names that include

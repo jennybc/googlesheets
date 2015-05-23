@@ -1,9 +1,9 @@
-#' googlesheets
-#' 
+#' \code{googlesheets} package
+#'
 #' Google spreadsheets R API
-#' 
+#'
 #' See the \href{https://github.com/jennybc/googlesheets}{README} on GitHub
-#' 
+#'
 #' @docType package
 #' @name googlesheets
 #' @importFrom dplyr %>%

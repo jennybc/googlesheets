@@ -6,7 +6,7 @@
 \alias{gs_gap_key}
 \alias{gs_gap_url}
 \alias{gs_gap_ws_feed}
-\title{Examples of Google Sheets.}
+\title{Examples of Google Sheets}
 \usage{
 gs_gap_key()
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_ws.R
 \name{gs_ws}
 \alias{gs_ws}
-\title{Retrieve a worksheet-describing list from a googlesheet}
+\title{Retrieve a worksheet-describing list from a \code{googlesheet}}
 \usage{
 gs_ws(ss, ws, verbose = TRUE)
 }

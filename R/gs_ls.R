@@ -1,4 +1,4 @@
-#' List spreadsheets a la Google Sheets home screen
+#' List sheets a la Google Sheets home screen
 #'
 #' Lists spreadsheets that the user would see in the Google Sheets home screen:
 #' \url{https://docs.google.com/spreadsheets/}. This function returns the

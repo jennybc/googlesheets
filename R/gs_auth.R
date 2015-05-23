@@ -1,12 +1,13 @@
 # environment to store credentials
 .state <- new.env(parent = emptyenv())
 
-#' Authorize \code{googlesheets} to access user data from Google
+#' Authorize \code{googlesheets}
 #'
-#' You will be directed to a web browser, asked to sign in to your Google
-#' account, and to grant \code{googlesheets} access to user data for Google
-#' Spreadsheets and Google Drive. These user credentials are cached in a file
-#' named \code{.httr-oauth} in the current working directory.
+#' Authorize \code{googlesheets} to access your Google user data. You will be
+#' directed to a web browser, asked to sign in to your Google account, and to
+#' grant \code{googlesheets} access to user data for Google Spreadsheets and
+#' Google Drive. These user credentials are cached in a file named
+#' \code{.httr-oauth} in the current working directory.
 #'
 #' Based on
 #' \href{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}{this
@@ -100,7 +101,7 @@ google_user <- function() {
 
 }
 
-#' Retrieve and print information about authorized user
+#' Retrieve information about authorized user
 #'
 #' Display information about a user that has been authorized via \code{gs_auth}:
 #' the user's display name, email, the date-time of authorization for the

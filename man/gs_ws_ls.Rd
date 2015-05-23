@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_ws.R
 \name{gs_ws_ls}
 \alias{gs_ws_ls}
-\title{List the worksheets in a Google Sheet}
+\title{List the worksheets in a spreadsheet}
 \usage{
 gs_ws_ls(ss)
 }

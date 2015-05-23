@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_copy.R
 \name{gs_copy}
 \alias{gs_copy}
-\title{Copy of an existing spreadsheet}
+\title{Copy an existing spreadsheet}
 \usage{
 gs_copy(from, to = NULL, verbose = TRUE)
 }

@@ -61,7 +61,7 @@ gs_delete <- function(x, verbose = TRUE) {
 
 }
 
-#' Delete several sheets at once by title
+#' Delete several spreadsheets at once by title
 #'
 #' These functions violate the general convention of operating on a registered
 #' Google sheet, i.e. on a \code{\link{googlesheet}} object. But the need to

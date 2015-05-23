@@ -3,7 +3,7 @@
 \name{gs_grepdel}
 \alias{gs_grepdel}
 \alias{gs_vecdel}
-\title{Delete several sheets at once by title}
+\title{Delete several spreadsheets at once by title}
 \usage{
 gs_grepdel(regex, ..., verbose = TRUE)
 
