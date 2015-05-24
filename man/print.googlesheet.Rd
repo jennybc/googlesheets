@@ -2,7 +2,7 @@
 % Please edit documentation in R/googlesheet-print.R
 \name{print.googlesheet}
 \alias{print.googlesheet}
-\title{Print information about a Google Sheet registered with \code{googlesheets}}
+\title{Print info about a \code{googlesheet} object}
 \usage{
 \method{print}{googlesheet}(x, ...)
 }

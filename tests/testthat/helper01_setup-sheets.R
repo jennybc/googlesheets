@@ -1,10 +1,10 @@
 `%>%` <- dplyr::`%>%`
 
 ## Gapminder (owned by rpackagetest)
-gap_url <- "https://docs.google.com/spreadsheets/d/1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ/"
-gap_title <- "test-gs-gapminder"
-gap_key <- "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ"
-gap_ws_feed <- construct_ws_feed_from_key(gap_key, "public")
+GAP_KEY <- gs_gap_key()
+GAP_URL <- gs_gap_url()
+GAP_WS_FEED <- gs_gap_ws_feed()
+GAP_TITLE <- "test-gs-gapminder"
 
 ## Mini gapminder (owned by rpackagetest)
 mini_gap_url <- "https://docs.google.com/spreadsheets/d/1BMtx1V2pk2KG2HGANvvBOaZM4Jx1DUdRrFdEx-OJIGY/edit#gid=2141688971"

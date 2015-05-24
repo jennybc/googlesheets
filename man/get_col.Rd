@@ -23,8 +23,7 @@ Get data via the cell feed for one column or for a range of columns.
 }
 \examples{
 \dontrun{
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+gap_ss <- gs_gap() # register the Gapminder example sheet
 get_col(gap_ss, "Oceania", col = 1:2)
 reshape_cf(get_col(gap_ss, "Oceania", col = 1:2))
 }

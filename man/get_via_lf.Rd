@@ -36,8 +36,7 @@ When you use the listfeed, the Sheets API transforms the variable or
 }
 \examples{
 \dontrun{
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+gap_ss <- gs_gap() # register the Gapminder example sheet
 oceania_lf <- get_via_lf(gap_ss, ws = "Oceania")
 str(oceania_lf)
 oceania_lf

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_copy.R
 \name{gs_copy}
 \alias{gs_copy}
-\title{Copy of an existing spreadsheet}
+\title{Copy an existing spreadsheet}
 \usage{
 gs_copy(from, to = NULL, verbose = TRUE)
 }
@@ -23,9 +23,10 @@ Drive API}.
 }
 \examples{
 \dontrun{
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gs_copy(gs_key(gap_key), to = "Gapminder_copy")
+# copy the Gapminder example sheet
+gap_ss <- gs_copy(gs_gap(), to = "Gapminder_copy")
 gap_ss
+gs_delete(gap_ss)
 }
 }
 

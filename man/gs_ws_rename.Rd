@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_ws.R
 \name{gs_ws_rename}
 \alias{gs_ws_rename}
-\title{Rename a worksheet}
+\title{Rename a worksheet within a spreadsheet}
 \usage{
 gs_ws_rename(ss, from = 1, to, verbose = TRUE)
 }
@@ -32,8 +32,7 @@ Since the edit link is used in the PUT request, the version path in the
 }
 \examples{
 \dontrun{
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+gap_ss <- gs_copy(gs_gap(), to = "gap_copy")
 gs_ws_ls(gap_ss)
 gap_ss <- gs_ws_rename(gap_ss, from = "Oceania", to = "ANZ")
 gs_ws_ls(gap_ss)

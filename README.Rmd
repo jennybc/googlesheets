@@ -50,8 +50,10 @@ Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](
 
 There are various ways to harvest web data directly into a Google Sheet. For example:
 
-  * [This blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) from Aylien.com has a simple example that uses the `=IMPORTXML()` formula to populate a Sheet with restaurant reviews and ratings from TripAdvisor.
+  * [This blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) from Aylien.com has a simple example that uses the `=IMPORTXML()` formula to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
   * Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free Google Sheet template to setup and run automated collection of search results from Twitter.
+  * Martin Hawksey also has a great blog post, [Feeding Google Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/), that demonstrates how functions like `importHTML`, `importFeed`, and `importXML` help you get data from the web into a Google Sheet with no programming.
+  * Martin Hawksey has another blog post about [feeding a Google Sheet from IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/). [IFTTT](https://ifttt.com) stands for "if this, then that" and it's "a web-based service that allows users to create chains of simple conditional statements, called 'recipes', which are triggered based on changes to other web services such as Gmail, Facebook, Instagram, and Craigslist" (from [Wikipedia](http://en.wikipedia.org/wiki/IFTTT)).
 
 Use `googlesheets` to get all that data into R.
 
@@ -75,7 +77,7 @@ If you insist, [check out the current state of the vignette](http://htmlpreview.
 
 ### Load googlesheets
 
-`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator availble in your own work by loading [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html) or [`magrittr`](http://cran.r-project.org/web/packages/magrittr/index.html).
+`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator available in your own work by loading [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html) or [`magrittr`](http://cran.r-project.org/web/packages/magrittr/index.html).
 
 ```{r load-package}
 library("googlesheets")
@@ -100,12 +102,10 @@ my_sheets %>% glimpse()
 
 ### Get a Google spreadsheet to practice with
 
-If you don't have any suitable Google Sheets lying around, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+Don't worry if you don't have any suitable Google Sheets lying around! We've published a sheet for you to practice with and have built functions into `googlesheets` to help you access it. The example sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder); feel free to [visit the Sheet in the browser](https://w3id.org/people/jennybc/googlesheets_gap_url). The code below will put a copy of this sheet into your Drive, titled "Gapminder".
 
 ```{r copy-gapminder, eval = FALSE}
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_key %>% 
-  gs_key() %>% 
+gs_gap() %>% 
   gs_copy(to = "Gapminder")
 ```
 
@@ -117,25 +117,27 @@ If you plan to consume data from a sheet or edit it, you must first __register__
 
 `googlesheets` provides several registration functions. Specifying the sheet by title? Use `gs_title()`. By key? Use `gs_key()`. You get the idea.
 
+*We're using the built-in functions `gs_gap_key()` and `gs_gap_url()` to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.*
+
 ```{r register-sheet}
 gap <- gs_title("Gapminder")
 gap
 
 # Need to access a sheet you do not own?
 # Access it by key if you know it!
-gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap <- gap_key %>%
+(GAP_KEY <- gs_gap_key())
+third_party_gap <- GAP_KEY %>%
   gs_key()
 
-# Have a sharing link?
+# Need to access a sheet you do not own but you have a sharing link?
 # Access it by URL!
-gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-gap <- gap_url %>%
+(GAP_URL <- gs_gap_url())
+third_party_gap <- GAP_URL %>%
   gs_url()
 # note: registration via URL may not work for "old" sheets
 ```
 
-These functions return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
+The registration functions `gs_title()`, `gs_key()`, and `gs_url()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
 ### Consume data
 
@@ -219,9 +221,7 @@ foo <- gs_new("foo")
 foo
 ```
 
-By default, there will be an empty worksheet called "Sheet1". You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
-
-*`gs_new()` and `gs_ws_new()` will soon gain the ability to populate with data upon creation (#116)*
+By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()`. You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
 
 ### Edit cells
 
@@ -248,6 +248,8 @@ Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 ```{r delete-sheet}
 gs_delete(foo)
 ```
+
+If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and `gs_vecdel()`. These functions also allow the deletion of multiple sheets at once.
 
 ### Upload delimited files or Excel workbooks
 
@@ -325,7 +327,3 @@ user_session_info
 In March 2014 [Google introduced "new" Sheets](https://support.google.com/docs/answer/3541068?hl=en). "New" Sheets and "old" sheets behave quite differently with respect to access via API and present a big headache for us. Recently, we've noted that Google is forcibly converting sheets: [all "old" Sheets will be switched over the "new" sheets during 2015](https://support.google.com/docs/answer/6082736?p=new_sheets_migrate&rd=1). However there are still "old" sheets lying around, so we've made some effort to support them, when it's easy to do so. But keep your expectations low.
 
 In particular, `get_via_csv()` does not and indeed __cannot__ work for "old"   sheets.
-
-##### Stuff we are in the process of bringing back online after the Great Refactor of February 2015
-
-  * visual overview of which cells are populated

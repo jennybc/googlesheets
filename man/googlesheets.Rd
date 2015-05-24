@@ -4,7 +4,7 @@
 \name{googlesheets}
 \alias{googlesheets}
 \alias{googlesheets-package}
-\title{googlesheets}
+\title{\code{googlesheets} package}
 \description{
 Google spreadsheets R API
 }

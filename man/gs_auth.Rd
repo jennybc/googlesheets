@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_auth.R
 \name{gs_auth}
 \alias{gs_auth}
-\title{Authorize \code{googlesheets} to access user data from Google}
+\title{Authorize \code{googlesheets}}
 \usage{
 gs_auth(new_user = FALSE, token = NULL)
 }
@@ -14,10 +14,11 @@ Google account.}
 \item{token}{path to a valid token; intended primarily for internal use}
 }
 \description{
-You will be directed to a web browser, asked to sign in to your Google
-account, and to grant \code{googlesheets} access to user data for Google
-Spreadsheets and Google Drive. These user credentials are cached in a file
-named \code{.httr-oauth} in the current working directory.
+Authorize \code{googlesheets} to access your Google user data. You will be
+directed to a web browser, asked to sign in to your Google account, and to
+grant \code{googlesheets} access to user data for Google Spreadsheets and
+Google Drive. These user credentials are cached in a file named
+\code{.httr-oauth} in the current working directory.
 }
 \details{
 Based on

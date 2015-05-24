@@ -1,26 +1,72 @@
 #' Create a new spreadsheet
 #'
-#' Create a new (empty) spreadsheet in your Google Drive. The new sheet will
-#' contain 1 default worksheet titled "Sheet1". This function
-#' calls the \href{https://developers.google.com/drive/v2/reference/}{Google
-#' Drive API}.
+#' Create a new spreadsheet in your Google Drive. It will contain a single
+#' worksheet which, by default, will [1] have 1000 rows and 26 columns, [2]
+#' contain no data, and [3] be titled "Sheet1". Use the \code{ws_title},
+#' \code{row_extent}, \code{col_extent}, and \code{...} arguments to give the
+#' worksheet a different title or extent or to populate it with some data. This
+#' function calls the
+#' \href{https://developers.google.com/drive/v2/reference/}{Google Drive API} to
+#' create the sheet and edit the worksheet name or extent. If you provide data
+#' for the sheet, then this function also calls the
+#' \href{https://developers.google.com/google-apps/spreadsheets/}{Google Sheets
+#' API}.
 #'
-#' @param title the title for the new sheet
+#' We anticipate that \strong{if} the user wants to control the extent of the
+#' new worksheet, it will be by providing input data and specifying `trim =
+#' TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
+#' \code{col_extent} directly. But not both ... although we won't stop you. In
+#' that case, note that explicit worksheet sizing occurs before data insertion.
+#' If data insertion triggers any worksheet resizing, that will override any
+#' usage of \code{row_extent} or \code{col_extent}.
+#'
+#' @param title the title for the new spreadsheet
+#' @param ws_title the title for the new, sole worksheet; if unspecified, the
+#'   Google Sheets default is "Sheet1"
+#' @param row_extent integer for new row extent; if unspecified, the Google
+#'   Sheets default is 1000
+#' @param col_extent integer for new column extent; if unspecified, the Google
+#'   Sheets default is 26
+#' @param ... optional arguments passed along to \code{\link{edit_cells}} in
+#'   order to populate the new worksheet with data
 #' @param verbose logical; do you want informative message?
 #'
 #' @return a \code{\link{googlesheet}} object
 #'
+#' @seealso \code{\link{edit_cells}} for specifics on populating the new sheet
+#'   with some data and \code{\link{gs_upload}} for creating a new spreadsheet
+#'   by uploading a local file. Note that \code{\link{gs_upload}} is likely much
+#'   faster than using \code{gs_new} and \code{\link{edit_cells}}, so try both
+#'   if speed is a concern.
+#'
 #' @examples
 #' \dontrun{
-#' foo <- gs_new("foo")
+#' foo <- gs_new()
 #' foo
+#' gs_delete(foo)
+#'
+#' foo <- gs_new("foo", ws_title = "numero uno", 4, 15)
+#' foo
+#' gs_delete(foo)
+#'
+#' foo <- gs_new("foo", ws = "I know my ABCs", input = letters, trim = TRUE)
+#' foo
+#' gs_delete(foo)
 #' }
 #'
 #' @export
-gs_new <- function(title = "my_sheet", verbose = TRUE) {
+gs_new <- function(title = "my_sheet", ws_title = NULL,
+                   row_extent = NULL, col_extent = NULL,
+                   ...,
+                   verbose = TRUE) {
 
-  ## TO DO? warn if sheet with same title alredy exists?
-  ## right now we proceed quietly, because sheet is identified by key
+  current_sheets <- gs_ls(regex = title, fixed = TRUE, verbose = FALSE)
+  if(!is.null(current_sheets)) {
+    mess <- paste("At least one sheet named \"%s\" already exists, so you",
+                  "may need to identify by key, not title, in future.") %>%
+      sprintf(title)
+    warning(mess)
+  }
 
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
@@ -29,17 +75,46 @@ gs_new <- function(title = "my_sheet", verbose = TRUE) {
     gdrive_POST(url = "https://www.googleapis.com/drive/v2/files",
                 body = the_body)
 
-  new_sheet_key <- httr::content(req)$id
-  ## I set verbose = FALSE here because it seems weird to message "Spreadsheet
-  ## identified!" in this context, esp. to do so *before* message confirming
-  ## creation
-  ss <- gs_key(new_sheet_key, verbose = FALSE)
+  ss <- httr::content(req)$id %>%
+    gs_key(verbose = FALSE)
 
-  if(verbose) {
-    message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
+  if(inherits(ss, "googlesheet")) {
+    if(verbose) {
+      message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
+    }
+  } else {
+    stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
   }
 
-  ss %>%
-    invisible()
+  if(!is.null(ws_title) || !is.null(row_extent) || !is.null(col_extent)) {
+    ss <- ss %>%
+      gs_ws_modify(from = 1, to = ws_title,
+                   new_dim = c(row_extent = row_extent,
+                               col_extent = col_extent), verbose = FALSE)
+    if(verbose) {
+      if(ws_title %in% ss$ws$ws_title) {
+        sprintf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title) %>%
+          message()
+      } else {
+        sprintf(paste("Cannot verify whether worksheet \"%s\" was",
+                      "renamed to \"%s\"."), "Sheet1", ws_title) %>%
+          message()
+      }
+    }
+  }
+
+  dotdotdot <- list(...)
+  if(length(dotdotdot)) {
+    edit_cells_arg_list <- c(list(ss = ss), dotdotdot, list(verbose = verbose))
+    #print(edit_cells_arg_list)
+    ss <- do.call(edit_cells, edit_cells_arg_list)
+  }
+
+  if(verbose) {
+    message(sprintf("Worksheet dimensions: %d x %d.",
+                    ss$ws$row_extent, ss$ws$col_extent))
+  }
+
+  invisible(ss)
 
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_auth.R
 \name{gs_user}
 \alias{gs_user}
-\title{Retrieve and print information about authorized user}
+\title{Retrieve information about authorized user}
 \usage{
 gs_user(verbose = TRUE)
 }

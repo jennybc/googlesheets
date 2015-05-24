@@ -1,4 +1,4 @@
-#' Print information about a Google Sheet registered with \code{googlesheets}
+#' Print info about a \code{googlesheet} object
 #'
 #' Display information about a Google spreadsheet that has been registered with
 #' \code{googlesheets}: the title of the spreadsheet, date-time of registration,

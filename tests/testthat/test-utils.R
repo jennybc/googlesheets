@@ -1,6 +1,6 @@
 context("utility functions")
 
-ss <- gs_ws_feed(gap_ws_feed, lookup = FALSE, verbose = FALSE)
+ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE, verbose = FALSE)
 
 test_that("We can get list of worksheets in a spreadsheet", {
 
@@ -56,6 +56,9 @@ test_that("We can a extract a key from a URL", {
   # vectorized
   expect_equal(extract_key_from_url(c(pts_url, pts_ws_feed)),
                c(pts_key, pts_key))
+
+  # Google Apps for Work, see issue #131
+  expect_identical(extract_key_from_url("https://docs.google.com/a/example.com/spreadsheets/d/KEY/pubhtml"), "KEY")
 
 })
 

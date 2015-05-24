@@ -8,9 +8,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' gap_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-#' gap_key <- extract_key_from_url(gap_url)
-#' gap_ss <- gs_key(gap_key)
+#' GAP_URL <- gs_gap_url()
+#' GAP_KEY <- extract_key_from_url(GAP_URL)
+#' gap_ss <- gs_key(GAP_KEY)
 #' gap_ss
 #' }
 #'
@@ -20,6 +20,7 @@ extract_key_from_url <- function(url) {
     c(ws_feed_start = "https://spreadsheets.google.com/feeds/worksheets/",
       self_link_start = "https://spreadsheets.google.com/feeds/spreadsheets/private/full/",
       url_start_new = "https://docs.google.com/spreadsheets/d/",
+      url_start_google_apps_for_work = "https://docs.google.com/a/[[:print:]]+/spreadsheets/d/",
       url_start_old = "https://docs.google.com/spreadsheet/ccc\\?key=",
       url_start_old2 = "https://docs.google.com/spreadsheet/pub\\?key=",
       url_start_old3 = "https://spreadsheets.google.com/ccc\\?key=")
@@ -41,4 +42,14 @@ construct_ws_feed_from_key <- function(key, visibility = "private") {
   tmp <-
     "https://spreadsheets.google.com/feeds/worksheets/%s/%s/full"
   sprintf(tmp, key, visibility)
+}
+
+#' Construct a browser URL from a key
+#'
+#' @param key character, unique key for a spreadsheet
+#'
+#' @keywords internal
+construct_url_from_key <- function(key) {
+  tmp <- "https://docs.google.com/spreadsheets/d/%s/"
+  sprintf(tmp, key)
 }

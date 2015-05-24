@@ -23,8 +23,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' oceania_csv <- get_via_csv(gap_ss, ws = "Oceania")
 #' str(oceania_csv)
 #' oceania_csv
@@ -98,8 +97,7 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' oceania_lf <- get_via_lf(gap_ss, ws = "Oceania")
 #' str(oceania_lf)
 #' oceania_lf
@@ -182,8 +180,7 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' get_via_cf(gap_ss, "Asia", max_row = 4)
 #' reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
 #' reshape_cf(get_via_cf(gap_ss, "Asia",
@@ -307,8 +304,7 @@ get_via_cf <-
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' get_row(gap_ss, "Europe", row = 1)
 #' simplify_cf(get_row(gap_ss, "Europe", row = 1))
 #' }
@@ -333,8 +329,7 @@ get_row <- function(ss, ws = 1, row, verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' get_col(gap_ss, "Oceania", col = 1:2)
 #' reshape_cf(get_col(gap_ss, "Oceania", col = 1:2))
 #' }
@@ -360,8 +355,7 @@ get_col <- function(ss, ws = 1, col, verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' get_cells(gap_ss, "Europe", range = "B3:D7")
 #' simplify_cf(get_cells(gap_ss, "Europe", range = "A1:F1"))
 #' }
@@ -386,8 +380,7 @@ get_cells <- function(ss, ws = 1, range, verbose = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_copy(gs_key(gap_key), to = "gap_copy")
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' get_via_cf(gap_ss, "Asia", max_row = 4)
 #' reshape_cf(get_via_cf(gap_ss, "Asia", max_row = 4))
 #' }
@@ -464,8 +457,7 @@ reshape_cf <- function(x, header = TRUE) {
 #'
 #' @examples
 #' \dontrun{
-#' gap_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-#' gap_ss <- gs_key(gap_key)
+#' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' get_row(gap_ss, row = 1)
 #' simplify_cf(get_row(gap_ss, row = 1))
 #' simplify_cf(get_row(gap_ss, row = 1), notation = "R1C1")
