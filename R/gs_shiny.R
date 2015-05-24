@@ -9,8 +9,9 @@
 #' @param redirect_uri redirect uri (shiny app url or localhost for local testing)
 #' @export
 gs_shiny_form_url <- function(redirect_uri) {
+  ## wont have to pass in redirect_uri if its set in options
   
-  client_id <- getOption("googlesheets.shiny.client_id")
+  client_id <- getOption("googlesheets.client_id")
   
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds", sep = " ")
@@ -42,8 +43,8 @@ gs_shiny_get_token <- function(auth_code, redirect_uri) {
   req <- 
     httr::POST("https://accounts.google.com/o/oauth2/token", 
                body = list(code = auth_code,
-                           client_id = getOption("googlesheets.shiny.client_id"),
-                           client_secret = getOption("googlesheets.shiny.client_secret"),
+                           client_id = getOption("googlesheets.client_id"),
+                           client_secret = getOption("googlesheets.client_secret"),
                            redirect_uri = redirect_uri,
                            grant_type = "authorization_code"), verbose = TRUE)
   
@@ -55,8 +56,8 @@ gs_shiny_get_token <- function(auth_code, redirect_uri) {
   
   googlesheets_app <-
     httr::oauth_app("google",
-                    key = getOption("googlesheets.shiny.client_id"),
-                    secret = getOption("googlesheets.shiny.client_secret"))
+                    key = getOption("googlesheets.client_id"),
+                    secret = getOption("googlesheets.client_secret"))
   
   token_formatted <- httr::Token2.0$new(app = googlesheets_app, 
                                         endpoint = httr::oauth_endpoints("google"), 
