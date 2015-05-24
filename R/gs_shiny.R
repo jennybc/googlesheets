@@ -8,9 +8,9 @@
 #' @param client secret application client secret
 #' @param redirect_uri redirect uri (shiny app url or localhost for local testing)
 #' @export
-shiny_get_url <- function(client_id, 
-                          client_secret,
-                          redirect_uri) {
+gs_shiny_form_url <- function(redirect_uri) {
+  
+  client_id <- getOption("googlesheets.shiny.client_id")
   
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds", sep = " ")
@@ -21,7 +21,7 @@ shiny_get_url <- function(client_id,
                                        redirect_uri = redirect_uri,
                                        response_type = "code", 
                                        client_id = client_id,
-                                       approval_prompt = "auto",
+                                       approval_prompt = "auto", # only have to approve once
                                        access_type = "online"))
   url
 }
@@ -38,19 +38,36 @@ shiny_get_url <- function(client_id,
 #'
 #' @return A list containing access_token, access_type, expires_in.
 #' @export
-shiny_get_token <- function(auth_code, client_id, client_secret, redirect_uri) {
+gs_shiny_get_token <- function(auth_code, redirect_uri) {
   req <- 
     httr::POST("https://accounts.google.com/o/oauth2/token", 
                body = list(code = auth_code,
-                           client_id = client_id,
-                           client_secret = client_secret,
+                           client_id = getOption("googlesheets.shiny.client_id"),
+                           client_secret = getOption("googlesheets.shiny.client_secret"),
                            redirect_uri = redirect_uri,
                            grant_type = "authorization_code"), verbose = TRUE)
   
   # only access_token, access_type, expires_in is returned
-  token_data <- httr::content(req, type = "application/json")
+  token <- httr::content(req, type = "application/json")
   
-  .state$shiny_access_token <- token_data
+  scope_list <- c("https://spreadsheets.google.com/feeds",
+                  "https://docs.google.com/feeds")
   
-  token_data
+  googlesheets_app <-
+    httr::oauth_app("google",
+                    key = getOption("googlesheets.shiny.client_id"),
+                    secret = getOption("googlesheets.shiny.client_secret"))
+  
+  token_formatted <- httr::Token2.0$new(app = googlesheets_app, 
+                                        endpoint = httr::oauth_endpoints("google"), 
+               credentials = list(access_token = token$access_token, 
+                                  token_type = token$token_type, 
+                                  expires_in = token$expires_in), 
+               params = list(scope = scope_list, 
+                             type = NULL, use_oob = FALSE, as_header = TRUE), 
+               cache_path = FALSE)
+  
+  .state$token <- token_formatted
+  .state$user <- google_user()
+  .state$token
 }
