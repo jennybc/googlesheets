@@ -67,20 +67,12 @@ gs_auth <- function(new_user = FALSE, token = NULL) {
 #' @keywords internal
 get_google_token <- function() {
   
-  if(exists("shiny_access_token", envir = .state)) {
-    
-    httr::add_headers("Authorization" = paste(.state$shiny_access_token$token_type,
-                                              .state$shiny_access_token$access_token))
-    
-  } else {
-    
     if(is.null(.state$token)) {
       gs_auth()
     }
     
     httr::config(token = .state$token)
     
-  }
 }
 
 #' Retrieve Google user data
@@ -92,20 +84,13 @@ google_user <- function() {
   
   ## require pre-existing token, to avoid recursion that would arise if
   ## gdrive_GET() called gs_auth()
-  if(token_exists() | exists("shiny_access_token", envir = .state)) {
-    
+
     req <- gdrive_GET("https://www.googleapis.com/drive/v2/about")
     
     user_stuff <- req$content$user
     list(displayName = user_stuff$displayName,
          emailAddress = user_stuff$emailAddress,
          auth_date = req$headers$date %>% httr::parse_http_date())
-    
-  } else {
-    
-    NULL
-    
-  }
   
 }
 
@@ -131,14 +116,8 @@ google_user <- function() {
 #' @export
 gs_user <- function(verbose = TRUE) {
   
-  if(token_exists() | exists("shiny_access_token", envir = .state)) {
+  if(token_exists()) {
     
-    if(exists("shiny_access_token", envir = .state)) {
-      ret <- google_user()
-      token_ok <- TRUE # should be valid, hardcoding for now
-      ret$exp_date <- Sys.time() + .state$shiny_access_token$expires_in
-    } else {
-      
       token <- .state$token
       token_ok <- token$validate()
       
@@ -151,8 +130,6 @@ gs_user <- function(verbose = TRUE) {
       } else {
         ret$exp_date <- NA_character_ %>% as.POSIXct()
       }
-      
-    }
     
     if(verbose) {
       sprintf("                       displayName: %s\n",
@@ -168,8 +145,7 @@ gs_user <- function(verbose = TRUE) {
       } else {
         message(paste("Access token has expired and will be auto-refreshed."))
       }
-      
-    }
+  }
   }
   
   else if(verbose) cat("No user currently authorized.")
