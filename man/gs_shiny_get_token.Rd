@@ -10,10 +10,6 @@ gs_shiny_get_token(auth_code, redirect_uri)
 \item{auth_code}{authorization code returned by Google that appears in URL}
 
 \item{redirect_uri}{redirect uri (shiny app url or localhost for local testing)}
-
-\item{client_id}{application client id}
-
-\item{client}{secret application client secret}
 }
 \value{
 A list containing access_token, access_type, expires_in.

@@ -8,10 +8,6 @@ gs_shiny_form_url(redirect_uri)
 }
 \arguments{
 \item{redirect_uri}{redirect uri (shiny app url or localhost for local testing)}
-
-\item{client_id}{application client id}
-
-\item{client}{secret application client secret}
 }
 \description{
 Once a user authenticates, the response is sent to the \code{redirect_uri}

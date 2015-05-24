@@ -4,14 +4,12 @@
 #' and contains an authorization code which \code{shiny_get_token} uses to 
 #' exchange for an access token.
 #' 
-#' @param client_id application client id
-#' @param client secret application client secret
 #' @param redirect_uri redirect uri (shiny app url or localhost for local testing)
 #' @export
 gs_shiny_form_url <- function(redirect_uri) {
   ## wont have to pass in redirect_uri if its set in options
   
-  client_id <- getOption("googlesheets.client_id")
+  client_id <- getOption("googlesheets.shiny.client_id")
   
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
                       "https://docs.google.com/feeds", sep = " ")
@@ -33,8 +31,6 @@ gs_shiny_form_url <- function(redirect_uri) {
 #' Use the authorization code in the return URL to exchange for an access_token. 
 #' 
 #' @param auth_code authorization code returned by Google that appears in URL
-#' @param client_id application client id
-#' @param client secret application client secret
 #' @param redirect_uri redirect uri (shiny app url or localhost for local testing)
 #'
 #' @return A list containing access_token, access_type, expires_in.
@@ -43,8 +39,8 @@ gs_shiny_get_token <- function(auth_code, redirect_uri) {
   req <- 
     httr::POST("https://accounts.google.com/o/oauth2/token", 
                body = list(code = auth_code,
-                           client_id = getOption("googlesheets.client_id"),
-                           client_secret = getOption("googlesheets.client_secret"),
+                           client_id = getOption("googlesheets.shiny.client_id"),
+                           client_secret = getOption("googlesheets.shiny.client_secret"),
                            redirect_uri = redirect_uri,
                            grant_type = "authorization_code"), verbose = TRUE)
   
@@ -56,8 +52,8 @@ gs_shiny_get_token <- function(auth_code, redirect_uri) {
   
   googlesheets_app <-
     httr::oauth_app("google",
-                    key = getOption("googlesheets.client_id"),
-                    secret = getOption("googlesheets.client_secret"))
+                    key = getOption("googlesheets.shiny.client_id"),
+                    secret = getOption("googlesheets.shiny.client_secret"))
   
   token_formatted <- httr::Token2.0$new(app = googlesheets_app, 
                                         endpoint = httr::oauth_endpoints("google"), 
