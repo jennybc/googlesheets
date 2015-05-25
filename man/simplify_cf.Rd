@@ -8,7 +8,7 @@ simplify_cf(x, convert = TRUE, as.is = TRUE, notation = c("A1", "R1C1"),
   header = NULL)
 }
 \arguments{
-\item{x}{a data.frame returned by \code{get_via_cf()}}
+\item{x}{a data.frame returned by \code{\link{get_via_cf}}}
 
 \item{convert}{logical, indicating whether to attempt to convert the result
 vector from character to something more appropriate, such as logical,

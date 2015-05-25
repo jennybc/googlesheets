@@ -8,7 +8,8 @@ gs_ws_new(ss, ws_title = "Sheet1", row_extent = 1000, col_extent = 26,
   ..., verbose = TRUE)
 }
 \arguments{
-\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google sheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws_title}{the title for the new, sole worksheet; if unspecified, the
 Google Sheets default is "Sheet1"}
@@ -22,7 +23,7 @@ Sheets default is 26}
 \item{...}{optional arguments passed along to \code{\link{edit_cells}} in
 order to populate the new worksheet with data}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
 a \code{\link{googlesheet}} object

@@ -7,15 +7,16 @@
 get_cells(ss, ws = 1, range, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
 \item{range}{single character string specifying which cell or range of cells
-  to retrieve; positioning notation can be either "A1" or "R1C1"; a single
-  cell can be requested, e.g. "B4" or "R4C2" or a rectangular range can be
-  requested, e.g. "B2:D4" or "R2C2:R4C4"}
+to retrieve; positioning notation can be either "A1" or "R1C1"; a single
+cell can be requested, e.g. "B4" or "R4C2" or a rectangular range can be
+requested, e.g. "B2:D4" or "R2C2:R4C4"}
 
 \item{verbose}{logical; do you want informative messages?}
 }

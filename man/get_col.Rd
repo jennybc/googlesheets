@@ -7,14 +7,15 @@
 get_col(ss, ws = 1, col, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
 \item{col}{vector of positive integers, possibly of length one, specifying
-  which columns to retrieve; only contiguous ranges of columns are supported,
-  i.e. if \code{col = c(2, 8)}, you will get columns 2 through 8}
+which columns to retrieve; only contiguous ranges of columns are supported,
+i.e. if \code{col = c(2, 8)}, you will get columns 2 through 8}
 
 \item{verbose}{logical; do you want informative messages?}
 }

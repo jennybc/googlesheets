@@ -7,8 +7,8 @@
 gs_ws_modify(ss, from = NULL, to = NULL, new_dim = NULL, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google
-sheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{from}{positive integer or character string specifying index or title,
 respectively, of the worksheet}
@@ -16,7 +16,7 @@ respectively, of the worksheet}
 \item{to}{character string for new title of worksheet}
 
 \item{new_dim}{list of length 2 specifying the row and column extent of the
-  worksheet}
+worksheet}
 
 \item{verbose}{logical; do you want informative messages?}
 }

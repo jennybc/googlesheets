@@ -8,7 +8,8 @@ gs_perm_edit(ss, email = NULL, perm_id = NULL, role = "reader",
   commenter = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google sheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{email}{The email address or domain name for the entity.}
 

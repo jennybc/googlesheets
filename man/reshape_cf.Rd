@@ -7,7 +7,7 @@
 reshape_cf(x, header = TRUE)
 }
 \arguments{
-\item{x}{a data.frame returned by \code{get_via_cf()}}
+\item{x}{a data.frame returned by \code{\link{get_via_cf}}}
 
 \item{header}{logical indicating whether first row should be taken as
   variable names}

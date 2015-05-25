@@ -23,13 +23,11 @@
 #' @param title the title for the new spreadsheet
 #' @param ws_title the title for the new, sole worksheet; if unspecified, the
 #'   Google Sheets default is "Sheet1"
-#' @param row_extent integer for new row extent; if unspecified, the Google
-#'   Sheets default is 1000
-#' @param col_extent integer for new column extent; if unspecified, the Google
-#'   Sheets default is 26
+#' @template row_extent
+#' @template col_extent
 #' @param ... optional arguments passed along to \code{\link{edit_cells}} in
 #'   order to populate the new worksheet with data
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @return a \code{\link{googlesheet}} object
 #'

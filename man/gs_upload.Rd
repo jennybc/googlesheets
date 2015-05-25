@@ -12,7 +12,7 @@ gs_upload(file, sheet_title = NULL, verbose = TRUE)
 \item{sheet_title}{the title of the spreadsheet; optional, if not specified
 then the name of the file will be used}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 Google supports the following file types to be converted to a Google

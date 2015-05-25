@@ -7,7 +7,8 @@
 gs_perm_ls(ss, filter = NULL)
 }
 \arguments{
-\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google sheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{filter}{character, optional; the email or unique ID of a user that,
   if provided, will be used to filter the results}

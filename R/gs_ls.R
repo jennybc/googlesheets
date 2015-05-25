@@ -35,7 +35,7 @@
 #'   are concatenated with the vertical bar
 #' @param ... optional arguments to be passed to \code{\link{grep}} when
 #'   matching \code{regex} to sheet titles
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @return a \code{googlesheet_ls} object, which is a
 #'   \code{\link[dplyr]{tbl_df}} with one row per sheet (we use a custom class

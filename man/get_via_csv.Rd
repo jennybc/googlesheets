@@ -7,15 +7,16 @@
 get_via_csv(ss, ws = 1, ..., verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
-\item{...}{further arguments to be passed to \code{\link{read.csv}} or,
-  ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is
-  called with \code{stringsAsFactors = FALSE}, which is the blanket policy
-  within \code{googlesheets} re: NOT converting character data to factor}
+\item{...}{Further arguments to be passed to the csv parser. This is
+currently \code{\link{read.csv}}, but expect a switch to
+\code{readr::read_csv} in the not-too-distant future! Note that by default
+\code{\link{read.csv}} is called with \code{stringsAsFactors = FALSE}.}
 
 \item{verbose}{logical; do you want informative messages?}
 }

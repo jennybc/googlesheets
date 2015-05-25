@@ -8,7 +8,8 @@
 #' it's a vector, then \code{byrow} controls whether edited cells will extend
 #' from the anchor across a row or down a column.
 #'
-#' @inheritParams get_via_lf
+#' @template ss
+#' @template ws
 #' @param input new cell values, as an object that can be coerced into a
 #'   character vector, presumably an atomic vector, a factor, a matrix or a
 #'   data.frame
@@ -23,7 +24,7 @@
 #'   data.frame
 #' @param trim logical; do you want the worksheet extent to be modified to
 #'   correspond exactly to the cells being edited?
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @examples
 #' \dontrun{

@@ -7,14 +7,15 @@
 get_row(ss, ws = 1, row, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
 \item{row}{vector of positive integers, possibly of length one, specifying
-  which rows to retrieve; only contiguous ranges of rows are supported, i.e.
-  if \code{row = c(2, 8)}, you will get rows 2 through 8}
+which rows to retrieve; only contiguous ranges of rows are supported, i.e.
+if \code{row = c(2, 8)}, you will get rows 2 through 8}
 
 \item{verbose}{logical; do you want informative messages?}
 }

@@ -110,7 +110,7 @@ google_user <- function() {
 #' \href{https://developers.google.com/drive/v2/reference/about/get}{the "about"
 #' endpoint} of the Drive API.
 #'
-#' @param verbose logical, indicating if info should be printed
+#' @template verbose
 #'
 #' @return a list containing user and session info
 #'

@@ -20,8 +20,9 @@
 #' If data insertion triggers any worksheet resizing, that will override any
 #' usage of \code{row_extent} or \code{col_extent}.
 #'
-#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google sheet
+#' @template ss
 #' @inheritParams gs_new
+#' @template verbose
 #'
 #' @return a \code{\link{googlesheet}} object
 #'
@@ -103,8 +104,9 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #'
 #' The worksheet and all of its contents will be removed from the spreadsheet.
 #'
-#' @inheritParams get_via_lf
-#' @param verbose logical; do you want informative message?
+#' @template ss
+#' @template ws
+#' @template verbose
 #'
 #' @return a \code{\link{googlesheet}} object
 #'
@@ -160,12 +162,10 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 #' Give a worksheet a new title that does not duplicate the title of any
 #' existing worksheet within the spreadsheet.
 #'
-#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google
-#'   sheet
-#' @param from positive integer or character string specifying index or title,
-#' respectively, of the worksheet
+#' @template ss
+#' @template ws_from
 #' @param to character string for new title of worksheet
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @return a \code{\link{googlesheet}} object
 #'
@@ -222,10 +222,11 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 #' worksheet extent, and to trim worksheet down to fit the data exactly. Is it
 #' possible a user might want to use this directly?
 #'
-#' @inheritParams get_via_lf
-#' @param row_extent integer for new row extent
-#' @param col_extent integer for new column extent
-#' @param verbose logical; do you want informative message?
+#' @template ss
+#' @template ws
+#' @template row_extent
+#' @template col_extent
+#' @template verbose
 #'
 #' @note Setting rows and columns to less than the current worksheet dimensions
 #'   will delete contents without warning!
@@ -289,15 +290,12 @@ gs_ws_resize <- function(ss, ws = 1,
 
 #' Modify a worksheet's title or size
 #'
-#' @inheritParams get_via_lf
-
-#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google
-#'   sheet
-#' @param from positive integer or character string specifying index or title,
-#' respectively, of the worksheet
+#' @template ss
+#' @template ws_from
 #' @param to character string for new title of worksheet
 #' @param new_dim list of length 2 specifying the row and column extent of the
 #'   worksheet
+#' @template verbose
 #'
 #' @return a \code{\link{googlesheet}} object
 #'
@@ -355,9 +353,9 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 #' From a \code{\link{googlesheet}}, retrieve a list (actually a row of a
 #' data.frame) giving everything we know about a specific worksheet.
 #'
-#' @inheritParams get_via_lf
-#' @param verbose logical, indicating whether to give a message re: title of the
-#'   worksheet being accessed
+#' @template ss
+#' @template ws
+#' @template verbose
 #'
 #' @keywords internal
 gs_ws <- function(ss, ws, verbose = TRUE) {
@@ -388,7 +386,7 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
 #'
 #' Retrieve the titles of all the worksheets in a \code{\link{googlesheet}}.
 #'
-#' @inheritParams get_via_lf
+#' @template ss
 #'
 #' @examples
 #' \dontrun{
