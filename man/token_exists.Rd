@@ -4,7 +4,7 @@
 \alias{token_exists}
 \title{Check if authorization currently in force}
 \usage{
-token_exists()
+token_exists(verbose = TRUE)
 }
 \value{
 logical

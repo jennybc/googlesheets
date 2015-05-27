@@ -4,13 +4,17 @@
 \alias{gsheets_GET}
 \title{Create GET request}
 \usage{
-gsheets_GET(url, to_xml = TRUE, ...)
+gsheets_GET(url, to_xml = TRUE, use_auth = !grepl("public", url), ...)
 }
 \arguments{
 \item{url}{the url of the page to retrieve}
 
-\item{to_xml}{whether to convert response contents to xml_doc() or leave as
-character string}
+\item{to_xml}{whether to convert response contents to \code{xml_doc()} or
+leave as character string}
+
+\item{use_auth}{logical; indicates if authorization should be used, defaults
+to \code{FALSE} if \code{url} implies public visibility and \code{TRUE}
+otherwise}
 
 \item{...}{optional; further named parameters, such as \code{query},
   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
