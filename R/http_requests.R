@@ -5,14 +5,16 @@
 #' @param url the url of the page to retrieve
 #' @param to_xml whether to convert response contents to xml_doc() or leave as
 #'    character string
+#' @param use_auth logical; should authorization be used, defaults to 
+#'   \code{TRUE}, \code{FALSE} when sheet is public
 #' @param ... optional; further named parameters, such as \code{query},
 #'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
 #'   parameters will be combined with \code{\link[httr]{config}}.
 #'
 #' @keywords internal
-gsheets_GET <- function(url, to_xml = TRUE, ...) {
+gsheets_GET <- function(url, to_xml = TRUE, use_auth = TRUE, ...) {
 
-  if(grepl("public", url)) {
+  if(grepl("public", url) || !use_auth) {
     req <- httr::GET(url, ...)
   } else {
     req <- httr::GET(url, get_google_token(), ...)
