@@ -123,7 +123,7 @@ google_user <- function() {
 #' @export
 gs_user <- function(verbose = TRUE) {
 
-  if(token_exists()) {
+  if(token_exists(verbose)) {
 
     token <- .state$token
     token_ok <- token$validate()
@@ -139,13 +139,13 @@ gs_user <- function(verbose = TRUE) {
 
     if(verbose) {
       sprintf("                       displayName: %s\n",
-              ret$displayName) %>% cat()
+              ret$displayName) %>% message()
       sprintf("                      emailAddress: %s\n",
-              ret$emailAddress) %>% cat()
+              ret$emailAddress) %>% message()
       sprintf("Date-time of session authorization: %s\n",
-              ret$auth_date) %>% cat()
+              ret$auth_date) %>% message()
       sprintf("  Date-time of access token expiry: %s\n",
-              ret$exp_date) %>% cat()
+              ret$exp_date) %>% message()
       if(token_ok) {
         message("Access token is valid.")
       } else {
@@ -154,7 +154,9 @@ gs_user <- function(verbose = TRUE) {
 
     }
 
-  } else if(verbose) cat("No user currently authorized.")
+  } else {
+    ret <- NULL
+  }
 
   invisible(ret)
 
@@ -165,18 +167,20 @@ gs_user <- function(verbose = TRUE) {
 #' @return logical
 #'
 #' @keywords internal
-token_exists <- function() {
+token_exists <- function(verbose = TRUE) {
 
   if(is.null(.state$token)) {
-    message("No authorization yet in this session!\n")
+    if(verbose) {
+      message("No authorization yet in this session!")
 
-    if(file.exists(".httr-oauth")) {
-      message(paste("NOTE: a .httr-oauth file exists in current working",
-                    "directory.\n Run gs_auth() to use the",
-                    "credentials cached in .httr-oauth for this session."))
-    } else {
-      message(paste("No .httr-oauth file exists in current working directory.",
-                    "Run gs_auth() to provide credentials."))
+      if(file.exists(".httr-oauth")) {
+        message(paste("NOTE: a .httr-oauth file exists in current working",
+                      "directory.\n Run gs_auth() to use the",
+                      "credentials cached in .httr-oauth for this session."))
+      } else {
+        message(paste("No .httr-oauth file exists in current working directory.",
+                      "Run gs_auth() to provide credentials."))
+      }
     }
 
     invisible(FALSE)
@@ -185,6 +189,31 @@ token_exists <- function() {
 
     invisible(TRUE)
 
+  }
+
+}
+
+#' Revoke authentication
+#'
+#' This unexported function exists so we can revoke all authentication for
+#' testing purposes.
+#'
+#' @keywords internal
+gs_auth_revoke <- function(rm_httr_oauth = FALSE, verbose = TRUE) {
+
+  if(rm_httr_oauth && file.exists(".httr-oauth")) {
+    if(verbose) {
+      message("Disabling .httr-oauth by renaming to .httr-oauth_REVOKED")
+    }
+    file.rename(".httr-oauth", ".httr-oauth_REVOKED")
+  }
+
+  if(!is.null(.state$token)) {
+    if(verbose) {
+      message(paste("Removing google token stashed in googlesheets's",
+                    "internal environment"))
+    }
+    rm("token", envir = .state)
   }
 
 }
