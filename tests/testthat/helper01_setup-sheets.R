@@ -76,3 +76,12 @@ iris_pvt_url <- "https://docs.google.com/spreadsheets/d/1UXr4-haIQsmJfyjkEhlkNt2
 iris_pvt_title <- "test-gs-iris-private"
 iris_pvt_key <- "1UXr4-haIQsmJfyjkEhlkNt2PXduBkB97e15jez9ogRo"
 iris_pvt_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1UXr4-haIQsmJfyjkEhlkNt2PXduBkB97e15jez9ogRo/private/full"
+
+## Private cars sheet (owned by rpackagetest)
+cars_pvt_url <- "https://docs.google.com/spreadsheets/d/1rC2qjB8VE50kTkHZL5PY_DHVc9foRLI8ixKLr8a0a9Y/"
+cars_pvt_title <- "test-gs-cars-private"
+cars_pvt_key <- cars_pvt_url %>%
+  extract_key_from_url()
+cars_pvt_ws_feed <- cars_pvt_url %>%
+  extract_key_from_url() %>%
+  construct_ws_feed_from_key()
