@@ -1,8 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.httr-oauth$
+^\.httr-oauth_REVOKED$
 ^vignettes/\.httr-oauth$
 ^tests/testthat/\.httr-oauth$
+^tests/testthat/\.httr-oauth_REVOKED$
 vignettes/basic-usage.Rmd
 ^\.travis\.yml$
 ^internal-projects$
@@ -10,3 +12,4 @@ vignettes/basic-usage.Rmd
 ^README\.Rmd$
 ^README-.*\.png$
 tests/testthat/token_file.rds.enc
+man-roxygen

@@ -20,7 +20,7 @@ gs_ws_feed(x, lookup = NULL, verbose = TRUE)
 \item{x}{sheet-identifying information; a character vector of length one
 holding sheet title, key, browser URL or worksheets feed}
 
-\item{verbose}{logical}
+\item{verbose}{logical; do you want informative messages?}
 
 \item{lookup}{logical, optional. Controls whether \code{googlesheets} will
 place authenticated API requests during registration. If unspecified, will

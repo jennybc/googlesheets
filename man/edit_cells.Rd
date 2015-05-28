@@ -8,10 +8,11 @@ edit_cells(ss, ws = 1, input = "", anchor = "A1", byrow = FALSE,
   header = FALSE, trim = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
 \item{input}{new cell values, as an object that can be coerced into a
 character vector, presumably an atomic vector, a factor, a matrix or a
@@ -32,7 +33,7 @@ data.frame}
 \item{trim}{logical; do you want the worksheet extent to be modified to
 correspond exactly to the cells being edited?}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 Modify the contents of one or more cells. The cells to be edited are

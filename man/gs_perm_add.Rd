@@ -9,17 +9,14 @@ gs_perm_add(ss, email = NULL, type = c("anyone", "user", "domain", "group"),
   with_link = TRUE, send_email = TRUE, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google sheet}
-
-\item{email}{The email address or domain name for the entity.}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{type}{The value "user", "group", "domain" or "anyone".}
 
-\item{role}{The primary role for this user. Allowed values are "owner",
-"reader", and "writer".}
+\item{role}{role}
 
-\item{commenter}{logical; allow the user to comment? This is only effective
-if role = "reader".}
+\item{commenter}{logical}
 
 \item{with_link}{logical; whether the link is required for this permission}
 

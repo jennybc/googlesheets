@@ -11,11 +11,13 @@
 #' transformed/mangled, as it is via the list feed. If you want all of your
 #' data, this is the fastest way to get it.
 #'
-#' @inheritParams get_via_lf
-#' @param ... further arguments to be passed to \code{\link{read.csv}} or,
-#'   ultimately, \code{\link{read.table}}; note that \code{\link{read.csv}} is
-#'   called with \code{stringsAsFactors = FALSE}, which is the blanket policy
-#'   within \code{googlesheets} re: NOT converting character data to factor
+#' @template ss
+#' @template ws
+#' @param ... Further arguments to be passed to the csv parser. This is
+#'   currently \code{\link{read.csv}}, but expect a switch to
+#'   \code{readr::read_csv} in the not-too-distant future! Note that by default
+#'   \code{\link{read.csv}} is called with \code{stringsAsFactors = FALSE}.
+#' @template verbose
 #'
 #' @family data consumption functions
 #'
@@ -44,7 +46,8 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
                "file and then read it into R."))
   }
 
-  req <- gsheets_GET(this_ws$exportcsv, to_xml = FALSE)
+  req <- gsheets_GET(this_ws$exportcsv, to_xml = FALSE, 
+                     use_auth = !ss$is_public)
 
   if(req$headers$`content-type` != "text/csv") {
     stop1 <- "Cannot access this sheet via csv."
@@ -78,6 +81,10 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 #' probably want to use that (unless you are dealing with an "old" Google Sheet,
 #' which \code{get_via_csv} does not support).
 #'
+#' @template ss
+#' @template ws
+#' @template verbose
+#'
 #' @note When you use the listfeed, the Sheets API transforms the variable or
 #'   column names like so: 'The column names are the header values of the
 #'   worksheet lowercased and with all non-alpha-numeric characters removed. For
@@ -85,11 +92,6 @@ get_via_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 #'   would be "time2eat".' If this is intolerable to you, consume the data via
 #'   the cell feed or csv download. Or, at least, consume the first row via the
 #'   cell feed and manually restore the variable names post hoc.
-#'
-#' @param ss a registered Google spreadsheet
-#' @param ws positive integer or character string specifying index or title,
-#'   respectively, of the worksheet to consume
-#' @param verbose logical; do you want informative messages?
 #'
 #' @family data consumption functions
 #'
@@ -167,7 +169,8 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 #' \code{return_empty = TRUE}, you could be in for several minutes wait, as the
 #' feed will return all cells, which defaults to 1000 rows and 26 columns.
 #'
-#' @inheritParams get_via_lf
+#' @template ss
+#' @template ws
 #' @param min_row positive integer, optional
 #' @param max_row positive integer, optional
 #' @param min_col positive integer, optional
@@ -177,6 +180,7 @@ get_via_lf <- function(ss, ws = 1, verbose = TRUE) {
 #' @param return_empty logical; indicates whether to return empty cells
 #' @param return_links logical; indicates whether to return the edit and self
 #'   links (used internally in cell editing workflow)
+#' @template verbose
 #'
 #' @examples
 #' \dontrun{
@@ -293,10 +297,12 @@ get_via_cf <-
 #'
 #' Get data via the cell feed for one row or for a range of rows.
 #'
-#' @inheritParams get_via_lf
+#' @template ss
+#' @template ws
 #' @param row vector of positive integers, possibly of length one, specifying
 #'   which rows to retrieve; only contiguous ranges of rows are supported, i.e.
 #'   if \code{row = c(2, 8)}, you will get rows 2 through 8
+#' @template verbose
 #'
 #' @family data consumption functions
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more
@@ -318,10 +324,12 @@ get_row <- function(ss, ws = 1, row, verbose = TRUE) {
 #'
 #' Get data via the cell feed for one column or for a range of columns.
 #'
-#' @inheritParams get_via_lf
+#' @template ss
+#' @template ws
 #' @param col vector of positive integers, possibly of length one, specifying
 #'   which columns to retrieve; only contiguous ranges of columns are supported,
 #'   i.e. if \code{col = c(2, 8)}, you will get columns 2 through 8
+#' @template verbose
 #'
 #' @family data consumption functions
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more
@@ -343,11 +351,13 @@ get_col <- function(ss, ws = 1, col, verbose = TRUE) {
 #'
 #' Get data via the cell feed for a rectangular range of cells
 #'
-#' @inheritParams get_via_lf
+#' @template ss
+#' @template ws
 #' @param range single character string specifying which cell or range of cells
 #'   to retrieve; positioning notation can be either "A1" or "R1C1"; a single
 #'   cell can be requested, e.g. "B4" or "R4C2" or a rectangular range can be
 #'   requested, e.g. "B2:D4" or "R2C2:R4C4"
+#' @template verbose
 #'
 #' @family data consumption functions
 #' @seealso \code{\link{reshape_cf}} to reshape the retrieved data into a more
@@ -372,7 +382,7 @@ get_cells <- function(ss, ws = 1, range, verbose = TRUE) {
 
 #' Reshape cell-level data and convert to data.frame
 #'
-#' @param x a data.frame returned by \code{get_via_cf()}
+#' @param x a data.frame returned by \code{\link{get_via_cf}}
 #' @param header logical indicating whether first row should be taken as
 #'   variable names
 #'

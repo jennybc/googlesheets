@@ -7,13 +7,13 @@
 gs_ws(ss, ws, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
-\item{verbose}{logical, indicating whether to give a message re: title of the
-  worksheet being accessed}
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 From a \code{\link{googlesheet}}, retrieve a list (actually a row of a

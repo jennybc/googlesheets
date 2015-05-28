@@ -15,7 +15,7 @@
 #' they are, the (unique) ID of the user this permission refers to, a link back
 #' to this permission, and the ETag of the permission.
 #'
-#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google sheet
+#' @template ss
 #' @param filter character, optional; the email or unique ID of a user that,
 #'   if provided, will be used to filter the results
 #'
@@ -70,11 +70,14 @@ gs_perm_ls <- function(ss, filter = NULL) {
 #' Commenting is allowed by default for "owners" and "writers".
 #' Set commenter = TRUE if you want "readers" to be able to comment.
 #'
-#' @inheritParams gs_perm_edit
+#' @template ss
 #' @param type The value "user", "group", "domain" or "anyone".
+#' @param role role
+#' @param commenter logical
 #' @param with_link logical; whether the link is required for this permission
 #' @param send_email logical; do you want to send notification emails when
 #' sharing to users or groups?
+#' @template verbose
 #'
 #' @return a tbl_df with information about the newly added permission.
 #'
@@ -147,14 +150,14 @@ gs_perm_add <- function(ss, email = NULL,
 #' when you want to change roles for an entity, e.g., from "writer" to "reader"
 #' or vice versa.
 #'
-#' @param ss a \code{\link{googlesheet}} object, i.e. a registered Google sheet
+#' @template ss
 #' @param email The email address or domain name for the entity.
 #' @param perm_id The ID for the permission.
 #' @param role The primary role for this user. Allowed values are "owner",
 #'   "reader", and "writer".
 #' @param commenter logical; allow the user to comment? This is only effective
 #'   if role = "reader".
-#' @param verbose logical; do you want informative messages?
+#' @template verbose
 #'
 #' @examples
 #' \dontrun{

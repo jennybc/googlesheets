@@ -7,17 +7,17 @@
 #' calls the \href{https://developers.google.com/drive/v2/reference/}{Google
 #' Drive API}.
 #'
-#' @param from a \code{\link{googlesheet}} object, i.e. a registered Google
-#'   sheet
-#' @param ws positive integer or character string specifying index or title,
-#'   respectively, of the worksheet to export; if \code{NULL} then the entire
-#'   spreadsheet will be exported (.pdf and xlsx formats) or the first worksheet
-#'   will be exported (.csv format)
+#' If the worksheet is unspecified, i.e. if \code{ws = NULL}, then the entire
+#' spreadsheet will be exported (.pdf and xlsx formats) or the first worksheet
+#' will be exported (.csv format)
+#'
+#' @template ss_from
+#' @template ws
 #' @param to path to write file; file extension must be one of .csv, .pdf, or
 #'   .xlsx, which dictates the export format
 #' @param overwrite logical, indicating whether to overwrite an existing local
 #'   file
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @examples
 #' \dontrun{

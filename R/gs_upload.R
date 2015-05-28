@@ -9,7 +9,7 @@
 #' @param file path to the file to upload
 #' @param sheet_title the title of the spreadsheet; optional, if not specified
 #'   then the name of the file will be used
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @examples
 #' \dontrun{

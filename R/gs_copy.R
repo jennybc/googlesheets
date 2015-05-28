@@ -5,11 +5,10 @@
 #' calls the \href{https://developers.google.com/drive/v2/reference/}{Google
 #' Drive API}.
 #'
-#' @param from a \code{\link{googlesheet}} object, i.e. a registered Google
-#'   sheet
+#' @template ss_from
 #' @param to character string giving the new title of the sheet; if \code{NULL},
 #'   then the copy will be titled "Copy of ..."
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @examples
 #' \dontrun{

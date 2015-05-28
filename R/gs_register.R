@@ -59,13 +59,8 @@
 #'   place authenticated API requests during registration. If unspecified, will
 #'   be set to \code{TRUE} if authentication has previously been used in this R
 #'   session or if working directory contains a file named \code{.httr-oauth}.
-#' @param visibility character, either "public" or "private". Consulted during
-#'   explicit construction of a worksheets feed from a key, which happens only
-#'   when \code{lookup = FALSE} and \code{googlesheets} is prevented from
-#'   looking up information in the spreadsheets feed. If unspecified, will be
-#'   set to "public" if \code{lookup = FALSE} and "private" if \code{lookup =
-#'   TRUE}.
-#' @param verbose logical
+#' @template visibility
+#' @template verbose
 #'
 #' @return a \code{googlesheet} object
 #'

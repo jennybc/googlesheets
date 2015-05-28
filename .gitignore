@@ -1,7 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
-.httr-oauth
+.httr-oauth*
 googlesheets.Rproj
 jenny-scratch/*
 tests/testthat/googlesheets_token.rds

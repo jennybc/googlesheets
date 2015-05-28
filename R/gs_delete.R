@@ -10,8 +10,8 @@
 #' visit the \href{https://drive.google.com/drive/#trash}{trash in Google
 #' Drive}, find the sheet, and restore it.
 #'
-#' @param x a \code{\link{googlesheet}} object, i.e. a registered Google sheet
-#' @param verbose logical; do you want informative message?
+#' @template ss
+#' @template verbose
 #'
 #' @return logical indicating if the deletion was successful
 #'
@@ -29,9 +29,9 @@
 #' }
 #'
 #' @export
-gs_delete <- function(x, verbose = TRUE) {
+gs_delete <- function(ss, verbose = TRUE) {
 
-  if(!inherits(x, "googlesheet")) {
+  if(!inherits(ss, "googlesheet")) {
     mess <-
       paste("Input must be a 'googlesheet'.",
             "Trying to delete by title? See gs_grepdel() and gs_vecdel().",
@@ -39,7 +39,7 @@ gs_delete <- function(x, verbose = TRUE) {
     stop(mess)
   }
 
-  key <- gs_get_alt_key(x)
+  key <- gs_get_alt_key(ss)
   the_url <- paste("https://www.googleapis.com/drive/v2/files",
                    key, "trash", sep = "/")
 
@@ -49,10 +49,10 @@ gs_delete <- function(x, verbose = TRUE) {
   if(verbose) {
     if(status == 200L) {
       sprintf("Success. \"%s\" moved to trash in Google Drive.",
-              x$sheet_title) %>%
+              ss$sheet_title) %>%
         message()
     } else {
-      sprintf("Oops. \"%s\" was NOT deleted.", x$sheet_title) %>%
+      sprintf("Oops. \"%s\" was NOT deleted.", ss$sheet_title) %>%
         message()
     }
   }
@@ -99,7 +99,7 @@ gs_delete <- function(x, verbose = TRUE) {
 #'   be deleted
 #' @param ... optional arguments to be passed to \code{\link{grep}} when
 #'   matching \code{regex} to sheet titles
-#' @param verbose logical; do you want informative message?
+#' @template verbose
 #'
 #' @export
 gs_grepdel <- function(regex, ..., verbose = TRUE) {

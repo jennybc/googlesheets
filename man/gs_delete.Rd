@@ -4,12 +4,13 @@
 \alias{gs_delete}
 \title{Delete a spreadsheet}
 \usage{
-gs_delete(x, verbose = TRUE)
+gs_delete(ss, verbose = TRUE)
 }
 \arguments{
-\item{x}{a \code{\link{googlesheet}} object, i.e. a registered Google sheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
 logical indicating if the deletion was successful

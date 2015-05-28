@@ -10,10 +10,11 @@ get_via_cf(ss, ws = 1, min_row = NULL, max_row = NULL, min_col = NULL,
   return_links = FALSE, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
 \item{min_row}{positive integer, optional}
 
@@ -29,7 +30,7 @@ and columns; intended primarily for internal use}
 \item{return_empty}{logical; indicates whether to return empty cells}
 
 \item{return_links}{logical; indicates whether to return the edit and self
-  links (used internally in cell editing workflow)}
+links (used internally in cell editing workflow)}
 
 \item{verbose}{logical; do you want informative messages?}
 }

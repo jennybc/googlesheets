@@ -8,16 +8,19 @@ gs_ws_resize(ss, ws = 1, row_extent = NULL, col_extent = NULL,
   verbose = TRUE)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to consume}
+respectively, of the worksheet}
 
-\item{row_extent}{integer for new row extent}
+\item{row_extent}{integer for new row extent; if unspecified, the Google
+Sheets default is 1000}
 
-\item{col_extent}{integer for new column extent}
+\item{col_extent}{integer for new column extent; if unspecified, the Google
+Sheets default is 26}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 Set the number of rows and columns of a worksheet. We use this function

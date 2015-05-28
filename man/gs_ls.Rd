@@ -14,7 +14,7 @@ are concatenated with the vertical bar}
 \item{...}{optional arguments to be passed to \code{\link{grep}} when
 matching \code{regex} to sheet titles}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
 a \code{googlesheet_ls} object, which is a

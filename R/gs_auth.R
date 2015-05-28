@@ -20,45 +20,45 @@
 #'
 #' @export
 gs_auth <- function(new_user = FALSE, token = NULL) {
-
+  
   if(new_user && file.exists(".httr-oauth")) {
     message("Removing old credentials ...")
     file.remove(".httr-oauth")
   }
-
+  
   if(is.null(token)) {
-
+    
     scope_list <- c("https://spreadsheets.google.com/feeds",
                     "https://docs.google.com/feeds")
-
+    
     googlesheets_app <-
       httr::oauth_app("google",
                       key = getOption("googlesheets.client_id"),
                       secret = getOption("googlesheets.client_secret"))
-
+    
     google_token <-
       httr::oauth2.0_token(httr::oauth_endpoints("google"), googlesheets_app,
                            scope = scope_list, cache = TRUE)
-
+    
     # check for validity so error is found before making requests
     # shouldn't happen if id and secret don't change
     if("invalid_client" %in% unlist(google_token$credentials)) {
       message("Authorization error. Please check client_id and client_secret.")
     }
-
+    
     stopifnot(inherits(google_token, "Token2.0"))
-
+    
     .state$token <- google_token
-
+    
   } else {
-
+    
     google_token <- readRDS(token)
     .state$token <- google_token
-
+    
   }
-
+  
   .state$user <- google_user()
-
+  
 }
 
 #' Retrieve Google token from environment
@@ -68,12 +68,11 @@ gs_auth <- function(new_user = FALSE, token = NULL) {
 #' @keywords internal
 get_google_token <- function() {
   
-    if(is.null(.state$token)) {
-      gs_auth()
-    }
-    
-    httr::config(token = .state$token)
-    
+  if(is.null(.state$token)) {
+    gs_auth()
+  }
+  
+  httr::config(token = .state$token)
 }
 
 #' Retrieve Google user data
@@ -85,13 +84,20 @@ google_user <- function() {
   
   ## require pre-existing token, to avoid recursion that would arise if
   ## gdrive_GET() called gs_auth()
-
+  if(token_exists()) {
+    
     req <- gdrive_GET("https://www.googleapis.com/drive/v2/about")
     
     user_stuff <- req$content$user
     list(displayName = user_stuff$displayName,
          emailAddress = user_stuff$emailAddress,
          auth_date = req$headers$date %>% httr::parse_http_date())
+    
+  } else {
+    
+    NULL
+    
+  }
   
 }
 
@@ -104,7 +110,7 @@ google_user <- function() {
 #' \href{https://developers.google.com/drive/v2/reference/about/get}{the "about"
 #' endpoint} of the Drive API.
 #'
-#' @param verbose logical, indicating if info should be printed
+#' @template verbose
 #'
 #' @return a list containing user and session info
 #'
@@ -117,39 +123,40 @@ google_user <- function() {
 #' @export
 gs_user <- function(verbose = TRUE) {
   
-  if(token_exists()) {
+  if(token_exists(verbose)) {
     
-      token <- .state$token
-      token_ok <- token$validate()
-      
-      ret <- list(displayName = .state$user$displayName,
-                  emailAddress = .state$user$emailAddress,
-                  auth_date = .state$user$auth_date)
-      
-      if(token_ok) {
-        ret$exp_date <- file.info(".httr-oauth")$mtime + 3600
-      } else {
-        ret$exp_date <- NA_character_ %>% as.POSIXct()
-      }
+    token <- .state$token
+    token_ok <- token$validate()
+    
+    ret <- list(displayName = .state$user$displayName,
+                emailAddress = .state$user$emailAddress,
+                auth_date = .state$user$auth_date)
+    if(token_ok) {
+      ret$exp_date <- file.info(".httr-oauth")$mtime + 3600
+    } else {
+      ret$exp_date <- NA_character_ %>% as.POSIXct()
+    }
     
     if(verbose) {
       sprintf("                       displayName: %s\n",
-              ret$displayName) %>% cat()
+              ret$displayName) %>% message()
       sprintf("                      emailAddress: %s\n",
-              ret$emailAddress) %>% cat()
+              ret$emailAddress) %>% message()
       sprintf("Date-time of session authorization: %s\n",
-              ret$auth_date) %>% cat()
+              ret$auth_date) %>% message()
       sprintf("  Date-time of access token expiry: %s\n",
-              ret$exp_date) %>% cat()
+              ret$exp_date) %>% message()
       if(token_ok) {
         message("Access token is valid.")
       } else {
         message(paste("Access token has expired and will be auto-refreshed."))
       }
+      
+    }
+    
+  } else {
+    ret <- NULL
   }
-  }
-  
-  else if(verbose) cat("No user currently authorized.")
   
   invisible(ret)
   
@@ -160,18 +167,20 @@ gs_user <- function(verbose = TRUE) {
 #' @return logical
 #'
 #' @keywords internal
-token_exists <- function() {
+token_exists <- function(verbose = TRUE) {
   
   if(is.null(.state$token)) {
-    message("No authorization yet in this session!\n")
-    
-    if(file.exists(".httr-oauth")) {
-      message(paste("NOTE: a .httr-oauth file exists in current working",
-                    "directory.\n Run gs_auth() to use the",
-                    "credentials cached in .httr-oauth for this session."))
-    } else {
-      message(paste("No .httr-oauth file exists in current working directory.",
-                    "Run gs_auth() to provide credentials."))
+    if(verbose) {
+      message("No authorization yet in this session!")
+      
+      if(file.exists(".httr-oauth")) {
+        message(paste("NOTE: a .httr-oauth file exists in current working",
+                      "directory.\n Run gs_auth() to use the",
+                      "credentials cached in .httr-oauth for this session."))
+      } else {
+        message(paste("No .httr-oauth file exists in current working directory.",
+                      "Run gs_auth() to provide credentials."))
+      }
     }
     
     invisible(FALSE)
@@ -184,3 +193,27 @@ token_exists <- function() {
   
 }
 
+#' Revoke authentication
+#'
+#' This unexported function exists so we can revoke all authentication for
+#' testing purposes.
+#'
+#' @keywords internal
+gs_auth_revoke <- function(rm_httr_oauth = FALSE, verbose = TRUE) {
+  
+  if(rm_httr_oauth && file.exists(".httr-oauth")) {
+    if(verbose) {
+      message("Disabling .httr-oauth by renaming to .httr-oauth_REVOKED")
+    }
+    file.rename(".httr-oauth", ".httr-oauth_REVOKED")
+  }
+  
+  if(!is.null(.state$token)) {
+    if(verbose) {
+      message(paste("Removing google token stashed in googlesheets's",
+                    "internal environment"))
+    }
+    rm("token", envir = .state)
+  }
+  
+}

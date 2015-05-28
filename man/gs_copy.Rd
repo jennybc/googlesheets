@@ -7,13 +7,13 @@
 gs_copy(from, to = NULL, verbose = TRUE)
 }
 \arguments{
-\item{from}{a \code{\link{googlesheet}} object, i.e. a registered Google
-sheet}
+\item{from}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{to}{character string giving the new title of the sheet; if \code{NULL},
 then the copy will be titled "Copy of ..."}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 You can copy a spreadsheet that you own or a sheet owned by a third party

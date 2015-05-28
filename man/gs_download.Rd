@@ -8,13 +8,11 @@ gs_download(from, ws = NULL, to = "my_sheet.xlsx", overwrite = FALSE,
   verbose = TRUE)
 }
 \arguments{
-\item{from}{a \code{\link{googlesheet}} object, i.e. a registered Google
-sheet}
+\item{from}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{ws}{positive integer or character string specifying index or title,
-respectively, of the worksheet to export; if \code{NULL} then the entire
-spreadsheet will be exported (.pdf and xlsx formats) or the first worksheet
-will be exported (.csv format)}
+respectively, of the worksheet}
 
 \item{to}{path to write file; file extension must be one of .csv, .pdf, or
 .xlsx, which dictates the export format}
@@ -22,7 +20,7 @@ will be exported (.csv format)}
 \item{overwrite}{logical, indicating whether to overwrite an existing local
 file}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 Export a Google Sheet as a .csv, .pdf, or .xlsx file. You can download a
@@ -31,6 +29,11 @@ accessible via the sharing dialog options. You can download the entire
 spreadsheet (.pdf and .xlsx formats) or a single worksheet. This function
 calls the \href{https://developers.google.com/drive/v2/reference/}{Google
 Drive API}.
+}
+\details{
+If the worksheet is unspecified, i.e. if \code{ws = NULL}, then the entire
+spreadsheet will be exported (.pdf and xlsx formats) or the first worksheet
+will be exported (.csv format)
 }
 \examples{
 \dontrun{

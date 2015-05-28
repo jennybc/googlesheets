@@ -4,17 +4,29 @@
 \alias{gs_shiny_get_token}
 \title{Exchange authorization code for an access token}
 \usage{
-gs_shiny_get_token(auth_code, redirect_uri)
+gs_shiny_get_token(auth_code,
+  client_id = getOption("googlesheets.shiny.client_id"),
+  client_secret = getOption("googlesheets.shiny.client_secret"),
+  redirect_uri = getOption("googlesheets.shiny.redirect_uri"))
 }
 \arguments{
 \item{auth_code}{authorization code returned by Google that appears in URL}
 
-\item{redirect_uri}{redirect uri (shiny app url or localhost for local testing)}
-}
-\value{
-A list containing access_token, access_type, expires_in.
+\item{client_id}{client id obtained from Google Developers Console}
+
+\item{client_secret}{client secret obtained from Google Developers Console}
+
+\item{redirect_uri}{redirect_uri where the response is sent, should be one of the
+redirect_uri values listed for the project in Google's Developer Console,
+must match exactly as listed including any trailing '/'}
 }
 \description{
-Use the authorization code in the return URL to exchange for an access_token.
+Use the authorization code in the return URL to exchange for an access_token
+by making an HTTPS POST.
+}
+\details{
+This function behaves similarly to gs_auth(). A token object gets stored in
+an environment variable and retrieved when making calls to the Google Sheets
+and Drive APIs.
 }
 

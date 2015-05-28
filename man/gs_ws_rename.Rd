@@ -7,15 +7,15 @@
 gs_ws_rename(ss, from = 1, to, verbose = TRUE)
 }
 \arguments{
-\item{ss}{a \code{\link{googlesheet}} object, i.e. a registered Google
-sheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 
 \item{from}{positive integer or character string specifying index or title,
 respectively, of the worksheet}
 
 \item{to}{character string for new title of worksheet}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
 a \code{\link{googlesheet}} object

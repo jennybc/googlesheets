@@ -22,7 +22,7 @@ Sheets default is 26}
 \item{...}{optional arguments passed along to \code{\link{edit_cells}} in
 order to populate the new worksheet with data}
 
-\item{verbose}{logical; do you want informative message?}
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
 a \code{\link{googlesheet}} object

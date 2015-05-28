@@ -7,7 +7,8 @@
 gs_ws_ls(ss)
 }
 \arguments{
-\item{ss}{a registered Google spreadsheet}
+\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
+object}
 }
 \description{
 Retrieve the titles of all the worksheets in a \code{\link{googlesheet}}.

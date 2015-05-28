@@ -7,7 +7,7 @@
 gs_user(verbose = TRUE)
 }
 \arguments{
-\item{verbose}{logical, indicating if info should be printed}
+\item{verbose}{logical; do you want informative messages?}
 }
 \value{
 a list containing user and session info
