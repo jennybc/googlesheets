@@ -2,7 +2,7 @@ library(shiny)
 library(shinythemes)
 library(DT)
 
-shinyUI(fluidPage(theme = shinytheme("cerulean"),
+shinyUI(fluidPage(#theme = shinytheme("cerulean"),
 
   titlePanel("My Google Sheets Explorer"),
   
