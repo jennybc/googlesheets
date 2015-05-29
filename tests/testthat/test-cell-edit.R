@@ -8,7 +8,7 @@ ws <- "for_updating"
 test_that("Input converts to character vector (or not)", {
 
   expect_ok_as_input <- function(x) {
-    expect_is(x %>% as_character_vector(), "character")
+    expect_is(x %>% as_character_vector(col_names = FALSE), "character")
   }
 
   expect_ok_as_input(-3:3)
@@ -23,23 +23,28 @@ test_that("Input converts to character vector (or not)", {
 
   tmp <- iris %>% head()
   expect_ok_as_input(tmp)
-  tmp2 <- tmp %>% as_character_vector()
+  tmp2 <- tmp %>% as_character_vector(col_names = FALSE)
   expect_equivalent(tmp2[seq_len(ncol(iris))], iris[1, ] %>% t() %>% drop())
-  tmp3 <- tmp %>% as_character_vector(header = TRUE)
+  tmp3 <- tmp %>% as_character_vector(col_names = TRUE)
   expect_identical(tmp3[seq_len(ncol(iris))], names(iris))
 
-  expect_error(rnorm %>% as_character_vector(), "not suitable as input")
-  expect_error(ss %>% as_character_vector(), "not suitable as input")
-  expect_error(array(1:9, dim = rep(3,3)) %>% as_character_vector(),
+  expect_error(rnorm %>% as_character_vector(col_names = FALSE),
+               "not suitable as input")
+  expect_error(ss %>% as_character_vector(col_names = FALSE),
+               "not suitable as input")
+  expect_error(array(1:9, dim = rep(3,3)) %>%
+                 as_character_vector(col_names = FALSE),
                "Input has more than 2 dimensions")
 })
 
 test_that("Single cell can be updated", {
 
-  expect_message(ss <- edit_cells(ss, ws, "eggplant", "A1"),
+  expect_message(ss <- gs_edit_cells(ss, ws, "eggplant", "A1"),
                  "successfully updated")
   Sys.sleep(1)
-  tmp <- ss %>% get_cells(ws, "A1") %>% simplify_cf(header = FALSE)
+  tmp <- ss %>%
+    gs_read_cellfeed(ws, range = "A1") %>%
+    gs_simplify_cellfeed(col_names = FALSE)
   expect_identical(tmp, c(A1 = "eggplant"))
 
 })
@@ -51,7 +56,7 @@ test_that("Cell update can force resize of worksheet", {
   Sys.sleep(1)
 
   # force worksheet extent to be increased
-  expect_message(ss <- edit_cells(ss, ws, "Way out there!", "R1C30"),
+  expect_message(ss <- gs_edit_cells(ss, ws, "Way out there!", "R1C30"),
                  "dimensions changed")
   Sys.sleep(1)
   expect_equal(ss %>% gs_ws(ws) %>% `[[`("col_extent"), 30)
@@ -67,26 +72,26 @@ iris_ish$Species <- iris_ish$Species %>% as.character()
 test_that("2-dimensional things can be uploaded", {
 
   # update with empty strings to "clear" cells
-  tmp <- ss %>% get_via_cf(ws)
+  tmp <- ss %>% gs_read_cellfeed(ws)
   if(nrow(tmp) > 0) {
     input <- matrix("", nrow = max(tmp$row), ncol = max(tmp$col))
-    ss <- ss %>% edit_cells(ws, input)
+    ss <- ss %>% gs_edit_cells(ws, input)
     Sys.sleep(1)
-    tmp <- ss %>% get_via_cf(ws)
+    tmp <- ss %>% gs_read_cellfeed(ws)
   }
   expect_equal(dim(tmp), c(0, 5))
 
-  # update w/ a data.frame, header = FALSE
-  ss <- ss %>% edit_cells(ws, iris_ish)
+  # update w/ a data.frame, col_names = FALSE
+  ss <- ss %>% gs_edit_cells(ws, iris_ish, col_names = FALSE)
   Sys.sleep(1)
-  tmp <- ss %>% get_via_cf(ws) %>% reshape_cf(header = FALSE)
+  tmp <- ss %>% gs_read(ws, header = FALSE) # header goes to read.csv()
   names(tmp) <- names(iris_ish) # I know these disagree, so just equate them
   expect_equivalent(tmp, iris_ish)
 
-  # update w/ a data.frame, header = TRUE
-  ss <- ss %>% edit_cells(ws, iris_ish, header = TRUE)
+  # update w/ a data.frame, col_names = TRUE
+  ss <- ss %>% gs_edit_cells(ws, iris_ish)
   Sys.sleep(1)
-  tmp <- ss %>% get_via_cf(ws) %>% reshape_cf()
+  tmp <- ss %>% gs_read(ws)
   expect_identical(tmp, iris_ish)
 
 })
@@ -96,15 +101,17 @@ test_that("Vectors can be uploaded", {
   ss <- gs_key(ss$sheet_key)
 
   # byrow = FALSE
-  ss <- ss %>% edit_cells(ws, LETTERS[1:5], "A8")
+  ss <- ss %>% gs_edit_cells(ws, LETTERS[1:5], "A8")
   Sys.sleep(2)
-  tmp <- ss %>% get_via_cf(ws, min_row = 7) %>% simplify_cf()
+  tmp <- ss %>% gs_read_cellfeed(ws, range = "A8:A12") %>%
+    gs_simplify_cellfeed()
   expect_equivalent(tmp, LETTERS[1:5])
 
   # byrow = TRUE
-  ss <- ss %>% edit_cells(ws, LETTERS[5:1], "A15", byrow = TRUE)
+  ss <- ss %>% gs_edit_cells(ws, LETTERS[5:1], "A15", byrow = TRUE)
   Sys.sleep(2)
-  tmp <- ss %>% get_via_cf(ws, min_row = 15) %>% simplify_cf()
+  tmp <- ss %>% gs_read_cellfeed(ws, range = "A15:E15") %>%
+                                   gs_simplify_cellfeed()
   expect_equivalent(tmp, LETTERS[5:1])
 
 })
@@ -112,15 +119,10 @@ test_that("Vectors can be uploaded", {
 test_that("We can trim worksheet extent to fit uploaded data", {
 
   ws <- "for_resizing"
-  ss <- ss %>% edit_cells(ws, iris_ish, trim = TRUE)
-  expect_equal(nrow(iris_ish), ss$ws$row_extent[ss$ws$ws_title == ws])
+  ss <- ss %>% gs_edit_cells(ws, iris_ish, trim = TRUE)
+  expect_equal(nrow(iris_ish) + 1, ss$ws$row_extent[ss$ws$ws_title == ws])
   expect_equal(ncol(iris_ish), ss$ws$col_extent[ss$ws$ws_title == ws])
 
 })
 
-delete_me <- gs_ls(regex = TEST, verbose = FALSE)
-if(!is.null(delete_me)) {
-  lapply(delete_me$sheet_key, function(x) {
-    gs_delete(gs_key(x, verbose = FALSE), verbose = FALSE)
-  })
-}
+gs_grepdel(TEST, verbose = FALSE)

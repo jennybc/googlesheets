@@ -14,28 +14,28 @@
 #'
 #' We anticipate that \strong{if} the user wants to control the extent of the
 #' new worksheet, it will be by providing input data and specifying `trim =
-#' TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
-#' \code{col_extent} directly. But not both ... although we won't stop you. In
-#' that case, note that explicit worksheet sizing occurs before data insertion.
-#' If data insertion triggers any worksheet resizing, that will override any
-#' usage of \code{row_extent} or \code{col_extent}.
+#' TRUE` (see \code{\link{gs_edit_cells}}) or by specifying \code{row_extent}
+#' and \code{col_extent} directly. But not both ... although we won't stop you.
+#' In that case, note that explicit worksheet sizing occurs before data
+#' insertion. If data insertion triggers any worksheet resizing, that will
+#' override any usage of \code{row_extent} or \code{col_extent}.
 #'
 #' @param title the title for the new spreadsheet
 #' @param ws_title the title for the new, sole worksheet; if unspecified, the
 #'   Google Sheets default is "Sheet1"
 #' @template row_extent
 #' @template col_extent
-#' @param ... optional arguments passed along to \code{\link{edit_cells}} in
+#' @param ... optional arguments passed along to \code{\link{gs_edit_cells}} in
 #'   order to populate the new worksheet with data
 #' @template verbose
 #'
 #' @return a \code{\link{googlesheet}} object
 #'
-#' @seealso \code{\link{edit_cells}} for specifics on populating the new sheet
-#'   with some data and \code{\link{gs_upload}} for creating a new spreadsheet
-#'   by uploading a local file. Note that \code{\link{gs_upload}} is likely much
-#'   faster than using \code{gs_new} and \code{\link{edit_cells}}, so try both
-#'   if speed is a concern.
+#' @seealso \code{\link{gs_edit_cells}} for specifics on populating the new
+#'   sheet with some data and \code{\link{gs_upload}} for creating a new
+#'   spreadsheet by uploading a local file. Note that \code{\link{gs_upload}} is
+#'   likely much faster than using \code{\link{gs_new}} and/or
+#'   \code{\link{gs_edit_cells}}, so try both if speed is a concern.
 #'
 #' @examples
 #' \dontrun{
@@ -89,7 +89,7 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
       gs_ws_modify(from = 1, to = ws_title,
                    new_dim = c(row_extent = row_extent,
                                col_extent = col_extent), verbose = FALSE)
-    if(verbose) {
+    if(verbose && !is.null(ws_title)) {
       if(ws_title %in% ss$ws$ws_title) {
         sprintf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title) %>%
           message()
@@ -103,9 +103,10 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
 
   dotdotdot <- list(...)
   if(length(dotdotdot)) {
-    edit_cells_arg_list <- c(list(ss = ss), dotdotdot, list(verbose = verbose))
-    #print(edit_cells_arg_list)
-    ss <- do.call(edit_cells, edit_cells_arg_list)
+    gs_edit_cells_arg_list <-
+      c(list(ss = ss), dotdotdot, list(verbose = verbose))
+    #print(gs_edit_cells_arg_list)
+    ss <- do.call(gs_edit_cells, gs_edit_cells_arg_list)
   }
 
   if(verbose) {

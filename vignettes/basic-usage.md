@@ -2,7 +2,7 @@
 Joanna Zhao, Jenny Bryan  
 `r Sys.Date()`  
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten __alot more love recently__, so you should read that instead or in addition to this (2015-05-08). Seriously, we've only been making sure this thing compiles, but not updating the text.
+__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten __alot more love recently__, so you should read that instead or in addition to this (2015-05-30). Seriously, we've only been making sure this thing compiles, but not updating the text.
 
 
 ```r
@@ -48,19 +48,19 @@ my_sheets
 ```
 
 ```
-## Source: local data frame [36 x 10]
+## Source: local data frame [40 x 10]
 ## 
 ##                 sheet_title        author perm version             updated
-## 1   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-23 05:33:43
-## 2  Ari's Anchor Text Scrap…      anahmani    r     old 2015-05-22 23:01:31
-## 3              #rhizo15 #tw     m.hawksey    r     new 2015-05-22 19:43:33
-## 4     All R Phylo Functions  omeara.brian    r     new 2015-05-20 18:34:43
-## 5                  ari copy      gspreadr   rw     old 2015-05-19 23:00:13
-## 6               gas_mileage      woo.kara    r     new 2015-05-17 00:00:12
-## 7  2014-05-10_seaRM-at-van…      gspreadr   rw     new 2015-05-11 04:19:08
-## 8  2014-05-10_seaRM-at-van…         jenny    r     new 2015-05-11 03:51:57
-## 9       test-gs-permissions      gspreadr   rw     new 2015-05-08 23:08:59
-## 10          #TalkPay Tweets      iskaldur    r     new 2015-05-02 06:25:14
+## 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-05-30 19:16:25
+## 2               TAGS v6.0ns     m.hawksey    r     new 2015-05-30 10:46:47
+## 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-30 16:44:08
+## 4              #rhizo15 #tw     m.hawksey    r     new 2015-05-30 07:53:02
+## 5  Ari's Anchor Text Scrap…      anahmani    r     new 2015-05-29 07:18:48
+## 6  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-05-28 17:43:29
+## 7      test-gs-cars-private      gspreadr   rw     new 2015-05-27 17:48:34
+## 8     All R Phylo Functions  omeara.brian    r     new 2015-05-20 18:34:43
+## 9  test-gs-public-testing-…  rpackagetest    r     new 2015-05-20 01:32:27
+## 10                 ari copy      gspreadr   rw     new 2015-05-19 23:00:13
 ## ..                      ...           ...  ...     ...                 ...
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
@@ -89,7 +89,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-23 05:54:27 GMT
+##   Date of googlesheets registration: 2015-05-30 19:22:45 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -140,7 +140,7 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-23 05:54:28 GMT
+##   Date of googlesheets registration: 2015-05-30 19:22:46 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -176,7 +176,7 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-23 05:54:27 GMT
+##   Date of googlesheets registration: 2015-05-30 19:22:45 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -194,7 +194,7 @@ gap
 ```
 
 ```r
-oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
+oceania_list_feed <- gs_read_listfeed(gap, ws = "Oceania") 
 ```
 
 ```
@@ -242,7 +242,7 @@ Example of getting the same data from the "cell feed".
 
 
 ```r
-oceania_cell_feed <- get_via_cf(gap, ws = "Oceania") 
+oceania_cell_feed <- gs_read_cellfeed(gap, ws = "Oceania") 
 ```
 
 ```
@@ -284,7 +284,7 @@ head(oceania_cell_feed, 10)
 ```
 
 ```r
-oceania_reshaped <- reshape_cf(oceania_cell_feed)
+oceania_reshaped <- gs_reshape_cellfeed(oceania_cell_feed)
 str(oceania_reshaped)
 ```
 
@@ -318,7 +318,7 @@ head(oceania_reshaped, 10)
 ## 10 Australia   Oceania 1997   78.83 18565243  26997.94
 ```
 
-Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `reshape_cf()` to reshape this data into something tabular.
+Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `gs_reshape_cellfeed()` to reshape this data into something tabular.
 
 *To add, using row and column limits on the cell feed. All covered in the README.*
 
@@ -378,14 +378,14 @@ gs_new("hi I am new here")
 ```
 
 ```r
-gs_ls() %>% filter(sheet_title == "hi I am new here")
+gs_ls("hi I am new here")
 ```
 
 ```
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-23 05:54:30
+## 1 hi I am new here gspreadr   rw     new 2015-05-30 19:22:48
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -395,24 +395,25 @@ Delete a spreadsheet with `gs_delete()`. This function operates on a registered 
 
 ```r
 # Move spreadsheet to trash
-gs_delete(gs_title("hi I am new here"))
+gs_grepdel("hi I am new here")
 ```
 
 ```
+## Authentication will be used.
 ## Sheet successfully identifed: "hi I am new here"
 ## Success. "hi I am new here" moved to trash in Google Drive.
 ```
 
+```
+## [1] TRUE
+```
+
 ```r
-gs_ls() %>% filter(sheet_title == "hi I am new here")
+gs_ls("hi I am new here")
 ```
 
 ```
-## Source: local data frame [0 x 10]
-## 
-## Variables not shown: sheet_title (chr), author (chr), perm (chr), version
-##   (chr), updated (time), sheet_key (chr), ws_feed (chr), alternate (chr),
-##   self (chr), alt_key (chr)
+## No matching sheets found.
 ```
 
 ### Add, delete, or rename a worksheet
@@ -443,8 +444,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-23 05:54:36 GMT
-##     Date of last spreadsheet update: 2015-05-23 05:54:34 GMT
+##   Date of googlesheets registration: 2015-05-30 19:23:00 GMT
+##     Date of last spreadsheet update: 2015-05-30 19:22:56 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -453,7 +454,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1UhIFltdnN2516Z9CZJYQAT9jLl6VEYhT1FQ4aHBpEoc
+## Key: 1fnJfX4NlhZOmSFkDe9WyuAmfjjcsqrSRcR560QI_0Cc
 ```
 
 ```r
@@ -471,8 +472,8 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-23 05:54:37 GMT
-##     Date of last spreadsheet update: 2015-05-23 05:54:36 GMT
+##   Date of googlesheets registration: 2015-05-30 19:23:01 GMT
+##     Date of last spreadsheet update: 2015-05-30 19:23:00 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -482,11 +483,11 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1UhIFltdnN2516Z9CZJYQAT9jLl6VEYhT1FQ4aHBpEoc
+## Key: 1fnJfX4NlhZOmSFkDe9WyuAmfjjcsqrSRcR560QI_0Cc
 ```
 
 ```r
-gs_ws_delete(x, ws = "foo")
+x <- gs_ws_delete(x, ws = "foo")
 ```
 
 ```
@@ -495,21 +496,13 @@ gs_ws_delete(x, ws = "foo")
 ```
 
 ```r
-x <- gs_title("hi I am new here")
-```
-
-```
-## Sheet successfully identifed: "hi I am new here"
-```
-
-```r
 x
 ```
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-23 05:54:39 GMT
-##     Date of last spreadsheet update: 2015-05-23 05:54:37 GMT
+##   Date of googlesheets registration: 2015-05-30 19:23:02 GMT
+##     Date of last spreadsheet update: 2015-05-30 19:23:01 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -518,7 +511,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1UhIFltdnN2516Z9CZJYQAT9jLl6VEYhT1FQ4aHBpEoc
+## Key: 1fnJfX4NlhZOmSFkDe9WyuAmfjjcsqrSRcR560QI_0Cc
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

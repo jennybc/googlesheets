@@ -4,7 +4,7 @@ ss <- gs_key(pts_key, lookup = FALSE, visibility = "public", verbose = FALSE)
 
 test_that("We can handle embedded empty cells via csv", {
 
-  dat_csv <- ss %>% get_via_csv("embedded_empty_cells")
+  dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
   expect_equal(dim(dat_csv), c(7L, 7L))
   expect_equal(which(is.na(dat_csv$country)), c(3L, 5L))
   expect_equal(which(is.na(dat_csv$year)), c(5L, 6L))
@@ -14,7 +14,7 @@ test_that("We can handle embedded empty cells via csv", {
   expect_equal(which(is.na(dat_csv$lifeExp)), 5L)
   expect_equal(which(is.na(dat_csv$gdpPercap)), 4:5)
 
-  expect_equal(sapply(dat_csv, class),
+  expect_equal(vapply(dat_csv, class, character(1)),
                c(country = "character", year = "integer", pop = "integer",
                  X = "logical", continent = "character",
                  lifeExp = "numeric", gdpPercap = "numeric"))
@@ -23,7 +23,7 @@ test_that("We can handle embedded empty cells via csv", {
 
 test_that("We can handle embedded empty cells via list feed", {
 
-  dat <- ss %>% get_via_lf("embedded_empty_cells")
+  dat <- ss %>% gs_read_listfeed("embedded_empty_cells")
   ## compare with csv!
   ## the blank column is dropped
   ## data reading stops at the empty row
@@ -33,7 +33,7 @@ test_that("We can handle embedded empty cells via list feed", {
   expect_equal(which(is.na(dat$continent)), 2L)
   expect_equal(which(is.na(dat$gdppercap)), 4L) # gdppercap has been lowercased
 
-  expect_equal(sapply(dat, class),
+  expect_equal(vapply(dat, class, character(1)),
                c(country = "character", year = "integer", pop = "integer",
                  continent = "character", lifeexp = "numeric",
                  gdppercap = "numeric"))
@@ -43,24 +43,24 @@ test_that("We can handle embedded empty cells via list feed", {
 test_that("We can handle embedded empty cells via cell feed", {
 
   ## for comparison
-  dat_csv <- ss %>% get_via_csv("embedded_empty_cells")
+  dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
 
-  raw_cf <- ss %>% get_via_cf("embedded_empty_cells")
+  raw_cf <- ss %>% gs_read_cellfeed("embedded_empty_cells")
   expect_equal(dim(raw_cf), c(38L, 5L))
 
-  dat_cf <- raw_cf %>% reshape_cf()
+  dat_cf <- raw_cf %>% gs_reshape_cellfeed()
   expect_equal(dim(dat_cf), c(7L, 7L))
   ## converting to data.frames for test because of this
   ## https://github.com/hadley/dplyr/issues/1095
   ## bug (now fixed) where NA_character_ mishandled by all.equal
   class(dat_cf) <- "data.frame"
   class(dat_csv) <- "data.frame"
-  expect_identical(dat_cf, dat_csv %>% dplyr::rename(C4 = X))
+  expect_identical(dat_cf, dat_csv %>% dplyr::rename(X4 = X))
 
   raw_cf <- ss %>%
-    get_via_cf("embedded_empty_cells", return_empty = TRUE)
+    gs_read_cellfeed("embedded_empty_cells", return_empty = TRUE)
   expect_equal(dim(raw_cf), c(56L, 5L))
-  dat_cf <- raw_cf %>% reshape_cf()
+  dat_cf <- raw_cf %>% gs_reshape_cellfeed()
   class(dat_cf) <- "data.frame"
 
   ## when return_empty = TRUE, empty character cells show up as "", not
@@ -69,7 +69,7 @@ test_that("We can handle embedded empty cells via cell feed", {
   dat_cf <- dat_cf %>%
     dplyr::mutate(country = ifelse(country == "", NA, country),
                   continent = ifelse(continent == "", NA, continent)) %>%
-    dplyr::rename(X = C4)
+    dplyr::rename(X = X4)
 
   expect_identical(dat_cf, dat_csv)
 
@@ -77,7 +77,7 @@ test_that("We can handle embedded empty cells via cell feed", {
 
 test_that("Special Characters can be imported correctly", {
 
-  expect_equal_to_reference(get_via_lf(ss, ws = "special_chars"),
+  expect_equal_to_reference(gs_read_listfeed(ss, ws = "special_chars"),
                             "pts_special_chars.rds")
 
 })
@@ -87,7 +87,7 @@ test_that("We can cope with tricky column names", {
   ## FYI this is as much about documenting what happens with weird names, as it
   ## is about testing
 
-  diabolical <- get_via_csv(ss, "diabolical_column_names")
+  diabolical <- gs_read_csv(ss, "diabolical_column_names")
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical),
                    c("id", "content", "X4.3", "X", "lifeExp", "X.1",
@@ -104,7 +104,7 @@ test_that("We can cope with tricky column names", {
 #   3    mar  gamma    tres   fall          drei      wed
 
   ## empty cells will not be here ...
-  diabolical <- get_via_cf(ss, "diabolical_column_names")
+  diabolical <- gs_read_cellfeed(ss, "diabolical_column_names")
   expect_identical(dim(diabolical), c(30L, 5L))
   expect_identical(diabolical$cell_text[diabolical$row == 1L],
                    c("id", "content", "4.3", "lifeExp",
@@ -112,23 +112,24 @@ test_that("We can cope with tricky column names", {
   ## but reshaping will create variables when data exists, even in absence of
   ## column name
   diabolical <- diabolical %>%
-    reshape_cf()
+    gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical),
-                   c("id", "content", "X4.3", "C4", "lifeExp", "C6",
+                   c("id", "content", "X4.3", "X4", "lifeExp", "X6",
                      "Fahrvergnügen", "Hey.space"))
 
   ## empty cells WILL be here ...
-  diabolical <- get_via_cf(ss, "diabolical_column_names", return_empty = TRUE)
+  diabolical <-
+    gs_read_cellfeed(ss, "diabolical_column_names", return_empty = TRUE)
   expect_identical(dim(diabolical), c(32L, 5L))
   expect_identical(diabolical$cell_text[diabolical$row == 1L],
                    c("id", "content", "4.3", "", "lifeExp", "",
                      "Fahrvergnügen", "Hey space"))
   diabolical <- diabolical %>%
-    reshape_cf()
+    gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical),
-                   c("id", "content", "X4.3", "C4", "lifeExp", "C6",
+                   c("id", "content", "X4.3", "X4", "lifeExp", "X6",
                      "Fahrvergnügen", "Hey.space"))
 
 })

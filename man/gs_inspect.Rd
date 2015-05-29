@@ -27,7 +27,7 @@ gs_inspect(iris)
 # data recorded from a game of ultimate frisbee
 ulti_key <- "1223dpf3vnjZUYUnCM8rBSig3JlGrAu1Qu6VmPvdEn4M"
 ulti_ss <- ulti_key \%>\% gs_key()
-ulti_csv <- ulti_ss \%>\% get_col(ws = 2, col = 1:6)  \%>\% reshape_cf()
+ulti_csv <- ulti_ss \%>\% get_col(ws = 2, col = 1:6)  \%>\% gs_reshape_cellfeed()
 gs_inspect(ulti_csv)
 
 }
