@@ -75,7 +75,8 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
     req %>%
       httr::content(type = "text/csv", na.strings = c("", "NA"),
                     encoding = "UTF-8", ...) %>%
-      dplyr::as_data_frame()
+      dplyr::as_data_frame() %>%
+      dplyr::as.tbl()
     ## in future, I'm interested in using readr::read_csv(), either directly
     ## or indirectly, if httr make it the parser when MIME type is text/csv
     ## won't do it know because doesn't support vector valued na.strings,
