@@ -67,7 +67,7 @@ What other ideas do you have?
 devtools::install_github("jennybc/googlesheets")
 ```
 
-*We plan to submit to CRAN in late May or early June 2015, so feedback on functionality and usability is especially valuable to us now!*
+*We plan to submit to CRAN in June 2015, so feedback on functionality and usability is especially valuable to us now!*
 
 ### Take a look at the vignette
 
@@ -109,7 +109,7 @@ gs_gap() %>%
   gs_copy(to = "Gapminder")
 ```
 
-If that seems to have worked, go check that you see a sheet named "Gapminder" listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
+If that seems to have worked, go check for a sheet named "Gapminder" in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
 
 ### Register a spreadsheet
 
@@ -135,9 +135,14 @@ third_party_gap <- GAP_KEY %>%
 third_party_gap <- GAP_URL %>%
   gs_url()
 # note: registration via URL may not work for "old" sheets
+
+# Worried that a spreadsheet's registration is out-of-date?
+# Re-register it!
+gap <- gap %>% gs_gs()
+gap
 ```
 
-The registration functions `gs_title()`, `gs_key()`, and `gs_url()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
+The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
 ### Consume data
 

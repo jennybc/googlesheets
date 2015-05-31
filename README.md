@@ -45,7 +45,7 @@ What other ideas do you have?
 devtools::install_github("jennybc/googlesheets")
 ```
 
-*We plan to submit to CRAN in late May or early June 2015, so feedback on functionality and usability is especially valuable to us now!*
+*We plan to submit to CRAN in June 2015, so feedback on functionality and usability is especially valuable to us now!*
 
 ### Take a look at the vignette
 
@@ -77,16 +77,16 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 #> Source: local data frame [40 x 10]
 #> 
 #>                 sheet_title        author perm version             updated
-#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-05-30 17:31:25
-#> 2               TAGS v6.0ns     m.hawksey    r     new 2015-05-30 10:46:47
-#> 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-30 16:44:08
-#> 4              #rhizo15 #tw     m.hawksey    r     new 2015-05-30 07:53:02
-#> 5  Ari's Anchor Text Scrap…      anahmani    r     new 2015-05-29 07:18:48
-#> 6  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-05-28 17:43:29
-#> 7      test-gs-cars-private      gspreadr   rw     new 2015-05-27 17:48:34
-#> 8     All R Phylo Functions  omeara.brian    r     new 2015-05-20 18:34:43
-#> 9  test-gs-public-testing-…  rpackagetest    r     new 2015-05-20 01:32:27
-#> 10                 ari copy      gspreadr   rw     new 2015-05-19 23:00:13
+#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-05-31 22:00:25
+#> 2               TAGS v6.0ns     m.hawksey    r     new 2015-05-31 21:12:24
+#> 3  Copy of test-gs-gapmind…      gspreadr   rw     new 2015-05-31 21:11:01
+#> 4              #rhizo15 #tw     m.hawksey    r     new 2015-05-31 13:12:01
+#> 5   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-31 22:02:01
+#> 6  Ari's Anchor Text Scrap…      anahmani    r     new 2015-05-29 07:18:48
+#> 7  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-05-28 17:43:29
+#> 8      test-gs-cars-private      gspreadr   rw     new 2015-05-27 17:48:34
+#> 9     All R Phylo Functions  omeara.brian    r     new 2015-05-20 18:34:43
+#> 10 test-gs-public-testing-…  rpackagetest    r     new 2015-05-20 01:32:27
 #> ..                      ...           ...  ...     ...                 ...
 #> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 #>   (chr), alt_key (chr)
@@ -94,11 +94,11 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 my_sheets %>% glimpse()
 #> Observations: 40
 #> Variables:
-#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "TAGS v6.0ns", "E...
-#> $ author      (chr) "joannazhaoo", "m.hawksey", "m.hawksey", "m.hawkse...
-#> $ perm        (chr) "r", "r", "r", "r", "r", "rw", "rw", "r", "r", "rw...
+#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "TAGS v6.0ns", "C...
+#> $ author      (chr) "joannazhaoo", "m.hawksey", "gspreadr", "m.hawksey...
+#> $ perm        (chr) "r", "r", "rw", "r", "r", "r", "rw", "rw", "r", "r...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2015-05-30 17:31:25, 2015-05-30 10:46:47, 2015-05...
+#> $ updated     (time) 2015-05-31 22:00:25, 2015-05-31 21:12:24, 2015-05...
 #> $ sheet_key   (chr) "1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1DoMXh2m3F...
@@ -115,7 +115,7 @@ gs_gap() %>%
   gs_copy(to = "Gapminder")
 ```
 
-If that seems to have worked, go check that you see a sheet named "Gapminder" listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
+If that seems to have worked, go check for a sheet named "Gapminder" in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
 
 ### Register a spreadsheet
 
@@ -130,7 +130,7 @@ gap <- gs_title("Gapminder")
 #> Sheet successfully identifed: "Gapminder"
 gap
 #>                   Spreadsheet title: Gapminder
-#>   Date of googlesheets registration: 2015-05-30 18:00:05 GMT
+#>   Date of googlesheets registration: 2015-05-31 22:07:47 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -161,16 +161,38 @@ third_party_gap <- GAP_KEY %>%
 #> [1] "https://docs.google.com/spreadsheets/d/1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ/"
 third_party_gap <- GAP_URL %>%
   gs_url()
-#> Authentication will be used.
 #> Sheet-identifying info appears to be a browser URL.
 #> googlesheets will attempt to extract sheet key from the URL.
 #> Putative key: 1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ
 #> Authentication will be used.
 #> Sheet successfully identifed: "test-gs-gapminder"
 # note: registration via URL may not work for "old" sheets
+
+# Worried that a spreadsheet's registration is out-of-date?
+# Re-register it!
+gap <- gap %>% gs_gs()
+#> Authentication will be used.
+#> Sheet successfully identifed: "Gapminder"
+gap
+#>                   Spreadsheet title: Gapminder
+#>   Date of googlesheets registration: 2015-05-31 22:07:51 GMT
+#>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
+#>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
+#> 
+#> Contains 5 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> Africa: 625 x 6
+#> Americas: 301 x 6
+#> Asia: 397 x 6
+#> Europe: 361 x 6
+#> Oceania: 25 x 6
+#> 
+#> Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 ```
 
-The registration functions `gs_title()`, `gs_key()`, and `gs_url()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
+The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
 ### Consume data
 
@@ -400,8 +422,8 @@ foo <- gs_new("foo")
 #> Worksheet dimensions: 1000 x 26.
 foo
 #>                   Spreadsheet title: foo
-#>   Date of googlesheets registration: 2015-05-30 18:00:16 GMT
-#>     Date of last spreadsheet update: 2015-05-30 18:00:14 GMT
+#>   Date of googlesheets registration: 2015-05-31 22:07:56 GMT
+#>     Date of last spreadsheet update: 2015-05-31 22:07:55 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -410,7 +432,7 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1QRqPObeTYiaddr2bRBo2M16a6hLrCG6e2H2_NqovNlQ
+#> Key: 19J9GvlYsWABg3nEGAOpmemkpRFCoBQAggi5Ww2czLP4
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()`. You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
@@ -423,6 +445,11 @@ You can modify the data in sheet cells via `gs_edit_cells()`. We'll work on the 
 foo <- foo %>% gs_edit_cells(input = head(iris), trim = TRUE)
 #> Range affected by the update: "A1:E7"
 #> Worksheet "Sheet1" successfully updated with 35 new value(s).
+#> Accessing worksheet titled "Sheet1"
+#> Authentication will be used.
+#> Sheet successfully identifed: "foo"
+#> Accessing worksheet titled "Sheet1"
+#> Worksheet "Sheet1" dimensions changed to 7 x 5.
 ```
 
 Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by consuming `foo` via the list feed.
@@ -466,8 +493,8 @@ iris_ss <- gs_upload("iris.csv")
 #> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
 iris_ss
 #>                   Spreadsheet title: iris
-#>   Date of googlesheets registration: 2015-05-30 18:00:31 GMT
-#>     Date of last spreadsheet update: 2015-05-30 18:00:29 GMT
+#>   Date of googlesheets registration: 2015-05-31 22:08:08 GMT
+#>     Date of last spreadsheet update: 2015-05-31 22:08:06 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -476,7 +503,7 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1JnFpHmc2Wj-Ai8IgbJD_QOrEcDXMrMW6gQa9K6YZsCk
+#> Key: 1JBhoVYK4CjvHvwrWl4N0nr03i6CQ7BBiTUHS6A31u50
 iris_ss %>% gs_read_listfeed()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -498,8 +525,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 #> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
-#>   Date of googlesheets registration: 2015-05-30 18:00:37 GMT
-#>     Date of last spreadsheet update: 2015-05-30 18:00:34 GMT
+#>   Date of googlesheets registration: 2015-05-31 22:08:13 GMT
+#>     Date of last spreadsheet update: 2015-05-31 22:08:11 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -512,7 +539,7 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1088N7_IdkHaqe-m1g2-U9Vg6ZQiH1z--aH7LQFxYbU4
+#> Key: 1AJakJVpaoEkuuwaO4Tm3IJbGAMxaHOr2U5r3jH2uyrY
 gap_xlsx %>% gs_read_listfeed(ws = "Oceania")
 #> Accessing worksheet titled "Oceania"
 #> Source: local data frame [5 x 6]
@@ -590,8 +617,8 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>                        displayName: google sheets
 #>                       emailAddress: gspreadr@gmail.com
-#> Date-time of session authorization: 2015-05-30 18:00:03
-#>   Date-time of access token expiry: 2015-05-30 11:58:52
+#> Date-time of session authorization: 2015-05-31 22:07:45
+#>   Date-time of access token expiry: 2015-05-31 15:11:01
 #> Access token is valid.
 user_session_info
 #> $displayName
@@ -601,10 +628,10 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $auth_date
-#> [1] "2015-05-30 18:00:03 GMT"
+#> [1] "2015-05-31 22:07:45 GMT"
 #> 
 #> $exp_date
-#> [1] "2015-05-30 11:58:52 PDT"
+#> [1] "2015-05-31 15:11:01 PDT"
 ```
 
 ### "Old" Google Sheets
