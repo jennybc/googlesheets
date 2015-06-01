@@ -23,7 +23,7 @@
 #'
 #' @template ss
 #' @template ws
-#' @param range blah blah
+#' @template range
 #' @param return_empty logical; indicates whether to return empty cells
 #' @param return_links logical; indicates whether to return the edit and self
 #'   links (used internally in cell editing workflow)

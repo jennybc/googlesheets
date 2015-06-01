@@ -18,10 +18,27 @@ cell range processing is handled by the \code{\link[=cellranger]{cellranger}}
 package, where you can find full documentation for the functions used in the
 examples below.
 }
+\examples{
+\dontrun{
+gs_gap() \%>\% gs_read(ws = 2, range = "A1:D8")
+gs_gap() \%>\% gs_read(ws = "Europe", range = cell_rows(1:4))
+gs_gap() \%>\% gs_read(ws = "Europe", range = cell_rows(100:103),
+                     col_names = FALSE)
+gs_gap() \%>\% gs_read(ws = "Africa", range = cell_cols(1:4))
+gs_gap() \%>\% gs_read(ws = "Asia", range = cell_limits(c(1, 5), c(4, NA)))
+}
+}
 \seealso{
 The \code{\link[=cellranger]{cellranger}} package has full
   documentation on cell specification and offers additional functions for
-  manipulating "A1:D10" style spreadsheet ranges. See a full list of
-  functions in the \link[cellranger:00Index]{cellranger index}.
+  manipulating "A1:D10" style spreadsheet ranges. Here are the most relevant:
+  \itemize{
+    \item \code{\link[cellranger]{cell_limits}}
+    \item \code{\link[cellranger]{cell_rows}}
+    \item \code{\link[cellranger]{cell_cols}}
+    \item \code{\link[cellranger]{anchored}}
+  }
+  See a full list of functions in the \link[cellranger:00Index]{cellranger
+  index}.
 }
 

@@ -25,10 +25,12 @@ as \code{NA} values}
 which cell the data came from; this argument selects between the "A1" and
 "R1C1" positioning notations; specify "none" to suppress names}
 
-\item{col_names}{blah blah}
+\item{col_names}{if \code{TRUE}, the first row of the input will be
+  interpreted as a column name and NOT included in the result; useful when
+  reading a single column or variable}
 }
 \value{
-a named vector
+a vector
 }
 \description{
 In some cases, you do not want to convert the data retrieved from the cell

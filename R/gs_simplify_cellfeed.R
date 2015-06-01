@@ -24,9 +24,11 @@
 #' @param notation character; the result vector can have names that reflect
 #'   which cell the data came from; this argument selects between the "A1" and
 #'   "R1C1" positioning notations; specify "none" to suppress names
-#' @param col_names blah blah
+#' @param col_names if \code{TRUE}, the first row of the input will be
+#'   interpreted as a column name and NOT included in the result; useful when
+#'   reading a single column or variable
 #'
-#' @return a named vector
+#' @return a vector
 #'
 #' @examples
 #' \dontrun{

@@ -20,6 +20,16 @@
 #' package, where you can find full documentation for the functions used in the
 #' examples below.
 #'
+#' @examples
+#' \dontrun{
+#' gs_gap() %>% gs_read(ws = 2, range = "A1:D8")
+#' gs_gap() %>% gs_read(ws = "Europe", range = cell_rows(1:4))
+#' gs_gap() %>% gs_read(ws = "Europe", range = cell_rows(100:103),
+#'                      col_names = FALSE)
+#' gs_gap() %>% gs_read(ws = "Africa", range = cell_cols(1:4))
+#' gs_gap() %>% gs_read(ws = "Asia", range = cell_limits(c(1, 5), c(4, NA)))
+#' }
+#'
 #' @template cellranger
 #' @name cell-specification
 NULL

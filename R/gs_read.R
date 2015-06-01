@@ -19,7 +19,7 @@
 #'
 #' @template ss
 #' @template ws
-#' @param range blah blah
+#' @template range
 #' @param ... optional arguments passed on to functions that control reading and
 #'   transforming the data
 #' @template verbose

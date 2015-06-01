@@ -13,7 +13,7 @@ object}
 \item{ws}{positive integer or character string specifying index or title,
 respectively, of the worksheet}
 
-\item{range}{blah blah}
+\item{range}{a cell range, as described in \code{\link{cell-specification}}}
 
 \item{...}{optional arguments passed on to functions that control reading and
 transforming the data}

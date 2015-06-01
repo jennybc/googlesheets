@@ -14,7 +14,7 @@ object}
 \item{ws}{positive integer or character string specifying index or title,
 respectively, of the worksheet}
 
-\item{range}{blah blah}
+\item{range}{a cell range, as described in \code{\link{cell-specification}}}
 
 \item{return_empty}{logical; indicates whether to return empty cells}
 

@@ -1,12 +1,16 @@
 context("register sheets")
 
-iris_pvt_url %>%
-  gs_url(verbose = FALSE) %>%
-  saveRDS("for_reference/iris_pvt_googlesheet.rds")
+if(!file.exists("for_reference/iris_pvt_googlesheet.rds")) {
+  iris_pvt_url %>%
+    gs_url(verbose = FALSE) %>%
+    saveRDS("for_reference/iris_pvt_googlesheet.rds")
+}
 
-GAP_KEY %>%
-  gs_key(verbose = FALSE) %>%
-  saveRDS("for_reference/gap_googlesheet.rds")
+if(!file.exists("for_reference/gap_googlesheet.rds")) {
+  GAP_KEY %>%
+    gs_key(verbose = FALSE) %>%
+    saveRDS("for_reference/gap_googlesheet.rds")
+}
 
 pseudo_expect_equal_to_reference <- function(x, ref) {
   ref_rds <- file.path("for_reference", paste0(ref, "_googlesheet.rds"))
