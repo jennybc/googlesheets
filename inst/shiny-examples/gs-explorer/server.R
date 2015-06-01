@@ -5,12 +5,12 @@ library(dplyr)
 library(DT)
 
 ## =====================
-# CHANGE THIS DEPENDING ON WHERE YOU ARE DEPLOYING APP
-options("googlesheets.shiny.redirect_uri" = "http://daattali.com/shiny/gs-explorer/")
+# CHANGE THIS DEPENDING ON WHERE YOU ARE DEPLOYING APP (your domain, shinyapps.io, etc)
+#options("googlesheets.shiny.redirect_uri" = "http://daattali.com/shiny/gs-explorer/")
+options("googlesheets.shiny.redirect_uri" = "https://jozhao.shinyapps.io/gs-explorer/")
 # FOR LOCAL TESTING - use runApp(port = 4642)
 #options("googlesheets.shiny.redirect_uri" = "http://127.0.0.1:4642")
 ## ======================
-
 
 shinyServer(function(input, output, session) {
   
@@ -26,9 +26,20 @@ shinyServer(function(input, output, session) {
     }
   })
   
+  output$logoutButton <- renderUI({
+    if(!is.null(access_token())) { 
+      # Revoke the token too? use access_token$revoke()
+      actionButton("logoutButton", 
+                   label = a("Logout", 
+                             href = getOption("googlesheets.shiny.redirect_uri"))) 
+    } else {
+      return()
+    }
+  })
+  
   ## Get auth code from return URL
   access_token  <- reactive({
-    ## gets all the parameters in the URL. Your authentication code should be one of them
+    ## gets all the parameters in the URL. The auth code should be one of them.
     pars <- parseQueryString(session$clientData$url_search) 
     
     if(length(pars$code) > 0) {
@@ -39,34 +50,54 @@ shinyServer(function(input, output, session) {
     }
   })
   
-  
-  ## If access_token was obtained and ok, show list sheets button
-  output$listButton <- renderUI({
-    if(!is.null(access_token())) { 
-      actionButton("listButton", label = "List Sheets")
-    } else {
-      return()
-    }
+  gsLs <- reactive({
+    gs_ls()
   })
   
+  output$listSheets <- DT::renderDataTable({
+    validate(
+      need(!is.null(access_token()), 
+           message = 
+             paste("Click 'Authorize App' to redirect to Google's authorization",
+                   "screen where this app requests authorization to access your",
+                   "Google Sheets and Google Drive. By authorizing, additional",
+                   "googlesheets functions that requires user authorization,",
+                   "can be utilized in your Shiny app."))
+    )
+    
+    dat <- gsLs() %>% select(1:6)
+    DT::datatable(dat)
+  })
+  
+  # Sheet selector
   output$selectSheet <- renderUI({
     validate(
       need(!is.null(access_token()), message = FALSE)
     )
     
     all_sheets <- gsLs()
-    
-    titles <- c("", all_sheets$sheet_title) %>% as.list()
+    titles <- c(" ", all_sheets$sheet_title) %>% 
+      stringr::str_sort() %>% 
+      as.list()
     
     selectInput("selectSheet", label = "Pick a Spreadsheet", 
                 choices = titles, selected = NULL)
+  })
+  
+  ## Worksheet selector
+  output$selectWs <- renderUI({
+    ss <- sheet()
+    # default selected would be " "
+    ws_titles <- c(" ", ss$ws$ws_title %>% as.list())
     
+    selectInput("selectWs", label = "Select a worksheet", 
+                choices = ws_titles, selected = NULL)
   })
   
   sheet <- reactive({
     validate(
       need(!is.null(access_token()), message = FALSE),
-      need(input$selectSheet != "", message = FALSE)
+      need(input$selectSheet != " ", message = FALSE)
     )
     
     ss <- gs_title(input$selectSheet)
@@ -85,10 +116,11 @@ shinyServer(function(input, output, session) {
             ss$updated %>% as.character(), 
             ss$visibility, ss$perm, ss$version))
     
-    DT::datatable(ss_info, rownames = FALSE, colnames = c("", ""), filter = "none",
-                  options = list(paging = FALSE, searching = FALSE, ordering = FALSE,
-                                 info = FALSE))
-    
+    DT::datatable(ss_info, rownames = FALSE, 
+                  colnames = c("", ""), 
+                  filter = "none",
+                  options = list(paging = FALSE, searching = FALSE, 
+                                 ordering = FALSE, info = FALSE))
   })
   
   output$sheetWsInfo <- DT::renderDataTable({
@@ -99,33 +131,6 @@ shinyServer(function(input, output, session) {
                              "Column Extent" = ss$ws$col_extent)
     
     DT::datatable(ss_ws_info, options = list(paging = FALSE))
-    
-  })
-  
-  
-  observe({
-    
-  if(is.null(input$selectSheet)) {
-      updateTabsetPanel(session, "panel", selected = "All Sheets")
-  } else {
-    if(input$selectSheet != "") {
-      updateTabsetPanel(session, "panel", selected = "Sheet Info")
-    } else {
-      updateTabsetPanel(session, "panel", selected = "All Sheets")
-    }
-  }
-
-  })
-  
-  output$logoutButton <- renderUI({
-    if(!is.null(access_token())) { 
-      # TODO: revoke the token upon login
-      #access_token$revoke()
-      actionButton("logoutButton", 
-                   label = a("Logout", href = getOption("googlesheets.shiny.redirect_uri"))) 
-    } else {
-      return()
-    }
   })
   
   user_info <- reactive({
@@ -137,11 +142,11 @@ shinyServer(function(input, output, session) {
   
   output$currentUser <- renderUI({
     validate(
-      need(!is.null(access_token()), message = "No user is currently authorized.")
+      need(!is.null(access_token()), 
+           message = "No user is currently authorized.")
     )
     
     x <- user_info()
-    x <- gs_user()
     line1 <- paste("Display Name:", x$displayName)
     line2 <- paste("Email:", x$emailAddress)
     line3 <- paste("Time of session authorization:", x$auth_date)
@@ -149,48 +154,33 @@ shinyServer(function(input, output, session) {
     HTML(paste(line1, line2, line3, sep = "</br><h>"))
   })
   
-  ## No auth_code has been returned
-  output$introInfo <- renderText({
-    if(isolate(is.null(access_token()))) {
-      paste("Click 'Authorize this App' to redirect to Google's authorization",
-            "screen where this app requests authorization to access your",
-            "Google Sheets and Google Drive. By authorizing, additional",
-            "googlesheets functions that requires user authorization,",
-            "can be utilized in your Shiny app.")
-    }
-  })
+  
   
   output$greeting <- renderText({
     paste("Hello,  ", user_info()$displayName, ":)", sep = "\n")
   })
   
-  
-  gsLs <- reactive({
-    validate(
-      need(!is.null(access_token), message = FALSE)
-    )
-    
-    gs_ls()
-    
-  })
-  
   output$plotSheet <- renderPlot({
-    ss <- sheet()
     validate(
-      need(input$selectWs != "", message = FALSE)
+      need(input$selectWs != " ", message = FALSE)
     )
+    
+    ss <- sheet()
     ws <- get_via_csv(ss, input$selectWs)
     gs_inspect(ws)
   })
   
-  
-  output$selectWs <- renderUI({
-    ss <- sheet()
-    
-    ws_titles <- c("", ss$ws$ws_title %>% as.list())
-    
-    selectInput("selectWs", label = "Select a worksheet", 
-                choices = ws_titles, selected = NULL)
+  ## Update tab panel when sheet is selected
+  observe({
+    if(is.null(input$selectSheet)) {
+      updateTabsetPanel(session, "panel", selected = "All Sheets")
+    } else {
+      if(input$selectSheet != " ") {
+        updateTabsetPanel(session, "panel", selected = "Sheet Info")
+      } else {
+        updateTabsetPanel(session, "panel", selected = "All Sheets")
+      }
+    }
   })
   
 })
