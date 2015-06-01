@@ -3,7 +3,7 @@
 #' This is the first step in the authorization sequence. Form the Google URL
 #' that redirects the user to Google's authorization screen. Once a user 
 #' authenticates, the response in the form of an authorization code is sent 
-#' to the \code{redirect_uri} in which \code{gs_webapp_get_token} uses to 
+#' to the \code{redirect_uri} in which \code{gs_shiny_get_token} uses to 
 #' exchange for an access token.
 #' 
 #' Set client ID and Secret, and redirect uri specific to your project by:
@@ -29,8 +29,8 @@
 #' @seealso gs_shiny_get_token
 #' 
 #' @export
-gs_get_auth_url <- function(client_id = getOption("googlesheets.shiny.client_id"),
-                             redirect_uri = getOption("googlesheets.shiny.redirect_uri"),
+gs_get_auth_url <- function(client_id = getOption("googlesheets.webapp.client_id"),
+                             redirect_uri = getOption("googlesheets.webapp.redirect_uri"),
                              access_type = "online", approval_prompt = "auto") {
   
   scope_list <- paste("https://spreadsheets.google.com/feeds", 
@@ -67,7 +67,7 @@ gs_get_auth_url <- function(client_id = getOption("googlesheets.shiny.client_id"
 #' @param auth_code authorization code returned by Google that appears in URL
 #' 
 #' @export
-gs_get_token <- 
+gs_webapp_get_token <- 
   function(auth_code, client_id = getOption("googlesheets.webapp.client_id"),
            client_secret = getOption("googlesheets.webapp.client_secret"),
            redirect_uri = getOption("googlesheets.webapp.redirect_uri")) {

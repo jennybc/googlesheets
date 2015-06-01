@@ -6,10 +6,10 @@ library(DT)
 
 ## =====================
 # CHANGE THIS DEPENDING ON WHERE YOU ARE DEPLOYING APP (your domain, shinyapps.io, etc)
-#options("googlesheets.shiny.redirect_uri" = "http://daattali.com/shiny/gs-explorer/")
-options("googlesheets.shiny.redirect_uri" = "https://jozhao.shinyapps.io/gs-explorer/")
+#options("googlesheets.webapp.redirect_uri" = "http://daattali.com/shiny/gs-explorer/")
+options("googlesheets.webapp.redirect_uri" = "https://jozhao.shinyapps.io/gs-explorer/")
 # FOR LOCAL TESTING - use runApp(port = 4642)
-#options("googlesheets.shiny.redirect_uri" = "http://127.0.0.1:4642")
+#options("googlesheets.webapp.redirect_uri" = "http://127.0.0.1:4642")
 ## ======================
 
 shinyServer(function(input, output, session) {
@@ -20,7 +20,7 @@ shinyServer(function(input, output, session) {
     if(is.null(isolate(access_token()))) {
       actionButton("loginButton", 
                    label = a("Authorize App", 
-                             href = gs_shiny_get_url()))
+                             href = gs_webapp_get_url()))
     } else {
       return()
     }
@@ -44,7 +44,7 @@ shinyServer(function(input, output, session) {
     
     if(length(pars$code) > 0) {
       ## extract the authorization code
-      gs_shiny_get_token(auth_code = pars$code)
+      gs_webapp_get_token(auth_code = pars$code)
     } else {
       NULL
     }
