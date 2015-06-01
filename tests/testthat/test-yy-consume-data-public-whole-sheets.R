@@ -6,14 +6,14 @@ ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE, verbose = FALSE)
 test_that("We can get all data from the list feed (pub)", {
 
   expect_equal_to_reference(gs_read_listfeed(ss, ws = 5),
-                            "gap_sheet5_gs_read_listfeed.rds")
+                            "for_reference/gap_sheet5_gs_read_listfeed.rds")
 
 })
 
 test_that("We can get all data from the cell feed (pub)", {
 
   expect_equal_to_reference(gs_read_cellfeed(ss, ws = 5),
-                            "gap_sheet5_gs_read_cellfeed.rds")
+                            "for_reference/gap_sheet5_gs_read_cellfeed.rds")
 
 })
 
@@ -21,7 +21,8 @@ test_that("We can get all data from the exportcsv link (pub)", {
 
   dat1 <- gs_read_csv(ss, ws = 5)
   names(dat1) <-  dat1 %>% names() %>% tolower()
-  expect_equal_to_reference(dat1, "gap_sheet5_gs_read_listfeed.rds")
+  expect_equal_to_reference(dat1,
+                            "for_reference/gap_sheet5_gs_read_listfeed.rds")
 
 })
 

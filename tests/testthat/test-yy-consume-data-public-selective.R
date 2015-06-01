@@ -74,9 +74,10 @@ test_that("We can simplify data from the cell feed", {
 
   foo <- ss %>% gs_read_cellfeed(ws = "Africa", range = cell_rows(2:3))
   expect_equal_to_reference(foo %>% gs_simplify_cellfeed(),
-                            "gap_africa_simplify_A1.rds")
-  expect_equal_to_reference(foo %>% gs_simplify_cellfeed(notation = "R1C1"),
-                                                "gap_africa_simplify_R1C1.rds")
+                            "for_reference/gap_africa_simplify_A1.rds")
+  expect_equal_to_reference(
+    foo %>% gs_simplify_cellfeed(notation = "R1C1"),
+    "for_reference/gap_africa_simplify_R1C1.rds")
 
   foo <- ss %>% gs_read_cellfeed(ws = "Oceania", range = cell_cols(3))
   foo_simple <- foo %>% gs_simplify_cellfeed()
