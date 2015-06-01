@@ -2,6 +2,7 @@
 % Please edit documentation in R/gs_register.R
 \name{googlesheet}
 \alias{googlesheet}
+\alias{gs_gs}
 \alias{gs_key}
 \alias{gs_title}
 \alias{gs_url}
@@ -15,24 +16,30 @@ gs_key(x, lookup = NULL, visibility = NULL, verbose = TRUE)
 gs_url(x, lookup = NULL, visibility = NULL, verbose = TRUE)
 
 gs_ws_feed(x, lookup = NULL, verbose = TRUE)
+
+gs_gs(x, visibility = NULL, verbose = TRUE)
 }
 \arguments{
 \item{x}{sheet-identifying information; a character vector of length one
-holding sheet title, key, browser URL or worksheets feed}
+holding sheet title, key, browser URL or worksheets feed OR, in the case of
+\code{gs_gs} only, a \code{googlesheet} object}
 
 \item{verbose}{logical; do you want informative messages?}
 
 \item{lookup}{logical, optional. Controls whether \code{googlesheets} will
 place authenticated API requests during registration. If unspecified, will
 be set to \code{TRUE} if authentication has previously been used in this R
-session or if working directory contains a file named \code{.httr-oauth}.}
+session, if working directory contains a file named \code{.httr-oauth}, or
+if \code{x} is a worksheets feed or \code{googlesheet} object that
+specifies "public" visibility.}
 
 \item{visibility}{character, either "public" or "private". Consulted during
 explicit construction of a worksheets feed from a key, which happens only
 when \code{lookup = FALSE} and \code{googlesheets} is prevented from
 looking up information in the spreadsheets feed. If unspecified, will be
 set to "public" if \code{lookup = FALSE} and "private" if \code{lookup =
-TRUE}.}
+TRUE}. Consult the API docs for more info about
+\href{https://developers.google.com/google-apps/spreadsheets/worksheets#sheets_api_urls_visibilities_and_projections}{visibility}}
 }
 \value{
 a \code{googlesheet} object
@@ -45,9 +52,9 @@ prior to any requests to read or write data. We call this
 object. Note this object does not contain any sheet data, but rather contains
 metadata about the sheet. We populate a \code{googlesheet}
 object with information from the
-\href{https://developers.google.com/google-apps/spreadsheets/#working_with_worksheets}{worksheets
+\href{https://developers.google.com/google-apps/spreadsheets/worksheets}{worksheets
 feed} and, if available, also from the
-\href{https://developers.google.com/google-apps/spreadsheets/#retrieving_a_list_of_spreadsheets}{spreadsheets
+\href{https://developers.google.com/google-apps/spreadsheets/worksheets#retrieve_a_list_of_spreadsheets}{spreadsheets
 feed}. Choose from the functions below depending on the type of
 sheet-identifying input you will provide. Is it a sheet title, key,
 browser URL, or worksheets feed (another URL, mostly used internally)?

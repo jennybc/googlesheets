@@ -74,7 +74,7 @@ pts_alt_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1hff6AzFAZg
 ## Private iris sheet (owned by gspreadr)
 iris_pvt_url <- "https://docs.google.com/spreadsheets/d/1UXr4-haIQsmJfyjkEhlkNt2PXduBkB97e15jez9ogRo/"
 iris_pvt_title <- "test-gs-iris-private"
-iris_pvt_key <- "1UXr4-haIQsmJfyjkEhlkNt2PXduBkB97e15jez9ogRo"
+iris_pvt_key <- iris_pvt_url %>% extract_key_from_url()
 iris_pvt_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1UXr4-haIQsmJfyjkEhlkNt2PXduBkB97e15jez9ogRo/private/full"
 
 ## Private cars sheet (owned by rpackagetest)

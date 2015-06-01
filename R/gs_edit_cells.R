@@ -18,7 +18,7 @@
 #' @param byrow logical; should we fill cells across a row (\code{byrow =
 #'   TRUE}) or down a column (\code{byrow = FALSE}, default); consulted only
 #'   when \code{input} is a vector, i.e. \code{dim(input)} is \code{NULL}
-#' @param header logical; indicates whether column names of input should be
+#' @param col_names logical; indicates whether column names of input should be
 #'   included in the edit, i.e. prepended to the input; consulted only when
 #'   \code{length(dim(input))} equals 2, i.e. \code{input} is a matrix or
 #'   data.frame
@@ -29,40 +29,56 @@
 #' @examples
 #' \dontrun{
 #' yo <- gs_new("yo")
-#' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
-#' get_via_csv(yo)
+#' yo <- gs_edit_cells(yo, input = head(iris), trim = TRUE)
+#' gs_read(yo)
 #'
-#' yo <- gs_ws_new(yo, "byrow_FALSE")
-#' yo <- edit_cells(yo, ws = "byrow_FALSE", LETTERS[1:5], "A8")
-#' get_via_cf(yo, ws = "byrow_FALSE", min_row = 7) %>% simplify_cf()
+#' yo <- gs_ws_new(yo, ws = "byrow_FALSE")
+#' yo <- gs_edit_cells(yo, ws = "byrow_FALSE",
+#'                     input = LETTERS[1:5], anchor = "A8")
+#' gs_read_cellfeed(yo, ws = "byrow_FALSE", range = "A8:A12") %>%
+#'   gs_simplify_cellfeed()
 #'
-#' yo <- gs_ws_new(yo, "byrow_TRUE")
-#' yo <- edit_cells(yo, ws = "byrow_TRUE", LETTERS[1:5], "A8", byrow = TRUE)
-#' get_via_cf(yo, ws = "byrow_TRUE", min_row = 7) %>% simplify_cf()
+#' yo <- gs_ws_new(yo, ws = "byrow_TRUE")
+#' yo <- gs_edit_cells(yo, ws = "byrow_TRUE", input = LETTERS[1:5],
+#'                     anchor = "A8", byrow = TRUE)
+#' gs_read_cellfeed(yo, ws = "byrow_TRUE", range = "A8:E8") %>%
+#'   gs_simplify_cellfeed()
+#'
+#' gs_delete(yo)
 #' }
 #'
 #' @export
-edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
-                       byrow = FALSE, header = FALSE, trim = FALSE,
-                       verbose = TRUE) {
+gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
+                          byrow = FALSE, col_names = NULL, trim = FALSE,
+                          verbose = TRUE) {
+
+  sleep <- 1 ## we must backoff or operations below don't complete before
+             ## next one starts; believe it or not, shorter sleeps cause
+             ## problems fairly regularly :(
 
   catch_hopeless_input(input)
   this_ws <- gs_ws(ss, ws, verbose = FALSE)
 
-  ## TO DO: I need to let the cellranger::anchored defaults rule the day here
-  ## (vs the ones above)
-  limits <-
-    cellranger::anchored(anchor, input = input, header = header,
-                         byrow = byrow) %>%
-    limit_list()
+  ## I can edit/remove this once cellranger updates on CRAN and the default
+  ## behavior of anchored() is smarter
+  if(is.null(dim(input))) {
+    col_names <- FALSE
+  } else if(is.null(col_names)) {
+    col_names <- !is.null(colnames(input))
+  }
+
+  limits <- ## change header to col_names after cellranger updates
+    cellranger::anchored(anchor, input = input, header = col_names,
+                         byrow = byrow)
   ## TO DO: if I were really nice, I would use the positioning notation from the
   ## user, i.e. learn it from anchor, instead of defaulting to A1
   range <- limits %>%
-    un_limit_list() %>%
     cellranger::as.range()
   if(verbose) {
     message(sprintf("Range affected by the update: \"%s\"", range))
   }
+  limits <- limits %>%
+    limit_list()
 
   if(limits$`max-row` > this_ws$row_extent ||
      limits$`max-col` > this_ws$col_extent) {
@@ -70,16 +86,17 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
       gs_ws_resize(this_ws$ws_title,
                    max(this_ws$row_extent, limits$`max-row`),
                    max(this_ws$col_extent, limits$`max-col`),
-                   verbose)
-    Sys.sleep(1)
+                   verbose = verbose)
+    Sys.sleep(sleep)
 
   }
 
-  input <- input %>% as_character_vector(header = header)
+  input <- input %>% as_character_vector(col_names = col_names)
 
   cells_df <- ss %>%
-    get_via_cf(ws, limits = limits,
-               return_empty = TRUE, return_links = TRUE, verbose = FALSE) %>%
+    gs_read_cellfeed(
+      ws, range = range, return_empty = TRUE,
+      return_links = TRUE, verbose = FALSE) %>%
     dplyr::mutate_(update_value = ~ input)
 
   update_entries <-
@@ -115,34 +132,35 @@ edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   req <-
     gsheets_POST(paste(this_ws$cellsfeed, "batch", sep = "/"), update_feed)
 
-  ## proactive check for successful update
   cell_status <-
     req$content %>%
     xml2::xml_find_all("atom:entry//batch:status", xml2::xml_ns(.)) %>%
     xml2::xml_attr("code")
 
-  if(all(cell_status == "200")) {
-    sprintf("Worksheet \"%s\" successfully updated with %d new value(s).",
-            this_ws$ws_title, length(input)) %>% message()
-  } else {
-    sprintf(paste("Problems updating cells in worksheet \"%s\".",
-                  "Statuses returned:\n"),
-            this_ws$ws_title,
-            cell_status %>%
-              unique() %>%
-              paste(sep = ",")) %>%
-      message()
+  if(verbose) {
+    if(all(cell_status == "200")) {
+      sprintf("Worksheet \"%s\" successfully updated with %d new value(s).",
+              this_ws$ws_title, length(input)) %>% message()
+    } else {
+      sprintf(paste("Problems updating cells in worksheet \"%s\".",
+                    "Statuses returned:\n%s"),
+              this_ws$ws_title,
+              paste(unique(cell_status), collapse = ",")) %>%
+        message()
+    }
   }
 
-  if(trim) {
+  if(trim &&
+     (limits$`max-row` < this_ws$row_extent ||
+      limits$`max-col` < this_ws$col_extent)) {
 
-    Sys.sleep(1)
+    Sys.sleep(sleep)
     ss <- ss %>%
       gs_ws_resize(this_ws$ws_title, limits$`max-row`,
-                   limits$`max-col`, verbose = FALSE)
+                   limits$`max-col`, verbose = verbose)
   }
 
-  Sys.sleep(1)
+  Sys.sleep(sleep)
   ss <- ss$sheet_key %>% gs_key(verbose = FALSE)
   invisible(ss)
 }
@@ -163,8 +181,9 @@ catch_hopeless_input <- function(x) {
 
 ## deeply pragmatic function to turn input destined for upload into cells
 ## into a character vector
-## header controls whether column names are prepended, when x has 2 dimensions
-as_character_vector <- function(x, header = FALSE) {
+## col_names controls whether column names are prepended, when x has 2
+## dimensions
+as_character_vector <- function(x, col_names) {
 
   catch_hopeless_input(x)
 
@@ -172,10 +191,10 @@ as_character_vector <- function(x, header = FALSE) {
 
   ## instead of fiddly tests on x (see comments below), just go with it, if x
   ## can be turned into a character vector
-  if(dim(x) %>% is.null()) {
-    y <- try(x %>% as.character(), silent = TRUE)
+  if(is.null(dim(x))) {
+    y <- try(as.character(x), silent = TRUE)
   } else if(length(dim(x)) == 2L) {
-    x_colnames <- x %>% colnames()
+    x_colnames <- colnames(x)
     y <- try(x %>% t() %>% as.character() %>% drop(), silent = TRUE)
   }
 
@@ -183,7 +202,7 @@ as_character_vector <- function(x, header = FALSE) {
     stop("Input cannot be converted to character vector.")
   }
 
-  if(header) {
+  if(col_names) {
     y <- c(x_colnames, y)
   }
 

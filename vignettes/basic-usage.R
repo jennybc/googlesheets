@@ -3,20 +3,17 @@ library(googlesheets)
 suppressMessages(library(dplyr))
 
 ## ----auth, include = FALSE-----------------------------------------------
-
-## look for .httr-oauth in pwd (assuming pwd is googlesheets) or two levels up
-## (assuming pwd is googlesheets/tests/testthat)
+## look for .httr-oauth in pwd (assuming pwd is googlesheets) or one level up
+## (assuming pwd is googlesheets/vignettes)
 pwd <- getwd()
 one_up <- pwd %>% dirname()
-two_up <- pwd %>% dirname() %>% dirname()
-HTTR_OAUTH <- c(two_up, one_up, pwd) %>% file.path(".httr-oauth")
+HTTR_OAUTH <- c(one_up, pwd) %>% file.path(".httr-oauth")
 HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
 
 if(length(HTTR_OAUTH) > 0) {
   HTTR_OAUTH <- HTTR_OAUTH[1]
   file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
 }
-
 
 ## ----pre-clean, include = FALSE------------------------------------------
 ## if a previous compilation of this document leaves anything behind, i.e. if it
@@ -44,27 +41,27 @@ ss2
 
 ## ------------------------------------------------------------------------
 gap
-oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
+oceania_list_feed <- gs_read_listfeed(gap, ws = "Oceania") 
 str(oceania_list_feed)
 oceania_list_feed
 
 ## ------------------------------------------------------------------------
-oceania_cell_feed <- get_via_cf(gap, ws = "Oceania") 
+oceania_cell_feed <- gs_read_cellfeed(gap, ws = "Oceania") 
 str(oceania_cell_feed)
 head(oceania_cell_feed, 10)
-oceania_reshaped <- reshape_cf(oceania_cell_feed)
+oceania_reshaped <- gs_reshape_cellfeed(oceania_cell_feed)
 str(oceania_reshaped)
 head(oceania_reshaped, 10)
 
 ## ----createspreadsheet---------------------------------------------------
 # Create a new empty spreadsheet by title
 gs_new("hi I am new here")
-gs_ls() %>% filter(sheet_title == "hi I am new here")
+gs_ls("hi I am new here")
 
 ## ----delete spreadsheet--------------------------------------------------
 # Move spreadsheet to trash
-gs_delete(gs_title("hi I am new here"))
-gs_ls() %>% filter(sheet_title == "hi I am new here")
+gs_grepdel("hi I am new here")
+gs_ls("hi I am new here")
 
 ## ----new-sheet-new-ws-delete-ws------------------------------------------
 gs_new("hi I am new here")
@@ -72,8 +69,7 @@ x <- gs_title("hi I am new here")
 x
 x <- gs_ws_new(x, ws_title = "foo", row_extent = 10, col_extent = 10)
 x
-gs_ws_delete(x, ws = "foo")
-x <- gs_title("hi I am new here")
+x <- gs_ws_delete(x, ws = "foo")
 x
 
 ## ----new-ws-rename-ws-delete-ws------------------------------------------

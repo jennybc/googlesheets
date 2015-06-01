@@ -20,7 +20,7 @@ Sheets default is 1000}
 \item{col_extent}{integer for new column extent; if unspecified, the Google
 Sheets default is 26}
 
-\item{...}{optional arguments passed along to \code{\link{edit_cells}} in
+\item{...}{optional arguments passed along to \code{\link{gs_edit_cells}} in
 order to populate the new worksheet with data}
 
 \item{verbose}{logical; do you want informative messages?}
@@ -44,11 +44,11 @@ worksheet in the sheet.
 \details{
 We anticipate that \strong{if} the user wants to control the extent of the
 new worksheet, it will be by providing input data and specifying `trim =
-TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
-\code{col_extent} directly. But not both ... although we won't stop you. In
-that case, note that explicit worksheet sizing occurs before data insertion.
-If data insertion triggers any worksheet resizing, that will override any
-usage of \code{row_extent} or \code{col_extent}.
+TRUE` (see \code{\link{gs_edit_cells}}) or by specifying \code{row_extent}
+and \code{col_extent} directly. But not both ... although we won't stop you.
+In that case, note that explicit worksheet sizing occurs before data
+insertion. If data insertion triggers any worksheet resizing, that will
+override any usage of \code{row_extent} or \code{col_extent}.
 }
 \examples{
 \dontrun{

@@ -14,11 +14,11 @@
 #'
 #' We anticipate that \strong{if} the user wants to control the extent of the
 #' new worksheet, it will be by providing input data and specifying `trim =
-#' TRUE` (see \code{\link{edit_cells}}) or by specifying \code{row_extent} and
-#' \code{col_extent} directly. But not both ... although we won't stop you. In
-#' that case, note that explicit worksheet sizing occurs before data insertion.
-#' If data insertion triggers any worksheet resizing, that will override any
-#' usage of \code{row_extent} or \code{col_extent}.
+#' TRUE` (see \code{\link{gs_edit_cells}}) or by specifying \code{row_extent}
+#' and \code{col_extent} directly. But not both ... although we won't stop you.
+#' In that case, note that explicit worksheet sizing occurs before data
+#' insertion. If data insertion triggers any worksheet resizing, that will
+#' override any usage of \code{row_extent} or \code{col_extent}.
 #'
 #' @template ss
 #' @inheritParams gs_new
@@ -84,10 +84,10 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   dotdotdot <- list(...)
   if(length(dotdotdot)) {
-    edit_cells_arg_list <-
+    gs_edit_cells_arg_list <-
       c(list(ss = ss), list(ws = this_ws$ws_title),
         dotdotdot, list(verbose = verbose))
-    ss <- do.call(edit_cells, edit_cells_arg_list)
+    ss <- do.call(gs_edit_cells, gs_edit_cells_arg_list)
   }
 
   if(verbose) {
@@ -115,8 +115,8 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #' gap_ss <- gs_copy(gs_gap(), to = "gap_copy")
 #' gs_ws_ls(gap_ss)
 #' gap_ss <- gs_ws_new(gap_ss, "new_stuff")
-#' gap_ss <- edit_cells(gap_ss, "new_stuff", input = head(iris), header = TRUE,
-#'                      trim = TRUE)
+#' gap_ss <- gs_edit_cells(gap_ss, "new_stuff", input = head(iris),
+#'                         header = TRUE, trim = TRUE)
 #' gap_ss
 #' gap_ss <- gs_ws_delete(gap_ss, "new_stuff")
 #' gs_ws_ls(gap_ss)
@@ -234,14 +234,14 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' yo <- gs_new("yo")
-#' yo <- edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
-#' get_via_csv(yo)
+#' yo <- gs_edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+#' gs_read_csv(yo)
 #' yo <- gs_ws_resize(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
-#' get_via_csv(yo)
+#' gs_read_csv(yo)
 #' yo <- gs_ws_resize(yo, ws = 1, row_extent = 3, col_extent = 3)
-#' get_via_csv(yo)
+#' gs_read_csv(yo)
 #' yo <- gs_ws_resize(yo, row_extent = 2, col_extent = 2)
-#' get_via_csv(yo)
+#' gs_read_csv(yo)
 #' gs_delete(yo)
 #' }
 #'

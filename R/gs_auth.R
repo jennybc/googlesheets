@@ -138,13 +138,13 @@ gs_user <- function(verbose = TRUE) {
     }
 
     if(verbose) {
-      sprintf("                       displayName: %s\n",
+      sprintf("                       displayName: %s",
               ret$displayName) %>% message()
-      sprintf("                      emailAddress: %s\n",
+      sprintf("                      emailAddress: %s",
               ret$emailAddress) %>% message()
-      sprintf("Date-time of session authorization: %s\n",
+      sprintf("Date-time of session authorization: %s",
               ret$auth_date) %>% message()
-      sprintf("  Date-time of access token expiry: %s\n",
+      sprintf("  Date-time of access token expiry: %s",
               ret$exp_date) %>% message()
       if(token_ok) {
         message("Access token is valid.")

@@ -37,8 +37,7 @@ test_that("Spreadsheet can be created and populated at once", {
 
   expect_message(
     new_ss <-
-      gs_new(sheet_title, "yo!", input = head(iris),
-             trim = TRUE, header = TRUE), "created")
+      gs_new(sheet_title, "yo!", input = head(iris), trim = TRUE), "created")
   expect_is(new_ss, "googlesheet")
   expect_identical(new_ss %>% gs_ws_ls(), "yo!")
   expect_identical(new_ss$ws$row_extent, 7L)
@@ -86,6 +85,5 @@ test_that("gs_delete() throws error on non-googlesheet input", {
   expect_error(gs_delete("yo"))
 
 })
-
 
 gs_grepdel(TEST, verbose = FALSE)

@@ -1,5 +1,3 @@
-## TO DO: gs_gs
-
 #' Register a Google Sheet
 #'
 #' The \code{googlesheets} package must gather information on a Google Sheet
@@ -9,9 +7,9 @@
 #' object. Note this object does not contain any sheet data, but rather contains
 #' metadata about the sheet. We populate a \code{googlesheet}
 #' object with information from the
-#' \href{https://developers.google.com/google-apps/spreadsheets/#working_with_worksheets}{worksheets
+#' \href{https://developers.google.com/google-apps/spreadsheets/worksheets}{worksheets
 #' feed} and, if available, also from the
-#' \href{https://developers.google.com/google-apps/spreadsheets/#retrieving_a_list_of_spreadsheets}{spreadsheets
+#' \href{https://developers.google.com/google-apps/spreadsheets/worksheets#retrieve_a_list_of_spreadsheets}{spreadsheets
 #' feed}. Choose from the functions below depending on the type of
 #' sheet-identifying input you will provide. Is it a sheet title, key,
 #' browser URL, or worksheets feed (another URL, mostly used internally)?
@@ -54,11 +52,14 @@
 #' @name googlesheet
 #'
 #' @param x sheet-identifying information; a character vector of length one
-#'   holding sheet title, key, browser URL or worksheets feed
+#'   holding sheet title, key, browser URL or worksheets feed OR, in the case of
+#'   \code{gs_gs} only, a \code{googlesheet} object
 #' @param lookup logical, optional. Controls whether \code{googlesheets} will
 #'   place authenticated API requests during registration. If unspecified, will
 #'   be set to \code{TRUE} if authentication has previously been used in this R
-#'   session or if working directory contains a file named \code{.httr-oauth}.
+#'   session, if working directory contains a file named \code{.httr-oauth}, or
+#'   if \code{x} is a worksheets feed or \code{googlesheet} object that
+#'   specifies "public" visibility.
 #' @template visibility
 #' @template verbose
 #'
@@ -84,7 +85,7 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
 
   stopifnot(length(x) == 1L, is.character(x))
 
-  lookup <- set_lookup(lookup, verbose)
+  lookup <- set_lookup(lookup, visibility, verbose)
   visibility <- set_visibility(visibility, lookup)
 
   if(lookup) {
@@ -92,7 +93,8 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
       gs_lookup("sheet_key", verbose)
     x <- ssf$ws_feed
   } else {
-    x <- x %>% construct_ws_feed_from_key(visibility)
+    x <- x %>%
+      construct_ws_feed_from_key(visibility)
     if(verbose) {
       sprintf("Worksheets feed constructed with %s visibility", visibility) %>%
         message()
@@ -113,9 +115,6 @@ gs_url <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
   stopifnot(length(x) == 1L, is.character(x),
             stringr::str_detect(x, "^https://"))
 
-  lookup <- set_lookup(lookup, verbose)
-  visibility <- set_visibility(visibility, lookup)
-
   if(verbose) {
     paste0("Sheet-identifying info appears to be a browser URL.\n",
            "googlesheets will attempt to extract sheet key from the URL.") %>%
@@ -123,8 +122,9 @@ gs_url <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
   }
 
   x <- extract_key_from_url(x)
+
   if(verbose) {
-    sprintf("Putative key: %s", x) %>% message()
+    message(sprintf("Putative key: %s", x))
   }
 
   x %>%
@@ -140,7 +140,8 @@ gs_ws_feed <- function(x, lookup = NULL, verbose = TRUE) {
   stopifnot(length(x) == 1L, is.character(x),
             stringr::str_detect(x, ws_feed_regex))
 
-  lookup <- set_lookup(lookup, verbose)
+  visibility <- if(grepl("public", x)) "public" else "private"
+  lookup <- set_lookup(lookup, visibility, verbose)
 
   if(lookup) {
     ssf <- x %>%
@@ -155,22 +156,42 @@ gs_ws_feed <- function(x, lookup = NULL, verbose = TRUE) {
 
 }
 
-## TO DO: decide how to handle googlesheets as input
-# as.googlesheet.googlesheet <- function(x, ssf = NULL, verbose = TRUE, ...) {
-#
-#   x <- structure(x$ws_feed, class = "ws_feed")
-#   x %>%
-#     as.googlesheet()
-#
-# }
+#' @rdname googlesheet
+#' @export
+gs_gs <- function(x, visibility = NULL, verbose = TRUE) {
 
-set_lookup <- function(lookup = NULL, verbose = TRUE) {
+  stopifnot(inherits(x, "googlesheet"))
+
+  if(is.null(visibility)) {
+    visibility <- x$visibility
+  } else {
+    stopifnot(identical(visibility, "public") ||
+                identical(visibility, "private"))
+  }
+
+  key <- extract_key_from_url(x$ws_feed)
+  key %>%
+    gs_key(visibility = visibility, verbose = verbose)
+
+}
+
+set_lookup <- function(lookup = NULL, visibility = NULL, verbose = TRUE) {
+
+  stopifnot(isTOGGLE(lookup))
+
+  auth_seems_possible <- !is.null(.state$token) || file.exists(".httr-oauth")
 
   if(is.null(lookup)) {
-    lookup <- !is.null(.state$token) || file.exists(".httr-oauth")
-  } else {
-    stopifnot(is.logical(lookup))
+    if(is.null(visibility)) {
+      lookup <- auth_seems_possible
+    } else {
+      lookup <- switch(visibility,
+                       public = FALSE,
+                       private = TRUE,
+                       auth_seems_possible)
+    }
   }
+
   if(verbose) {
     sprintf("Authentication will %sbe used.", if(lookup) "" else "not ") %>%
       message()
@@ -189,14 +210,16 @@ set_visibility <- function(visibility = NULL, lookup = TRUE) {
       visibility <- "public"
     }
   } else {
-    stopifnot(visibility %in% c("public", "private"))
+    stopifnot(identical(visibility, "public") ||
+                identical(visibility, "private"))
   }
 
   visibility
 
 }
 
-## for internal use only x = character holding title | key | ws_feed
+## for internal use only
+## x = character holding title | key | ws_feed
 ##
 ## x will be sought in the variable named 'lvar' in the tbl_df returned by
 ## gs_ls(), which wraps the spreadsheets feed

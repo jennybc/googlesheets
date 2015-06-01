@@ -12,7 +12,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten __alot more love recently__, so you should read that instead or in addition to this (2015-05-08). Seriously, we've only been making sure this thing compiles, but not updating the text.
+__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten __alot more love recently__, so you should read that instead or in addition to this (2015-05-30). Seriously, we've only been making sure this thing compiles, but not updating the text.
 
 ```{r load package}
 library(googlesheets)
@@ -32,20 +32,17 @@ If you want to switch to a different Google account, run `gs_auth(new_user = TRU
 *In a hidden chunk, we are logging into Google as a user associated with this package, so we can work with some Google spreadsheets later in this vignette.*
 
 ```{r auth, include = FALSE}
-
-## look for .httr-oauth in pwd (assuming pwd is googlesheets) or two levels up
-## (assuming pwd is googlesheets/tests/testthat)
+## look for .httr-oauth in pwd (assuming pwd is googlesheets) or one level up
+## (assuming pwd is googlesheets/vignettes)
 pwd <- getwd()
 one_up <- pwd %>% dirname()
-two_up <- pwd %>% dirname() %>% dirname()
-HTTR_OAUTH <- c(two_up, one_up, pwd) %>% file.path(".httr-oauth")
+HTTR_OAUTH <- c(one_up, pwd) %>% file.path(".httr-oauth")
 HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
 
 if(length(HTTR_OAUTH) > 0) {
   HTTR_OAUTH <- HTTR_OAUTH[1]
   file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
 }
-
 ```
 
 ```{r pre-clean, include = FALSE}
@@ -116,7 +113,7 @@ Example of getting nice tabular data from the "list feed":
 
 ```{r}
 gap
-oceania_list_feed <- get_via_lf(gap, ws = "Oceania") 
+oceania_list_feed <- gs_read_listfeed(gap, ws = "Oceania") 
 str(oceania_list_feed)
 oceania_list_feed
 ```
@@ -126,15 +123,15 @@ If you wish, go look at the [Oceania worksheet from the Gapminder spreadsheet](h
 Example of getting the same data from the "cell feed".
 
 ```{r}
-oceania_cell_feed <- get_via_cf(gap, ws = "Oceania") 
+oceania_cell_feed <- gs_read_cellfeed(gap, ws = "Oceania") 
 str(oceania_cell_feed)
 head(oceania_cell_feed, 10)
-oceania_reshaped <- reshape_cf(oceania_cell_feed)
+oceania_reshaped <- gs_reshape_cellfeed(oceania_cell_feed)
 str(oceania_reshaped)
 head(oceania_reshaped, 10)
 ```
 
-Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `reshape_cf()` to reshape this data into something tabular.
+Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `gs_reshape_cellfeed()` to reshape this data into something tabular.
 
 *To add, using row and column limits on the cell feed. All covered in the README.*
 
@@ -185,15 +182,15 @@ or `gs_delete()`
 ```{r createspreadsheet}
 # Create a new empty spreadsheet by title
 gs_new("hi I am new here")
-gs_ls() %>% filter(sheet_title == "hi I am new here")
+gs_ls("hi I am new here")
 ```
 
 Delete a spreadsheet with `gs_delete()`. This function operates on a registered `googlesheet`, so enclose your sheet identifying information in a suitable function. Here we specify (and delete) the above sheet by title, then confirm it is no longer in our sheet listing.
 
 ```{r delete spreadsheet}
 # Move spreadsheet to trash
-gs_delete(gs_title("hi I am new here"))
-gs_ls() %>% filter(sheet_title == "hi I am new here")
+gs_grepdel("hi I am new here")
+gs_ls("hi I am new here")
 ```
 
 ### Add, delete, or rename a worksheet
@@ -206,8 +203,7 @@ x <- gs_title("hi I am new here")
 x
 x <- gs_ws_new(x, ws_title = "foo", row_extent = 10, col_extent = 10)
 x
-gs_ws_delete(x, ws = "foo")
-x <- gs_title("hi I am new here")
+x <- gs_ws_delete(x, ws = "foo")
 x
 ```
 

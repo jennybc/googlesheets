@@ -53,3 +53,7 @@ construct_url_from_key <- function(key) {
   tmp <- "https://docs.google.com/spreadsheets/d/%s/"
   sprintf(tmp, key)
 }
+
+isTOGGLE <- function(x) {
+  is.null(x) || isTRUE(x) || identical(x, FALSE)
+}

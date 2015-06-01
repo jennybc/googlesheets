@@ -67,7 +67,7 @@ What other ideas do you have?
 devtools::install_github("jennybc/googlesheets")
 ```
 
-*We plan to submit to CRAN in late May or early June 2015, so feedback on functionality and usability is especially valuable to us now!*
+*We plan to submit to CRAN in June 2015, so feedback on functionality and usability is especially valuable to us now!*
 
 ### Take a look at the vignette
 
@@ -86,9 +86,7 @@ suppressPackageStartupMessages(library("dplyr"))
 
 ### Function naming convention
 
-*implementation not yet 100% complete ... but we'll get there soon*
-
-All functions start with `gs_`, which plays nicely with tab completion in RStudio, for example. If the function has something to do with worksheets or tabs within a spreadsheet, it will start with `gs_ws_`.
+All functions start with `gs_`, which plays nicely with tab completion in RStudio, for example. If the function has something to do with worksheets or tabs within a spreadsheet, then it will start with `gs_ws_`.
 
 ### See some spreadsheets you can access
 
@@ -109,7 +107,7 @@ gs_gap() %>%
   gs_copy(to = "Gapminder")
 ```
 
-If that seems to have worked, go check that you see a sheet named "Gapminder" listed in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
+If that seems to have worked, go check for a sheet named "Gapminder" in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
 
 ### Register a spreadsheet
 
@@ -135,81 +133,131 @@ third_party_gap <- GAP_KEY %>%
 third_party_gap <- GAP_URL %>%
   gs_url()
 # note: registration via URL may not work for "old" sheets
+
+# Worried that a spreadsheet's registration is out-of-date?
+# Re-register it!
+gap <- gap %>% gs_gs()
 ```
 
-The registration functions `gs_title()`, `gs_key()`, and `gs_url()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
+The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
+
+*We export a utility function, `extract_key_from_url()`, to help you get and store the key from a browser URL. Registering via browser URL is fine, but registering by key is probably a better idea in the long-run.*
 
 ### Consume data
 
 #### Ignorance is bliss
 
-*coming soon: a wrapper for the functions described below that just gets the data you want, while you remain blissfully ignorant of how we're doing it*
+If you want to consume the data in a worksheet and get something rectangular back, use the all-purpose function `gs_read()`. By default, it reads all the data in a worksheet.
+
+```{r}
+oceania <- gap %>% gs_read(ws = "Oceania")
+oceania
+str(oceania)
+glimpse(oceania)
+```
+
+You can target specific cells via the `range =` argument. The simplest usage is to specify an Excel-like cell range, such as range = "D12:F15" or range = "R1C12:R6C15". The cell rectangle can be specified in various other ways, using helper functions.
+
+```{r}
+gap %>% gs_read(ws = 2, range = "A1:D8")
+gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
+gap %>% gs_read(ws = "Europe", range = cell_rows(100:103), col_names = FALSE)
+gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
+gap %>% gs_read(ws = "Asia", range = cell_limits(c(1, 5), c(4, NA)))
+```
+
+`gs_read()` is a wrapper that bundles together the most common methods to read data from the API and transform it for downstream use. You can refine it's behavior further, by passing more arguments via `...`. Read the help file for more details.
+
+If `gs_read()` doesn't do what you need, then keep reading for the underlying functions to read and post-process data.
 
 #### Specify the consumption method
 
 There are three ways to consume data from a worksheet within a Google spreadsheet. The order goes from fastest-but-more-limited to slowest-but-most-flexible:
 
-  * `get_via_csv()`: Don't let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the "exportcsv" link. For cases where `get_via_csv()` and `get_via_lf()` both work, we see that `get_via_csv()` is around __50 times faster__. Use this when your data occupies a nice rectangle in the sheet and you're willing to consume all of it. You will get a `tbl_df` back, which is basically just a `data.frame`.
-  * `get_via_lf()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `get_via_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support (#17).
-  * `get_via_cf()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It works great for small amounts of data but can be rather slow otherwise. `get_via_cf()` returns a `tbl_df` with __one row per cell__. You can specify cell limits directly in `get_via_cf()` or use convenience wrappers `get_row()`, `get_col()` or `get_cells()` for some common special cases. See below for demos of `reshape_cf()` and `simplify_cf()` which help with post-processing.
+  * `gs_read_csv()`: Don't let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the "exportcsv" link. For cases where `gs_read_csv()` and `gs_read_listfeed()` both work, we see that `gs_read_csv()` is around __50 times faster__. Use this when your data occupies a nice rectangle in the sheet and you're willing to consume all of it. You will get a `tbl_df` back, which is basically just a `data.frame`. In fact, you might want to use `gs_read_csv()`, it in other, less tidy scenarios and do further munging in R.
+  * `gs_read_listfeed()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `gs_read_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support (#17).
+  * `gs_read_cellfeed()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It is invoked by `gs_read()` whenever the `range =` argument is used. It works great for modest amounts of data but can be rather slow otherwise. `gs_read_cellfeed()` returns a `tbl_df` with __one row per cell__. You can target specific cells via the `range` argument. See below for demos of `gs_reshape_cellfeed()` and `gs_simplify_cellfeed()` which help with post-processing.
 
 ```{r csv-list-and-cell-feed}
 # Get the data for worksheet "Oceania": the super-fast csv way
-oceania_csv <- gap %>% get_via_csv(ws = "Oceania")
+oceania_csv <- gap %>% gs_read_csv(ws = "Oceania")
 str(oceania_csv)
 oceania_csv
 
-# Get the data for worksheet "Oceania": the fast tabular way ("list feed")
-oceania_list_feed <- gap %>% get_via_lf(ws = "Oceania") 
+# Get the data for worksheet "Oceania": the less-fast tabular way ("list feed")
+oceania_list_feed <- gap %>% gs_read_listfeed(ws = "Oceania") 
 str(oceania_list_feed)
 oceania_list_feed
 
-# Get the data for worksheet "Oceania": the slower cell-by-cell way ("cell feed")
-oceania_cell_feed <- gap %>% get_via_cf(ws = "Oceania") 
+# Get the data for worksheet "Oceania": the slow cell-by-cell way ("cell feed")
+oceania_cell_feed <- gap %>% gs_read_cellfeed(ws = "Oceania") 
 str(oceania_cell_feed)
-head(oceania_cell_feed, 10)
+oceania_cell_feed
 ```
 
-#### Convenience wrappers and post-processing the data
+#### Quick speed comparison
 
-There are a few ways to limit the data you're consuming. You can put direct limits into `get_via_cf()`, but there are also convenience functions to get a row (`get_row()`), a column (`get_col()`), or a range (`get_cells()`). Also, when you consume data via the cell feed (which these wrappers are doing under the hood), you will often want to reshape it or simplify it (`reshape_cf()` and `simplify_cf()`).
+Let's consume all the data for Africa by all 3 methods and see how long it takes.
 
-```{r wrappers-and-post-processing}
+```{r}
+jfun <- function(readfun)
+  system.time(do.call(readfun, list(gs_gap(), ws = "Africa", verbose = FALSE)))
+readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
+readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
+sapply(readfuns, jfun)
+```
+
+#### Post-processing data from the cell feed
+
+If you consume data from the cell feed with `gs_read_cellfeed(..., range = ...)`, you get a data.frame back with **one row per cell**. The package offers two functions to post-process this into something more useful, `gs_reshape_cellfeed()` and `gs_simplify_cellfeed()`.
+
+To reshape into a table, use `gs_reshape_cellfeed()`. You can signal that the first row contains column names (or not) with `col_names = TRUE` (or `FALSE`). Or you can provide a character vector of names. This is inspired by the `col_names` argument of `readxl::read_excel()` and `readr::read_delim()`, which generalizes the `header` argument of `read.table()`.
+
+```{r post-processing}
 # Reshape: instead of one row per cell, make a nice rectangular data.frame
-oceania_reshaped <- oceania_cell_feed %>% reshape_cf()
-str(oceania_reshaped)
-head(oceania_reshaped, 10)
-
-# Limit data retrieval to certain cells
+australia_cell_feed <- gap %>%
+  gs_read_cellfeed(ws = "Oceania", range = "A1:F13") 
+str(australia_cell_feed)
+oceania_cell_feed
+australia_reshaped <- australia_cell_feed %>% gs_reshape_cellfeed()
+str(australia_reshaped)
+australia_reshaped
 
 # Example: first 3 rows
-gap_3rows <- gap %>% get_row("Europe", row = 1:3)
+gap_3rows <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1:3))
 gap_3rows %>% head()
 
-# convert to a data.frame (first row treated as header by default)
-gap_3rows %>% reshape_cf()
+# convert to a data.frame (by default, column names found in first row)
+gap_3rows %>% gs_reshape_cellfeed()
 
+# arbitrary cell range, column names no longer available in first row
+gap %>%
+  gs_read_cellfeed("Oceania", range = "D12:F15") %>%
+  gs_reshape_cellfeed(col_names = FALSE)
+
+# arbitrary cell range, direct specification of column names
+gap %>%
+  gs_read_cellfeed("Oceania", range = cell_limits(c(2, 5), c(1, 3))) %>%
+  gs_reshape_cellfeed(col_names = paste("thing", c("one", "two", "three"),
+                                        sep = "_"))
+```
+
+To extract the cell data into an atomic vector, possibly named, use `gs_simplify_cellfeed()`. You can signal that the first row contains column names (or not) with `col_names = TRUE` (or `FALSE`). There are several arguments to control conversion.
+
+```{r}
 # Example: first row only
-gap_1row <- gap %>% get_row("Europe", row = 1)
+gap_1row <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1))
 gap_1row
 
 # convert to a named character vector
-gap_1row %>% simplify_cf()
+gap_1row %>% gs_simplify_cellfeed()
 
-# just 2 columns, converted to data.frame
-gap %>%
-  get_col("Oceania", col = 3:4) %>%
-  reshape_cf()
+# Example: single column
+gap_1col <- gap %>% gs_read_cellfeed("Europe", range = cell_cols(3))
+gap_1col
 
-# arbitrary cell range
-gap %>%
-  get_cells("Oceania", range = "D12:F15") %>%
-  reshape_cf(header = FALSE)
-
-# arbitrary cell range, alternative specification
-gap %>%
-  get_via_cf("Oceania", max_row = 5, min_col = 1, max_col = 3) %>%
-  reshape_cf()
+# convert to a un-named character vector and drop the variable name
+gap_1col %>% gs_simplify_cellfeed(notation = "none", col_names = TRUE)
 ```
 
 ### Create sheets
@@ -221,25 +269,25 @@ foo <- gs_new("foo")
 foo
 ```
 
-By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()`. You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
+By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
 
 ### Edit cells
 
-You can modify the data in sheet cells via `edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
+You can modify the data in sheet cells via `gs_edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
 
 ```{r edit-cells}
-foo <- foo %>% edit_cells(input = head(iris), header = TRUE, trim = TRUE)
+foo <- foo %>% gs_edit_cells(input = head(iris), trim = TRUE)
 ```
 
-Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by consuming `foo` via the list feed.
+Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by reading the data from `foo`.
 
-Note how we always store the returned value from `edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
+Note how we always store the returned value from `gs_edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
 ```{r consume-edited-cells}
-foo %>% get_via_lf()
+foo %>% gs_read()
 ```
 
-Read the function documentation for `edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
+Read the function documentation for `gs_edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
 
 ### Delete sheets
 
@@ -256,10 +304,12 @@ If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and
 Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
 
 ```{r new-sheet-from-file}
-iris %>% head(5) %>% write.csv("iris.csv", row.names = FALSE)
+iris %>%
+  head(5) %>%
+  write.csv("iris.csv", row.names = FALSE)
 iris_ss <- gs_upload("iris.csv")
 iris_ss
-iris_ss %>% get_via_lf()
+iris_ss %>% gs_read()
 file.remove("iris.csv")
 ```
 
@@ -268,14 +318,16 @@ Now we'll upload a multi-sheet Excel workbook. Slowly.
 ```{r new-sheet-from-xlsx}
 gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
-gap_xlsx %>% get_via_lf(ws = "Oceania")
+gap_xlsx %>% gs_read(ws = "Asia")
 ```
 
 And we clean up after ourselves on Google Drive.
 
 ```{r delete-moar-sheets}
-gs_delete(iris_ss)
-gs_delete(gap_xlsx)
+gs_vecdel(c("iris", "mini-gap"))
+## achieves same as:
+## gs_delete(iris_ss)
+## gs_delete(gap_xlsx)
 ```
 
 ### Download sheets as csv, pdf, or xlsx file
@@ -326,4 +378,4 @@ user_session_info
 
 In March 2014 [Google introduced "new" Sheets](https://support.google.com/docs/answer/3541068?hl=en). "New" Sheets and "old" sheets behave quite differently with respect to access via API and present a big headache for us. Recently, we've noted that Google is forcibly converting sheets: [all "old" Sheets will be switched over the "new" sheets during 2015](https://support.google.com/docs/answer/6082736?p=new_sheets_migrate&rd=1). However there are still "old" sheets lying around, so we've made some effort to support them, when it's easy to do so. But keep your expectations low.
 
-In particular, `get_via_csv()` does not and indeed __cannot__ work for "old"   sheets.
+In particular, `gs_read_csv()` does not currently work for "old" sheets.

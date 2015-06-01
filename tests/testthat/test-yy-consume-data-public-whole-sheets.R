@@ -5,31 +5,34 @@ ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE, verbose = FALSE)
 
 test_that("We can get all data from the list feed (pub)", {
 
-  expect_equal_to_reference(get_via_lf(ss, ws = 5), "gap_sheet5_get_via_lf.rds")
+  expect_equal_to_reference(gs_read_listfeed(ss, ws = 5),
+                            "for_reference/gap_sheet5_gs_read_listfeed.rds")
 
 })
 
 test_that("We can get all data from the cell feed (pub)", {
 
-  expect_equal_to_reference(get_via_cf(ss, ws = 5), "gap_sheet5_get_via_cf.rds")
+  expect_equal_to_reference(gs_read_cellfeed(ss, ws = 5),
+                            "for_reference/gap_sheet5_gs_read_cellfeed.rds")
 
 })
 
 test_that("We can get all data from the exportcsv link (pub)", {
 
-  dat1 <- get_via_csv(ss, ws = 5)
+  dat1 <- gs_read_csv(ss, ws = 5)
   names(dat1) <-  dat1 %>% names() %>% tolower()
-  expect_equal_to_reference(dat1, "gap_sheet5_get_via_lf.rds")
+  expect_equal_to_reference(dat1,
+                            "for_reference/gap_sheet5_gs_read_listfeed.rds")
 
 })
 
 test_that("We can reshape data from the cell feed", {
 
-  oceania <- ss %>% get_via_cf(ws = "Oceania")
+  oceania <- ss %>% gs_read_cellfeed(ws = "Oceania")
   expect_true(all(names(oceania) %in%
                     c("cell", "cell_alt", "row", "col", "cell_text")))
 
-  y <- reshape_cf(oceania)
+  y <- gs_reshape_cellfeed(oceania)
   expect_equal(dim(y), c(24L, 6L))
   expect_is(oceania$cell, "character")
   expect_is(oceania$row, "integer")
@@ -38,17 +41,17 @@ test_that("We can reshape data from the cell feed", {
   expect_equal(names(y),
                c("country", "continent", "year", "lifeExp", "pop", "gdpPercap"))
 
-  z <- reshape_cf(oceania, header = FALSE)
+  z <- gs_reshape_cellfeed(oceania, col_names = FALSE)
   expect_equal(dim(z), c(25L, 6L))
   expect_true(all(grepl("^X[0-9]+", names(z))))
   expect_equal(unique(sapply(z, class)), "character")
 
 })
 
-test_that("We get no error from get_via_csv on an empty sheet (pub)", {
+test_that("We get no error from gs_read_csv on an empty sheet (pub)", {
 
   pts_ss <- pts_key %>% gs_key(lookup = FALSE)
-  expect_is(tmp <- pts_ss %>% get_via_csv(ws = "empty"), "data.frame")
+  expect_is(tmp <- pts_ss %>% gs_read_csv(ws = "empty"), "data.frame")
   expect_identical(dim(tmp), rep(0L, 2))
 
 })
