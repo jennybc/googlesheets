@@ -62,6 +62,12 @@ yo <- gs_edit_cells(yo, ws = "byrow_TRUE", input = LETTERS[1:5],
 gs_read_cellfeed(yo, ws = "byrow_TRUE", range = "A8:E8") \%>\%
   gs_simplify_cellfeed()
 
+yo <- gs_ws_new(yo, ws = "col_names_FALSE")
+yo <- gs_edit_cells(yo, ws = "col_names_FALSE", input = head(iris),
+                    trim = TRUE, col_names = FALSE)
+gs_read_cellfeed(yo, ws = "col_names_FALSE") \%>\%
+  gs_reshape_cellfeed(col_names = FALSE)
+
 gs_delete(yo)
 }
 }
