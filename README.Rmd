@@ -75,6 +75,10 @@ No, actually, __don't__. This README is much more current than the vignette, tho
 
 If you insist, [check out the current state of the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html).
 
+### Here are some draft slides
+
+[Draft slides](https://speakerdeck.com/jennybc/googlesheets-draft) for a talk in July 2015
+
 ### Load googlesheets
 
 `googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator available in your own work by loading [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html) or [`magrittr`](http://cran.r-project.org/web/packages/magrittr/index.html).
