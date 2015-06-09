@@ -73,6 +73,7 @@ get_google_token <- function() {
   }
 
   httr::config(token = .state$token)
+
 }
 
 #' Retrieve Google user data
@@ -131,6 +132,7 @@ gs_user <- function(verbose = TRUE) {
     ret <- list(displayName = .state$user$displayName,
                 emailAddress = .state$user$emailAddress,
                 auth_date = .state$user$auth_date)
+
     if(token_ok) {
       ret$exp_date <- file.info(".httr-oauth")$mtime + 3600
     } else {
@@ -151,11 +153,12 @@ gs_user <- function(verbose = TRUE) {
       } else {
         message(paste("Access token has expired and will be auto-refreshed."))
       }
-
     }
-
   } else {
+
+    if(verbose) message("No user currently authorized.")
     ret <- NULL
+
   }
 
   invisible(ret)
@@ -181,6 +184,7 @@ token_exists <- function(verbose = TRUE) {
         message(paste("No .httr-oauth file exists in current working directory.",
                       "Run gs_auth() to provide credentials."))
       }
+
     }
 
     invisible(FALSE)
