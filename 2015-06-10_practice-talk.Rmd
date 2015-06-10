@@ -1,7 +1,5 @@
 ---
 output:
-  html_document:
-    fig_caption: yes
   md_document:
     variant: markdown_github
 ---
@@ -10,7 +8,7 @@ output:
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "2015-06-10_practice-talk-"
 )
 ```
 
