@@ -16,17 +16,17 @@ gs_webapp_get_token(auth_code,
 
 \item{client_secret}{client secret obtained from Google Developers Console}
 
-\item{redirect_uri}{redirect_uri where the response is sent, should be one of the
-redirect_uri values listed for the project in Google's Developer Console,
-must match exactly as listed including any trailing '/'}
+\item{redirect_uri}{redirect_uri where the response is sent, should be one of
+the redirect_uri values listed for the project in Google's Developer
+Console, must match exactly as listed including any trailing '/'}
 }
 \description{
 Use the authorization code in the return URL to exchange for an access_token
 by making an HTTPS POST.
 }
 \details{
-This function behaves similarly to gs_auth(). A token object gets stored in
-an environment variable and retrieved when making calls to the Google Sheets
-and Drive APIs.
+This function behaves similarly to \code{\link{gs_auth()}}: it stores a token
+object in an internal environment, where it can be retrieved for making calls
+to the Google Sheets and Drive APIs.
 }
 

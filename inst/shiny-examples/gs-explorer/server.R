@@ -13,35 +13,35 @@ options("googlesheets.webapp.redirect_uri" = "https://jozhao.shinyapps.io/gs-exp
 ## ======================
 
 shinyServer(function(input, output, session) {
-  
+
   ## Make a button to link to Google auth screen
   ## If auth_code is returned then dont show login button
   output$loginButton <- renderUI({
     if(is.null(isolate(access_token()))) {
-      actionButton("loginButton", 
-                   label = a("Authorize App", 
-                             href = gs_webapp_get_url()))
+      actionButton("loginButton",
+                   label = a("Authorize App",
+                             href = gs_get_auth_url()))
     } else {
       return()
     }
   })
-  
+
   output$logoutButton <- renderUI({
-    if(!is.null(access_token())) { 
+    if(!is.null(access_token())) {
       # Revoke the token too? use access_token$revoke()
-      actionButton("logoutButton", 
-                   label = a("Logout", 
-                             href = getOption("googlesheets.shiny.redirect_uri"))) 
+      actionButton("logoutButton",
+                   label = a("Logout",
+                             href = getOption("googlesheets.shiny.redirect_uri")))
     } else {
       return()
     }
   })
-  
+
   ## Get auth code from return URL
   access_token  <- reactive({
     ## gets all the parameters in the URL. The auth code should be one of them.
-    pars <- parseQueryString(session$clientData$url_search) 
-    
+    pars <- parseQueryString(session$clientData$url_search)
+
     if(length(pars$code) > 0) {
       ## extract the authorization code
       gs_webapp_get_token(auth_code = pars$code)
@@ -49,127 +49,127 @@ shinyServer(function(input, output, session) {
       NULL
     }
   })
-  
+
   gsLs <- reactive({
     gs_ls()
   })
-  
+
   output$listSheets <- DT::renderDataTable({
     validate(
-      need(!is.null(access_token()), 
-           message = 
+      need(!is.null(access_token()),
+           message =
              paste("Click 'Authorize App' to redirect to Google's authorization",
                    "screen where this app requests authorization to access your",
                    "Google Sheets and Google Drive. By authorizing, additional",
                    "googlesheets functions that requires user authorization,",
                    "can be utilized in your Shiny app."))
     )
-    
+
     dat <- gsLs() %>% select(1:6)
     DT::datatable(dat)
   })
-  
+
   # Sheet selector
   output$selectSheet <- renderUI({
     validate(
       need(!is.null(access_token()), message = FALSE)
     )
-    
+
     all_sheets <- gsLs()
-    titles <- c(" ", all_sheets$sheet_title) %>% 
-      stringr::str_sort() %>% 
+    titles <- c(" ", all_sheets$sheet_title) %>%
+      stringr::str_sort() %>%
       as.list()
-    
-    selectInput("selectSheet", label = "Pick a Spreadsheet", 
+
+    selectInput("selectSheet", label = "Pick a Spreadsheet",
                 choices = titles, selected = NULL)
   })
-  
+
   ## Worksheet selector
   output$selectWs <- renderUI({
     ss <- sheet()
     # default selected would be " "
     ws_titles <- c(" ", ss$ws$ws_title %>% as.list())
-    
-    selectInput("selectWs", label = "Select a worksheet", 
+
+    selectInput("selectWs", label = "Select a worksheet",
                 choices = ws_titles, selected = NULL)
   })
-  
+
   sheet <- reactive({
     validate(
       need(!is.null(access_token()), message = FALSE),
       need(input$selectSheet != " ", message = FALSE)
     )
-    
+
     ss <- gs_title(input$selectSheet)
     ss
   })
-  
+
   output$sheetInfo <- DT::renderDataTable({
     ss <- sheet()
-    
+
     ss_info <- data_frame(
-      x = c("Spreadsheet Title", 
+      x = c("Spreadsheet Title",
             "Date of googlesheets registration",
             "Date of last spreadsheet update",
             "Visibility", "Permissions", "Version"),
-      y = c(ss$sheet_title, ss$reg_date %>% as.character(), 
-            ss$updated %>% as.character(), 
+      y = c(ss$sheet_title, ss$reg_date %>% as.character(),
+            ss$updated %>% as.character(),
             ss$visibility, ss$perm, ss$version))
-    
-    DT::datatable(ss_info, rownames = FALSE, 
-                  colnames = c("", ""), 
+
+    DT::datatable(ss_info, rownames = FALSE,
+                  colnames = c("", ""),
                   filter = "none",
-                  options = list(paging = FALSE, searching = FALSE, 
+                  options = list(paging = FALSE, searching = FALSE,
                                  ordering = FALSE, info = FALSE))
   })
-  
+
   output$sheetWsInfo <- DT::renderDataTable({
     ss <- sheet()
-    
-    ss_ws_info <- data_frame("Worksheet" = ss$ws$ws_title, 
-                             "Row Extent" = ss$ws$row_extent, 
+
+    ss_ws_info <- data_frame("Worksheet" = ss$ws$ws_title,
+                             "Row Extent" = ss$ws$row_extent,
                              "Column Extent" = ss$ws$col_extent)
-    
+
     DT::datatable(ss_ws_info, options = list(paging = FALSE))
   })
-  
+
   user_info <- reactive({
     validate(
       need(!is.null(access_token()), message = FALSE)
     )
     gs_user()
   })
-  
+
   output$currentUser <- renderUI({
     validate(
-      need(!is.null(access_token()), 
+      need(!is.null(access_token()),
            message = "No user is currently authorized.")
     )
-    
+
     x <- user_info()
     line1 <- paste("Display Name:", x$displayName)
     line2 <- paste("Email:", x$emailAddress)
     line3 <- paste("Time of session authorization:", x$auth_date)
-    
+
     HTML(paste(line1, line2, line3, sep = "</br><h>"))
   })
-  
-  
-  
+
+
+
   output$greeting <- renderText({
     paste("Hello,  ", user_info()$displayName, ":)", sep = "\n")
   })
-  
+
   output$plotSheet <- renderPlot({
     validate(
       need(input$selectWs != " ", message = FALSE)
     )
-    
+
     ss <- sheet()
     ws <- get_via_csv(ss, input$selectWs)
     gs_inspect(ws)
   })
-  
+
   ## Update tab panel when sheet is selected
   observe({
     if(is.null(input$selectSheet)) {
@@ -182,5 +182,5 @@ shinyServer(function(input, output, session) {
       }
     }
   })
-  
+
 })

@@ -1,10 +1,24 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # Using `googlesheets` in Shiny
 
 ---
 
-There are many cool ways to feed and house data in a Google Sheet, from using its built-in import functions such as `importxml`, `importfeed` and `importhtml` to scrape web data, and Google scripts to collect data into a spreadsheet.
+There are many cool ways to feed data into a Google Sheet:
 
-Some cool ways to use Google Sheets as an online datastore from Amit Argawal's [blog](http://www.labnol.org/tag/guide/):
+  * scrape the web
+    - built-in functions such as `importxml`, `importfeed` and `importhtml`
+    - Google Apps scripts -- possibly written by others and baked into Google Sheet "templates" you can copy then customize
+  * crowdsource data via Google Forms or direct Sheet editing, on a small or large scale
+  * automated data collection based on web services, such as [ifttt.com](https://ifttt.com)
+
+Here are examples of using Google Sheets as an online datastore from Amit Argawal's [blog](http://www.labnol.org/tag/guide/):
 
   * [GMail Scheduler](http://www.labnol.org/internet/schedule-gmail-send-later/24867/)
   

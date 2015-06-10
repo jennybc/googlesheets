@@ -2,7 +2,8 @@
 % Please edit documentation in R/gs_webapp.R
 \name{gs_get_auth_url}
 \alias{gs_get_auth_url}
-\title{Build the Google URL to authenticate \code{googlesheets} in Web Server Applications}
+\title{Build the Google URL to authenticate \code{googlesheets} in Web Server
+Applications}
 \usage{
 gs_get_auth_url(client_id = getOption("googlesheets.webapp.client_id"),
   redirect_uri = getOption("googlesheets.webapp.redirect_uri"),
@@ -15,32 +16,45 @@ gs_get_auth_url(client_id = getOption("googlesheets.webapp.client_id"),
 redirect_uri values listed for the project in Google's Developer Console,
 must match exactly as listed including any trailing '/'}
 
-\item{access_type}{either "online" (no refresh token) or "offline"
-(refresh token), determines whether a refresh token is returned in the response}
+\item{access_type}{either "online" (no refresh token) or "offline" (refresh
+token), determines whether a refresh token is returned in the response}
 
 \item{approval_prompt}{either "force" or "auto", determines whether the user
   is reprompted for consent, If set to "auto", then the user only has to see
-  the consent page once for the first time through the authorization sequence.
-  If set to "force" then user will have to grant consent everytime even if
-  they have previously done so.}
+  the consent page once for the first time through the authorization
+  sequence. If set to "force" then user will have to grant consent everytime
+  even if they have previously done so.}
 }
 \description{
-This is the first step in the authorization sequence. Form the Google URL
-that redirects the user to Google's authorization screen. Once a user
-authenticates, the response in the form of an authorization code is sent
-to the \code{redirect_uri} in which \code{gs_shiny_get_token} uses to
-exchange for an access token.
+The default authorization sequence in \code{googlesheets} is appropriate for
+a user working on a local computer, where the default handshakes between the
+local computer and Google work just fine. But what if the process using
+\code{googlesheets} is running, e.g., within Shiny? We have built an
+alternative authorization sequence for these situations and the first step is
+to form the Google URL that directs the user to Google's authorization
+screen. Once a user authenticates, the response, in the form of an
+authorization code, is sent to the \code{redirect_uri} (see below) which
+\code{\link{gs_webapp_get_token}} uses to exchange for an access token. This
+token is then stored in the usual manner for this package and used for
+subsequent API requests.
 }
 \details{
-Set client ID and Secret, and redirect uri specific to your project by:
+That was the good news. The bad news is you'll need to use the
+\href{https://console.developers.google.com}{Google Developers Console} to
+\strong{obtain your own client ID and secret and declare the
+\code{redirect_uri} specific to your project}. Inform \code{googlesheets} of
+this information by defining these options, for example, by putting lines
+like this into a Project-specific \code{.Rprofile} file:
+
 options("googlesheets.webapp.client_id" = MY_CLIENT_ID)
 options("googlesheets.webapp.client_secret" = MY_CLIENT_SECRET)
 options("googlesheets.webapp.redirect_uri" = MY_REDIRECT_URI)
 
-Based on Google Developers' guide to \href{https://developers.google.com/ide
-ntity/protocols/OAuth2WebServer}{Using OAuth2.0 for Web Server Applications}.
+Based on Google Developers' guide to
+\href{https://developers.google.com/identity/protocols/OAuth2WebServer}{Using
+OAuth2.0 for Web Server Applications}.
 }
 \seealso{
-gs_shiny_get_token
+gs_webapp_get_token
 }
 
