@@ -85,14 +85,16 @@ google_user <- function() {
 
   ## require pre-existing token, to avoid recursion that would arise if
   ## gdrive_GET() called gs_auth()
-  if(token_exists()) {
+  if(token_exists(verbose = FALSE)) {
 
+    ## docs here
+    ## https://developers.google.com/drive/v2/reference/about
     req <- gdrive_GET("https://www.googleapis.com/drive/v2/about")
 
     user_stuff <- req$content$user
     list(displayName = user_stuff$displayName,
          emailAddress = user_stuff$emailAddress,
-         auth_date = req$headers$date %>% httr::parse_http_date())
+         date = req$headers$date %>% httr::parse_http_date())
 
   } else {
 
@@ -127,32 +129,32 @@ gs_user <- function(verbose = TRUE) {
   if(token_exists(verbose)) {
 
     token <- .state$token
-    token_ok <- token$validate()
+    token_valid <- token$validate()
 
-    ret <- list(displayName = .state$user$displayName,
-                emailAddress = .state$user$emailAddress,
-                auth_date = .state$user$auth_date)
-
-    if(token_ok) {
-      ret$exp_date <- file.info(".httr-oauth")$mtime + 3600
-    } else {
-      ret$exp_date <- NA_character_ %>% as.POSIXct()
-    }
+    ret <- list(
+      displayName = .state$user$displayName,
+      emailAddress = .state$user$emailAddress,
+      date = .state$user$date,
+      token_valid = token_valid,
+      peek_acc = paste(stringr::str_sub(token$credentials$access_token,
+                                        end = 5),
+                       stringr::str_sub(token$credentials$access_token,
+                                        start = -5), sep = "..."),
+      peek_ref = paste(stringr::str_sub(token$credentials$refresh_token,
+                                        end = 5),
+                       stringr::str_sub(token$credentials$refresh_token,
+                                        start = -5), sep = "..."))
 
     if(verbose) {
-      sprintf("                       displayName: %s",
-              ret$displayName) %>% message()
-      sprintf("                      emailAddress: %s",
-              ret$emailAddress) %>% message()
-      sprintf("Date-time of session authorization: %s",
-              ret$auth_date) %>% message()
-      sprintf("  Date-time of access token expiry: %s",
-              ret$exp_date) %>% message()
-      if(token_ok) {
-        message("Access token is valid.")
-      } else {
-        message(paste("Access token has expired and will be auto-refreshed."))
-      }
+      sprintf("          displayName: %s",  ret$displayName) %>% message()
+      sprintf("         emailAddress: %s", ret$emailAddress) %>% message()
+      sprintf("                 date: %s",
+              format(ret$date, usetz = TRUE)) %>% message()
+      sprintf("         access token: %s",
+              if(token_valid) "valid" else "expired, will auto-refresh") %>%
+        message()
+      sprintf(" peek at access token: %s", ret$peek_acc) %>% message()
+      sprintf("peek at refresh token: %s", ret$peek_ref) %>% message()
     }
   } else {
 
