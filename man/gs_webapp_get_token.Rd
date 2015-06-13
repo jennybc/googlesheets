@@ -25,7 +25,7 @@ Use the authorization code in the return URL to exchange for an access_token
 by making an HTTPS POST.
 }
 \details{
-This function behaves similarly to \code{\link{gs_auth()}}: it stores a token
+This function behaves similarly to \code{\link{gs_auth}}: it stores a token
 object in an internal environment, where it can be retrieved for making calls
 to the Google Sheets and Drive APIs.
 }

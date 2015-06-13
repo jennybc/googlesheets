@@ -7,22 +7,78 @@
 #' directed to a web browser, asked to sign in to your Google account, and to
 #' grant \code{googlesheets} access to user data for Google Spreadsheets and
 #' Google Drive. These user credentials are cached in a file named
-#' \code{.httr-oauth} in the current working directory.
+#' \code{.httr-oauth} in the current working directory, from where they can be
+#' automatically refreshed , as necessary.
 #'
-#' Based on
-#' \href{https://github.com/hadley/httr/blob/master/demo/oauth2-google.r}{this
-#' demo} from \code{\link[httr]{httr}}.
+#' Most users, most of the time, do not need to call this function
+#' explicitly -- it will be triggered by the first action that
+#' requires authorization. Even when called, the default arguments will often
+#' suffice. However, when necessary, this function allows the user to
+#'
+#' \itemize{
+#'   \item read the token from an \code{.rds} file or pre-existing object in the
+#'   workspace
+#'   \item provide your own app key and secret, by setting up a new project in
+#'   \href{https://console.developers.google.com}{Google Developers Console}
+#'   \item prevent caching of credentials in \code{.httr-oauth}
+#' }
+#'
+#' In a call to \code{gs_auth}, the user can provide the token, app key and
+#' secret explicitly and can dictate whether credentials will be cached in
+#' \code{.httr_oauth}. If unspecified, these arguments are controlled via
+#' options, which, if undefined at the time \code{googlesheets} is loaded, are
+#' defined like so:
+#'
+#' \describe{
+#'   \item{key}{Set to option \code{googlesheets.client_id}, which defaults to
+#'   a client ID that ships with the package}
+#'   \item{secret}{Set to option \code{googlesheets.client_secret}, which
+#'   defaults to a client secret that ships with the package}
+#'   \item{cache}{Set to option \code{googlesheets.httr_oauth_cache}, which
+#'   defaults to TRUE}
+#' }
+#'
+#' To override these defaults in persistent way, predefine one or more of
+#' them with lines like this in a \code{.Rprofile} file:
+#' \preformatted{
+#' options(googlesheets.client_id = "FOO",
+#'         googlesheets.client_secret = "BAR",
+#'         googlesheets.httr_oauth_cache = FALSE)
+#' }
+#' See \code{\link[base]{Startup}} for possible locations for this file and the
+#' implications thereof.
+#'
+#' More detail is available from
+#' \href{https://developers.google.com/identity/protocols/OAuth2}{Using OAuth
+#' 2.0 to Access Google APIs}. This function executes the "installed
+#' application" flow. See THE WEBAPP STUFF for functions that execute the "web
+#' server application" flow.
 #'
 #' @param new_user logical, defaults to \code{FALSE}. Set to \code{TRUE} if you
 #'   want to wipe the slate clean and re-authenticate with the same or different
-#'   Google account.
-#' @param token path to a valid token; intended primarily for internal use
+#'   Google account. This deletes the \code{.httr-oauth} file in current working
+#'   directory.
+#' @param token path to a valid token stored as an \code{.rds} file or an actual
+#'   token object
+#' @param key,secret the "Client ID" and "Client secret" for the application;
+#'   defaults to the ID and secret built into the \code{googlesheets} package
+#' @param cache logical indicating if \code{googlesheets} should use the default
+#'   cache file \code{.httr-oauth}
+#' @template verbose
+#'
+#' @return an OAuth token object, specifically a \code{\link[httr]{Token2.0}},
+#'   invisibly
 #'
 #' @export
-gs_auth <- function(new_user = FALSE, token = NULL) {
+gs_auth <- function(new_user = FALSE,
+                    token = NULL,
+                    key = getOption("googlesheets.client_id"),
+                    secret = getOption("googlesheets.client_secret"),
+                    cache = getOption("googlesheets.httr_oauth_cache"),
+                    verbose = TRUE) {
 
   if(new_user && file.exists(".httr-oauth")) {
-    message("Removing old credentials ...")
+    if(verbose) message("Removing old credentials ...")
     file.remove(".httr-oauth")
   }
 
@@ -31,14 +87,11 @@ gs_auth <- function(new_user = FALSE, token = NULL) {
     scope_list <- c("https://spreadsheets.google.com/feeds",
                     "https://docs.google.com/feeds")
 
-    googlesheets_app <-
-      httr::oauth_app("google",
-                      key = getOption("googlesheets.client_id"),
-                      secret = getOption("googlesheets.client_secret"))
+    googlesheets_app <- httr::oauth_app("google", key = key, secret = secret)
 
     google_token <-
       httr::oauth2.0_token(httr::oauth_endpoints("google"), googlesheets_app,
-                           scope = scope_list, cache = TRUE)
+                           scope = scope_list, cache = cache)
 
     # check for validity so error is found before making requests
     # shouldn't happen if id and secret don't change
