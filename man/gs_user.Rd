@@ -14,9 +14,9 @@ a list containing user and session info
 }
 \description{
 Display information about a user that has been authorized via \code{gs_auth}:
-the user's display name, email, the date-time of authorization for the
-current session, date-time of access token expiry, and the validity of the
-current access token. This is a subset of the information available from
+the user's display name, email, the date-time of info lookup, and the
+validity of the current access token. This is a subset of the information
+available from
 \href{https://developers.google.com/drive/v2/reference/about/get}{the "about"
 endpoint} of the Drive API.
 }

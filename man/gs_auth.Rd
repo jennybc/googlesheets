@@ -4,25 +4,25 @@
 \alias{gs_auth}
 \title{Authorize \code{googlesheets}}
 \usage{
-gs_auth(new_user = FALSE, token = NULL,
+gs_auth(token = NULL, new_user = FALSE,
   key = getOption("googlesheets.client_id"),
   secret = getOption("googlesheets.client_secret"),
   cache = getOption("googlesheets.httr_oauth_cache"), verbose = TRUE)
 }
 \arguments{
+\item{token}{an actual token object or the path to a valid token stored as an
+\code{.rds} file}
+
 \item{new_user}{logical, defaults to \code{FALSE}. Set to \code{TRUE} if you
 want to wipe the slate clean and re-authenticate with the same or different
 Google account. This deletes the \code{.httr-oauth} file in current working
 directory.}
 
-\item{token}{path to a valid token stored as an \code{.rds} file or an actual
-token object}
-
 \item{key,secret}{the "Client ID" and "Client secret" for the application;
 defaults to the ID and secret built into the \code{googlesheets} package}
 
-\item{cache}{logical indicating if \code{googlesheets} should use the default
-cache file \code{.httr-oauth}}
+\item{cache}{logical indicating if \code{googlesheets} should cache
+credentials in the default cache file \code{.httr-oauth}}
 
 \item{verbose}{logical; do you want informative messages?}
 }
@@ -45,9 +45,12 @@ requires authorization. Even when called, the default arguments will often
 suffice. However, when necessary, this function allows the user to
 
 \itemize{
+  \item store a token -- the token is invisibly returned and can be assigned
+  to an object or written to an \code{.rds} file
   \item read the token from an \code{.rds} file or pre-existing object in the
   workspace
-  \item provide your own app key and secret, by setting up a new project in
+  \item provide your own app key and secret -- this requires setting up a new
+  project in
   \href{https://console.developers.google.com}{Google Developers Console}
   \item prevent caching of credentials in \code{.httr-oauth}
 }

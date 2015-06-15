@@ -16,9 +16,12 @@
 #' suffice. However, when necessary, this function allows the user to
 #'
 #' \itemize{
+#'   \item store a token -- the token is invisibly returned and can be assigned
+#'   to an object or written to an \code{.rds} file
 #'   \item read the token from an \code{.rds} file or pre-existing object in the
 #'   workspace
-#'   \item provide your own app key and secret, by setting up a new project in
+#'   \item provide your own app key and secret -- this requires setting up a new
+#'   project in
 #'   \href{https://console.developers.google.com}{Google Developers Console}
 #'   \item prevent caching of credentials in \code{.httr-oauth}
 #' }
@@ -54,24 +57,24 @@
 #' application" flow. See THE WEBAPP STUFF for functions that execute the "web
 #' server application" flow.
 #'
+#' @param token an actual token object or the path to a valid token stored as an
+#'   \code{.rds} file
 #' @param new_user logical, defaults to \code{FALSE}. Set to \code{TRUE} if you
 #'   want to wipe the slate clean and re-authenticate with the same or different
 #'   Google account. This deletes the \code{.httr-oauth} file in current working
 #'   directory.
-#' @param token path to a valid token stored as an \code{.rds} file or an actual
-#'   token object
 #' @param key,secret the "Client ID" and "Client secret" for the application;
 #'   defaults to the ID and secret built into the \code{googlesheets} package
-#' @param cache logical indicating if \code{googlesheets} should use the default
-#'   cache file \code{.httr-oauth}
+#' @param cache logical indicating if \code{googlesheets} should cache
+#'   credentials in the default cache file \code{.httr-oauth}
 #' @template verbose
 #'
 #' @return an OAuth token object, specifically a \code{\link[httr]{Token2.0}},
 #'   invisibly
 #'
 #' @export
-gs_auth <- function(new_user = FALSE,
-                    token = NULL,
+gs_auth <- function(token = NULL,
+                    new_user = FALSE,
                     key = getOption("googlesheets.client_id"),
                     secret = getOption("googlesheets.client_secret"),
                     cache = getOption("googlesheets.httr_oauth_cache"),
@@ -105,12 +108,30 @@ gs_auth <- function(new_user = FALSE,
 
   } else {
 
-    google_token <- readRDS(token)
+    if(inherits(token, "Token2.0")) {
+      google_token <- token
+    } else {
+      google_token <- try(suppressWarnings(readRDS(token)), silent = TRUE)
+      if(inherits(google_token, "try-error")) {
+        if(verbose) {
+          message(sprintf("Cannot read token from alleged .rds file:\n%s",
+                          token))
+        }
+        return(invisible(NULL))
+      } else if(!inherits(google_token, "Token2.0")) {
+        if(verbose) {
+          message(sprintf("File does not contain a proper token:\n%s", token))
+        }
+        return(invisible(NULL))
+      }
+    }
     .state$token <- google_token
 
   }
 
   .state$user <- google_user()
+
+  invisible(.state$token)
 
 }
 
@@ -160,9 +181,9 @@ google_user <- function() {
 #' Retrieve information about authorized user
 #'
 #' Display information about a user that has been authorized via \code{gs_auth}:
-#' the user's display name, email, the date-time of authorization for the
-#' current session, date-time of access token expiry, and the validity of the
-#' current access token. This is a subset of the information available from
+#' the user's display name, email, the date-time of info lookup, and the
+#' validity of the current access token. This is a subset of the information
+#' available from
 #' \href{https://developers.google.com/drive/v2/reference/about/get}{the "about"
 #' endpoint} of the Drive API.
 #'
@@ -242,11 +263,11 @@ token_exists <- function(verbose = TRUE) {
 
     }
 
-    invisible(FALSE)
+    FALSE
 
   } else {
 
-    invisible(TRUE)
+    TRUE
 
   }
 
