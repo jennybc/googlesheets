@@ -9,7 +9,7 @@ gsheets_GET(url, to_xml = TRUE, use_auth = !grepl("public", url), ...)
 \arguments{
 \item{url}{the url of the page to retrieve}
 
-\item{to_xml}{whether to convert response contents to \code{xml_doc()} or
+\item{to_xml}{whether to convert response contents to an \code{xml_doc} or
 leave as character string}
 
 \item{use_auth}{logical; indicates if authorization should be used, defaults

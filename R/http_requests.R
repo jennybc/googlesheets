@@ -3,7 +3,7 @@
 #' Make GET request to Google Sheets API.
 #'
 #' @param url the url of the page to retrieve
-#' @param to_xml whether to convert response contents to \code{xml_doc()} or
+#' @param to_xml whether to convert response contents to an \code{xml_doc} or
 #'   leave as character string
 #' @param use_auth logical; indicates if authorization should be used, defaults
 #'   to \code{FALSE} if \code{url} implies public visibility and \code{TRUE}
@@ -28,31 +28,16 @@ gsheets_GET <-
 
   ok_content_types <- c("application/atom+xml; charset=UTF-8", "text/csv")
   if(!(req$headers$`content-type` %in% ok_content_types)) {
-
-    # DIAGNOSTIC EXPERIMENT: If I always call gs_ls() here, which seems to
-    # trigger token refresh more reliably when needed (vs registration), does
-    # this problem go away? If so, I'll put that info to good use with a less
-    # stupid fix. NOTE added later: I am NOT calling gs_ls() here, but am simply
-    # trying the GET a second time. Can this be ripped out now?
-    if(grepl("public", url)) {
-      req <- httr::GET(url, ...)
-    } else {
-      req <- httr::GET(url, get_google_token(), ...)
-    }
-    httr::stop_for_status(req)
-    if(!any(req$headers[["content-type"]] %>%
-            stringr::str_detect(ok_content_types))) {
-      stop(sprintf(paste("Not expecting content-type to be:\n%s"),
-                   req$headers[["content-type"]]))
-    }
+    stop(sprintf(paste("Not expecting content-type to be:\n%s"),
+                 req$headers[["content-type"]]))
+    # usually when the content-type is unexpectedly binary, it means we need to
+    # refresh the token ... we should have a better message or do something
+    # constructive when this happens ... sort of waiting til I can review all
+    # the auth stuff
   }
-  # usually when the content-type is unexpectedly binary, it means we need to
-  # refresh the token ... we should have a better message or do something
-  # constructive when this happens ... sort of waiting til I can review all the
-  # auth stuff
 
   # This is only FALSE when calling gs_ws_modify() where we are using regex
-  # substitution, waiting for xml2 to support changing xml_doc()
+  # substitution, waiting for xml2 to support XML editing
   if(to_xml) {
     req$content <- req %>%
       httr::content(as = "text", encoding = "UTF-8") %>%
