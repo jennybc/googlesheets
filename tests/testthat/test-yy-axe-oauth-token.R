@@ -1,10 +1,13 @@
-context("revoke authentication")
+context("suspend authentication")
 
 ## remove the google token, to make 100% sure the remaining tests run w/o auth
 
+## now that we authorize explicitly and locally throughout our tests, this is
+## arguably paranoid and overkill
+
 ## this filename is deliberate w/r/t alphabetical order, so don't change it
 ## lightly! it's no coincidence that "axe" starts with "A"
-gs_auth_revoke(rm_httr_oauth = TRUE, verbose = FALSE)
+gs_auth_suspend(verbose = FALSE)
 
 test_that("Token does NOT exist, no .httr-oauth file in wd", {
 

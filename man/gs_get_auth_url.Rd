@@ -27,13 +27,13 @@ token), determines whether a refresh token is returned in the response}
 }
 \description{
 The default authorization sequence in \code{googlesheets} is appropriate for
-a user working on a local computer, where the default handshakes between the
-local computer and Google work just fine. But what if the process using
-\code{googlesheets} is running, e.g., within Shiny? We have built an
-alternative authorization sequence for these situations and the first step is
-to form the Google URL that directs the user to Google's authorization
-screen. Once a user authenticates, the response, in the form of an
-authorization code, is sent to the \code{redirect_uri} (see below) which
+a user working directly with R on a local computer, where the default
+handshakes between the local computer and Google work just fine. But what if
+the process using \code{googlesheets} is running, e.g., within Shiny? We have
+built an alternative authorization sequence for these situations and the
+first step is to form the Google URL that directs the user to Google's
+authorization screen. Once a user authenticates, the response, in the form of
+an authorization code, is sent to the \code{redirect_uri} (see below) which
 \code{\link{gs_webapp_get_token}} uses to exchange for an access token. This
 token is then stored in the usual manner for this package and used for
 subsequent API requests.

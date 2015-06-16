@@ -28,7 +28,8 @@ sheet that you own or a sheet owned by a third party that has been made
 accessible via the sharing dialog options. You can download the entire
 spreadsheet (.pdf and .xlsx formats) or a single worksheet. This function
 calls the \href{https://developers.google.com/drive/v2/reference/}{Google
-Drive API}.
+Drive API}. Note that the current implementation of this function absolutely
+requires authorization.
 }
 \details{
 If the worksheet is unspecified, i.e. if \code{ws = NULL}, then the entire

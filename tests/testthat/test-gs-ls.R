@@ -1,5 +1,7 @@
 context("list sheets")
 
+gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+
 test_that("Spreadsheets visible to authenticated user can be listed", {
 
   ss_list <- gs_ls()
@@ -34,3 +36,4 @@ test_that("Regexes work for limiting sheet listing", {
 
 })
 
+gs_auth_suspend(verbose = FALSE)

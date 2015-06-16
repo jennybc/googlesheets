@@ -1,5 +1,7 @@
 context("register sheets")
 
+gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+
 if(!file.exists("for_reference/iris_pvt_googlesheet.rds")) {
   iris_pvt_url %>%
     gs_url(verbose = FALSE) %>%
@@ -126,3 +128,5 @@ test_that("Print method for googlesheet works", {
   expect_output(print(ss), paste("Key:", GAP_KEY))
 
 })
+
+gs_auth_suspend(verbose = FALSE)

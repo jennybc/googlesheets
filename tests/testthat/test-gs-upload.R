@@ -1,5 +1,7 @@
 context("upload sheets")
 
+gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+
 test_that("Nonexistent or wrong-extension files throw error", {
 
   expect_error(gs_upload("I dont exist.csv"), "does not exist")
@@ -31,3 +33,4 @@ test_that("Different file formats can be uploaded", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
+gs_auth_suspend(verbose = FALSE)
