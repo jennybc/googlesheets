@@ -1,5 +1,7 @@
 context("consume data with private visibility")
 
+gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+
 ## consuming data owned by authorized user, namely gspreadr
 ss <- gs_ws_feed(iris_pvt_ws_feed, verbose = FALSE)
 
@@ -30,3 +32,5 @@ test_that("We can get all data from the exportcsv link (pvt)", {
   expect_equal_to_reference(dat1, "for_reference/iris_pvt_gs_read_listfeed.rds")
 
 })
+
+gs_auth_suspend(verbose = FALSE)

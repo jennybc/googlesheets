@@ -1,5 +1,7 @@
 context("create, delete, copy sheets")
 
+gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+
 test_that("Spreadsheet can be created and deleted", {
 
   sheet_title <- p_("hello-bye")
@@ -87,3 +89,4 @@ test_that("gs_delete() throws error on non-googlesheet input", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
+gs_auth_suspend(verbose = FALSE)

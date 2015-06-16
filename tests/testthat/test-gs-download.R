@@ -1,5 +1,8 @@
 context("download sheets")
 
+## this function requires authorization absolutely
+gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+
 test_that("Spreadsheet can be exported", {
 
   ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
@@ -72,3 +75,5 @@ test_that("Old Sheets can be exported", {
   expect_true(all(file.remove(file.path(temp_dir, c("old.xlsx", "old.pdf")))))
 
 })
+
+gs_auth_suspend(verbose = FALSE)

@@ -1,5 +1,7 @@
 context("edit cells")
 
+gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+
 pts_copy <- p_("pts-copy")
 ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
               to = pts_copy, verbose = FALSE)
@@ -126,3 +128,4 @@ test_that("We can trim worksheet extent to fit uploaded data", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
+gs_auth_suspend(verbose = FALSE)
