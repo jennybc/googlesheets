@@ -142,7 +142,8 @@ gs_auth <- function(token = NULL,
 #' @keywords internal
 get_google_token <- function() {
 
-  if(is.null(.state$token)) {
+  if(is.null(.state$token) ||
+     "error" %in% names(.state$token$credentials)) {
     gs_auth()
   }
 
@@ -203,33 +204,44 @@ gs_user <- function(verbose = TRUE) {
   if(token_exists(verbose)) {
 
     token <- .state$token
-    token_valid <- token$validate()
 
-    ret <- list(
-      displayName = .state$user$displayName,
-      emailAddress = .state$user$emailAddress,
-      date = .state$user$date,
-      token_valid = token_valid,
-      peek_acc = paste(stringr::str_sub(token$credentials$access_token,
-                                        end = 5),
-                       stringr::str_sub(token$credentials$access_token,
-                                        start = -5), sep = "..."),
-      peek_ref = paste(stringr::str_sub(token$credentials$refresh_token,
-                                        end = 5),
-                       stringr::str_sub(token$credentials$refresh_token,
-                                        start = -5), sep = "..."))
+    if("error" %in% names(token$credentials)) {
 
-    if(verbose) {
-      sprintf("          displayName: %s",  ret$displayName) %>% message()
-      sprintf("         emailAddress: %s", ret$emailAddress) %>% message()
-      sprintf("                 date: %s",
-              format(ret$date, usetz = TRUE)) %>% message()
-      sprintf("         access token: %s",
-              if(token_valid) "valid" else "expired, will auto-refresh") %>%
-        message()
-      sprintf(" peek at access token: %s", ret$peek_acc) %>% message()
-      sprintf("peek at refresh token: %s", ret$peek_ref) %>% message()
+      if(verbose) message("Current token contains an error.")
+      ret <- NULL
+
+    } else {
+
+      token_valid <- token$validate()
+
+      ret <- list(
+        displayName = .state$user$displayName,
+        emailAddress = .state$user$emailAddress,
+        date = .state$user$date,
+        token_valid = token_valid,
+        peek_acc = paste(stringr::str_sub(token$credentials$access_token,
+                                          end = 5),
+                         stringr::str_sub(token$credentials$access_token,
+                                          start = -5), sep = "..."),
+        peek_ref = paste(stringr::str_sub(token$credentials$refresh_token,
+                                          end = 5),
+                         stringr::str_sub(token$credentials$refresh_token,
+                                          start = -5), sep = "..."))
+
+      if(verbose) {
+        sprintf("          displayName: %s",  ret$displayName) %>% message()
+        sprintf("         emailAddress: %s", ret$emailAddress) %>% message()
+        sprintf("                 date: %s",
+                format(ret$date, usetz = TRUE)) %>% message()
+        sprintf("         access token: %s",
+                if(token_valid) "valid" else "expired, will auto-refresh") %>%
+          message()
+        sprintf(" peek at access token: %s", ret$peek_acc) %>% message()
+        sprintf("peek at refresh token: %s", ret$peek_ref) %>% message()
+      }
+
     }
+
   } else {
 
     if(verbose) message("No user currently authorized.")
@@ -273,19 +285,19 @@ token_exists <- function(verbose = TRUE) {
 
 }
 
-#' Revoke authentication
+#' Suspend authorization
 #'
-#' This unexported function exists so we can revoke all authentication for
+#' This unexported function exists so we can suspend authorization for
 #' testing purposes.
 #'
 #' @keywords internal
-gs_auth_revoke <- function(rm_httr_oauth = FALSE, verbose = TRUE) {
+gs_auth_suspend <- function(disable_httr_oauth = TRUE, verbose = TRUE) {
 
-  if(rm_httr_oauth && file.exists(".httr-oauth")) {
+  if(disable_httr_oauth && file.exists(".httr-oauth")) {
     if(verbose) {
-      message("Disabling .httr-oauth by renaming to .httr-oauth_REVOKED")
+      message("Disabling .httr-oauth by renaming to .httr-oauth-SUSPENDED")
     }
-    file.rename(".httr-oauth", ".httr-oauth_REVOKED")
+    file.rename(".httr-oauth", ".httr-oauth-SUSPENDED")
   }
 
   if(!is.null(.state$token)) {
