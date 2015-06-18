@@ -6,3 +6,6 @@ googlesheets.Rproj
 jenny-scratch/*
 tests/testthat/googlesheets_token.rds
 README.html
+*.html
+pics
+jenny_token.rds
