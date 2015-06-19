@@ -71,14 +71,14 @@ gsheets_POST <- function(url, the_body) {
                  config = c(token,
                             httr::add_headers("Content-Type" = content_type)),
                  body = the_body)
+    httr::stop_for_status(req)
+
     req$content <- httr::content(req, as = "text", encoding = "UTF-8")
 
     if(!is.null(req$content)) {
       ## known example of this: POST request triggered by gs_ws_new()
       req$content <- req$content %>% xml2::read_xml()
     }
-
-    httr::stop_for_status(req)
 
     req
 

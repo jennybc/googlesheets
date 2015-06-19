@@ -36,7 +36,7 @@ directed to a web browser, asked to sign in to your Google account, and to
 grant \code{googlesheets} access to user data for Google Spreadsheets and
 Google Drive. These user credentials are cached in a file named
 \code{.httr-oauth} in the current working directory, from where they can be
-automatically refreshed , as necessary.
+automatically refreshed, as necessary.
 }
 \details{
 Most users, most of the time, do not need to call this function

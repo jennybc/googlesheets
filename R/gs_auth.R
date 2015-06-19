@@ -8,7 +8,7 @@
 #' grant \code{googlesheets} access to user data for Google Spreadsheets and
 #' Google Drive. These user credentials are cached in a file named
 #' \code{.httr-oauth} in the current working directory, from where they can be
-#' automatically refreshed , as necessary.
+#' automatically refreshed, as necessary.
 #'
 #' Most users, most of the time, do not need to call this function
 #' explicitly -- it will be triggered by the first action that
@@ -96,19 +96,13 @@ gs_auth <- function(token = NULL,
       httr::oauth2.0_token(httr::oauth_endpoints("google"), googlesheets_app,
                            scope = scope_list, cache = cache)
 
-    # check for validity so error is found before making requests
-    # shouldn't happen if id and secret don't change
-    if("invalid_client" %in% unlist(google_token$credentials)) {
-      message("Authorization error. Please check client_id and client_secret.")
-    }
-
-    stopifnot(inherits(google_token, "Token2.0"))
+    stopifnot(is_legit_token(google_token))
 
     .state$token <- google_token
 
   } else {
 
-    if(inherits(token, "Token2.0")) {
+    if(is_legit_token(token)) {
       google_token <- token
     } else {
       google_token <- try(suppressWarnings(readRDS(token)), silent = TRUE)
@@ -118,7 +112,7 @@ gs_auth <- function(token = NULL,
                           token))
         }
         return(invisible(NULL))
-      } else if(!inherits(google_token, "Token2.0")) {
+      } else if(!is_legit_token(google_token)) {
         if(verbose) {
           message(sprintf("File does not contain a proper token:\n%s", token))
         }
@@ -142,8 +136,7 @@ gs_auth <- function(token = NULL,
 #' @keywords internal
 get_google_token <- function() {
 
-  if(is.null(.state$token) ||
-     "error" %in% names(.state$token$credentials)) {
+  if(is.null(.state$token) || !is_legit_token(.state$token)) {
     gs_auth()
   }
 
@@ -160,7 +153,7 @@ google_user <- function() {
 
   ## require pre-existing token, to avoid recursion that would arise if
   ## gdrive_GET() called gs_auth()
-  if(token_exists(verbose = FALSE)) {
+  if(token_exists(verbose = FALSE) && is_legit_token(.state$token)) {
 
     ## docs here
     ## https://developers.google.com/drive/v2/reference/about
@@ -201,44 +194,36 @@ google_user <- function() {
 #' @export
 gs_user <- function(verbose = TRUE) {
 
-  if(token_exists(verbose)) {
+  if(token_exists(verbose) && is_legit_token(.state$token)) {
 
     token <- .state$token
 
-    if("error" %in% names(token$credentials)) {
+    token_valid <- token$validate()
 
-      if(verbose) message("Current token contains an error.")
-      ret <- NULL
+    ret <- list(
+      displayName = .state$user$displayName,
+      emailAddress = .state$user$emailAddress,
+      date = .state$user$date,
+      token_valid = token_valid,
+      peek_acc = paste(stringr::str_sub(token$credentials$access_token,
+                                        end = 5),
+                       stringr::str_sub(token$credentials$access_token,
+                                        start = -5), sep = "..."),
+      peek_ref = paste(stringr::str_sub(token$credentials$refresh_token,
+                                        end = 5),
+                       stringr::str_sub(token$credentials$refresh_token,
+                                        start = -5), sep = "..."))
 
-    } else {
-
-      token_valid <- token$validate()
-
-      ret <- list(
-        displayName = .state$user$displayName,
-        emailAddress = .state$user$emailAddress,
-        date = .state$user$date,
-        token_valid = token_valid,
-        peek_acc = paste(stringr::str_sub(token$credentials$access_token,
-                                          end = 5),
-                         stringr::str_sub(token$credentials$access_token,
-                                          start = -5), sep = "..."),
-        peek_ref = paste(stringr::str_sub(token$credentials$refresh_token,
-                                          end = 5),
-                         stringr::str_sub(token$credentials$refresh_token,
-                                          start = -5), sep = "..."))
-
-      if(verbose) {
-        sprintf("          displayName: %s",  ret$displayName) %>% message()
-        sprintf("         emailAddress: %s", ret$emailAddress) %>% message()
-        sprintf("                 date: %s",
-                format(ret$date, usetz = TRUE)) %>% message()
-        sprintf("         access token: %s",
-                if(token_valid) "valid" else "expired, will auto-refresh") %>%
-          message()
-        sprintf(" peek at access token: %s", ret$peek_acc) %>% message()
-        sprintf("peek at refresh token: %s", ret$peek_ref) %>% message()
-      }
+    if(verbose) {
+      sprintf("          displayName: %s",  ret$displayName) %>% message()
+      sprintf("         emailAddress: %s", ret$emailAddress) %>% message()
+      sprintf("                 date: %s",
+              format(ret$date, usetz = TRUE)) %>% message()
+      sprintf("         access token: %s",
+              if(token_valid) "valid" else "expired, will auto-refresh") %>%
+        message()
+      sprintf(" peek at access token: %s", ret$peek_acc) %>% message()
+      sprintf("peek at refresh token: %s", ret$peek_ref) %>% message()
 
     }
 
@@ -307,5 +292,37 @@ gs_auth_suspend <- function(disable_httr_oauth = TRUE, verbose = TRUE) {
     }
     rm("token", envir = .state)
   }
+
+}
+
+#' Check that token appears to be legitimate
+#'
+#' This unexported function exists to catch tokens that are technically valid,
+#' i.e. `inherits(token, "Token2.0")` is TRUE, but that have dysfunctional
+#' credentials.
+#'
+#' @keywords internal
+is_legit_token <- function(x) {
+
+  if(!inherits(x, "Token2.0")) {
+    message("Not a Token2.0 object.")
+    return(FALSE)
+  }
+
+  if("invalid_client" %in% unlist(x$credentials)) {
+    # check for validity so error is found before making requests
+    # shouldn't happen if id and secret don't change
+    message("Authorization error. Please check client_id and client_secret.")
+    return(FALSE)
+  }
+
+  if("invalid_request" %in% unlist(x$credentials)) {
+    # known example: if user clicks "Cancel" instead of "Accept" when OAuth2
+    # flow kicks to browser
+    message("Authorization error. No access token obtained.")
+    return(FALSE)
+  }
+
+  TRUE
 
 }

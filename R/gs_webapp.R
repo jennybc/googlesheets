@@ -6,11 +6,11 @@
 #' handshakes between the local computer and Google work just fine. But what if
 #' the process using \code{googlesheets} is running, e.g., within Shiny? We have
 #' built an alternative authorization sequence for these situations and the
-#' first step is to form the Google URL that directs the user to Google's
-#' authorization screen. Once a user authenticates, the response, in the form of
-#' an authorization code, is sent to the \code{redirect_uri} (see below) which
-#' \code{\link{gs_webapp_get_token}} uses to exchange for an access token. This
-#' token is then stored in the usual manner for this package and used for
+#' first step is to form the Google URL that directs the user to authenticate
+#' him or herself with Google. Once a user authenticates, the response, in the
+#' form of an authorization code, is sent to the \code{redirect_uri} (see below)
+#' which \code{\link{gs_webapp_get_token}} uses to exchange for an access token.
+#' This token is then stored in the usual manner for this package and used for
 #' subsequent API requests.
 #'
 #' That was the good news. The bad news is you'll need to use the

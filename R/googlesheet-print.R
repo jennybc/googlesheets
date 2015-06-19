@@ -20,6 +20,7 @@
 print.googlesheet <- function(x, ...) {
 
   sprintf("                  Spreadsheet title: %s\n", x$sheet_title) %>% cat()
+  sprintf("                 Spreadsheet author: %s\n", x$author) %>% cat()
   sprintf("  Date of googlesheets registration: %s\n",
           x$reg_date %>% format.POSIXct(usetz = TRUE)) %>% cat()
   sprintf("    Date of last spreadsheet update: %s\n",
