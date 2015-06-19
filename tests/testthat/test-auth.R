@@ -1,6 +1,6 @@
 context("authorization")
 
-gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 
 test_that("Cached credentials are in force", {
 

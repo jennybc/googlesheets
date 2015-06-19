@@ -3,7 +3,7 @@
 ## The default testing state is one of: NO AUTHORIZATION.
 ## Explicitly read a token from .rds at the beginning of each file that
 ## needs it. Hmm ... we could make that even more local?
-## Explicitly suspect authorization at the end of any such files.
+## Explicitly suspend authorization at the end of any such files.
 
 ## No hardwiring sheet title, key, URL or worksheet feed in a test-xxx.R file.
 ## Define all of that in helper01_setup-sheets.R and then exploit.

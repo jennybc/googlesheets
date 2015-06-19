@@ -1,6 +1,6 @@
 context("list sheets")
 
-gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 
 test_that("Spreadsheets visible to authenticated user can be listed", {
 

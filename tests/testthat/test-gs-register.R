@@ -1,6 +1,6 @@
 context("register sheets")
 
-gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 
 if(!file.exists("for_reference/iris_pvt_googlesheet.rds")) {
   iris_pvt_url %>%

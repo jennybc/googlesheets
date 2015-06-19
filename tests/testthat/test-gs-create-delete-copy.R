@@ -1,6 +1,6 @@
 context("create, delete, copy sheets")
 
-gs_auth(token = "googlesheets_token.rds", verbose = FALSE)
+suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 
 test_that("Spreadsheet can be created and deleted", {
 
