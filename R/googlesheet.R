@@ -48,7 +48,8 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL, verbose = TRUE, ...) {
   ss$sheet_title <- req$content %>%
     xml2::xml_find_one("./feed:title", ns) %>% xml2::xml_text()
   ss$n_ws <- req$content %>%
-    xml2::xml_find_one("./openSearch:totalResults", ns) %>% xml2::xml_text() %>%
+    xml2::xml_find_one("./openSearch:totalResults", ns) %>%
+    xml2::xml_text() %>%
     as.integer()
 
   ss$ws_feed <- req$url          # same as the "self" link below  ... pick one?

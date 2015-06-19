@@ -96,7 +96,7 @@ gs_auth <- function(token = NULL,
       httr::oauth2.0_token(httr::oauth_endpoints("google"), googlesheets_app,
                            scope = scope_list, cache = cache)
 
-    stopifnot(is_legit_token(google_token))
+    stopifnot(is_legit_token(google_token, verbose = TRUE))
 
     .state$token <- google_token
 
@@ -112,7 +112,7 @@ gs_auth <- function(token = NULL,
                           token))
         }
         return(invisible(NULL))
-      } else if(!is_legit_token(google_token)) {
+      } else if(!is_legit_token(google_token, verbose = TRUE)) {
         if(verbose) {
           message(sprintf("File does not contain a proper token:\n%s", token))
         }
@@ -302,24 +302,26 @@ gs_auth_suspend <- function(disable_httr_oauth = TRUE, verbose = TRUE) {
 #' credentials.
 #'
 #' @keywords internal
-is_legit_token <- function(x) {
+is_legit_token <- function(x, verbose = FALSE) {
 
   if(!inherits(x, "Token2.0")) {
-    message("Not a Token2.0 object.")
+    if(verbose) message("Not a Token2.0 object.")
     return(FALSE)
   }
 
   if("invalid_client" %in% unlist(x$credentials)) {
     # check for validity so error is found before making requests
     # shouldn't happen if id and secret don't change
-    message("Authorization error. Please check client_id and client_secret.")
+    if(verbose) {
+      message("Authorization error. Please check client_id and client_secret.")
+    }
     return(FALSE)
   }
 
   if("invalid_request" %in% unlist(x$credentials)) {
     # known example: if user clicks "Cancel" instead of "Accept" when OAuth2
     # flow kicks to browser
-    message("Authorization error. No access token obtained.")
+    if(verbose) message("Authorization error. No access token obtained.")
     return(FALSE)
   }
 
