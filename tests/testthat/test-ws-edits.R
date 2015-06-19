@@ -15,9 +15,9 @@ test_that("Add a new worksheet", {
 
   new_ws_index <- ss_before$n_ws + 1
   expect_equal(new_ws_index, ss_after$n_ws)
-  expect_equal(ss_after$ws[new_ws_index, "row_extent"], 7L)
-  expect_equal(ss_after$ws[new_ws_index, "col_extent"], 5L)
-  expect_equal(ss_after$ws[new_ws_index, "ws_title"], "Test Sheet")
+  expect_equal(ss_after$ws[[new_ws_index, "row_extent"]], 7L)
+  expect_equal(ss_after$ws[[new_ws_index, "col_extent"]], 5L)
+  expect_equal(ss_after$ws[[new_ws_index, "ws_title"]], "Test Sheet")
 
   ## this worksheet gets deleted below
 
