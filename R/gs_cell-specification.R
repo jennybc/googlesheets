@@ -69,8 +69,8 @@ limit_list <- function(x) {
   stopifnot(inherits(x, "cell_limits") || is.null(x))
 
   if(inherits(x, "cell_limits")) {
-    retval <- list(`min-row` = x$rows[1], `max-row` = x$rows[2],
-                   `min-col` = x$cols[1], `max-col` = x$cols[2])
+    retval <- list(`min-row` = x$ul[1], `max-row` = x$lr[1],
+                   `min-col` = x$ul[2], `max-col` = x$lr[2])
     retval[is.na(retval)] <- NULL
   }
 
@@ -84,7 +84,7 @@ limit_list <- function(x) {
 
 un_limit_list <- function(x) {
 
-  cellranger::cell_limits(rows = c(x[['min-row']], x[['max-row']]),
-                          cols = c(x[['min-col']], x[['max-col']]))
+  cellranger::cell_limits(ul = c(x[['min-row']], x[['min-col']]),
+                          lr = c(x[['max-row']], x[['max-col']]))
 
 }

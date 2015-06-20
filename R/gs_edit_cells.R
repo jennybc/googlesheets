@@ -65,16 +65,8 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   catch_hopeless_input(input)
   this_ws <- gs_ws(ss, ws, verbose = FALSE)
 
-  ## I can edit/remove this once cellranger updates on CRAN and the default
-  ## behavior of anchored() is smarter
-  if(is.null(dim(input))) {
-    col_names <- FALSE
-  } else if(is.null(col_names)) {
-    col_names <- !is.null(colnames(input))
-  }
-
-  limits <- ## change header to col_names after cellranger updates
-    cellranger::anchored(anchor, input = input, header = col_names,
+  limits <-
+    cellranger::anchored(anchor = anchor, input = input, col_names = col_names,
                          byrow = byrow)
   ## TO DO: if I were really nice, I would use the positioning notation from the
   ## user, i.e. learn it from anchor, instead of defaulting to A1
@@ -95,6 +87,14 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                    verbose = verbose)
     Sys.sleep(sleep)
 
+  }
+
+  ## redundant with the default col_names-setting logic from cellranger :(
+  ## but we need it here as well to pass directions to as_character_vector()
+  if(is.null(dim(input))) { # input is 1-dimensional
+    col_names <- FALSE
+  } else if(is.null(col_names)) {
+    col_names <- !is.null(colnames(input))
   }
 
   input <- input %>% as_character_vector(col_names = col_names)
@@ -192,7 +192,6 @@ catch_hopeless_input <- function(x) {
 as_character_vector <- function(x, col_names) {
 
   catch_hopeless_input(x)
-
   x_colnames <- NULL
 
   ## instead of fiddly tests on x (see comments below), just go with it, if x

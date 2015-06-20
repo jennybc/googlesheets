@@ -55,12 +55,6 @@ gs_read_cellfeed <- function(
   stopifnot(inherits(ss, "googlesheet"))
   this_ws <- gs_ws(ss, ws, verbose)
 
-  if(is.null(range)) {
-    ## once cellranger updates on CRAN, can remove this
-    ## because as.cell_limits() will natively do the right thing for NULL
-    ## https://github.com/jennybc/cellranger/commit/c9c9080ca0fdf1db97c8ea935f00c6bcc10d6e0b
-    range <- cell_limits()
-  }
   limits <- range %>%
     cellranger::as.cell_limits() %>%
     limit_list()

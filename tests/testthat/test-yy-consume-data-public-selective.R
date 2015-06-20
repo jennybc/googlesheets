@@ -3,21 +3,21 @@ context("consume data with public visibility, selectively")
 ## consuming data owned by someone else, namely rpackagetest
 ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE, verbose = FALSE)
 
-test_that("We can get data from specific cells using a limits", {
+test_that("We can get data from specific cells using limits", {
 
   ## fully specify limits
   foo <- ss %>%
-    gs_read_cellfeed(ws = 5, range = cell_limits(c(3, 5), c(1, 3)))
+    gs_read_cellfeed(ws = 5, range = cell_limits(c(3, 1), c(5, 3)))
   expect_equal(foo$cell, paste0(LETTERS[1:3], rep(3:5, each = 3)))
 
   ## partially specified limits
   foo <- ss %>%
-    gs_read_cellfeed(ws = "Oceania", range = cell_limits(c(2, NA), c(4, 4)))
+    gs_read_cellfeed(ws = "Oceania", range = cell_limits(c(2, 4), c(NA, 4)))
   expect_true(all(grepl("^D", foo$cell)))
 
   ## partially specified limits
   foo <- ss %>%
-    gs_read_cellfeed(ws = "Oceania", range = cell_limits(cols = c(NA, 3)))
+    gs_read_cellfeed(ws = "Oceania", range = cell_limits(lr = c(NA, 3)))
   expect_true(all(grepl("^[ABC][0-9]+$", foo$cell)))
 
 })

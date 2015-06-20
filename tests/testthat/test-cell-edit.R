@@ -41,7 +41,7 @@ test_that("Input converts to character vector (or not)", {
 
 test_that("Single cell can be updated", {
 
-  expect_message(ss <- gs_edit_cells(ss, ws, "eggplant", "A1"),
+  expect_message(ss <- gs_edit_cells(ss, ws, "eggplant"),
                  "successfully updated")
   Sys.sleep(1)
   tmp <- ss %>%
