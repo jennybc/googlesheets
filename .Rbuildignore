@@ -1,10 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.httr-oauth$
-^\.httr-oauth_REVOKED$
+^\.httr-oauth-SUSPENDED$
 ^vignettes/\.httr-oauth$
 ^tests/testthat/\.httr-oauth$
-^tests/testthat/\.httr-oauth_REVOKED$
+^tests/testthat/\.httr-oauth-SUSPENDED$
 vignettes/basic-usage.Rmd
 ^\.travis\.yml$
 ^internal-projects$

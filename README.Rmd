@@ -167,7 +167,7 @@ gap %>% gs_read(ws = 2, range = "A1:D8")
 gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
 gap %>% gs_read(ws = "Europe", range = cell_rows(100:103), col_names = FALSE)
 gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
-gap %>% gs_read(ws = "Asia", range = cell_limits(c(1, 5), c(4, NA)))
+gap %>% gs_read(ws = "Asia", range = cell_limits(c(1, 4), c(5, NA)))
 ```
 
 `gs_read()` is a wrapper that bundles together the most common methods to read data from the API and transform it for downstream use. You can refine it's behavior further, by passing more arguments via `...`. Read the help file for more details.
@@ -241,7 +241,7 @@ gap %>%
 
 # arbitrary cell range, direct specification of column names
 gap %>%
-  gs_read_cellfeed("Oceania", range = cell_limits(c(2, 5), c(1, 3))) %>%
+  gs_read_cellfeed("Oceania", range = cell_limits(c(2, 1), c(5, 3))) %>%
   gs_reshape_cellfeed(col_names = paste("thing", c("one", "two", "three"),
                                         sep = "_"))
 ```
