@@ -4,12 +4,17 @@ library(plyr)
 library(dplyr)
 library(DT)
 
-## =====================
-# CHANGE THIS DEPENDING ON WHERE YOU ARE DEPLOYING APP (your domain, shinyapps.io, etc)
-#options("googlesheets.webapp.redirect_uri" = "http://daattali.com/shiny/gs-explorer/")
-options("googlesheets.webapp.redirect_uri" = "https://jozhao.shinyapps.io/gs-explorer/")
-# FOR LOCAL TESTING - use runApp(port = 4642)
-#options("googlesheets.webapp.redirect_uri" = "http://127.0.0.1:4642")
+## ===================== CHANGE THIS DEPENDING ON WHERE YOU ARE DEPLOYING APP
+##
+## For local testing, you can accept the default value for the
+## googlesheets.webapp.redirect_uri option, which is http://127.0.0.1:4642
+## In that case, run and inspect your app like so:
+## runApp(port = 4642)
+##
+## If the app is deployed elsewhere you will need to uncomment a line like one
+## of those below to correctly set the googlesheets.webapp.redirect_uri option:
+# options("googlesheets.webapp.redirect_uri" = "http://daattali.com/shiny/gs-explorer/")
+# options("googlesheets.webapp.redirect_uri" = "https://jozhao.shinyapps.io/gs-explorer/")
 ## ======================
 
 shinyServer(function(input, output, session) {
@@ -20,7 +25,7 @@ shinyServer(function(input, output, session) {
     if(is.null(isolate(access_token()))) {
       actionButton("loginButton",
                    label = a("Authorize App",
-                             href = gs_get_auth_url()))
+                             href = gs_webapp_auth_url()))
     } else {
       return()
     }
@@ -58,11 +63,9 @@ shinyServer(function(input, output, session) {
     validate(
       need(!is.null(access_token()),
            message =
-             paste("Click 'Authorize App' to redirect to Google's authorization",
-                   "screen where this app requests authorization to access your",
-                   "Google Sheets and Google Drive. By authorizing, additional",
-                   "googlesheets functions that requires user authorization,",
-                   "can be utilized in your Shiny app."))
+             paste("Click 'Authorize App' to redirect to a Google page where",
+                   "you will authenticate yourself and authorize",
+                   "this app to access your Google Sheets and Google Drive."))
     )
 
     dat <- gsLs() %>% select(1:6)
@@ -108,12 +111,14 @@ shinyServer(function(input, output, session) {
     ss <- sheet()
 
     ss_info <- data_frame(
-      x = c("Spreadsheet Title",
+      x = c("Spreadsheet title",
+            "Spreadsheet author",
             "Date of googlesheets registration",
             "Date of last spreadsheet update",
             "Visibility", "Permissions", "Version"),
-      y = c(ss$sheet_title, ss$reg_date %>% as.character(),
-            ss$updated %>% as.character(),
+      y = c(ss$sheet_title, ss$author,
+            ss$reg_date %>% format.POSIXct(usetz = TRUE) %>% as.character(),
+            ss$updated %>% format.POSIXct(usetz = TRUE) %>% as.character(),
             ss$visibility, ss$perm, ss$version))
 
     DT::datatable(ss_info, rownames = FALSE,
@@ -147,9 +152,9 @@ shinyServer(function(input, output, session) {
     )
 
     x <- user_info()
-    line1 <- paste("Display Name:", x$displayName)
-    line2 <- paste("Email:", x$emailAddress)
-    line3 <- paste("Time of session authorization:", x$auth_date)
+    line1 <- paste("displayName:", x$displayName)
+    line2 <- paste("emailAddress:", x$emailAddress)
+    line3 <- paste("date:", format(x$date, usetz = TRUE))
 
     HTML(paste(line1, line2, line3, sep = "</br><h>"))
   })
@@ -166,7 +171,7 @@ shinyServer(function(input, output, session) {
     )
 
     ss <- sheet()
-    ws <- get_via_csv(ss, input$selectWs)
+    ws <- gs_read_csv(ss, input$selectWs)
     gs_inspect(ws)
   })
 

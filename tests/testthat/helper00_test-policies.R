@@ -27,7 +27,7 @@
 
 ## Don't run anything related to tests on CRAN. Simply putting skip_on_cran()
 ## inside certain tests is not enough. We have code in test_xxx.R files, outside
-## of the tests, that should not run on CRAN. In the end I've shut down
-## everything related to testing when the NOT_CRAN env var is FALSE. devtools
+## of the tests, that should not run on CRAN. In the end, we will not do
+## anything related to testing UNLESS the NOT_CRAN env var is TRUE. devtools
 ## will set this, so if testing or checking through other means, this might need
 ## to be set manually.
