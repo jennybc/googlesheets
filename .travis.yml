@@ -12,6 +12,7 @@ install:
 - ./travis-tool.sh r_binary_install stringi
 - ./travis-tool.sh r_binary_install tidyr
 - ./travis-tool.sh r_binary_install ggplot2
+- ./travis-tool.sh github_package jennybc/cellranger@v1.0.0
 - ./travis-tool.sh install_deps
 - ./travis-tool.sh install_r covr
 script: ./travis-tool.sh run_tests
