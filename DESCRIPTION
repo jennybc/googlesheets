@@ -23,6 +23,7 @@ Imports:
     XML,
     xml2
 Suggests:
-    testthat,
-    knitr
+    covr,
+    knitr,
+    testthat
 VignetteBuilder: knitr

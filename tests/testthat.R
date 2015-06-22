@@ -1,4 +1,6 @@
 library(testthat)
 library(googlesheets)
 
-test_check("googlesheets")
+if (identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
+  test_check("googlesheets")
+}
