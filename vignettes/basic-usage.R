@@ -3,17 +3,7 @@ library(googlesheets)
 suppressMessages(library(dplyr))
 
 ## ----auth, include = FALSE-----------------------------------------------
-## look for .httr-oauth in pwd (assuming pwd is googlesheets) or one level up
-## (assuming pwd is googlesheets/vignettes)
-pwd <- getwd()
-one_up <- pwd %>% dirname()
-HTTR_OAUTH <- c(one_up, pwd) %>% file.path(".httr-oauth")
-HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
-
-if(length(HTTR_OAUTH) > 0) {
-  HTTR_OAUTH <- HTTR_OAUTH[1]
-  file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
-}
+suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 
 ## ----pre-clean, include = FALSE------------------------------------------
 ## if a previous compilation of this document leaves anything behind, i.e. if it

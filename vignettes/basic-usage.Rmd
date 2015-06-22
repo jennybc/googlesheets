@@ -25,24 +25,16 @@ This vignette shows the basic functionality of `googlesheets`.
 
 In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `googlesheets` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
 
-The `gs_auth()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
+The `gs_auth()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will be cached in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
 
-If you want to switch to a different Google account, run `gs_auth(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
+If you want to switch to a different Google account, run `gs_auth(new_user = TRUE)`, as this will delete the previously cached token and get a new one for the new account.
 
-*In a hidden chunk, we are logging into Google as a user associated with this package, so we can work with some Google spreadsheets later in this vignette.*
+For finer control, read the documentation on `gs_auth()`. The user can provide the token directly, provide their own application Client ID and secret, and prevent the caching of credentials.
+
+*In a hidden chunk, we are using a previously stored token to authenticate, so we can work with some Google spreadsheets later in this vignette.*
 
 ```{r auth, include = FALSE}
-## look for .httr-oauth in pwd (assuming pwd is googlesheets) or one level up
-## (assuming pwd is googlesheets/vignettes)
-pwd <- getwd()
-one_up <- pwd %>% dirname()
-HTTR_OAUTH <- c(one_up, pwd) %>% file.path(".httr-oauth")
-HTTR_OAUTH <- HTTR_OAUTH[HTTR_OAUTH %>% file.exists()]
-
-if(length(HTTR_OAUTH) > 0) {
-  HTTR_OAUTH <- HTTR_OAUTH[1]
-  file.copy(from = HTTR_OAUTH, to = ".httr-oauth", overwrite = TRUE)
-}
+suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 ```
 
 ```{r pre-clean, include = FALSE}

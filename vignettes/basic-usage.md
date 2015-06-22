@@ -16,11 +16,13 @@ This vignette shows the basic functionality of `googlesheets`.
 
 In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `googlesheets` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
 
-The `gs_auth()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will automatically be stored in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
+The `gs_auth()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will be cached in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
 
-If you want to switch to a different Google account, run `gs_auth(new_user = TRUE)`, as this will delete the previously stored token and get a new one for the new account.
+If you want to switch to a different Google account, run `gs_auth(new_user = TRUE)`, as this will delete the previously cached token and get a new one for the new account.
 
-*In a hidden chunk, we are logging into Google as a user associated with this package, so we can work with some Google spreadsheets later in this vignette.*
+For finer control, read the documentation on `gs_auth()`. The user can provide the token directly, provide their own application Client ID and secret, and prevent the caching of credentials.
+
+*In a hidden chunk, we are using a previously stored token to authenticate, so we can work with some Google spreadsheets later in this vignette.*
 
 
 
@@ -48,19 +50,19 @@ my_sheets
 ```
 
 ```
-## Source: local data frame [40 x 10]
+## Source: local data frame [39 x 10]
 ## 
 ##                 sheet_title        author perm version             updated
-## 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-05-30 19:16:25
-## 2               TAGS v6.0ns     m.hawksey    r     new 2015-05-30 10:46:47
-## 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-05-30 16:44:08
-## 4              #rhizo15 #tw     m.hawksey    r     new 2015-05-30 07:53:02
-## 5  Ari's Anchor Text Scrap…      anahmani    r     new 2015-05-29 07:18:48
-## 6  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-05-28 17:43:29
-## 7      test-gs-cars-private      gspreadr   rw     new 2015-05-27 17:48:34
-## 8     All R Phylo Functions  omeara.brian    r     new 2015-05-20 18:34:43
-## 9  test-gs-public-testing-…  rpackagetest    r     new 2015-05-20 01:32:27
-## 10                 ari copy      gspreadr   rw     new 2015-05-19 23:00:13
+## 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-22 01:06:25
+## 2               gas_mileage      woo.kara    r     new 2015-06-22 00:37:26
+## 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
+## 4               TAGS v6.0ns     m.hawksey    r     new 2015-06-08 17:55:05
+## 5  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
+## 6          Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44
+## 7              #rhizo15 #tw     m.hawksey    r     new 2015-06-01 15:41:47
+## 8  Ari's Anchor Text Scrap…      anahmani    r     new 2015-05-29 07:18:48
+## 9  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-05-28 17:43:29
+## 10     test-gs-cars-private      gspreadr   rw     new 2015-05-27 17:48:34
 ## ..                      ...           ...  ...     ...                 ...
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
@@ -89,7 +91,8 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-30 19:22:45 GMT
+##                  Spreadsheet author: gspreadr
+##   Date of googlesheets registration: 2015-06-22 01:14:39 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -140,7 +143,8 @@ ss2
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-30 19:22:46 GMT
+##                  Spreadsheet author: gspreadr
+##   Date of googlesheets registration: 2015-06-22 01:14:40 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -176,7 +180,8 @@ gap
 
 ```
 ##                   Spreadsheet title: Gapminder
-##   Date of googlesheets registration: 2015-05-30 19:22:45 GMT
+##                  Spreadsheet author: gspreadr
+##   Date of googlesheets registration: 2015-06-22 01:14:39 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -385,7 +390,7 @@ gs_ls("hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-05-30 19:22:48
+## 1 hi I am new here gspreadr   rw     new 2015-06-22 01:14:42
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -444,8 +449,9 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-30 19:23:00 GMT
-##     Date of last spreadsheet update: 2015-05-30 19:22:56 GMT
+##                  Spreadsheet author: gspreadr
+##   Date of googlesheets registration: 2015-06-22 01:14:51 GMT
+##     Date of last spreadsheet update: 2015-06-22 01:14:49 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -454,7 +460,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1fnJfX4NlhZOmSFkDe9WyuAmfjjcsqrSRcR560QI_0Cc
+## Key: 1fTLM2IxtMDR54q-bjRAL1adCA1apGqRjp3HFKLV1kOA
 ```
 
 ```r
@@ -472,8 +478,9 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-30 19:23:01 GMT
-##     Date of last spreadsheet update: 2015-05-30 19:23:00 GMT
+##                  Spreadsheet author: gspreadr
+##   Date of googlesheets registration: 2015-06-22 01:14:53 GMT
+##     Date of last spreadsheet update: 2015-06-22 01:14:52 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -483,7 +490,7 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1fnJfX4NlhZOmSFkDe9WyuAmfjjcsqrSRcR560QI_0Cc
+## Key: 1fTLM2IxtMDR54q-bjRAL1adCA1apGqRjp3HFKLV1kOA
 ```
 
 ```r
@@ -501,8 +508,9 @@ x
 
 ```
 ##                   Spreadsheet title: hi I am new here
-##   Date of googlesheets registration: 2015-05-30 19:23:02 GMT
-##     Date of last spreadsheet update: 2015-05-30 19:23:01 GMT
+##                  Spreadsheet author: gspreadr
+##   Date of googlesheets registration: 2015-06-22 01:14:54 GMT
+##     Date of last spreadsheet update: 2015-06-22 01:14:53 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -511,7 +519,7 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1fnJfX4NlhZOmSFkDe9WyuAmfjjcsqrSRcR560QI_0Cc
+## Key: 1fTLM2IxtMDR54q-bjRAL1adCA1apGqRjp3HFKLV1kOA
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
