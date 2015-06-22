@@ -24,3 +24,10 @@
 ## Check if the old test sheet is still old before working with it.
 ## See helper03_check-if-old-sheet-still-old.R.
 ## 2015-06-15 God willing, old sheets will go away completely soon.
+
+## Don't run anything related to tests on CRAN. Simply putting skip_on_cran()
+## inside certain tests is not enough. We have code in test_xxx.R files, outside
+## of the tests, that should not run on CRAN. In the end I've shut down
+## everything related to testing when the NOT_CRAN env var is FALSE. devtools
+## will set this, so if testing or checking through other means, this might need
+## to be set manually.

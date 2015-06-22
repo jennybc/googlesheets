@@ -2,10 +2,8 @@
 ^\.Rproj\.user$
 ^\.httr-oauth$
 ^\.httr-oauth-SUSPENDED$
-^vignettes/\.httr-oauth$
 ^tests/testthat/\.httr-oauth$
 ^tests/testthat/\.httr-oauth-SUSPENDED$
-vignettes/basic-usage.Rmd
 ^\.travis\.yml$
 ^internal-projects$
 ^jenny-scratch$
@@ -15,3 +13,4 @@ tests/testthat/token_file.rds.enc
 man-roxygen
 ^inst/shiny-examples/craigslist-lost-and-found/\.httr-oauth$
 rsconnect
+^cran-comments.md$
