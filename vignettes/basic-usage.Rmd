@@ -34,7 +34,10 @@ For finer control, read the documentation on `gs_auth()`. The user can provide t
 *In a hidden chunk, we are using a previously stored token to authenticate, so we can work with some Google spreadsheets later in this vignette.*
 
 ```{r auth, include = FALSE}
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+## I grab the token from the testing directory because that's where it is to be
+## found on Travis
+token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
+suppressMessages(gs_auth(token = token_path, verbose = FALSE))
 ```
 
 ```{r pre-clean, include = FALSE}

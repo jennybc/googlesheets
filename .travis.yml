@@ -1,29 +1,20 @@
-language: c
+language: r
 warnings_are_errors: true
-before_install:
-- openssl aes-256-cbc -K $encrypted_14663dddc4d3_key -iv $encrypted_14663dddc4d3_iv
-  -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
-- curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
-- chmod 755 ./travis-tool.sh
-- ./travis-tool.sh bootstrap
-install:
-- ./travis-tool.sh r_binary_install dplyr
-- ./travis-tool.sh r_binary_install XML
-- ./travis-tool.sh r_binary_install reshape2
-- ./travis-tool.sh r_binary_install stringi
-- ./travis-tool.sh r_binary_install tidyr
-- ./travis-tool.sh r_binary_install ggplot2
-- ./travis-tool.sh install_deps
+sudo: required
 env:
-- NOT_CRAN=true
-script: ./travis-tool.sh run_tests
-after_script:
-- ./travis-tool.sh dump_sysinfo
-after_failure:
-- ./travis-tool.sh dump_logs
-notifications:
-  email:
-    on_success: change
-    on_failure: change
+ global:
+  - CRAN: http://cran.rstudio.com
+  - NOT_CRAN: true
+before_install: openssl aes-256-cbc -K $encrypted_14663dddc4d3_key -iv $encrypted_14663dddc4d3_iv -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
+r_binary_packages:
+  - dplyr
+  - XML
+  - reshape2
+  - stringi
+  - tidyr
+  - ggplot2
+  - testthat
+r_packages:
+  - rmarkdown
 after_success: git log -n 1 --format=%B | grep -iq "covr"; if [ $? -eq 0 ]; then echo
   "Checking test coverage with covr"; Rscript -e 'library(covr);coveralls()'; fi
