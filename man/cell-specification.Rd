@@ -38,7 +38,6 @@ The \code{\link[=cellranger]{cellranger}} package has full
     \item \code{\link[cellranger]{cell_cols}}
     \item \code{\link[cellranger]{anchored}}
   }
-  See a full list of functions in the \link[cellranger:00Index]{cellranger
-  index}.
+  See a full list of functions in the \code{\link{cellranger}} index.
 }
 
