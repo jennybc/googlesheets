@@ -39,12 +39,6 @@ test_that("We throw error for bad worksheet request", {
 
 })
 
-test_that("We can get list of worksheets in a spreadsheet", {
-  ws_listing <- ss %>% gs_ws_ls()
-  expect_true(all(c('Asia', 'Africa', 'Americas', 'Europe', 'Oceania') %in%
-                    ws_listing))
-})
-
 test_that("We can a extract a key from a URL", {
 
   # new style URL
@@ -66,5 +60,21 @@ test_that("We can a extract a key from an old URL", {
 
   # old style URL
   expect_equal(extract_key_from_url(old_url), old_alt_key)
+
+})
+
+test_that("We can form URLs", {
+
+  expect_identical(construct_url_from_key(pts_key), pts_url)
+  expect_identical(construct_ws_feed_from_key(pts_key, visibility = "public"),
+                   pts_ws_feed)
+
+  # vectorized
+  expect_identical(construct_url_from_key(c(pts_key, GAP_KEY)),
+                   c(pts_url, GAP_URL))
+  expect_equal(construct_ws_feed_from_key(c(pts_key, GAP_KEY),
+                                          visibility = "public"),
+               c(pts_ws_feed, GAP_WS_FEED))
+
 
 })

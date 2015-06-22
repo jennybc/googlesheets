@@ -53,10 +53,10 @@ my_sheets
 ## Source: local data frame [39 x 10]
 ## 
 ##                 sheet_title        author perm version             updated
-## 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-22 01:06:25
-## 2               gas_mileage      woo.kara    r     new 2015-06-22 00:37:26
-## 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
-## 4               TAGS v6.0ns     m.hawksey    r     new 2015-06-08 17:55:05
+## 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-22 23:12:25
+## 2               TAGS v6.0ns     m.hawksey    r     new 2015-06-22 19:17:33
+## 3               gas_mileage      woo.kara    r     new 2015-06-22 00:37:26
+## 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
 ## 5  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
 ## 6          Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44
 ## 7              #rhizo15 #tw     m.hawksey    r     new 2015-06-01 15:41:47
@@ -92,7 +92,7 @@ gap
 ```
 ##                   Spreadsheet title: Gapminder
 ##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-22 01:14:39 GMT
+##   Date of googlesheets registration: 2015-06-22 23:14:38 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -107,6 +107,7 @@ gap
 ## Oceania: 25 x 6
 ## 
 ## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+## Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
 ```
 
 Besides using the spreadsheet title, you can also specify a spreadsheet in three other ways:
@@ -144,7 +145,7 @@ ss2
 ```
 ##                   Spreadsheet title: Gapminder
 ##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-22 01:14:40 GMT
+##   Date of googlesheets registration: 2015-06-22 23:14:39 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -159,6 +160,7 @@ ss2
 ## Oceania: 25 x 6
 ## 
 ## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+## Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
 ```
 
 # Consuming data from a worksheet
@@ -181,7 +183,7 @@ gap
 ```
 ##                   Spreadsheet title: Gapminder
 ##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-22 01:14:39 GMT
+##   Date of googlesheets registration: 2015-06-22 23:14:38 GMT
 ##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 ##                          visibility: private
 ##                         permissions: rw
@@ -196,6 +198,7 @@ gap
 ## Oceania: 25 x 6
 ## 
 ## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+## Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
 ```
 
 ```r
@@ -390,7 +393,7 @@ gs_ls("hi I am new here")
 ## Source: local data frame [1 x 10]
 ## 
 ##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-06-22 01:14:42
+## 1 hi I am new here gspreadr   rw     new 2015-06-22 23:14:40
 ## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 ##   (chr), alt_key (chr)
 ```
@@ -450,8 +453,8 @@ x
 ```
 ##                   Spreadsheet title: hi I am new here
 ##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-22 01:14:51 GMT
-##     Date of last spreadsheet update: 2015-06-22 01:14:49 GMT
+##   Date of googlesheets registration: 2015-06-22 23:14:47 GMT
+##     Date of last spreadsheet update: 2015-06-22 23:14:45 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -460,7 +463,8 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1fTLM2IxtMDR54q-bjRAL1adCA1apGqRjp3HFKLV1kOA
+## Key: 19NX3HML2XLfGjP-ppLHgUsy9XugUMP-nA15IOH0dU3Y
+## Browser URL: https://docs.google.com/spreadsheets/d/19NX3HML2XLfGjP-ppLHgUsy9XugUMP-nA15IOH0dU3Y/
 ```
 
 ```r
@@ -479,8 +483,8 @@ x
 ```
 ##                   Spreadsheet title: hi I am new here
 ##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-22 01:14:53 GMT
-##     Date of last spreadsheet update: 2015-06-22 01:14:52 GMT
+##   Date of googlesheets registration: 2015-06-22 23:14:48 GMT
+##     Date of last spreadsheet update: 2015-06-22 23:14:47 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -490,7 +494,8 @@ x
 ## Sheet1: 1000 x 26
 ## foo: 10 x 10
 ## 
-## Key: 1fTLM2IxtMDR54q-bjRAL1adCA1apGqRjp3HFKLV1kOA
+## Key: 19NX3HML2XLfGjP-ppLHgUsy9XugUMP-nA15IOH0dU3Y
+## Browser URL: https://docs.google.com/spreadsheets/d/19NX3HML2XLfGjP-ppLHgUsy9XugUMP-nA15IOH0dU3Y/
 ```
 
 ```r
@@ -509,8 +514,8 @@ x
 ```
 ##                   Spreadsheet title: hi I am new here
 ##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-22 01:14:54 GMT
-##     Date of last spreadsheet update: 2015-06-22 01:14:53 GMT
+##   Date of googlesheets registration: 2015-06-22 23:14:49 GMT
+##     Date of last spreadsheet update: 2015-06-22 23:14:48 GMT
 ##                          visibility: private
 ##                         permissions: rw
 ##                             version: new
@@ -519,7 +524,8 @@ x
 ## (Title): (Nominal worksheet extent as rows x columns)
 ## Sheet1: 1000 x 26
 ## 
-## Key: 1fTLM2IxtMDR54q-bjRAL1adCA1apGqRjp3HFKLV1kOA
+## Key: 19NX3HML2XLfGjP-ppLHgUsy9XugUMP-nA15IOH0dU3Y
+## Browser URL: https://docs.google.com/spreadsheets/d/19NX3HML2XLfGjP-ppLHgUsy9XugUMP-nA15IOH0dU3Y/
 ```
 
 To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  

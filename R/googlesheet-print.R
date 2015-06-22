@@ -40,5 +40,5 @@ print.googlesheet <- function(x, ...) {
   cat("\n")
   sprintf("Key: %s\n", x$sheet_key) %>% cat()
   if(!is.na(x$alt_key)) sprintf("Alternate key: %s\n", x$alt_key) %>% cat()
-  #sprintf("Worksheets feed: %s\n", x$ws_feed) %>% cat
+  sprintf("Browser URL: %s\n", x$browser_url) %>% cat()
 }

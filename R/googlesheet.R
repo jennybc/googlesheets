@@ -11,6 +11,7 @@ googlesheet <- function() {
                  sheet_title = character(),
                  n_ws = integer(),
                  ws_feed = character(),
+                 browser_url = character(),
                  updated = character() %>% as.POSIXct(),
                  reg_date = character() %>% as.POSIXct(),
                  visibility = character(),
@@ -53,6 +54,7 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL, verbose = TRUE, ...) {
     as.integer()
 
   ss$ws_feed <- req$url          # same as the "self" link below  ... pick one?
+  ss$browser_url <- construct_url_from_key(ss$sheet_key)
 
   ss$updated <- req$headers$`last-modified` %>% httr::parse_http_date()
   ss$reg_date <- req$headers$date %>% httr::parse_http_date()
