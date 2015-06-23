@@ -127,5 +127,35 @@ test_that("We can trim worksheet extent to fit uploaded data", {
 
 })
 
+test_that("We can add a row", {
+
+  ws <- "shipwrecks"
+  ss <- ss %>% gs_add_row(ws = ws, input = c("Dona Paz", "1987-12-20"))
+  expect_is(ss, "googlesheet")
+  expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
+               dplyr::data_frame(id = "Dona Paz", wreckdate = "1987-12-20"))
+
+})
+
+test_that("Row input is given the proper length", {
+
+  ws <- "shipwrecks"
+  expect_message(ss <- ss %>% gs_add_row(ws = ws, input = "Vasa"),
+                 "too short")
+  expect_is(ss, "googlesheet")
+  expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
+               dplyr::data_frame(id = "Vasa", wreckdate = NA_character_))
+
+  expect_message(ss <- ss %>%
+                   gs_add_row(ws = ws,
+                              input = c("USS Arizona", "1941-12-07",
+                                        "Pearl Harbor")),
+                 "too long")
+  expect_is(ss, "googlesheet")
+  expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
+               dplyr::data_frame(id = "USS Arizona", wreckdate = "1941-12-07"))
+
+})
+
 gs_grepdel(TEST, verbose = FALSE)
 gs_auth_suspend(verbose = FALSE)

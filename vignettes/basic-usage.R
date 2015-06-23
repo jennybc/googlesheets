@@ -3,7 +3,10 @@ library(googlesheets)
 suppressMessages(library(dplyr))
 
 ## ----auth, include = FALSE-----------------------------------------------
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+## I grab the token from the testing directory because that's where it is to be
+## found on Travis
+token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
+suppressMessages(gs_auth(token = token_path, verbose = FALSE))
 
 ## ----pre-clean, include = FALSE------------------------------------------
 ## if a previous compilation of this document leaves anything behind, i.e. if it

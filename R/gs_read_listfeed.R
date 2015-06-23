@@ -46,7 +46,7 @@ gs_read_listfeed <- function(ss, ws = 1, verbose = TRUE) {
   ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
 
   var_names <- req$content %>%
-    xml2::xml_find_all("(//feed:entry)[1]", ns) %>%
+    xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
     xml2::xml_find_all(".//gsx:*", ns) %>%
     xml2::xml_name()
 
