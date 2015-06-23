@@ -71,4 +71,7 @@ gs_read_cellfeed(yo, ws = "col_names_FALSE") \%>\%
 gs_delete(yo)
 }
 }
+\seealso{
+\code{\link{gs_add_row}}
+}
 

@@ -30,6 +30,14 @@ method}, which "inserts the new row immediately after the last row that
 appears in the list feed, which is to say immediately before the first
 entirely blank row."
 }
+\details{
+At the moment, this function will only work in a sheet that has a proper
+header row of variable or column names and at least one pre-existing data
+row. If you get \code{Error : No matches}, that suggests the worksheet
+doesn't meet these minimum requirements. In the future, we will try harder to
+populate the sheet as necessary, e.g. create default variable names in a
+header row and be able to cope with \code{input} being the first row of data.
+}
 \examples{
 \dontrun{
 yo <- gs_copy(gs_gap(), to = "yo")
@@ -40,5 +48,8 @@ tail(gs_read(yo, ws = "Oceania"))
 
 gs_delete(yo)
 }
+}
+\seealso{
+\code{\link{gs_edit_cells}}
 }
 

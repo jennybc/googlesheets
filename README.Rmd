@@ -277,19 +277,40 @@ By default, there will be an empty worksheet called "Sheet1", but you can contro
 
 ### Edit cells
 
-You can modify the data in sheet cells via `gs_edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
+There are two ways to edit cells within an existing worksheet of an existing spreadsheet:
+
+  * `gs_edit_cells()` can write into an arbitrary cell rectangle
+  * `gs_add_row()` can add a new row to the bottom of an existing cell rectangle
+  
+If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
+
+We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
 
 ```{r edit-cells}
-foo <- foo %>% gs_edit_cells(input = head(iris), trim = TRUE)
+## foo <- gs_new("foo")
+## initialize the worksheets
+foo <- foo %>% gs_ws_new("edit_cells")
+foo <- foo %>% gs_ws_new("add_row")
+
+## add first six rows of iris data (and var names) into a blank sheet
+foo <- foo %>% gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
+
+## initialize sheet with column headers and one row of data
+## the list feed is picky about this
+foo <- foo %>% gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
+## add the next 5 rows of data
+for(i in 2:6) {
+  foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
+}
+
+## let's inspect out work
+foo %>% gs_read(ws = "edit_cells")
+foo %>% gs_read(ws = "add_row")
 ```
 
-Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by reading the data from `foo`.
+Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the worksheets named `edit_cells` and `add_row`.
 
 Note how we always store the returned value from `gs_edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
-
-```{r consume-edited-cells}
-foo %>% gs_read()
-```
 
 Read the function documentation for `gs_edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
 

@@ -26,6 +26,8 @@
 #'   correspond exactly to the cells being edited?
 #' @template verbose
 #'
+#' @seealso \code{\link{gs_add_row}}
+#'
 #' @examples
 #' \dontrun{
 #' yo <- gs_new("yo")

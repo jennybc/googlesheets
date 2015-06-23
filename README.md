@@ -79,10 +79,10 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 #> Source: local data frame [39 x 10]
 #> 
 #>                 sheet_title        author perm version             updated
-#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-20 23:31:25
-#> 2               gas_mileage      woo.kara    r     new 2015-06-20 01:31:26
-#> 3   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
-#> 4               TAGS v6.0ns     m.hawksey    r     new 2015-06-08 17:55:05
+#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-23 17:12:25
+#> 2               TAGS v6.0ns     m.hawksey    r     new 2015-06-22 19:17:33
+#> 3               gas_mileage      woo.kara    r     new 2015-06-22 00:37:26
+#> 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
 #> 5  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
 #> 6          Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44
 #> 7              #rhizo15 #tw     m.hawksey    r     new 2015-06-01 15:41:47
@@ -96,11 +96,11 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 my_sheets %>% glimpse()
 #> Observations: 39
 #> Variables:
-#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "gas_mileage", "E...
-#> $ author      (chr) "joannazhaoo", "woo.kara", "m.hawksey", "m.hawksey...
+#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "TAGS v6.0ns", "g...
+#> $ author      (chr) "joannazhaoo", "m.hawksey", "woo.kara", "m.hawksey...
 #> $ perm        (chr) "r", "r", "r", "r", "r", "r", "r", "r", "rw", "rw"...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2015-06-20 23:31:25, 2015-06-20 01:31:26, 2015-06...
+#> $ updated     (time) 2015-06-23 17:12:25, 2015-06-22 19:17:33, 2015-06...
 #> $ sheet_key   (chr) "1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1DoMXh2m3F...
@@ -133,7 +133,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-20 23:34:46 GMT
+#>   Date of googlesheets registration: 2015-06-23 17:29:50 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -148,6 +148,7 @@ gap
 #> Oceania: 25 x 6
 #> 
 #> Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
 
 # Need to access a sheet you do not own?
 # Access it by key if you know it!
@@ -390,9 +391,9 @@ readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
 readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.057            0.360            1.421
-#> sys.self         0.002            0.011            0.044
-#> elapsed          0.384            1.004            3.022
+#> user.self        0.056            0.371            1.441
+#> sys.self         0.002            0.014            0.052
+#> elapsed          0.384            1.045            6.595
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -600,8 +601,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-20 23:35:06 GMT
-#>     Date of last spreadsheet update: 2015-06-20 23:35:05 GMT
+#>   Date of googlesheets registration: 2015-06-23 17:30:13 GMT
+#>     Date of last spreadsheet update: 2015-06-23 17:30:12 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -610,33 +611,77 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1YjkRLrB_ECIbJsHAurcmqgzIDLs1ZDUgnBieKoCLlVo
+#> Key: 1cxfvkiX_KucOPYMmw1G1830ykjoZcQsRak96m1jz0NA
+#> Browser URL: https://docs.google.com/spreadsheets/d/1cxfvkiX_KucOPYMmw1G1830ykjoZcQsRak96m1jz0NA/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
 
 ### Edit cells
 
-You can modify the data in sheet cells via `gs_edit_cells()`. We'll work on the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
+There are two ways to edit cells within an existing worksheet of an existing spreadsheet:
+
+-   `gs_edit_cells()` can write into an arbitrary cell rectangle
+-   `gs_add_row()` can add a new row to the bottom of an existing cell rectangle
+
+If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
+
+We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
 
 ``` r
-foo <- foo %>% gs_edit_cells(input = head(iris), trim = TRUE)
+## foo <- gs_new("foo")
+## initialize the worksheets
+foo <- foo %>% gs_ws_new("edit_cells")
+#> Worksheet "edit_cells" added to sheet "foo".
+#> Worksheet dimensions: 1000 x 26.
+foo <- foo %>% gs_ws_new("add_row")
+#> Worksheet "add_row" added to sheet "foo".
+#> Worksheet dimensions: 1000 x 26.
+
+## add first six rows of iris data (and var names) into a blank sheet
+foo <- foo %>% gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
 #> Range affected by the update: "A1:E7"
-#> Worksheet "Sheet1" successfully updated with 35 new value(s).
-#> Accessing worksheet titled "Sheet1"
+#> Worksheet "edit_cells" successfully updated with 35 new value(s).
+#> Accessing worksheet titled "edit_cells"
 #> Authentication will be used.
 #> Sheet successfully identifed: "foo"
-#> Accessing worksheet titled "Sheet1"
-#> Worksheet "Sheet1" dimensions changed to 7 x 5.
-```
+#> Accessing worksheet titled "edit_cells"
+#> Worksheet "edit_cells" dimensions changed to 7 x 5.
 
-Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the first (and only) worksheet. We'll also take a look at it here, by reading the data from `foo`.
+## initialize sheet with column headers and one row of data
+## the list feed is picky about this
+foo <- foo %>% gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
+#> Range affected by the update: "A1:E2"
+#> Worksheet "add_row" successfully updated with 10 new value(s).
+#> Accessing worksheet titled "add_row"
+#> Authentication will be used.
+#> Sheet successfully identifed: "foo"
+#> Accessing worksheet titled "add_row"
+#> Worksheet "add_row" dimensions changed to 2 x 5.
+## add the next 5 rows of data
+for(i in 2:6) {
+  foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
+}
+#> Row successfully appended.
+#> Row successfully appended.
+#> Row successfully appended.
+#> Row successfully appended.
+#> Row successfully appended.
 
-Note how we always store the returned value from `gs_edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
-
-``` r
-foo %>% gs_read()
-#> Accessing worksheet titled "Sheet1"
+## let's inspect out work
+foo %>% gs_read(ws = "edit_cells")
+#> Accessing worksheet titled "edit_cells"
+#> Source: local data frame [6 x 5]
+#> 
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> 3          4.7         3.2          1.3         0.2  setosa
+#> 4          4.6         3.1          1.5         0.2  setosa
+#> 5          5.0         3.6          1.4         0.2  setosa
+#> 6          5.4         3.9          1.7         0.4  setosa
+foo %>% gs_read(ws = "add_row")
+#> Accessing worksheet titled "add_row"
 #> Source: local data frame [6 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -647,6 +692,10 @@ foo %>% gs_read()
 #> 5          5.0         3.6          1.4         0.2  setosa
 #> 6          5.4         3.9          1.7         0.4  setosa
 ```
+
+Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the worksheets named `edit_cells` and `add_row`.
+
+Note how we always store the returned value from `gs_edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
 Read the function documentation for `gs_edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
 
@@ -674,8 +723,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-20 23:35:19 GMT
-#>     Date of last spreadsheet update: 2015-06-20 23:35:18 GMT
+#>   Date of googlesheets registration: 2015-06-23 17:30:42 GMT
+#>     Date of last spreadsheet update: 2015-06-23 17:30:40 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -684,7 +733,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 6 x 5
 #> 
-#> Key: 1fp6LF7F1hb5q-ZVdmqD_BipV4dzrRBAWvCvelKf0D5w
+#> Key: 1Dvq1k84dBGundwPCp-KVtWWceSycr7zByK38FbvU3EI
+#> Browser URL: https://docs.google.com/spreadsheets/d/1Dvq1k84dBGundwPCp-KVtWWceSycr7zByK38FbvU3EI/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -707,8 +757,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-20 23:35:24 GMT
-#>     Date of last spreadsheet update: 2015-06-20 23:35:22 GMT
+#>   Date of googlesheets registration: 2015-06-23 17:30:46 GMT
+#>     Date of last spreadsheet update: 2015-06-23 17:30:45 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -721,7 +771,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1RuOmo-PsXeXVjjZIW5u6nBt0Dq9xhiaAB_364rA2Wvs
+#> Key: 1It7ls_GOaBnd_rJSCcJZRMEAnTzLcLKiLGote_0n4H0
+#> Browser URL: https://docs.google.com/spreadsheets/d/1It7ls_GOaBnd_rJSCcJZRMEAnTzLcLKiLGote_0n4H0/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled "Asia"
 #> Source: local data frame [5 x 6]
@@ -806,9 +857,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-06-20 23:34:44 GMT
+#>                  date: 2015-06-23 17:29:48 GMT
 #>          access token: valid
-#>  peek at access token: ya29....MqV7Q
+#>  peek at access token: ya29....Wstew
 #> peek at refresh token: 1/egc...4epw8
 user_session_info
 #> $displayName
@@ -818,13 +869,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2015-06-20 23:34:44 GMT"
+#> [1] "2015-06-23 17:29:48 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....MqV7Q"
+#> [1] "ya29....Wstew"
 #> 
 #> $peek_ref
 #> [1] "1/egc...4epw8"
