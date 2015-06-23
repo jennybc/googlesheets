@@ -4,7 +4,11 @@
 #' based on the
 #' \href{https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds}{list
 #' feed}, which has a strong assumption that the data occupies a neat rectangle
-#' in the upper left corner of the sheet. This function specifically uses \href{https://developers.google.com/google-apps/spreadsheets/#adding_a_list_row}{this method}, which "inserts the new row immediately after the last row that appears in the list feed, which is to say immediately before the first entirely blank row."
+#' in the upper left corner of the sheet. This function specifically uses
+#' \href{https://developers.google.com/google-apps/spreadsheets/#adding_a_list_row}{this
+#' method}, which "inserts the new row immediately after the last row that
+#' appears in the list feed, which is to say immediately before the first
+#' entirely blank row."
 #'
 #' @template ss
 #' @template ws
