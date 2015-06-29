@@ -6,8 +6,8 @@ library(stringr)
 
 shinyServer(function(input, output, session) {
 
-  craig_ss <- gs_url("https://docs.google.com/spreadsheets/d/1qtvN-PKWvIbmTJ-RSmga1m2iGn7Mze4w_yRg9ZJx2TU/pubhtml",
-                     lookup = FALSE)
+  craig_ss <-
+    gs_key("1qtvN-PKWvIbmTJ-RSmga1m2iGn7Mze4w_yRg9ZJx2TU", lookup = FALSE)
 
   ## All the data
   craig_all <- gs_read(craig_ss) %>%
