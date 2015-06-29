@@ -9,9 +9,9 @@ googleform_data_url <- "https://docs.google.com/spreadsheets/d/1K5g_3bxsE33T4Zuw
 ## ======================
 
 shinyServer(function(input, output, session) {
-  
+
   ss <- gs_url(googleform_data_url, lookup = FALSE, visibility = "public")
-  
+
   output$googleForm <- renderUI({
     tags$iframe(id = "googleform",
                src = googleform_embed_link,
@@ -21,15 +21,18 @@ shinyServer(function(input, output, session) {
                marginheight=0)
   })
 
-  
-  output$googleFormData <- DT::renderDataTable({
+
+  output$googleFormData <- renderDataTable({
     input$refresh
-    ss_dat <- get_via_csv(ss) %>% 
-      dplyr::select(Timestamp, Name, Age = How.old.are.you.)
-    
+    ss_dat <- gs_read(ss) %>%
+      mutate(Timestamp = Timestamp %>%
+               as.POSIXct(format = "%m/%d/%Y %H:%M:%S", tz = "PST8PDT")) %>%
+      select(Timestamp, Name, Age = How.old.are.you.) %>%
+      arrange(desc(Timestamp))
+
     DT::datatable(ss_dat)
   })
-  
 
-  
+
+
 })
