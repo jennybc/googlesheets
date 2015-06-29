@@ -5,7 +5,7 @@ output: html_document
 
 ## Description
 
-This app is currently deployed [here](https://jennybc.shinyapps.io/craigslist-lost-and-found).
+This app is currently deployed [here](https://jennybc.shinyapps.io/03_craigslist-lost-and-found).
 
 **Craigslist Lost and Found** is a simple app that reads from a Google Sheet that is "published to the web" and can be found [here](https://docs.google.com/spreadsheets/d/1qtvN-PKWvIbmTJ-RSmga1m2iGn7Mze4w_yRg9ZJx2TU/pubhtml). This Google Sheet uses the built-in function [`IMPORTXML`](https://support.google.com/docs/answer/3093342?hl=en) to scrape [Craigslist's Lost and Found](http://vancouver.craigslist.ca/search/laf) listing. You can view the posts listed for any one day and also see the overall number and type of posts.
 
