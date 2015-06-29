@@ -16,17 +16,19 @@ gs_webapp_get_token(auth_code,
 
 \item{client_secret}{client secret obtained from Google Developers Console}
 
-\item{redirect_uri}{redirect_uri where the response is sent, should be one of
-the redirect_uri values listed for the project in Google's Developer
-Console, must match exactly as listed including any trailing '/'}
+\item{redirect_uri}{where the response is sent, should be one of the
+redirect_uri values listed for the project in Google's Developer Console,
+must match exactly as listed including any trailing '/'}
 }
 \description{
-Use the authorization code in the return URL to exchange for an access_token
-by making an HTTPS POST.
+Exchange the authorization code in the URL returned by
+\code{\link{gs_webapp_auth_url}} to get an access_token. This function plays
+a role similar to \code{\link{gs_auth}}, but in a Shiny-based workflow: it
+stores a token object in an internal environment, where it can be retrieved
+for making calls to the Google Sheets and Drive APIs. Read the documentation
+for \code{\link{gs_webapp_auth_url}} for more details on OAuth2 within Shiny.
 }
-\details{
-This function behaves similarly to \code{\link{gs_auth}}: it stores a token
-object in an internal environment, where it can be retrieved for making calls
-to the Google Sheets and Drive APIs.
+\seealso{
+\code{\link{gs_webapp_auth_url}}
 }
 

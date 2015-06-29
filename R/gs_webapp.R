@@ -1,24 +1,24 @@
-#' Build the Google URL to authenticate \code{googlesheets} in Web Server
-#' Applications
+#' Build URL for authentication
 #'
-#' The default authorization sequence in \code{googlesheets} is appropriate for
-#' a user working directly with R on a local computer, where the default
-#' handshakes between the local computer and Google work just fine. But what if
-#' the process using \code{googlesheets} is running, e.g., within Shiny? We have
-#' built an alternative authorization sequence for these situations and the
-#' first step is to form the Google URL that directs the user to authenticate
-#' him or herself with Google. Once a user authenticates, the response, in the
-#' form of an authorization code, is sent to the \code{redirect_uri} (see below)
-#' which \code{\link{gs_webapp_get_token}} uses to exchange for an access token.
-#' This token is then stored in the usual manner for this package and used for
-#' subsequent API requests.
+#' Build the Google URL that \code{googlesheets} needs to direct users to in
+#' order to authenticate in a Web Server Application. This function is designed
+#' for use in Shiny apps. In contrast, the default authorization sequence in
+#' \code{googlesheets} is appropriate for a user working directly with R on a
+#' local computer, where the default handshakes between the local computer and
+#' Google work just fine. The first step in the Shiny-based workflow is to form
+#' the Google URL where the user can authenticate him or herself with Google.
+#' After success, the response, in the form of an authorization code, is sent to
+#' the \code{redirect_uri} (see below) which \code{\link{gs_webapp_get_token}}
+#' uses to exchange for an access token. This token is then stored in the usual
+#' manner for this package and used for subsequent API requests.
 #'
 #' That was the good news. The bad news is you'll need to use the
 #' \href{https://console.developers.google.com}{Google Developers Console} to
 #' \strong{obtain your own client ID and secret and declare the
 #' \code{redirect_uri} specific to your project}. Inform \code{googlesheets} of
-#' this information by defining these options, for example, by putting lines
-#' like this into a Project-specific \code{.Rprofile} file:
+#' this information by providing as function arguments or by defining these
+#' options. For example, you can put lines like this into a Project-specific
+#' \code{.Rprofile} file:
 #'
 #' options("googlesheets.webapp.client_id" = MY_CLIENT_ID)
 #' options("googlesheets.webapp.client_secret" = MY_CLIENT_SECRET)
@@ -40,10 +40,10 @@
 #'   sequence. If set to "force" then user will have to grant consent everytime
 #'   even if they have previously done so.
 #'
-#' @seealso gs_webapp_get_token
+#' @seealso \code{\link{gs_webapp_get_token}}
 #'
 #' @export
-gs_get_auth_url <-
+gs_webapp_auth_url <-
   function(client_id = getOption("googlesheets.webapp.client_id"),
            redirect_uri = getOption("googlesheets.webapp.redirect_uri"),
            access_type = "online",
@@ -68,19 +68,18 @@ gs_get_auth_url <-
 
 #' Exchange authorization code for an access token
 #'
-#' Use the authorization code in the return URL to exchange for an access_token
-#' by making an HTTPS POST.
+#' Exchange the authorization code in the URL returned by
+#' \code{\link{gs_webapp_auth_url}} to get an access_token. This function plays
+#' a role similar to \code{\link{gs_auth}}, but in a Shiny-based workflow: it
+#' stores a token object in an internal environment, where it can be retrieved
+#' for making calls to the Google Sheets and Drive APIs. Read the documentation
+#' for \code{\link{gs_webapp_auth_url}} for more details on OAuth2 within Shiny.
 #'
-#' This function behaves similarly to \code{\link{gs_auth}}: it stores a token
-#' object in an internal environment, where it can be retrieved for making calls
-#' to the Google Sheets and Drive APIs.
-#'
-#' @param client_id client id obtained from Google Developers Console
+#' @inheritParams gs_webapp_auth_url
 #' @param client_secret client secret obtained from Google Developers Console
-#' @param redirect_uri redirect_uri where the response is sent, should be one of
-#'   the redirect_uri values listed for the project in Google's Developer
-#'   Console, must match exactly as listed including any trailing '/'
 #' @param auth_code authorization code returned by Google that appears in URL
+#'
+#' @seealso \code{\link{gs_webapp_auth_url}}
 #'
 #' @export
 gs_webapp_get_token <-
@@ -102,8 +101,9 @@ gs_webapp_get_token <-
                              client_secret = client_secret,
                              redirect_uri = redirect_uri,
                              grant_type = "authorization_code"), verbose = TRUE)
-
-    # only access_token, access_type, expires_in is returned
+    stopifnot(identical(httr::headers(req)$`content-type`,
+                        "application/json; charset=utf-8"))
+    # content of req will contain access_token, token_type, expires_in
     token <- httr::content(req, type = "application/json")
 
     # Create a Token2.0 object consistent with the token obtained from gs_auth()
