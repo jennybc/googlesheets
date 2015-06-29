@@ -19,7 +19,7 @@ We've built a few simple apps to get you started in some important use cases:
 
 -   No authentication/authorization:
     -   [01\_read-public-sheet](01_read-public-sheet): simply read a public sheet. See it deployed [here](https://jennybc.shinyapps.io/01_read-public-sheet).
-    -   [02\_user-picks-worksheet](02-user-picks-worksheet): read a public sheet but allow the app user to specify which worksheet is being inspected. See it deployed [here](https://jennybc.shinyapps.io/02_user-picks-worksheet).
+    -   [02\_user-picks-worksheet](02_user-picks-worksheet): read a public sheet but allow the app user to specify which worksheet is being inspected. See it deployed [here](https://jennybc.shinyapps.io/02_user-picks-worksheet).
     -   [03\_craigslist-lost-and-found](03_craigslist-lost-and-found): reads from a public spreadsheet that utilizes the Google Sheet function `importxml` to read data from Vancouver's Craigslist's Lost and Found listings.
 -   Credentials are baked into the app:
     -   [10\_gs-forms](10_gs-forms): a Google Form is embedded in the app, allowing user to enter data with native Google Form/Sheets functionality. App also displays the underlying Sheet, allowing user to see the just-entered data.
