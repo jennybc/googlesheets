@@ -7,6 +7,9 @@ shinyUI(fluidPage(
   titlePanel("Embed a Google Form"),
     sidebarLayout(
       sidebarPanel(
+        h6(a("Click Here to See Code on Github",
+             href="https://github.com/jennybc/googlesheets/tree/master/inst/shiny-examples/04_embedded-google-form",
+             target="_blank")),
         htmlOutput("googleForm")
         ),
       mainPanel(

@@ -14,11 +14,11 @@ shinyServer(function(input, output, session) {
 
   output$googleForm <- renderUI({
     tags$iframe(id = "googleform",
-               src = googleform_embed_link,
-               width= 400,
-               height= 600,
-               frameborder=0,
-               marginheight=0)
+                src = googleform_embed_link,
+                width = 400,
+                height = 625,
+                frameborder = 0,
+                marginheight = 0)
   })
 
 

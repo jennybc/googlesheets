@@ -5,7 +5,7 @@ output: html_document
 
 ## Description
 
-This app is currently deployed [here](https://joannaz.shinyapps.io/gs-forms/).
+This app is currently deployed [here](https://jennybc.shinyapps.io/04_embedded-google-form).
 
 This Sheet is not world writable, but the app works without authentication since data input is handled via the embedded native Google Form. The accumulating data can also be displayed in the app without authentication since the Sheet is "published to the web".
 
@@ -24,9 +24,9 @@ You can wrap that with `HTML()` in `ui.R`, or reconstruct the HTML using Shiny's
 ```
 tags$iframe(id = "googleform",
             src = "https://docs.google.com/forms/d/SOME_LONG_KEY/viewform?embedded=true",
-            width= 400,
-            height= 600,
-            frameborder=0,
-            marginheight=0)
+            width = 400,
+            height = 600,
+            frameborder = 0,
+            marginheight = 0)
 ```
 **Note that when you run the app locally, you must use "Open in Browser" in order to see the embedded Google Form!**

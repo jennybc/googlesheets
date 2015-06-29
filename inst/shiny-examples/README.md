@@ -24,9 +24,8 @@ We've built a few simple apps to get you started in some important use cases:
     - [01_read-public-sheet](01_read-public-sheet): simply read a public sheet. See it deployed [here](https://jennybc.shinyapps.io/01_read-public-sheet).
     - [02_user-picks-worksheet](02_user-picks-worksheet): read a public sheet but allow the app user to specify which worksheet is being inspected. See it deployed [here](https://jennybc.shinyapps.io/02_user-picks-worksheet).
     - [03_craigslist-lost-and-found](03_craigslist-lost-and-found): reads from a public spreadsheet that utilizes the Google Sheet function `IMPORTXML` to read data from Vancouver's Craigslist's Lost and Found listings. See it deployed [here](https://jennybc.shinyapps.io/craigslist-lost-and-found).
-    - [10_gs-forms](10_gs-forms): a Google Form is embedded in the app, allowing user to enter data with native Google Form/Sheets functionality. App also displays the underlying Sheet, allowing user to see the just-entered data.
+    - [04_embedded-google-form](04_embedded-google-form): a Google Form is embedded in the app, allowing user to enter data with native Google Form/Sheets functionality. App also displays the underlying Sheet, allowing user to see the just-entered data. See it deployed [here](https://jennybc.shinyapps.io/04_embedded-google-form).
   * Credentials are baked into the app:
-    
     - [11_tweet-collector](11_tweet-collector): app presents a private (not published to the web!) Sheet to app user. App user is allowed to write into the Sheet through constrained input handled by the Shiny app. App user allowed to download the Sheet throught the app. Uses a third party magic Sheet template.
   * User provides Google credentials via the app:
     - [20_gs-explorer](20_gs-explorer): app requires the user to authenticate with Google and authorize the app to deal on their behalf. After authorization, the user is presented with a listing of their Sheets, the option to view details of each spreadsheet and inspect the worksheets contained in a spreadsheet.
