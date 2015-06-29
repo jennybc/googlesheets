@@ -2,19 +2,21 @@ language: r
 warnings_are_errors: true
 sudo: required
 env:
- global:
+  global:
   - CRAN: http://cran.rstudio.com
   - NOT_CRAN: true
-before_install: openssl aes-256-cbc -K $encrypted_14663dddc4d3_key -iv $encrypted_14663dddc4d3_iv -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
+before_install:
+- openssl aes-256-cbc -K $encrypted_84f43c85142c_key -iv $encrypted_84f43c85142c_iv
+  -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
 r_binary_packages:
-  - dplyr
-  - XML
-  - reshape2
-  - stringi
-  - tidyr
-  - ggplot2
-  - testthat
+- dplyr
+- XML
+- reshape2
+- stringi
+- tidyr
+- ggplot2
+- testthat
 r_packages:
-  - rmarkdown
+- rmarkdown
 after_success: git log -n 1 --format=%B | grep -iq "covr"; if [ $? -eq 0 ]; then echo
   "Checking test coverage with covr"; Rscript -e 'library(covr);coveralls()'; fi

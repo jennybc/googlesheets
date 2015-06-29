@@ -1,5 +1,5 @@
 ---
-title: "OAuth Token Encryption for testing"
+title: "OAuth Token Encryption for Travis"
 output: html_document
 ---
 
@@ -11,23 +11,29 @@ Following [noamross](https://discuss.ropensci.org/t/test-api-wrapping-r-packages
 # to access environment in which token is stored
 devtools::load_all()
 
-gs_auth()
+token <- gs_auth()
 
-saveRDS(.state$token, file = "tests/testthat/googlesheets_token.rds")
+saveRDS(token, file = "tests/testthat/googlesheets_token.rds")
 ```
 
 
-#### 2. In a helper file in `tests/testthat`, insert the code to read in the token.
-
+#### 2. Prior to tests that require authentication, make sure to read in the token.
 
 ```r
 gs_auth(token = "googlesheets_token.rds")
 ```
 
+or, more realistically,
 
-#### 3. In command line, encode the token file.
+```r
+suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+```
+
+#### 3. In the shell, encode the token file.
 
 `gem install travis`
+
+*Note: I had to do this as sudo.*
 
 Log into your Travis account using your Github username and password.
 
@@ -39,35 +45,35 @@ Encrypt token:
 
 `--add` automatically adds a decrypt command to your .travis.yml file
 
-   *Double check .travis.yml that the directories of `googlesheets_token.rds` and `googlesheets_token.rds.enc` are indeed `tests/testthat`.*
+   *Double check that the token and encrypted token live in `tests/testthat/` and that `.travis.yml` reflects the correct path.*
 
 #### 4. Ignore and Commit
 
-Put `tests/testthat/googlesheets_token.rds` in your `*.gitignore*`. 
+Put `tests/testthat/googlesheets_token.rds` in your `.gitignore`. 
 
-Put `tests/testthat/googlesheets_token.rds.enc` in your `*.Rbuildignore*`.
+Put `tests/testthat/googlesheets_token.rds.enc` in your `.Rbuildignore`.
 
 
-> Do not mix these up. You don't want your token file on GitHub, and you don't want the encoded version being distributed into everyone's libraries. If you put token_file.rds in your .Rbuildignore, it will not be copied over into the package.rcheck directory when Travis runs R CMD CHECK, and your tests will fail. Over and over. As you bang your desk trying to figure out what's wrong.
+> Do not mix these up. You don't want your token file on GitHub, and you don't want the encoded version being distributed into everyone's libraries. If you put `token_file.rds` in your .Rbuildignore, it will not be copied over into the package.rcheck directory when Travis runs `R CMD check`, and your tests will fail. Over and over. As you bang your desk trying to figure out what's wrong.
 
 
 Commit `tests/testthat/googlesheets_token.rds.enc` and your updated `.travis.yml` and push to Github.
 
-
-Sidenote
+Note
 ---
 
-A token saved via `saveRDS()` vs `httr` is slightly different. A token saved with `saveRDS()` has an underlying `.rds` extension and when read into R using `readRDS()` will be readily available to use as a `Token2.0` object. But a token saved by `httr` and read using `readRDS()` results in a list object and you have to use the long-alphanumeric-hash to access the token object within it.
+2015-06-29 The token we had been using finally fell off the end of the 25-token stack. The instructions above no longer worked for me when attempting to encrypt the new token file. I got this:
 
 ```
-# reading .httr-oauth cached by httr
+Jennifers-2015-MacBook-Pro:googlesheets jenny$ travis encrypt-file tests/testthat/googlesheets_token.rds 
+repository not known to https://api.travis-ci.com/: jennybc/gspreadr
+```
 
-token <- readRDS(".httr-oauth")
-
-$faa68f85c8290ff6d9f1ac0811d605e3
-<environment: 0x102f45030>
-attr(,"class")
-[1] "Token2.0" "Token"    "R6" 
+The old name of this repo was somehow blocking me. From [this issue thread](https://github.com/travis-ci/travis-ci/issues/3093) I learned to inspect and correct the Travis slug in `.git/config`.
 
 ```
-If you save a token using `saveRDS()` and name it `.httr-oauth`, `httr` wont be able to recognize this file as a cached token since the underlying extension is `.rds`. There might be some confusion down the road when the googlesheets functions that requires authentication (reading in `.httr-oauth`) wont work even though you see a `.httr-oauth` file in your working directory.
+[travis]
+	slug = jennybc/googlesheets
+```
+
+That allowed me to encrypt a new token file.
