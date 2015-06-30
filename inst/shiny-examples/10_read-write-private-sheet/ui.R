@@ -18,7 +18,7 @@ shinyUI(
         sliderInput("row", "Row", min = 1, max = n, value = 1, step = 1,
                     ticks = FALSE),
         selectInput("column", "Column",
-                    choices = setNames(seq_len(n), colnames(filler))),
+                    choices = stats::setNames(seq_len(n), colnames(filler))),
         selectInput("contents", "Cell contents",
                     choices = c("apple", "grape", "banana")),
         actionButton("submit", "Submit", class = "btn-primary"),

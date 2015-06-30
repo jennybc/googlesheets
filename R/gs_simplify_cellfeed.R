@@ -76,7 +76,7 @@ gs_simplify_cellfeed <- function(
                        R1C1 = x$cell_alt)
   }
   if(convert) {
-    y %>% type.convert(as.is = as.is)
+    y %>% utils::type.convert(as.is = as.is)
   } else {
     y
   }

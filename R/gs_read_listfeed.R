@@ -58,7 +58,8 @@ gs_read_listfeed <- function(ss, ws = 1, verbose = TRUE) {
                 dimnames = list(NULL, var_names)) %>%
     ## convert to integer, numeric, etc. but w/ stringsAsFactors = FALSE
     ## empty cells returned as empty string ""
-    plyr::alply(2, type.convert, na.strings = c("NA", ""), as.is = TRUE) %>%
+    plyr::alply(2, utils::type.convert,
+                na.strings = c("NA", ""), as.is = TRUE) %>%
     ## get rid of attributes that are non-standard for tbl_dfs or data.frames
     ## and that are an artefact of the above (specifically, I think, the use of
     ## alply?); if I don't do this, the output is fugly when you str() it

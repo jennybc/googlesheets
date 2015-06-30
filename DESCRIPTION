@@ -18,8 +18,10 @@ Imports:
     ggplot2,
     httr (>= 0.6.1),
     plyr,
+    stats,
     stringr,
     tidyr,
+    utils,
     XML,
     xml2
 Suggests:
