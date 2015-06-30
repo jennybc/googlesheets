@@ -1,13 +1,3 @@
--   Google Sheets R API
-    -   What the hell do I do with this?
-    -   Install googlesheets
-    -   Take a look at the vignette
-    -   Here are some draft slides
-    -   Load googlesheets
-    -   Function naming convention
-    -   Quick demo
-    -   Overview of functions
-
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets)
 
@@ -106,7 +96,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-30 16:20:10 GMT
+#>   Date of googlesheets registration: 2015-06-30 16:26:37 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw

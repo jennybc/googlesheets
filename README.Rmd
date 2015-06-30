@@ -3,7 +3,6 @@ output:
 #  html_document
   md_document:
     variant: markdown_github
-    toc: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -174,6 +173,7 @@ file.remove("iris-ish-stuff.csv")
 
 ```{r include = FALSE}
 gs_vecdel("iris")
+file.remove("iris-ish-stuff.csv")
 ```
 
 Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) shows a lot more usage.
