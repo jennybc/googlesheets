@@ -6,13 +6,17 @@ library(DT)
 
 ## ===================== CHANGE THIS DEPENDING ON WHERE YOU ARE DEPLOYING APP
 ##
-## For local testing, you can accept the default value for the
-## googlesheets.webapp.redirect_uri option, which is http://127.0.0.1:4642
-## In that case, run and inspect your app like so:
+## For local testing, you can accept the default values for the options related
+## to client ID, secret and the redirect URI.
+## For example, by default the googlesheets.webapp.redirect_uri option is
+## http://127.0.0.1:4642
+## This implies you'll need to run and inspect your app like so:
 ## runApp(port = 4642)
 ##
-## If the app is deployed elsewhere you will need to uncomment a line like one
-## of those below to correctly set the googlesheets.webapp.redirect_uri option:
+## If the app is deployed elsewhere, you will need to get your app its own
+## client ID and secret and set up the redirect URI. Read the documentation on
+## googlesheets::gs_webapp_auth_url for more details.
+## To declare the redirect URI, uncomment and modify one of these lines:
 # options("googlesheets.webapp.redirect_uri" = "http://daattali.com/shiny/gs-explorer/")
 # options("googlesheets.webapp.redirect_uri" = "https://jozhao.shinyapps.io/gs-explorer/")
 ## ======================
@@ -20,7 +24,7 @@ library(DT)
 shinyServer(function(input, output, session) {
 
   ## Make a button to link to Google auth screen
-  ## If auth_code is returned then dont show login button
+  ## If auth_code is returned then don't show login button
   output$loginButton <- renderUI({
     if(is.null(isolate(access_token()))) {
       actionButton("loginButton",

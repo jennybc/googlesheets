@@ -29,7 +29,7 @@ We've built a few simple apps to get you started in some important use cases:
     - [10_read-write-private-sheet](10_read-write-private-sheet): app users are allowed to view and edit data in a private Google Sheet via the app. A token stored in a file within the app is used for auth. See it deployed [here](https://jennybc.shinyapps.io/10_read-write-private-sheet).
     - See [Persistent data storage in Shiny apps](http://deanattali.com/blog/shiny-persistent-data-storage), a blog post by [Dean Attali](http://deanattali.com), for another example of using a Google Sheet as a Shiny data store. He shows how to append new rows to a data table. His app loads the token from the cache in a `.httr-oauth` file.
   * User provides Google credentials via the app:
-    - [20_gs-explorer](20_gs-explorer): app requires the user to authenticate with Google and authorize the app to deal on their behalf. After authorization, the user is presented with a listing of their Sheets, the option to view details of each spreadsheet and inspect the worksheets contained in a spreadsheet.
+    - [20_gs-explorer](20_gs-explorer): app requires the user to authenticate with Google and authorize the app to deal on their behalf. After authorization, the user is presented with a listing of their Sheets, the option to view details of each spreadsheet and inspect the worksheets contained in a spreadsheet. See it deployed [here](https://jennybc.shinyapps.io/20_gs-explorer).
     
 ## More inspiration for feeding Google Sheets:
 
