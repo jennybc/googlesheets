@@ -26,12 +26,11 @@ We've built a few simple apps to get you started in some important use cases:
     - [03_craigslist-lost-and-found](03_craigslist-lost-and-found): reads from a public spreadsheet that utilizes the Google Sheet function `IMPORTXML` to read data from Vancouver's Craigslist's Lost and Found listings. See it deployed [here](https://jennybc.shinyapps.io/03_craigslist-lost-and-found).
     - [04_embedded-google-form](04_embedded-google-form): a Google Form is embedded in the app, allowing user to enter data with native Google Form/Sheets functionality. App also displays the underlying Sheet, allowing user to see the just-entered data. See it deployed [here](https://jennybc.shinyapps.io/04_embedded-google-form).
   * Credentials are baked into the app:
-    - *make one of these!*
+    - [10_read-write-private-sheet](10_read-write-private-sheet): app users are allowed to view and edit data in a private Google Sheet via the app. A token stored in a file within the app is used for auth. See it deployed [here](https://jennybc.shinyapps.io/10_read-write-private-sheet).
+    - See [Persistent data storage in Shiny apps](http://deanattali.com/blog/shiny-persistent-data-storage), a blog post by [Dean Attali](http://deanattali.com), for another example of using a Google Sheet as a Shiny data store. He shows how to append new rows to a data table. His app loads the token from the cache in a `.httr-oauth` file.
   * User provides Google credentials via the app:
     - [20_gs-explorer](20_gs-explorer): app requires the user to authenticate with Google and authorize the app to deal on their behalf. After authorization, the user is presented with a listing of their Sheets, the option to view details of each spreadsheet and inspect the worksheets contained in a spreadsheet.
     
-Dean Attali also includes a Google Sheets + `googlesheets` example in his blog post [Persistent data storage in Shiny apps](http://deanattali.com). *not published yet but will be soon*
-
 ## More inspiration for feeding Google Sheets:
 
 Here are examples of using Google Sheets as an online datastore from Amit Argawal's [blog](http://www.labnol.org/tag/guide/):
