@@ -60,7 +60,7 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
 
   current_sheets <- gs_ls(regex = title, fixed = TRUE, verbose = FALSE)
   if(!is.null(current_sheets)) {
-    mess <- paste("At least one sheet named \"%s\" already exists, so you",
+    mess <- paste("At least one sheet matching \"%s\" already exists, so you",
                   "may need to identify by key, not title, in future.") %>%
       sprintf(title)
     warning(mess)
