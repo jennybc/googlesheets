@@ -1,8 +1,12 @@
 # googlesheets Basic Usage
-Joanna Zhao, Jenny Bryan  
+Jenny Bryan, Joanna Zhao  
 `r Sys.Date()`  
 
-__NOTE__: The vignette is still under development. Stuff here is not written in stone. The [README](https://github.com/jennybc/googlesheets) on GitHub has gotten __alot more love recently__, so you should read that instead or in addition to this (2015-05-30). Seriously, we've only been making sure this thing compiles, but not updating the text.
+
+
+
+
+
 
 
 ```r
@@ -10,28 +14,48 @@ library(googlesheets)
 suppressMessages(library(dplyr))
 ```
 
-This vignette shows the basic functionality of `googlesheets`.
+### See some spreadsheets you can access
 
-# User Authentication
-
-In order to access spreadsheets that are not "published to the web" and in order to access __any__ spreadsheets by title (vs key), you need to authenticate with Google. Many `googlesheets` functions require authentication and, if necessary, will simply trigger the interactive process we describe here.
-
-The `gs_auth()` function uses OAuth2 for authentication, but don't worry if you don't know what that means. The first time, you will be kicked into a web browser. You'll be asked to login to your Google account and give `googlesheets` permission to access Sheets and Google Drive. Successful login will lead to the creation of an access token, which will be cached in a file named `.httr-oath` in current working directory. These tokens are perishable and, for the most part, they will be refreshed automatically when they go stale. Under the hood, we use the `httr` package to manage this.
-
-If you want to switch to a different Google account, run `gs_auth(new_user = TRUE)`, as this will delete the previously cached token and get a new one for the new account.
-
-For finer control, read the documentation on `gs_auth()`. The user can provide the token directly, provide their own application Client ID and secret, and prevent the caching of credentials.
-
-*In a hidden chunk, we are using a previously stored token to authenticate, so we can work with some Google spreadsheets later in this vignette.*
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
 
+```r
+(my_sheets <- gs_ls())
+#> Source: local data frame [41 x 10]
+#> 
+#>                 sheet_title        author perm version             updated
+#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-30 16:40:27
+#> 2                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10
+#> 3               TAGS v6.0ns     m.hawksey    r     new 2015-06-22 19:17:33
+#> 4               gas_mileage      woo.kara    r     new 2015-06-22 00:37:26
+#> 5   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
+#> 6  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
+#> 7          Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44
+#> 8   Craigslist Lost & Found   joannazhaoo    r     new 2015-06-01 22:35:04
+#> 9              #rhizo15 #tw     m.hawksey    r     new 2015-06-01 15:41:47
+#> 10 Ari's Anchor Text Scrap…      anahmani    r     new 2015-05-29 07:18:48
+#> ..                      ...           ...  ...     ...                 ...
+#> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
+#>   (chr), alt_key (chr)
+# (expect a prompt to authenticate with Google interactively HERE)
+my_sheets %>% glimpse()
+#> Observations: 41
+#> Variables:
+#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "for_sean", "TAGS...
+#> $ author      (chr) "joannazhaoo", "gspreadr", "m.hawksey", "woo.kara"...
+#> $ perm        (chr) "r", "rw", "r", "r", "r", "r", "r", "r", "r", "r",...
+#> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
+#> $ updated     (time) 2015-06-30 16:40:27, 2015-06-23 18:33:10, 2015-06...
+#> $ sheet_key   (chr) "1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE", "1...
+#> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
+#> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1DoMXh2m3F...
+#> $ self        (chr) "https://spreadsheets.google.com/feeds/spreadsheet...
+#> $ alt_key     (chr) NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...
+```
 
+### Get a Google spreadsheet to practice with
 
-
-
-# Get a Google spreadsheet to practice with
-
-If you don't have any Google Sheets yet, or if you just want to follow along verbatim with this vignette, this bit of code will copy a sheet from the `googlesheets` Google user into your Drive. The sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder).
+Don't worry if you don't have any suitable Google Sheets lying around! We've published a sheet for you to practice with and have built functions into `googlesheets` to help you access it. The example sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder); feel free to [visit the Sheet in the browser](https://w3id.org/people/jennybc/googlesheets_gap_url). The code below will put a copy of this sheet into your Drive, titled "Gapminder".
 
 
 ```r
@@ -39,563 +63,790 @@ gs_gap() %>%
   gs_copy(to = "Gapminder")
 ```
 
-# List your spreadsheets
+If that seems to have worked, go check for a sheet named "Gapminder" in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
 
-As an authenticated user, you can get a (partial) listing of accessible sheets. If you have not yet authenticated, you will be prompted to do so. If it's been a while since you authenticated, you'll see a message about refreshing a stale OAuth token.
+### Register a spreadsheet
 
+If you plan to consume data from a sheet or edit it, you must first __register__ it. This is how `googlesheets` records important info about the sheet that is required downstream by the Google Sheets or Google Drive APIs. Once registered, you can print the result to get some basic info about the sheet.
 
-```r
-my_sheets <- gs_ls()
-my_sheets
-```
+`googlesheets` provides several registration functions. Specifying the sheet by title? Use `gs_title()`. By key? Use `gs_key()`. You get the idea.
 
-```
-## Source: local data frame [39 x 10]
-## 
-##                 sheet_title        author perm version             updated
-## 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-23 06:31:24
-## 2               TAGS v6.0ns     m.hawksey    r     new 2015-06-22 19:17:33
-## 3               gas_mileage      woo.kara    r     new 2015-06-22 00:37:26
-## 4   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
-## 5  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
-## 6          Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44
-## 7              #rhizo15 #tw     m.hawksey    r     new 2015-06-01 15:41:47
-## 8  Ari's Anchor Text Scrap…      anahmani    r     new 2015-05-29 07:18:48
-## 9  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-05-28 17:43:29
-## 10     test-gs-cars-private      gspreadr   rw     new 2015-05-27 17:48:34
-## ..                      ...           ...  ...     ...                 ...
-## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
-##   (chr), alt_key (chr)
-```
-
-This provides a nice overview of the spreadsheets you can access.
-
-# Register a spreadsheet
-
-Before you can access a spreadsheet, you must first __register__ it. This returns a `googlesheets` object that is needed by downstream functions in order to retrieve or edit spreadsheet data.
-
-Let's register the Gapminder spreadsheet we spied in the list above and that you may have copied into your Google Drive. We have a nice `print` method for these objects, so print to screen for some basic info.
+*We're using the built-in functions `gs_gap_key()` and `gs_gap_url()` to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.*
 
 
 ```r
 gap <- gs_title("Gapminder")
-```
-
-```
-## Sheet successfully identifed: "Gapminder"
-```
-
-```r
+#> Sheet successfully identifed: "Gapminder"
 gap
-```
+#>                   Spreadsheet title: Gapminder
+#>                  Spreadsheet author: gspreadr
+#>   Date of googlesheets registration: 2015-06-30 16:45:38 GMT
+#>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
+#>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
+#> 
+#> Contains 5 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> Africa: 625 x 6
+#> Americas: 301 x 6
+#> Asia: 397 x 6
+#> Europe: 361 x 6
+#> Oceania: 25 x 6
+#> 
+#> Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
+#> Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
 
-```
-##                   Spreadsheet title: Gapminder
-##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-23 06:37:31 GMT
-##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
-##                          visibility: private
-##                         permissions: rw
-##                             version: new
-## 
-## Contains 5 worksheets:
-## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 625 x 6
-## Americas: 301 x 6
-## Asia: 397 x 6
-## Europe: 361 x 6
-## Oceania: 25 x 6
-## 
-## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-## Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
-```
-
-Besides using the spreadsheet title, you can also specify a spreadsheet in three other ways:
-
-  * By key: this unfriendly but unique string is probably the best long-term strategy.
-  * By URL: copy and paste the URL in your browser while visiting the spreadsheet.
-  * By the "worksheets feed": under the hood, this is how `googlesheets` actually gets spreadsheet information from the API. Unlikely to be relevant to a regular user.
-
-Here's an example of registering a sheet via key. While registration by title is handy for interactive use, registration by key might be preferred when programming.
-
-
-```r
-just_gap <- gs_ls("^Gapminder$")
-just_gap$sheet_key
-```
-
-```
-## [1] "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-```
-
-```r
-ss2 <- just_gap$sheet_key %>%
+# Need to access a sheet you do not own?
+# Access it by key if you know it!
+(GAP_KEY <- gs_gap_key())
+#> [1] "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ"
+third_party_gap <- GAP_KEY %>%
   gs_key()
+#> Authentication will be used.
+#> Sheet successfully identifed: "test-gs-gapminder"
+
+# Need to access a sheet you do not own but you have a sharing link?
+# Access it by URL!
+(GAP_URL <- gs_gap_url())
+#> [1] "https://docs.google.com/spreadsheets/d/1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ/"
+third_party_gap <- GAP_URL %>%
+  gs_url()
+#> Sheet-identifying info appears to be a browser URL.
+#> googlesheets will attempt to extract sheet key from the URL.
+#> Putative key: 1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ
+#> Authentication will be used.
+#> Sheet successfully identifed: "test-gs-gapminder"
+# note: registration via URL may not work for "old" sheets
+
+# Worried that a spreadsheet's registration is out-of-date?
+# Re-register it!
+gap <- gap %>% gs_gs()
+#> Authentication will be used.
+#> Sheet successfully identifed: "Gapminder"
 ```
 
-```
-## Authentication will be used.
-## Sheet successfully identifed: "Gapminder"
-```
+The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
-```r
-ss2
-```
+*We export a utility function, `extract_key_from_url()`, to help you get and store the key from a browser URL. Registering via browser URL is fine, but registering by key is probably a better idea in the long-run.*
 
-```
-##                   Spreadsheet title: Gapminder
-##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-23 06:37:32 GMT
-##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
-##                          visibility: private
-##                         permissions: rw
-##                             version: new
-## 
-## Contains 5 worksheets:
-## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 625 x 6
-## Americas: 301 x 6
-## Asia: 397 x 6
-## Europe: 361 x 6
-## Oceania: 25 x 6
-## 
-## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-## Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
-```
+### Consume data
 
-# Consuming data from a worksheet
+#### Ignorance is bliss
 
-Spreadsheet data is parcelled out into __worksheets__. To consume data from a Google spreadsheet, you'll need to specify a registered spreadsheet and, within that, a worksheet. Specify the worksheet either by name or positive integer index.
-
-There are three ways to consume data.
-
-  * *The csv way ... bring this over from README*
-  * The "list feed": only suitable for well-behaved tabular data. Think: data that looks like an R data.frame
-  * The "cell feed": for everything else. Of course, you can get well-behaved tabular data with the cell feed but it's up to 3x slower and will require post-processing (reshaping and coercion).
-  
-Example of getting nice tabular data from the "list feed":
+If you want to consume the data in a worksheet and get something rectangular back, use the all-purpose function `gs_read()`. By default, it reads all the data in a worksheet.
 
 
 ```r
-gap
+oceania <- gap %>% gs_read(ws = "Oceania")
+#> Accessing worksheet titled "Oceania"
+oceania
+#> Source: local data frame [24 x 6]
+#> 
+#>      country continent year lifeExp      pop gdpPercap
+#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
+#> ..       ...       ...  ...     ...      ...       ...
+str(oceania)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
+#>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
+#>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
+#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+#>  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+#>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
+glimpse(oceania)
+#> Observations: 24
+#> Variables:
+#> $ country   (chr) "Australia", "Australia", "Australia", "Australia", ...
+#> $ continent (chr) "Oceania", "Oceania", "Oceania", "Oceania", "Oceania...
+#> $ year      (int) 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...
+#> $ lifeExp   (dbl) 69.120, 70.330, 70.930, 71.100, 71.930, 73.490, 74.7...
+#> $ pop       (int) 8691212, 9712569, 10794968, 11872264, 13177000, 1407...
+#> $ gdpPercap (dbl) 10039.60, 10949.65, 12217.23, 14526.12, 16788.63, 18...
 ```
 
-```
-##                   Spreadsheet title: Gapminder
-##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-23 06:37:31 GMT
-##     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
-##                          visibility: private
-##                         permissions: rw
-##                             version: new
-## 
-## Contains 5 worksheets:
-## (Title): (Nominal worksheet extent as rows x columns)
-## Africa: 625 x 6
-## Americas: 301 x 6
-## Asia: 397 x 6
-## Europe: 361 x 6
-## Oceania: 25 x 6
-## 
-## Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-## Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
-```
+You can target specific cells via the `range =` argument. The simplest usage is to specify an Excel-like cell range, such as range = "D12:F15" or range = "R1C12:R6C15". The cell rectangle can be specified in various other ways, using helper functions.
+
 
 ```r
-oceania_list_feed <- gs_read_listfeed(gap, ws = "Oceania") 
+gap %>% gs_read(ws = 2, range = "A1:D8")
+#> Accessing worksheet titled "Americas"
+#> Source: local data frame [7 x 4]
+#> 
+#>     country continent year lifeExp
+#> 1 Argentina  Americas 1952  62.485
+#> 2 Argentina  Americas 1957  64.399
+#> 3 Argentina  Americas 1962  65.142
+#> 4 Argentina  Americas 1967  65.634
+#> 5 Argentina  Americas 1972  67.065
+#> 6 Argentina  Americas 1977  68.481
+#> 7 Argentina  Americas 1982  69.942
+gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
+#> Accessing worksheet titled "Europe"
+#> Source: local data frame [3 x 6]
+#> 
+#>   country continent year lifeExp     pop gdpPercap
+#> 1 Albania    Europe 1952   55.23 1282697  1601.056
+#> 2 Albania    Europe 1957   59.28 1476505  1942.284
+#> 3 Albania    Europe 1962   64.82 1728137  2312.889
+gap %>% gs_read(ws = "Europe", range = cell_rows(100:103), col_names = FALSE)
+#> Accessing worksheet titled "Europe"
+#> Source: local data frame [4 x 6]
+#> 
+#>        X1     X2   X3    X4      X5        X6
+#> 1 Finland Europe 1962 68.75 4491443  9371.843
+#> 2 Finland Europe 1967 69.83 4605744 10921.636
+#> 3 Finland Europe 1972 70.87 4639657 14358.876
+#> 4 Finland Europe 1977 72.52 4738902 15605.423
+gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
+#> Accessing worksheet titled "Africa"
+#> Source: local data frame [624 x 4]
+#> 
+#>    country continent year lifeExp
+#> 1  Algeria    Africa 1952  43.077
+#> 2  Algeria    Africa 1957  45.685
+#> 3  Algeria    Africa 1962  48.303
+#> 4  Algeria    Africa 1967  51.407
+#> 5  Algeria    Africa 1972  54.518
+#> 6  Algeria    Africa 1977  58.014
+#> 7  Algeria    Africa 1982  61.368
+#> 8  Algeria    Africa 1987  65.799
+#> 9  Algeria    Africa 1992  67.744
+#> 10 Algeria    Africa 1997  69.152
+#> ..     ...       ...  ...     ...
+gap %>% gs_read(ws = "Asia", range = cell_limits(c(1, 4), c(5, NA)))
+#> Accessing worksheet titled "Asia"
+#> Source: local data frame [4 x 3]
+#> 
+#>   lifeExp      pop gdpPercap
+#> 1  28.801  8425333  779.4453
+#> 2  30.332  9240934  820.8530
+#> 3  31.997 10267083  853.1007
+#> 4  34.020 11537966  836.1971
 ```
 
-```
-## Accessing worksheet titled "Oceania"
-```
+`gs_read()` is a wrapper that bundles together the most common methods to read data from the API and transform it for downstream use. You can refine it's behavior further, by passing more arguments via `...`. Read the help file for more details.
+
+If `gs_read()` doesn't do what you need, then keep reading for the underlying functions to read and post-process data.
+
+#### Specify the consumption method
+
+There are three ways to consume data from a worksheet within a Google spreadsheet. The order goes from fastest-but-more-limited to slowest-but-most-flexible:
+
+  * `gs_read_csv()`: Don't let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the "exportcsv" link. For cases where `gs_read_csv()` and `gs_read_listfeed()` both work, we see that `gs_read_csv()` is around __50 times faster__. Use this when your data occupies a nice rectangle in the sheet and you're willing to consume all of it. You will get a `tbl_df` back, which is basically just a `data.frame`. In fact, you might want to use `gs_read_csv()`, it in other, less tidy scenarios and do further munging in R.
+  * `gs_read_listfeed()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `gs_read_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support (#17).
+  * `gs_read_cellfeed()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It is invoked by `gs_read()` whenever the `range =` argument is used. It works great for modest amounts of data but can be rather slow otherwise. `gs_read_cellfeed()` returns a `tbl_df` with __one row per cell__. You can target specific cells via the `range` argument. See below for demos of `gs_reshape_cellfeed()` and `gs_simplify_cellfeed()` which help with post-processing.
+
 
 ```r
+# Get the data for worksheet "Oceania": the super-fast csv way
+oceania_csv <- gap %>% gs_read_csv(ws = "Oceania")
+#> Accessing worksheet titled "Oceania"
+str(oceania_csv)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
+#>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
+#>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
+#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+#>  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+#>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
+oceania_csv
+#> Source: local data frame [24 x 6]
+#> 
+#>      country continent year lifeExp      pop gdpPercap
+#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
+#> ..       ...       ...  ...     ...      ...       ...
+
+# Get the data for worksheet "Oceania": the less-fast tabular way ("list feed")
+oceania_list_feed <- gap %>% gs_read_listfeed(ws = "Oceania") 
+#> Accessing worksheet titled "Oceania"
 str(oceania_list_feed)
-```
-
-```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
-##  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
-##  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
-##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
-##  $ lifeexp  : num  69.1 70.3 70.9 71.1 71.9 ...
-##  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
-##  $ gdppercap: num  10040 10950 12217 14526 16789 ...
-```
-
-```r
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
+#>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
+#>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
+#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+#>  $ lifeexp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+#>  $ gdppercap: num  10040 10950 12217 14526 16789 ...
 oceania_list_feed
-```
+#> Source: local data frame [24 x 6]
+#> 
+#>      country continent year lifeexp      pop gdppercap
+#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
+#> ..       ...       ...  ...     ...      ...       ...
 
-```
-## Source: local data frame [24 x 6]
-## 
-##      country continent year lifeexp      pop gdppercap
-## 1  Australia   Oceania 1952   69.12  8691212  10039.60
-## 2  Australia   Oceania 1957   70.33  9712569  10949.65
-## 3  Australia   Oceania 1962   70.93 10794968  12217.23
-## 4  Australia   Oceania 1967   71.10 11872264  14526.12
-## 5  Australia   Oceania 1972   71.93 13177000  16788.63
-## 6  Australia   Oceania 1977   73.49 14074100  18334.20
-## 7  Australia   Oceania 1982   74.74 15184200  19477.01
-## 8  Australia   Oceania 1987   76.32 16257249  21888.89
-## 9  Australia   Oceania 1992   77.56 17481977  23424.77
-## 10 Australia   Oceania 1997   78.83 18565243  26997.94
-## ..       ...       ...  ...     ...      ...       ...
-```
-
-If you wish, go look at the [Oceania worksheet from the Gapminder spreadsheet](https://docs.google.com/spreadsheets/d/1hS762lIJd2TRUTVOqoOP7g-h4MDQs6b2vhkTzohg8bE/edit#gid=431684907) for comparison.
-
-Example of getting the same data from the "cell feed".
-
-
-```r
-oceania_cell_feed <- gs_read_cellfeed(gap, ws = "Oceania") 
-```
-
-```
-## Accessing worksheet titled "Oceania"
-```
-
-```r
+# Get the data for worksheet "Oceania": the slow cell-by-cell way ("cell feed")
+oceania_cell_feed <- gap %>% gs_read_cellfeed(ws = "Oceania") 
+#> Accessing worksheet titled "Oceania"
 str(oceania_cell_feed)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	150 obs. of  5 variables:
+#>  $ cell     : chr  "A1" "B1" "C1" "D1" ...
+#>  $ cell_alt : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
+#>  $ row      : int  1 1 1 1 1 1 2 2 2 2 ...
+#>  $ col      : int  1 2 3 4 5 6 1 2 3 4 ...
+#>  $ cell_text: chr  "country" "continent" "year" "lifeExp" ...
+#>  - attr(*, "ws_title")= chr "Oceania"
+oceania_cell_feed
+#> Source: local data frame [150 x 5]
+#> 
+#>    cell cell_alt row col cell_text
+#> 1    A1     R1C1   1   1   country
+#> 2    B1     R1C2   1   2 continent
+#> 3    C1     R1C3   1   3      year
+#> 4    D1     R1C4   1   4   lifeExp
+#> 5    E1     R1C5   1   5       pop
+#> 6    F1     R1C6   1   6 gdpPercap
+#> 7    A2     R2C1   2   1 Australia
+#> 8    B2     R2C2   2   2   Oceania
+#> 9    C2     R2C3   2   3      1952
+#> 10   D2     R2C4   2   4     69.12
+#> ..  ...      ... ... ...       ...
 ```
 
-```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	150 obs. of  5 variables:
-##  $ cell     : chr  "A1" "B1" "C1" "D1" ...
-##  $ cell_alt : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
-##  $ row      : int  1 1 1 1 1 1 2 2 2 2 ...
-##  $ col      : int  1 2 3 4 5 6 1 2 3 4 ...
-##  $ cell_text: chr  "country" "continent" "year" "lifeExp" ...
-##  - attr(*, "ws_title")= chr "Oceania"
-```
+#### Quick speed comparison
 
-```r
-head(oceania_cell_feed, 10)
-```
-
-```
-## Source: local data frame [10 x 5]
-## 
-##    cell cell_alt row col cell_text
-## 1    A1     R1C1   1   1   country
-## 2    B1     R1C2   1   2 continent
-## 3    C1     R1C3   1   3      year
-## 4    D1     R1C4   1   4   lifeExp
-## 5    E1     R1C5   1   5       pop
-## 6    F1     R1C6   1   6 gdpPercap
-## 7    A2     R2C1   2   1 Australia
-## 8    B2     R2C2   2   2   Oceania
-## 9    C2     R2C3   2   3      1952
-## 10   D2     R2C4   2   4     69.12
-```
-
-```r
-oceania_reshaped <- gs_reshape_cellfeed(oceania_cell_feed)
-str(oceania_reshaped)
-```
-
-```
-## Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
-##  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
-##  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
-##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
-##  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
-##  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
-##  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
-```
-
-```r
-head(oceania_reshaped, 10)
-```
-
-```
-## Source: local data frame [10 x 6]
-## 
-##      country continent year lifeExp      pop gdpPercap
-## 1  Australia   Oceania 1952   69.12  8691212  10039.60
-## 2  Australia   Oceania 1957   70.33  9712569  10949.65
-## 3  Australia   Oceania 1962   70.93 10794968  12217.23
-## 4  Australia   Oceania 1967   71.10 11872264  14526.12
-## 5  Australia   Oceania 1972   71.93 13177000  16788.63
-## 6  Australia   Oceania 1977   73.49 14074100  18334.20
-## 7  Australia   Oceania 1982   74.74 15184200  19477.01
-## 8  Australia   Oceania 1987   76.32 16257249  21888.89
-## 9  Australia   Oceania 1992   77.56 17481977  23424.77
-## 10 Australia   Oceania 1997   78.83 18565243  26997.94
-```
-
-Note that data from the cell feed comes back as a data.frame with one row per cell. We provide the function `gs_reshape_cellfeed()` to reshape this data into something tabular.
-
-*To add, using row and column limits on the cell feed. All covered in the README.*
-
-*Stuff below partialy redundant with above*
-
-Eventually, you may want to read parts of the [Google Sheets API version 3.0 documentation](https://developers.google.com/google-apps/spreadsheets/). The types of data access supported by the API determine what is possible and also what is (relatively) fast vs slow in the `googlesheets` package. The Sheets API uses the term "feed" much like other APIs will refer to an "endpoint".
-
-There are two basic modes of consuming data stored in a worksheet (quotes taken from the [API docs](https://developers.google.com/google-apps/spreadsheets/):
-
-  * the __list feed__: implicitly assumes data is in a neat rectangle, like an R matrix or data.frame, with a header row followed by one or more data rows, none of which are completely empty
-    - "list row: Row of cells in a worksheet, represented as a key-value pair, where each key is a column name, and each value is the cell value. The first row of a worksheet is always considered the header row when using the API, and therefore is the row that defines the keys represented in each row."
-  * the __cell feed__: unconstrained access to individual non-empty cells specified in either Excel-like notation, e.g. cell D9, or in row-number-column-number notation, e.g. R9C4
-    - "cell: Single piece of data in a worksheet."
-
-*show how to iterate across worksheets, i.e. get cell D4 from all worksheets*
-
-### Visibility stuff
-
-*Rework this for the new era.*
-
-Under the hood, `googlesheets` functions must access a spreadsheet with either public or private __visiblity__. Visibility determines whether or not authorization will be used for a request.
-
-No authorization is used when visibility is set to "public", which will only work for spreadsheets that have been "Published to the Web". Note that requests with visibility set to "public" __will not work__ for spreadsheets that are made "Public on the web" from the "Visibility options" portion of the sharing dialog of a Google Sheets file. In summary, "Published to the web" and "Public on the web" are __different__ ways to share a spreadsheet.
-
-Authorization is used when visibility is set to "private".
-
-#### For spreadsheets that have been published to the web
-
-To access public spreadsheets, you will either need the key of the spreadsheet (as found in the URL) or the entire URL.
-
-*show registering a sheet by these two methods*
-
-#### For private spreadsheets
-
-*this is the scenario when you can use `gs_ls()` to remind yourself what spreadsheets are in your Google drive. A spreadsheet can be opened by its title. kind of covered above, since it's what we do first*
-
-# Add, delete, rename spreadsheets and worksheets
-
-*needs updating; lots of this already in README*
-
-### Add or delete spreadsheet
-
-To add a spreadsheet to your Google Drive, use `gs_new()` and simply pass in the title of the spreadsheet as a character string. The new spreadsheet will contain one worksheet titled "Sheet1" by default. Recall we demonstrate the use of `gs_copy()` at the start of this vignette, which is another common way to get a new sheet.
-
-or delete 
-or `gs_delete()` 
+Let's consume all the data for Africa by all 3 methods and see how long it takes.
 
 
 ```r
-# Create a new empty spreadsheet by title
-gs_new("hi I am new here")
+jfun <- function(readfun)
+  system.time(do.call(readfun, list(gs_gap(), ws = "Africa", verbose = FALSE)))
+readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
+readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
+sapply(readfuns, jfun)
+#>            gs_read_csv gs_read_listfeed gs_read_cellfeed
+#> user.self        0.032            0.135            0.962
+#> sys.self         0.002            0.018            0.040
+#> elapsed          0.758            1.370            3.016
+#> user.child       0.000            0.000            0.000
+#> sys.child        0.000            0.000            0.000
 ```
 
-```
-## Sheet "hi I am new here" created in Google Drive.
-## Worksheet dimensions: 1000 x 26.
-```
+#### Post-processing data from the cell feed
 
-```r
-gs_ls("hi I am new here")
-```
+If you consume data from the cell feed with `gs_read_cellfeed(..., range = ...)`, you get a data.frame back with **one row per cell**. The package offers two functions to post-process this into something more useful, `gs_reshape_cellfeed()` and `gs_simplify_cellfeed()`.
 
-```
-## Source: local data frame [1 x 10]
-## 
-##        sheet_title   author perm version             updated
-## 1 hi I am new here gspreadr   rw     new 2015-06-23 06:37:33
-## Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
-##   (chr), alt_key (chr)
-```
-
-Delete a spreadsheet with `gs_delete()`. This function operates on a registered `googlesheet`, so enclose your sheet identifying information in a suitable function. Here we specify (and delete) the above sheet by title, then confirm it is no longer in our sheet listing.
+To reshape into a table, use `gs_reshape_cellfeed()`. You can signal that the first row contains column names (or not) with `col_names = TRUE` (or `FALSE`). Or you can provide a character vector of names. This is inspired by the `col_names` argument of `readxl::read_excel()` and `readr::read_delim()`, which generalizes the `header` argument of `read.table()`.
 
 
 ```r
-# Move spreadsheet to trash
-gs_grepdel("hi I am new here")
+# Reshape: instead of one row per cell, make a nice rectangular data.frame
+australia_cell_feed <- gap %>%
+  gs_read_cellfeed(ws = "Oceania", range = "A1:F13") 
+#> Accessing worksheet titled "Oceania"
+str(australia_cell_feed)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	78 obs. of  5 variables:
+#>  $ cell     : chr  "A1" "B1" "C1" "D1" ...
+#>  $ cell_alt : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
+#>  $ row      : int  1 1 1 1 1 1 2 2 2 2 ...
+#>  $ col      : int  1 2 3 4 5 6 1 2 3 4 ...
+#>  $ cell_text: chr  "country" "continent" "year" "lifeExp" ...
+#>  - attr(*, "ws_title")= chr "Oceania"
+oceania_cell_feed
+#> Source: local data frame [150 x 5]
+#> 
+#>    cell cell_alt row col cell_text
+#> 1    A1     R1C1   1   1   country
+#> 2    B1     R1C2   1   2 continent
+#> 3    C1     R1C3   1   3      year
+#> 4    D1     R1C4   1   4   lifeExp
+#> 5    E1     R1C5   1   5       pop
+#> 6    F1     R1C6   1   6 gdpPercap
+#> 7    A2     R2C1   2   1 Australia
+#> 8    B2     R2C2   2   2   Oceania
+#> 9    C2     R2C3   2   3      1952
+#> 10   D2     R2C4   2   4     69.12
+#> ..  ...      ... ... ...       ...
+australia_reshaped <- australia_cell_feed %>% gs_reshape_cellfeed()
+str(australia_reshaped)
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	12 obs. of  6 variables:
+#>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
+#>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
+#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+#>  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
+#>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
+australia_reshaped
+#> Source: local data frame [12 x 6]
+#> 
+#>      country continent year lifeExp      pop gdpPercap
+#> 1  Australia   Oceania 1952  69.120  8691212  10039.60
+#> 2  Australia   Oceania 1957  70.330  9712569  10949.65
+#> 3  Australia   Oceania 1962  70.930 10794968  12217.23
+#> 4  Australia   Oceania 1967  71.100 11872264  14526.12
+#> 5  Australia   Oceania 1972  71.930 13177000  16788.63
+#> 6  Australia   Oceania 1977  73.490 14074100  18334.20
+#> 7  Australia   Oceania 1982  74.740 15184200  19477.01
+#> 8  Australia   Oceania 1987  76.320 16257249  21888.89
+#> 9  Australia   Oceania 1992  77.560 17481977  23424.77
+#> 10 Australia   Oceania 1997  78.830 18565243  26997.94
+#> 11 Australia   Oceania 2002  80.370 19546792  30687.75
+#> 12 Australia   Oceania 2007  81.235 20434176  34435.37
+
+# Example: first 3 rows
+gap_3rows <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1:3))
+#> Accessing worksheet titled "Europe"
+gap_3rows %>% head()
+#> Source: local data frame [6 x 5]
+#> 
+#>   cell cell_alt row col cell_text
+#> 1   A1     R1C1   1   1   country
+#> 2   B1     R1C2   1   2 continent
+#> 3   C1     R1C3   1   3      year
+#> 4   D1     R1C4   1   4   lifeExp
+#> 5   E1     R1C5   1   5       pop
+#> 6   F1     R1C6   1   6 gdpPercap
+
+# convert to a data.frame (by default, column names found in first row)
+gap_3rows %>% gs_reshape_cellfeed()
+#> Source: local data frame [2 x 6]
+#> 
+#>   country continent year lifeExp     pop gdpPercap
+#> 1 Albania    Europe 1952   55.23 1282697  1601.056
+#> 2 Albania    Europe 1957   59.28 1476505  1942.284
+
+# arbitrary cell range, column names no longer available in first row
+gap %>%
+  gs_read_cellfeed("Oceania", range = "D12:F15") %>%
+  gs_reshape_cellfeed(col_names = FALSE)
+#> Accessing worksheet titled "Oceania"
+#> Source: local data frame [4 x 3]
+#> 
+#>       X4       X5       X6
+#> 1 80.370 19546792 30687.75
+#> 2 81.235 20434176 34435.37
+#> 3 69.390  1994794 10556.58
+#> 4 70.260  2229407 12247.40
+
+# arbitrary cell range, direct specification of column names
+gap %>%
+  gs_read_cellfeed("Oceania", range = cell_limits(c(2, 1), c(5, 3))) %>%
+  gs_reshape_cellfeed(col_names = paste("thing", c("one", "two", "three"),
+                                        sep = "_"))
+#> Accessing worksheet titled "Oceania"
+#> Source: local data frame [4 x 3]
+#> 
+#>   thing_one thing_two thing_three
+#> 1 Australia   Oceania        1952
+#> 2 Australia   Oceania        1957
+#> 3 Australia   Oceania        1962
+#> 4 Australia   Oceania        1967
 ```
 
-```
-## Authentication will be used.
-## Sheet successfully identifed: "hi I am new here"
-## Success. "hi I am new here" moved to trash in Google Drive.
-```
-
-```
-## [1] TRUE
-```
-
-```r
-gs_ls("hi I am new here")
-```
-
-```
-## No matching sheets found.
-```
-
-### Add, delete, or rename a worksheet
-
-To add a worksheet to a spreadsheet, pass in the spreadsheet object, title of new worksheet and the number of rows and columns. To delete a worksheet from a spreadsheet, pass in the spreadsheet object and the title of the worksheet. Note that after adding or deleting a worksheet, the local `googlesheet` object will not be automatically updated to include the new worksheet(s) information, you must register the spreadsheet again to update local knowledge about, e.g., the contituent worksheets. Notice that we store the sheet back to `x` after adding the worksheet. This is because adding a worksheet changes the information associated with a registered sheet and, within editing functions like `gs_ws_new()`, we re-register the sheet and return the current sheet info.
-
-
-```r
-gs_new("hi I am new here")
-```
-
-```
-## Sheet "hi I am new here" created in Google Drive.
-## Worksheet dimensions: 1000 x 26.
-```
-
-```r
-x <- gs_title("hi I am new here")
-```
-
-```
-## Sheet successfully identifed: "hi I am new here"
-```
-
-```r
-x
-```
-
-```
-##                   Spreadsheet title: hi I am new here
-##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-23 06:37:41 GMT
-##     Date of last spreadsheet update: 2015-06-23 06:37:39 GMT
-##                          visibility: private
-##                         permissions: rw
-##                             version: new
-## 
-## Contains 1 worksheets:
-## (Title): (Nominal worksheet extent as rows x columns)
-## Sheet1: 1000 x 26
-## 
-## Key: 1X56dqB_CzXIReMAtAJc8jO614qAQUVtK4dyxyNPr9W4
-## Browser URL: https://docs.google.com/spreadsheets/d/1X56dqB_CzXIReMAtAJc8jO614qAQUVtK4dyxyNPr9W4/
-```
-
-```r
-x <- gs_ws_new(x, ws_title = "foo", row_extent = 10, col_extent = 10)
-```
-
-```
-## Worksheet "foo" added to sheet "hi I am new here".
-## Worksheet dimensions: 10 x 10.
-```
-
-```r
-x
-```
-
-```
-##                   Spreadsheet title: hi I am new here
-##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-23 06:37:42 GMT
-##     Date of last spreadsheet update: 2015-06-23 06:37:42 GMT
-##                          visibility: private
-##                         permissions: rw
-##                             version: new
-## 
-## Contains 2 worksheets:
-## (Title): (Nominal worksheet extent as rows x columns)
-## Sheet1: 1000 x 26
-## foo: 10 x 10
-## 
-## Key: 1X56dqB_CzXIReMAtAJc8jO614qAQUVtK4dyxyNPr9W4
-## Browser URL: https://docs.google.com/spreadsheets/d/1X56dqB_CzXIReMAtAJc8jO614qAQUVtK4dyxyNPr9W4/
-```
-
-```r
-x <- gs_ws_delete(x, ws = "foo")
-```
-
-```
-## Accessing worksheet titled "foo"
-## Worksheet "foo" deleted from sheet "hi I am new here".
-```
-
-```r
-x
-```
-
-```
-##                   Spreadsheet title: hi I am new here
-##                  Spreadsheet author: gspreadr
-##   Date of googlesheets registration: 2015-06-23 06:37:43 GMT
-##     Date of last spreadsheet update: 2015-06-23 06:37:43 GMT
-##                          visibility: private
-##                         permissions: rw
-##                             version: new
-## 
-## Contains 1 worksheets:
-## (Title): (Nominal worksheet extent as rows x columns)
-## Sheet1: 1000 x 26
-## 
-## Key: 1X56dqB_CzXIReMAtAJc8jO614qAQUVtK4dyxyNPr9W4
-## Browser URL: https://docs.google.com/spreadsheets/d/1X56dqB_CzXIReMAtAJc8jO614qAQUVtK4dyxyNPr9W4/
-```
-
-To rename a worksheet, pass in the spreadsheet object, the worksheet's current name and the new name you want it to be.  
+To extract the cell data into an atomic vector, possibly named, use `gs_simplify_cellfeed()`. You can signal that the first row contains column names (or not) with `col_names = TRUE` (or `FALSE`). There are several arguments to control conversion.
 
 
 ```r
-gs_ws_rename(x, "Sheet1", "First Sheet")
+# Example: first row only
+gap_1row <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1))
+#> Accessing worksheet titled "Europe"
+gap_1row
+#> Source: local data frame [6 x 5]
+#> 
+#>   cell cell_alt row col cell_text
+#> 1   A1     R1C1   1   1   country
+#> 2   B1     R1C2   1   2 continent
+#> 3   C1     R1C3   1   3      year
+#> 4   D1     R1C4   1   4   lifeExp
+#> 5   E1     R1C5   1   5       pop
+#> 6   F1     R1C6   1   6 gdpPercap
+
+# convert to a named character vector
+gap_1row %>% gs_simplify_cellfeed()
+#>          A1          B1          C1          D1          E1          F1 
+#>   "country" "continent"      "year"   "lifeExp"       "pop" "gdpPercap"
+
+# Example: single column
+gap_1col <- gap %>% gs_read_cellfeed("Europe", range = cell_cols(3))
+#> Accessing worksheet titled "Europe"
+gap_1col
+#> Source: local data frame [361 x 5]
+#> 
+#>    cell cell_alt row col cell_text
+#> 1    C1     R1C3   1   3      year
+#> 2    C2     R2C3   2   3      1952
+#> 3    C3     R3C3   3   3      1957
+#> 4    C4     R4C3   4   3      1962
+#> 5    C5     R5C3   5   3      1967
+#> 6    C6     R6C3   6   3      1972
+#> 7    C7     R7C3   7   3      1977
+#> 8    C8     R8C3   8   3      1982
+#> 9    C9     R9C3   9   3      1987
+#> 10  C10    R10C3  10   3      1992
+#> ..  ...      ... ... ...       ...
+
+# convert to a un-named character vector and drop the variable name
+gap_1col %>% gs_simplify_cellfeed(notation = "none", col_names = TRUE)
+#>   [1] "year" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
+#>  [11] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
+#>  [21] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
+#>  [31] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
+#>  [41] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
+#>  [51] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
+#>  [61] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
+#>  [71] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
+#>  [81] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
+#>  [91] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
+#> [101] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
+#> [111] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
+#> [121] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
+#> [131] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
+#> [141] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
+#> [151] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
+#> [161] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
+#> [171] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
+#> [181] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
+#> [191] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
+#> [201] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
+#> [211] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
+#> [221] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
+#> [231] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
+#> [241] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
+#> [251] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
+#> [261] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
+#> [271] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
+#> [281] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
+#> [291] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
+#> [301] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
+#> [311] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
+#> [321] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
+#> [331] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
+#> [341] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
+#> [351] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
+#> [361] "2007"
 ```
 
-```
-## Accessing worksheet titled "Sheet1"
-## Authentication will be used.
-## Sheet successfully identifed: "hi I am new here"
-## Worksheet "Sheet1" renamed to "First Sheet".
-```
+### Create sheets
 
-Tidy up by getting rid of the sheet we've playing with.
+You can use `googlesheets` to create new spreadsheets.
 
 
 ```r
-gs_delete(gs_title("hi I am new here"))
+foo <- gs_new("foo")
+#> Sheet "foo" created in Google Drive.
+#> Worksheet dimensions: 1000 x 26.
+foo
+#>                   Spreadsheet title: foo
+#>                  Spreadsheet author: gspreadr
+#>   Date of googlesheets registration: 2015-06-30 16:46:05 GMT
+#>     Date of last spreadsheet update: 2015-06-30 16:46:03 GMT
+#>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
+#> 
+#> Contains 1 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> Sheet1: 1000 x 26
+#> 
+#> Key: 1X_VkBRtYY4JVGJIcZaG1rmWtiri__aaBdHDlUH6UuYI
+#> Browser URL: https://docs.google.com/spreadsheets/d/1X_VkBRtYY4JVGJIcZaG1rmWtiri__aaBdHDlUH6UuYI/
 ```
 
-```
-## Sheet successfully identifed: "hi I am new here"
-## Success. "hi I am new here" moved to trash in Google Drive.
-```
+By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
 
-# Worksheet Operations
+### Edit cells
 
-## View worksheet
+There are two ways to edit cells within an existing worksheet of an existing spreadsheet:
 
-*this function has not been resurrected yet*
+  * `gs_edit_cells()` can write into an arbitrary cell rectangle
+  * `gs_add_row()` can add a new row to the bottom of an existing cell rectangle
+  
+If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
 
-You can take a look at your worksheets to get an idea of what it looks like. Use `view()` to look at one worksheet and `view_all()` to look at all worksheets contained in a spreadsheet. `view_all()` returns a gallery of all the worksheets. Set `show_overlay = TRUE` to view an overlay of all the worksheets to identify the density of the cells occupied by worksheets. **showing Error: could not find function "ggplotGrob"**
+We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
 
 
 ```r
-view(ws)
+## foo <- gs_new("foo")
+## initialize the worksheets
+foo <- foo %>% gs_ws_new("edit_cells")
+#> Worksheet "edit_cells" added to sheet "foo".
+#> Worksheet dimensions: 1000 x 26.
+foo <- foo %>% gs_ws_new("add_row")
+#> Worksheet "add_row" added to sheet "foo".
+#> Worksheet dimensions: 1000 x 26.
 
-view_all(ssheet)
+## add first six rows of iris data (and var names) into a blank sheet
+foo <- foo %>% gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
+#> Range affected by the update: "A1:E7"
+#> Worksheet "edit_cells" successfully updated with 35 new value(s).
+#> Accessing worksheet titled "edit_cells"
+#> Authentication will be used.
+#> Sheet successfully identifed: "foo"
+#> Accessing worksheet titled "edit_cells"
+#> Worksheet "edit_cells" dimensions changed to 7 x 5.
+
+## initialize sheet with column headers and one row of data
+## the list feed is picky about this
+foo <- foo %>% gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
+#> Range affected by the update: "A1:E2"
+#> Worksheet "add_row" successfully updated with 10 new value(s).
+#> Accessing worksheet titled "add_row"
+#> Authentication will be used.
+#> Sheet successfully identifed: "foo"
+#> Accessing worksheet titled "add_row"
+#> Worksheet "add_row" dimensions changed to 2 x 5.
+## add the next 5 rows of data
+for(i in 2:6) {
+  foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
+}
+#> Row successfully appended.
+#> Row successfully appended.
+#> Row successfully appended.
+#> Row successfully appended.
+#> Row successfully appended.
+
+## let's inspect out work
+foo %>% gs_read(ws = "edit_cells")
+#> Accessing worksheet titled "edit_cells"
+#> Source: local data frame [6 x 5]
+#> 
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> 3          4.7         3.2          1.3         0.2  setosa
+#> 4          4.6         3.1          1.5         0.2  setosa
+#> 5          5.0         3.6          1.4         0.2  setosa
+#> 6          5.4         3.9          1.7         0.4  setosa
+foo %>% gs_read(ws = "add_row")
+#> Accessing worksheet titled "add_row"
+#> Source: local data frame [6 x 5]
+#> 
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> 3          4.7         3.2          1.3         0.2  setosa
+#> 4          4.6         3.1          1.5         0.2  setosa
+#> 5          5.0         3.6          1.4         0.2  setosa
+#> 6          5.4         3.9          1.7         0.4  setosa
 ```
 
+Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the worksheets named `edit_cells` and `add_row`.
 
-## Update cells
+Note how we always store the returned value from `gs_edit_cells()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
 
-*documented only in README right now*
+Read the function documentation for `gs_edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
 
-# Appendix: Visibility table
+### Delete sheets
 
-Accessing spreadsheets that are or are not "published to the web" with visibility set of "public" vs "private"
+Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
 
-| Sheet Type           | Public? (Published to the web) | URL visibility setting | Response      | Content Type         | Content                |
-|----------------------|--------------------------------|------------------------|---------------|----------------------|------------------------|
-| My sheet             | Yes                            | private                | 200 OK        | application/atom+xml | data                   |
-| My sheet             | Yes                            | public                 | 200 OK        | application/atom+xml | data                   |
-| My sheet             | No                             | private                | 200 OK        | application/atom+xml | data                   |
-| My sheet             | No                             | public                 | 200 OK        | text/html            | this doc is not public |
-| Someone else's sheet | Yes                            | private                | 403 Forbidden | Error                | Error                  |
-| Someone else's sheet | Yes                            | public                 | 200 OK        | application/atom+xml | data                   |
-| Someone else's sheet | No                             | private                | 200 OK        | application/atom+xml | data                   |
-| Someone else's sheet | No                             | public                 | 200 OK        | text/html            | this doc is not public |
+```r
+gs_delete(foo)
+#> Success. "foo" moved to trash in Google Drive.
+```
 
-# Appendix: Words about sheet identifiers
+If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and `gs_vecdel()`. These functions also allow the deletion of multiple sheets at once.
 
-For a user, it is natural to specify a Google sheet via the URL displayed in the browser or by its title. The primary identifier as far as Google Sheets and `gspread` are concerned is the sheet key. To access a sheet via the Google Sheets API, one must know the sheet's worksheets feed. The worksheets feed is simply a URL, but different from the one you see when visiting a spreadsheet in the browser!
+### Upload delimited files or Excel workbooks
 
-Stuff from roxygen comments for a function that no longer exists: Given a Google spreadsheet's URL, unique key, title, or worksheets feed, return its worksheets feed. The worksheets feed is simply a URL -- different from the one you see when visiting a spreadsheet in the browser! -- and is the very best way to specify a spreadsheet for API access. There's no simple way to capture a spreadsheet's worksheets feed, so this function helps you convert readily available information (spreadsheet title or URL) into the worksheets feed.
+Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
 
-Simple regexes are used to detect if the input is a worksheets feed or the URL one would see when visiting a spreadsheet in the browser. If it's a URL, we attempt to extract the spreadsheet's unique key, assuming the URL followsthe pattern characteristic of "new style" Google spreadsheets.
 
-Otherwise the input is assumed to be the spreadsheet's title or unique key. When we say title, we mean the name of the spreadsheet in, say, Google Drive or in the \code{sheet_title} variable of the data.frame returned by \code{\link{gs_ls}}. Spreadsheet title or key will be sought in the listing of spreadsheets visible to the authenticated user and, if a match is found, the associated worksheets feed is returned.
+```r
+iris %>%
+  head(5) %>%
+  write.csv("iris.csv", row.names = FALSE)
+iris_ss <- gs_upload("iris.csv")
+#> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
+iris_ss
+#>                   Spreadsheet title: iris
+#>                  Spreadsheet author: gspreadr
+#>   Date of googlesheets registration: 2015-06-30 16:46:47 GMT
+#>     Date of last spreadsheet update: 2015-06-30 16:46:45 GMT
+#>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
+#> 
+#> Contains 1 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> iris: 1000 x 26
+#> 
+#> Key: 1UF9Z_CCNh75FjAU1VWPAp3RM2K37V1n2yJzDetm6aig
+#> Browser URL: https://docs.google.com/spreadsheets/d/1UF9Z_CCNh75FjAU1VWPAp3RM2K37V1n2yJzDetm6aig/
+iris_ss %>% gs_read()
+#> Accessing worksheet titled "iris"
+#> Source: local data frame [5 x 5]
+#> 
+#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#> 1          5.1         3.5          1.4         0.2  setosa
+#> 2          4.9         3.0          1.4         0.2  setosa
+#> 3          4.7         3.2          1.3         0.2  setosa
+#> 4          4.6         3.1          1.5         0.2  setosa
+#> 5          5.0         3.6          1.4         0.2  setosa
+file.remove("iris.csv")
+#> [1] TRUE
+```
+
+Now we'll upload a multi-sheet Excel workbook. Slowly.
+
+
+```r
+gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
+#> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
+gap_xlsx
+#>                   Spreadsheet title: mini-gap
+#>                  Spreadsheet author: gspreadr
+#>   Date of googlesheets registration: 2015-06-30 16:46:52 GMT
+#>     Date of last spreadsheet update: 2015-06-30 16:46:50 GMT
+#>                          visibility: private
+#>                         permissions: rw
+#>                             version: new
+#> 
+#> Contains 5 worksheets:
+#> (Title): (Nominal worksheet extent as rows x columns)
+#> Africa: 1000 x 26
+#> Americas: 1000 x 26
+#> Asia: 1000 x 26
+#> Europe: 1000 x 26
+#> Oceania: 1000 x 26
+#> 
+#> Key: 1PUQMV3Y8TQi31XVHAmmWhx8Nk5XEwLnhM8X9iK8lKlo
+#> Browser URL: https://docs.google.com/spreadsheets/d/1PUQMV3Y8TQi31XVHAmmWhx8Nk5XEwLnhM8X9iK8lKlo/
+gap_xlsx %>% gs_read(ws = "Asia")
+#> Accessing worksheet titled "Asia"
+#> Source: local data frame [5 x 6]
+#> 
+#>       country continent year lifeExp       pop gdpPercap
+#> 1 Afghanistan      Asia 1952  28.801   8425333  779.4453
+#> 2     Bahrain      Asia 1952  50.939    120447 9867.0848
+#> 3  Bangladesh      Asia 1952  37.484  46886859  684.2442
+#> 4    Cambodia      Asia 1952  39.417   4693836  368.4693
+#> 5       China      Asia 1952  44.000 556263527  400.4486
+```
+
+And we clean up after ourselves on Google Drive.
+
+
+```r
+gs_vecdel(c("iris", "mini-gap"))
+#> Authentication will be used.
+#> Sheet successfully identifed: "mini-gap"
+#> Success. "mini-gap" moved to trash in Google Drive.
+#> Authentication will be used.
+#> Sheet successfully identifed: "iris"
+#> Success. "iris" moved to trash in Google Drive.
+#> [1] TRUE TRUE
+## achieves same as:
+## gs_delete(iris_ss)
+## gs_delete(gap_xlsx)
+```
+
+### Download sheets as csv, pdf, or xlsx file
+
+You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
+
+
+```r
+gs_title("Gapminder") %>%
+  gs_download(ws = "Africa", to = "~/tmp/gapminder-africa.csv")
+#> Sheet successfully identifed: "Gapminder"
+#> Accessing worksheet titled "Africa"
+#> Sheet successfully downloaded: /Users/jenny/tmp/gapminder-africa.csv
+## is it there? yes!
+read.csv("~/tmp/gapminder-africa.csv") %>% head()
+#>   country continent year lifeExp      pop gdpPercap
+#> 1 Algeria    Africa 1952  43.077  9279525  2449.008
+#> 2 Algeria    Africa 1957  45.685 10270856  3013.976
+#> 3 Algeria    Africa 1962  48.303 11000948  2550.817
+#> 4 Algeria    Africa 1967  51.407 12760499  3246.992
+#> 5 Algeria    Africa 1972  54.518 14760787  4182.664
+#> 6 Algeria    Africa 1977  58.014 17152804  4910.417
+```
+
+Download the entire spreadsheet as an Excel workbook.
+
+
+```r
+gs_title("Gapminder") %>% 
+  gs_download(to = "~/tmp/gapminder.xlsx")
+#> Sheet successfully identifed: "Gapminder"
+#> Sheet successfully downloaded: /Users/jenny/tmp/gapminder.xlsx
+```
+
+Go check it out in Excel, if you wish!
+
+And now we clean up the downloaded files.
+
+
+```r
+file.remove(file.path("~/tmp", c("gapminder.xlsx", "gapminder-africa.csv")))
+#> [1] TRUE TRUE
+```
+
+### Authorization using OAuth2
+ 
+If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
+ 
+
+```r
+# Give googlesheets permission to access your spreadsheets and google drive
+gs_auth() 
+```
+ 
+Use `gs_auth(new_user = TRUE)`, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.
+
+The function `gs_user()` will print and return some information about the current authenticated user and session.
+
+
+```r
+user_session_info <- gs_user()
+#>           displayName: google sheets
+#>          emailAddress: gspreadr@gmail.com
+#>                  date: 2015-06-30 16:45:35 GMT
+#>          access token: valid
+#>  peek at access token: ya29....vbUdw
+#> peek at refresh token: 1/zNh...ATCKT
+user_session_info
+#> $displayName
+#> [1] "google sheets"
+#> 
+#> $emailAddress
+#> [1] "gspreadr@gmail.com"
+#> 
+#> $date
+#> [1] "2015-06-30 16:45:35 GMT"
+#> 
+#> $token_valid
+#> [1] TRUE
+#> 
+#> $peek_acc
+#> [1] "ya29....vbUdw"
+#> 
+#> $peek_ref
+#> [1] "1/zNh...ATCKT"
+```
+
+### "Old" Google Sheets
+
+In March 2014 [Google introduced "new" Sheets](https://support.google.com/docs/answer/3541068?hl=en). "New" Sheets and "old" sheets behave quite differently with respect to access via API and present a big headache for us. Recently, we've noted that Google is forcibly converting sheets: [all "old" Sheets will be switched over the "new" sheets during 2015](https://support.google.com/docs/answer/6082736?p=new_sheets_migrate&rd=1). However there are still "old" sheets lying around, so we've made some effort to support them, when it's easy to do so. But keep your expectations low.
+
+In particular, `gs_read_csv()` does not currently work for "old" sheets.
