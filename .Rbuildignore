@@ -1,16 +1,12 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^\.httr-oauth$
-^\.httr-oauth-SUSPENDED$
-^tests/testthat/\.httr-oauth$
-^tests/testthat/\.httr-oauth-SUSPENDED$
 ^\.travis\.yml$
+\.httr-oauth.*$
 ^internal-projects$
 ^jenny-scratch$
 ^README\.Rmd$
 ^README-.*\.png$
 tests/testthat/token_file.rds.enc
 man-roxygen
-^inst/shiny-examples/craigslist-lost-and-found/\.httr-oauth$
 rsconnect
 ^cran-comments.md$
