@@ -16,18 +16,24 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "README-",
+  purl = FALSE
 )
+if(identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
+  NOT_CRAN <- TRUE
+} else {
+  NOT_CRAN <- FALSE
+}
 ```
 
-```{r auth, include = FALSE}
+```{r auth, include = FALSE, eval = NOT_CRAN}
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
 token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
 suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ```
 
-```{r pre-clean, include = FALSE}
+```{r pre-clean, include = FALSE, eval = NOT_CRAN}
 ## if a previous compilation of this document leaves anything behind, i.e. if it
 ## aborts, clean up Google Drive first
 googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
@@ -43,7 +49,7 @@ suppressMessages(library(dplyr))
 
 The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
-```{r list-sheets}
+```{r list-sheets, eval = NOT_CRAN}
 (my_sheets <- gs_ls())
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
@@ -68,7 +74,7 @@ If you plan to consume data from a sheet or edit it, you must first __register__
 
 *We're using the built-in functions `gs_gap_key()` and `gs_gap_url()` to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.*
 
-```{r register-sheet}
+```{r register-sheet, eval = NOT_CRAN}
 gap <- gs_title("Gapminder")
 gap
 
@@ -89,6 +95,11 @@ third_party_gap <- GAP_URL %>%
 # Re-register it!
 gap <- gap %>% gs_gs()
 ```
+
+```{r register-sheet-cran-only, include = FALSE, eval = !NOT_CRAN}
+gap <- gs_gap_key() %>% gs_key(lookup = FALSE, visibility = "public")
+```
+
 
 The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
@@ -215,7 +226,7 @@ gap_1col %>% gs_simplify_cellfeed(notation = "none", col_names = TRUE)
 
 You can use `googlesheets` to create new spreadsheets.
 
-```{r new-sheet}
+```{r new-sheet, eval = NOT_CRAN}
 foo <- gs_new("foo")
 foo
 ```
@@ -233,7 +244,7 @@ If you have the choice, `gs_add_row()` is faster, but it can only be used when y
 
 We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
 
-```{r edit-cells}
+```{r edit-cells, eval = NOT_CRAN}
 ## foo <- gs_new("foo")
 ## initialize the worksheets
 foo <- foo %>% gs_ws_new("edit_cells")
@@ -268,7 +279,7 @@ Read the function documentation for `gs_edit_cells()` for how to specify where t
 
 Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
-```{r delete-sheet}
+```{r delete-sheet, eval = NOT_CRAN}
 gs_delete(foo)
 ```
 
@@ -278,7 +289,7 @@ If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and
 
 Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
 
-```{r new-sheet-from-file}
+```{r new-sheet-from-file, eval = NOT_CRAN}
 iris %>%
   head(5) %>%
   write.csv("iris.csv", row.names = FALSE)
@@ -290,7 +301,7 @@ file.remove("iris.csv")
 
 Now we'll upload a multi-sheet Excel workbook. Slowly.
 
-```{r new-sheet-from-xlsx}
+```{r new-sheet-from-xlsx, eval = NOT_CRAN}
 gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 gap_xlsx %>% gs_read(ws = "Asia")
@@ -298,7 +309,7 @@ gap_xlsx %>% gs_read(ws = "Asia")
 
 And we clean up after ourselves on Google Drive.
 
-```{r delete-moar-sheets}
+```{r delete-moar-sheets, eval = NOT_CRAN}
 gs_vecdel(c("iris", "mini-gap"))
 ## achieves same as:
 ## gs_delete(iris_ss)
@@ -309,7 +320,7 @@ gs_vecdel(c("iris", "mini-gap"))
 
 You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
 
-```{r export-sheet-as-csv}
+```{r export-sheet-as-csv, eval = NOT_CRAN}
 gs_title("Gapminder") %>%
   gs_download(ws = "Africa", to = "gapminder-africa.csv")
 ## is it there? yes!
@@ -318,7 +329,7 @@ read.csv("gapminder-africa.csv") %>% head()
 
 Download the entire spreadsheet as an Excel workbook.
 
-```{r export-sheet-as-xlsx}
+```{r export-sheet-as-xlsx, eval = NOT_CRAN}
 gs_title("Gapminder") %>% 
   gs_download(to = "gapminder.xlsx")
 ```
@@ -327,7 +338,7 @@ Go check it out in Excel, if you wish!
 
 And now we clean up the downloaded files.
 
-```{r clean-exported-files}
+```{r clean-exported-files, eval = NOT_CRAN}
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 ```
 
