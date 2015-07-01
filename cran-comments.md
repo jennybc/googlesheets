@@ -7,14 +7,14 @@
 
 There were no ERRORs or WARNINGs. 
 
-There is a NOTE from winbuilder, both R 3.2.1 and R Under development (unstable):
+There is one NOTE:
 
-* checking re-building of vignette outputs ... NOTE
-Error in re-building vignettes:
-  ...
-Quitting from lines 309-313 (basic-usage.Rmd) 
-Error: processing vignette 'basic-usage.Rmd' failed with diagnostics:
-Failed to open file C:\Users\CRAN\Documents\tmp\gapminder-africa.csv.
-Execution halted
+* checking CRAN incoming feasibility ... NOTE
+Maintainer: 'Jennifer Bryan <jenny@stat.ubc.ca>'
+New submission
 
-The vignette uses my package with OAuth2 to read and write via the Google Sheets API. Since I cannot upload the necessary token to CRAN, it seems inevitable that my vignette cannot be rebuilt by CRAN. I do rebuild it regularly on Travis-CI, where I can upload the token as an encrypted file.
+License components with restrictions and base license permitting such:
+  MIT + file LICENSE
+File 'LICENSE':
+  YEAR: 2015
+  COPYRIGHT HOLDER: Jennifer Bryan, Joanna Zhao
