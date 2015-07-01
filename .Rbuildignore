@@ -6,8 +6,8 @@
 ^jenny-scratch$
 ^README\.Rmd$
 ^README-.*\.png$
-tests/testthat/token_file.rds.enc
 man-roxygen
 rsconnect
 ^cran-comments.md$
 ^README.html$
+tests/testthat/googlesheets_token.rds.enc
