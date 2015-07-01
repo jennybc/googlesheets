@@ -14,7 +14,8 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ## ----pre-clean, include = FALSE------------------------------------------
 ## if a previous compilation of this document leaves anything behind, i.e. if it
 ## aborts, clean up Google Drive first
-googlesheets::gs_vecdel("hi I am new here", verbose = FALSE)
+googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
+file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 
 ## ----load package--------------------------------------------------------
 library(googlesheets)
@@ -140,11 +141,13 @@ foo <- foo %>% gs_ws_new("edit_cells")
 foo <- foo %>% gs_ws_new("add_row")
 
 ## add first six rows of iris data (and var names) into a blank sheet
-foo <- foo %>% gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
+foo <- foo %>%
+  gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
 
 ## initialize sheet with column headers and one row of data
 ## the list feed is picky about this
-foo <- foo %>% gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
+foo <- foo %>% 
+  gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
 ## add the next 5 rows of data
 for(i in 2:6) {
   foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
@@ -179,16 +182,16 @@ gs_vecdel(c("iris", "mini-gap"))
 
 ## ----export-sheet-as-csv-------------------------------------------------
 gs_title("Gapminder") %>%
-  gs_download(ws = "Africa", to = "~/tmp/gapminder-africa.csv")
+  gs_download(ws = "Africa", to = "gapminder-africa.csv")
 ## is it there? yes!
-read.csv("~/tmp/gapminder-africa.csv") %>% head()
+read.csv("gapminder-africa.csv") %>% head()
 
 ## ----export-sheet-as-xlsx------------------------------------------------
 gs_title("Gapminder") %>% 
-  gs_download(to = "~/tmp/gapminder.xlsx")
+  gs_download(to = "gapminder.xlsx")
 
 ## ----clean-exported-files------------------------------------------------
-file.remove(file.path("~/tmp", c("gapminder.xlsx", "gapminder-africa.csv")))
+file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 
 ## ----gs_auth, eval = FALSE-----------------------------------------------
 #  # Give googlesheets permission to access your spreadsheets and google drive

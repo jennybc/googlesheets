@@ -24,10 +24,10 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 #> Source: local data frame [41 x 10]
 #> 
 #>                 sheet_title        author perm version             updated
-#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-06-30 16:40:27
-#> 2                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10
-#> 3               TAGS v6.0ns     m.hawksey    r     new 2015-06-22 19:17:33
-#> 4               gas_mileage      woo.kara    r     new 2015-06-22 00:37:26
+#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-01 07:24:25
+#> 2               gas_mileage      woo.kara    r     new 2015-07-01 02:21:07
+#> 3                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10
+#> 4               TAGS v6.0ns     m.hawksey    r     new 2015-06-22 19:17:33
 #> 5   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
 #> 6  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
 #> 7          Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44
@@ -41,11 +41,11 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 my_sheets %>% glimpse()
 #> Observations: 41
 #> Variables:
-#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "for_sean", "TAGS...
-#> $ author      (chr) "joannazhaoo", "gspreadr", "m.hawksey", "woo.kara"...
-#> $ perm        (chr) "r", "rw", "r", "r", "r", "r", "r", "r", "r", "r",...
+#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "gas_mileage", "f...
+#> $ author      (chr) "joannazhaoo", "woo.kara", "gspreadr", "m.hawksey"...
+#> $ perm        (chr) "r", "r", "rw", "r", "r", "r", "r", "r", "r", "r",...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2015-06-30 16:40:27, 2015-06-23 18:33:10, 2015-06...
+#> $ updated     (time) 2015-07-01 07:24:25, 2015-07-01 02:21:07, 2015-06...
 #> $ sheet_key   (chr) "1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1DoMXh2m3F...
@@ -80,7 +80,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-30 16:45:38 GMT
+#>   Date of googlesheets registration: 2015-07-01 07:26:48 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -342,9 +342,9 @@ readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
 readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.032            0.135            0.962
-#> sys.self         0.002            0.018            0.040
-#> elapsed          0.758            1.370            3.016
+#> user.self        0.031            0.136            0.989
+#> sys.self         0.002            0.014            0.046
+#> elapsed          1.308            1.719            3.339
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -555,8 +555,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-30 16:46:05 GMT
-#>     Date of last spreadsheet update: 2015-06-30 16:46:03 GMT
+#>   Date of googlesheets registration: 2015-07-01 07:27:15 GMT
+#>     Date of last spreadsheet update: 2015-07-01 07:27:13 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -565,8 +565,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1X_VkBRtYY4JVGJIcZaG1rmWtiri__aaBdHDlUH6UuYI
-#> Browser URL: https://docs.google.com/spreadsheets/d/1X_VkBRtYY4JVGJIcZaG1rmWtiri__aaBdHDlUH6UuYI/
+#> Key: 1E4R8x4fpHCozG3nc_AIN3xWPWGoR9SlKrTIRzLwH6HI
+#> Browser URL: https://docs.google.com/spreadsheets/d/1E4R8x4fpHCozG3nc_AIN3xWPWGoR9SlKrTIRzLwH6HI/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
@@ -594,7 +594,8 @@ foo <- foo %>% gs_ws_new("add_row")
 #> Worksheet dimensions: 1000 x 26.
 
 ## add first six rows of iris data (and var names) into a blank sheet
-foo <- foo %>% gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
+foo <- foo %>%
+  gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
 #> Range affected by the update: "A1:E7"
 #> Worksheet "edit_cells" successfully updated with 35 new value(s).
 #> Accessing worksheet titled "edit_cells"
@@ -605,7 +606,8 @@ foo <- foo %>% gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
 
 ## initialize sheet with column headers and one row of data
 ## the list feed is picky about this
-foo <- foo %>% gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
+foo <- foo %>% 
+  gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
 #> Range affected by the update: "A1:E2"
 #> Worksheet "add_row" successfully updated with 10 new value(s).
 #> Accessing worksheet titled "add_row"
@@ -680,8 +682,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-30 16:46:47 GMT
-#>     Date of last spreadsheet update: 2015-06-30 16:46:45 GMT
+#>   Date of googlesheets registration: 2015-07-01 07:27:50 GMT
+#>     Date of last spreadsheet update: 2015-07-01 07:27:47 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -690,8 +692,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 1UF9Z_CCNh75FjAU1VWPAp3RM2K37V1n2yJzDetm6aig
-#> Browser URL: https://docs.google.com/spreadsheets/d/1UF9Z_CCNh75FjAU1VWPAp3RM2K37V1n2yJzDetm6aig/
+#> Key: 1Zw0L68up_wubuqAUiIOPB2N_OuhMfhbhZjrKd6XSQ70
+#> Browser URL: https://docs.google.com/spreadsheets/d/1Zw0L68up_wubuqAUiIOPB2N_OuhMfhbhZjrKd6XSQ70/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -715,8 +717,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-30 16:46:52 GMT
-#>     Date of last spreadsheet update: 2015-06-30 16:46:50 GMT
+#>   Date of googlesheets registration: 2015-07-01 07:27:55 GMT
+#>     Date of last spreadsheet update: 2015-07-01 07:27:53 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -729,8 +731,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1PUQMV3Y8TQi31XVHAmmWhx8Nk5XEwLnhM8X9iK8lKlo
-#> Browser URL: https://docs.google.com/spreadsheets/d/1PUQMV3Y8TQi31XVHAmmWhx8Nk5XEwLnhM8X9iK8lKlo/
+#> Key: 11vPD6VdocD2yQZc_1LbmW8WScGc_8geuTBNL1LVh7RA
+#> Browser URL: https://docs.google.com/spreadsheets/d/11vPD6VdocD2yQZc_1LbmW8WScGc_8geuTBNL1LVh7RA/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled "Asia"
 #> Source: local data frame [5 x 6]
@@ -767,12 +769,12 @@ You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spr
 
 ```r
 gs_title("Gapminder") %>%
-  gs_download(ws = "Africa", to = "~/tmp/gapminder-africa.csv")
+  gs_download(ws = "Africa", to = "gapminder-africa.csv")
 #> Sheet successfully identifed: "Gapminder"
 #> Accessing worksheet titled "Africa"
-#> Sheet successfully downloaded: /Users/jenny/tmp/gapminder-africa.csv
+#> Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder-africa.csv
 ## is it there? yes!
-read.csv("~/tmp/gapminder-africa.csv") %>% head()
+read.csv("gapminder-africa.csv") %>% head()
 #>   country continent year lifeExp      pop gdpPercap
 #> 1 Algeria    Africa 1952  43.077  9279525  2449.008
 #> 2 Algeria    Africa 1957  45.685 10270856  3013.976
@@ -787,9 +789,9 @@ Download the entire spreadsheet as an Excel workbook.
 
 ```r
 gs_title("Gapminder") %>% 
-  gs_download(to = "~/tmp/gapminder.xlsx")
+  gs_download(to = "gapminder.xlsx")
 #> Sheet successfully identifed: "Gapminder"
-#> Sheet successfully downloaded: /Users/jenny/tmp/gapminder.xlsx
+#> Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder.xlsx
 ```
 
 Go check it out in Excel, if you wish!
@@ -798,7 +800,7 @@ And now we clean up the downloaded files.
 
 
 ```r
-file.remove(file.path("~/tmp", c("gapminder.xlsx", "gapminder-africa.csv")))
+file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 #> [1] TRUE TRUE
 ```
 
@@ -821,9 +823,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-06-30 16:45:35 GMT
+#>                  date: 2015-07-01 07:26:46 GMT
 #>          access token: valid
-#>  peek at access token: ya29....vbUdw
+#>  peek at access token: ya29....vBXHQ
 #> peek at refresh token: 1/zNh...ATCKT
 user_session_info
 #> $displayName
@@ -833,13 +835,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2015-06-30 16:45:35 GMT"
+#> [1] "2015-07-01 07:26:46 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....vbUdw"
+#> [1] "ya29....vBXHQ"
 #> 
 #> $peek_ref
 #> [1] "1/zNh...ATCKT"
