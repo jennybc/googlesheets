@@ -55,9 +55,9 @@ install.packages("googlesheets")
 
 Read [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) on GitHub.
 
-### Here are some draft slides
+### Slides from UseR2015
 
-[Draft slides](https://speakerdeck.com/jennybc/googlesheets-draft) for a talk in July 2015
+[Slides](https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015) for a talk in July 2015 at the [UseR2015 conference](http://user2015.math.aau.dk)
 
 ### Load googlesheets
 
@@ -96,7 +96,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-06-30 16:26:37 GMT
+#>   Date of googlesheets registration: 2015-07-02 10:46:41 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -152,8 +152,8 @@ Create a new Sheet:
 ``` r
 iris_ss <- gs_new("iris", input = head(iris, 3), trim = TRUE)
 #> Warning in gs_new("iris", input = head(iris, 3), trim = TRUE): At least one
-#> sheet named "iris" already exists, so you may need to identify by key, not
-#> title, in future.
+#> sheet matching "iris" already exists, so you may need to identify by key,
+#> not title, in future.
 #> Sheet "iris" created in Google Drive.
 #> Range affected by the update: "A1:E4"
 #> Worksheet "Sheet1" successfully updated with 20 new value(s).
