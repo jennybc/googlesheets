@@ -84,11 +84,9 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
     stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
   }
 
-  if(!is.null(ws_title) || !is.null(row_extent) || !is.null(col_extent)) {
+  if(!is.null(ws_title)) {
     ss <- ss %>%
-      gs_ws_modify(from = 1, to = ws_title,
-                   new_dim = c(row_extent = row_extent,
-                               col_extent = col_extent), verbose = FALSE)
+      gs_ws_rename(from = 1, to = ws_title, verbose = FALSE)
     if(verbose && !is.null(ws_title)) {
       if(ws_title %in% ss$ws$ws_title) {
         sprintf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title) %>%
@@ -99,6 +97,13 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
           message()
       }
     }
+  }
+
+  if(!is.null(row_extent) || !is.null(col_extent)) {
+    ## unless I sleep, it's better to use ws = 1 than to access by (new?) title
+    ss <- ss %>%
+      gs_ws_resize(ws = 1, row_extent = row_extent, col_extent = col_extent,
+                   verbose = FALSE)
   }
 
   dotdotdot <- list(...)
