@@ -247,9 +247,10 @@ foo <- foo %>%
 ## the list feed is picky about this
 foo <- foo %>% 
   gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
-## add the next 5 rows of data
+## add the next 5 rows of data ... careful not to go too fast
 for(i in 2:6) {
   foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
+  Sys.sleep(0.3)
 }
 
 ## let's inspect out work
