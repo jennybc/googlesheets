@@ -11,4 +11,3 @@ rsconnect
 ^cran-comments.md$
 ^README.html$
 tests/testthat/googlesheets_token.rds.enc
-tests/testthat/googlesheets_token.rds
