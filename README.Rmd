@@ -63,14 +63,16 @@ What other ideas do you have?
   
 ### Install googlesheets
 
-```{r eval = FALSE}
-devtools::install_github("jennybc/googlesheets")
-```
-
-*It's not on CRAN yet but that is hopefully imminent. So then this will work.*
+The released version is available on CRAN
 
 ```{r eval = FALSE}
 install.packages("googlesheets")
+```
+
+Or you can get the development version from GitHub:
+
+```{r eval = FALSE}
+devtools::install_github("jennybc/googlesheets")
 ```
 
 ### Take a look at the vignette

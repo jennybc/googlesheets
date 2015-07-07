@@ -41,14 +41,16 @@ What other ideas do you have?
 
 ### Install googlesheets
 
-``` r
-devtools::install_github("jennybc/googlesheets")
-```
-
-*It's not on CRAN yet but that is hopefully imminent. So then this will work.*
+The released version is available on CRAN
 
 ``` r
 install.packages("googlesheets")
+```
+
+Or you can get the development version from GitHub:
+
+``` r
+devtools::install_github("jennybc/googlesheets")
 ```
 
 ### Take a look at the vignette
@@ -96,7 +98,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-02 10:46:41 GMT
+#>   Date of googlesheets registration: 2015-07-07 08:33:29 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
