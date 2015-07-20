@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jenny Bryan, Joanna Zhao" />
 
-<meta name="date" content="2015-07-07" />
+<meta name="date" content="2015-07-20" />
 
 <title>googlesheets Basic Usage</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">googlesheets Basic Usage</h1>
 <h4 class="author"><em>Jenny Bryan, Joanna Zhao</em></h4>
-<h4 class="date"><em>2015-07-07</em></h4>
+<h4 class="date"><em>2015-07-20</em></h4>
 </div>
 
 <div id="TOC">
@@ -82,13 +82,13 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <span class="co">#&gt; Source: local data frame [42 x 10]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                 sheet_title        author perm version             updated</span>
-<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-07 08:31:25</span>
-<span class="co">#&gt; 2               gas_mileage      woo.kara    r     new 2015-07-07 00:19:42</span>
-<span class="co">#&gt; 3  test-gs-jenny-121c66d79…      gspreadr   rw     new 2015-07-06 17:08:26</span>
-<span class="co">#&gt; 4  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14</span>
-<span class="co">#&gt; 5           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22</span>
-<span class="co">#&gt; 6                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10</span>
-<span class="co">#&gt; 7               TAGS v6.0ns     m.hawksey    r     new 2015-06-22 19:17:33</span>
+<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-20 22:13:25</span>
+<span class="co">#&gt; 2               gas_mileage      woo.kara    r     new 2015-07-20 01:08:07</span>
+<span class="co">#&gt; 3               TAGS v6.0ns     m.hawksey    r     new 2015-07-14 08:59:57</span>
+<span class="co">#&gt; 4  test-gs-jenny-121c66d79…      gspreadr   rw     new 2015-07-06 17:08:26</span>
+<span class="co">#&gt; 5  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14</span>
+<span class="co">#&gt; 6           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22</span>
+<span class="co">#&gt; 7                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10</span>
 <span class="co">#&gt; 8   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23</span>
 <span class="co">#&gt; 9  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51</span>
 <span class="co">#&gt; 10         Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44</span>
@@ -99,11 +99,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 <span class="co">#&gt; Observations: 42</span>
 <span class="co">#&gt; Variables:</span>
-<span class="co">#&gt; $ sheet_title (chr) &quot;Copy of Twitter Archiver v2.1&quot;, &quot;gas_mileage&quot;, &quot;t...</span>
-<span class="co">#&gt; $ author      (chr) &quot;joannazhaoo&quot;, &quot;woo.kara&quot;, &quot;gspreadr&quot;, &quot;gspreadr&quot;,...</span>
-<span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r...</span>
+<span class="co">#&gt; $ sheet_title (chr) &quot;Copy of Twitter Archiver v2.1&quot;, &quot;gas_mileage&quot;, &quot;T...</span>
+<span class="co">#&gt; $ author      (chr) &quot;joannazhaoo&quot;, &quot;woo.kara&quot;, &quot;m.hawksey&quot;, &quot;gspreadr&quot;...</span>
+<span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r...</span>
 <span class="co">#&gt; $ version     (chr) &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;...</span>
-<span class="co">#&gt; $ updated     (time) 2015-07-07 08:31:25, 2015-07-07 00:19:42, 2015-07...</span>
+<span class="co">#&gt; $ updated     (time) 2015-07-20 22:13:25, 2015-07-20 01:08:07, 2015-07...</span>
 <span class="co">#&gt; $ sheet_key   (chr) &quot;1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE&quot;, &quot;1...</span>
 <span class="co">#&gt; $ ws_feed     (chr) &quot;https://spreadsheets.google.com/feeds/worksheets/...</span>
 <span class="co">#&gt; $ alternate   (chr) &quot;https://docs.google.com/spreadsheets/d/1DoMXh2m3F...</span>
@@ -127,7 +127,7 @@ my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 gap
 <span class="co">#&gt;                   Spreadsheet title: Gapminder</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-07 08:34:20 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:19:31 GMT</span>
 <span class="co">#&gt;     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
@@ -275,7 +275,7 @@ gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 <h4>Specify the consumption method</h4>
 <p>There are three ways to consume data from a worksheet within a Google spreadsheet. The order goes from fastest-but-more-limited to slowest-but-most-flexible:</p>
 <ul>
-<li><code>gs_read_csv()</code>: Don’t let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the “exportcsv” link. For cases where <code>gs_read_csv()</code> and <code>gs_read_listfeed()</code> both work, we see that <code>gs_read_csv()</code> is around <strong>50 times faster</strong>. Use this when your data occupies a nice rectangle in the sheet and you’re willing to consume all of it. You will get a <code>tbl_df</code> back, which is basically just a <code>data.frame</code>. In fact, you might want to use <code>gs_read_csv()</code>, it in other, less tidy scenarios and do further munging in R.</li>
+<li><code>gs_read_csv()</code>: Don’t let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the “exportcsv” link. For cases where <code>gs_read_csv()</code> and <code>gs_read_listfeed()</code> both work, we see that <code>gs_read_csv()</code> is around <strong>50 times faster</strong>. Use this when your data occupies a nice rectangle in the sheet and you’re willing to consume all of it. You will get a <code>tbl_df</code> back, which is basically just a <code>data.frame</code>. In fact, you might want to use <code>gs_read_csv()</code> in other, less tidy scenarios and do further munging in R.</li>
 <li><code>gs_read_listfeed()</code>: Gets data via the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">“list feed”</a>, which consumes data row-by-row. Like <code>gs_read_csv()</code>, this is appropriate when your data occupies a nice rectangle. You will again get a <code>tbl_df</code> back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support (#17).</li>
 <li><code>gs_read_cellfeed()</code>: Get data via the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">“cell feed”</a>, which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It is invoked by <code>gs_read()</code> whenever the <code>range =</code> argument is used. It works great for modest amounts of data but can be rather slow otherwise. <code>gs_read_cellfeed()</code> returns a <code>tbl_df</code> with <strong>one row per cell</strong>. You can target specific cells via the <code>range</code> argument. See below for demos of <code>gs_reshape_cellfeed()</code> and <code>gs_simplify_cellfeed()</code> which help with post-processing.</li>
 </ul>
@@ -369,9 +369,9 @@ readfuns &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st
 readfuns &lt;-<span class="st"> </span><span class="kw">sapply</span>(readfuns, get, <span class="dt">USE.NAMES =</span> <span class="ot">TRUE</span>)
 <span class="kw">sapply</span>(readfuns, jfun)
 <span class="co">#&gt;            gs_read_csv gs_read_listfeed gs_read_cellfeed</span>
-<span class="co">#&gt; user.self        0.034            0.134            1.011</span>
-<span class="co">#&gt; sys.self         0.002            0.013            0.040</span>
-<span class="co">#&gt; elapsed          0.706            1.654            4.466</span>
+<span class="co">#&gt; user.self        0.034            0.143            1.016</span>
+<span class="co">#&gt; sys.self         0.001            0.021            0.053</span>
+<span class="co">#&gt; elapsed          1.029            0.782            2.178</span>
 <span class="co">#&gt; user.child       0.000            0.000            0.000</span>
 <span class="co">#&gt; sys.child        0.000            0.000            0.000</span></code></pre>
 </div>
@@ -569,8 +569,8 @@ gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</s
 foo
 <span class="co">#&gt;                   Spreadsheet title: foo</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-07 08:34:52 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-07 08:34:49 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:19:51 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-20 22:19:48 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -579,8 +579,8 @@ foo
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; Sheet1: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1Tg_XFZfvGTHWc-ZSgg5Ipjj4taZnjg_W5-nPsWAayVc</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1Tg_XFZfvGTHWc-ZSgg5Ipjj4taZnjg_W5-nPsWAayVc/</span></code></pre>
+<span class="co">#&gt; Key: 1OBRGUa3d4RkwXJcnbyN8f0fa1WqHCjM34-Ie_PWyaB0</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1OBRGUa3d4RkwXJcnbyN8f0fa1WqHCjM34-Ie_PWyaB0/</span></code></pre>
 <p>By default, there will be an empty worksheet called “Sheet1”, but you can control it’s title, extent, and initial data with additional arguments to <code>gs_new()</code> (see <code>gs_edit_cells()</code> in the next section). You can also add, rename, and delete worksheets within an existing sheet via <code>gs_ws_new()</code>, <code>gs_ws_rename()</code>, and <code>gs_ws_delete()</code>. Copy an entire spreadsheet with <code>gs_copy()</code>.</p>
 </div>
 <div id="edit-cells" class="section level3">
@@ -679,8 +679,8 @@ iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span cl
 iris_ss
 <span class="co">#&gt;                   Spreadsheet title: iris</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-07 08:35:34 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-07 08:35:32 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:20:23 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-20 22:20:21 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -689,8 +689,8 @@ iris_ss
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; iris: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 13SkrPLW6QdKW4XduDXycp1TVtuW-UwSu2go2p6UbyoY</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/13SkrPLW6QdKW4XduDXycp1TVtuW-UwSu2go2p6UbyoY/</span>
+<span class="co">#&gt; Key: 14EJWUvfIjRW7Z-pIStWfkG7XvhJKVBU9gxVIrnddTJM</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/14EJWUvfIjRW7Z-pIStWfkG7XvhJKVBU9gxVIrnddTJM/</span>
 iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; Accessing worksheet titled &quot;iris&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 5]</span>
@@ -709,8 +709,8 @@ iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 gap_xlsx
 <span class="co">#&gt;                   Spreadsheet title: mini-gap</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-07 08:35:41 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-07 08:35:39 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:20:29 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-20 22:20:27 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -723,8 +723,8 @@ gap_xlsx
 <span class="co">#&gt; Europe: 1000 x 26</span>
 <span class="co">#&gt; Oceania: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 19bplWnDxRtvR74k4mtAro9gu__ptLmgg2A9NCd-dkGk</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/19bplWnDxRtvR74k4mtAro9gu__ptLmgg2A9NCd-dkGk/</span>
+<span class="co">#&gt; Key: 1UPE1nDcjsm5qiD1dsuWMcgUahMQyXRE6ofb9boaZ2iE</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1UPE1nDcjsm5qiD1dsuWMcgUahMQyXRE6ofb9boaZ2iE/</span>
 gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Asia&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 6]</span>
@@ -785,9 +785,9 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <pre class="sourceCode r"><code class="sourceCode r">user_session_info &lt;-<span class="st"> </span><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2015-07-07 08:34:17 GMT</span>
+<span class="co">#&gt;                  date: 2015-07-20 22:19:28 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....TG2XQ</span>
+<span class="co">#&gt;  peek at access token: ya29....oOPjQ</span>
 <span class="co">#&gt; peek at refresh token: 1/zNh...ATCKT</span>
 user_session_info
 <span class="co">#&gt; $displayName</span>
@@ -797,13 +797,13 @@ user_session_info
 <span class="co">#&gt; [1] &quot;gspreadr@gmail.com&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $date</span>
-<span class="co">#&gt; [1] &quot;2015-07-07 08:34:17 GMT&quot;</span>
+<span class="co">#&gt; [1] &quot;2015-07-20 22:19:28 GMT&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $token_valid</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_acc</span>
-<span class="co">#&gt; [1] &quot;ya29....TG2XQ&quot;</span>
+<span class="co">#&gt; [1] &quot;ya29....oOPjQ&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_ref</span>
 <span class="co">#&gt; [1] &quot;1/zNh...ATCKT&quot;</span></code></pre>

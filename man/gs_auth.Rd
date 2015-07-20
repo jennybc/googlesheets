@@ -27,8 +27,8 @@ credentials in the default cache file \code{.httr-oauth}}
 \item{verbose}{logical; do you want informative messages?}
 }
 \value{
-an OAuth token object, specifically a \code{\link[httr]{Token2.0}},
-  invisibly
+an OAuth token object, specifically a
+  \code{\link[=Token-class]{Token2.0}}, invisibly
 }
 \description{
 Authorize \code{googlesheets} to access your Google user data. You will be
@@ -83,7 +83,8 @@ implications thereof.
 More detail is available from
 \href{https://developers.google.com/identity/protocols/OAuth2}{Using OAuth
 2.0 to Access Google APIs}. This function executes the "installed
-application" flow. See THE WEBAPP STUFF for functions that execute the "web
-server application" flow.
+application" flow. See \code{\link{gs_webapp_auth_url}} and
+\code{\link{gs_webapp_get_token}} for functions that execute the "web server
+application" flow.
 }
 
