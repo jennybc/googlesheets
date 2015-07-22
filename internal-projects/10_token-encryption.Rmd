@@ -1,4 +1,12 @@
-# OAuth Token Encryption for Travis
+---
+title: "OAuth Token Encryption for Travis"
+output:
+  html_document:
+    keep_md: yes
+    theme: cosmo
+    toc: yes
+    toc_depth: 4
+---
 
 *Heavily based on [Noam Ross's instructions](https://discuss.ropensci.org/t/test-api-wrapping-r-packages-with-oauth-tokens/157), here is how we obtain and encrypt the OAuth2.0 token used for testing, including on [Travis-CI](https://travis-ci.org). Go [here](http://docs.travis-ci.com/user/encrypting-files/) for the generic instructions on how to encrypt files on Travis.*
 
@@ -14,8 +22,7 @@ However, I've decided it's pretty important to anticipate token workflows where 
 
 Either do this from a working directory where the existing `.httr-oauth` contains the token you'd like to use or where there is NO existing `.httr-oauth` (or use `gs_auth(new_user = TRUE)`). In the latter case, when you are kicked to the browser, make sure you log in (or already logged in) to Google as the desired user. Pro tip: start with a fresh token or one near the beginning of the current 25-token sequence.
 
-
-```r
+```{r eval = FALSE}
 library(googlesheets)
 token <- gs_auth()
 saveRDS(token, file = "tests/testthat/googlesheets_token.rds")
