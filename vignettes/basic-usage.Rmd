@@ -13,17 +13,16 @@ vignette: >
 ---
 
 ```{r, echo = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "README-",
-  purl = FALSE
-)
 if(identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
   NOT_CRAN <- TRUE
 } else {
   NOT_CRAN <- FALSE
 }
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  purl = if(NOT_CRAN) TRUE else FALSE
+)
 ```
 
 ```{r auth, include = FALSE, eval = NOT_CRAN}
@@ -34,20 +33,22 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ```
 
 ```{r pre-clean, include = FALSE, eval = NOT_CRAN}
-## if a previous compilation of this document leaves anything behind, i.e. if it
-## aborts, clean up Google Drive first
+## in case a previous compilation of this document exited uncleanly, pre-clean 
+## working directory and Google Drive first
 googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 ```
 
-```{r load package}
+First we load the `googlesheets` package and `dplyr`, from which we use the `%>%` pipe operator, among other things. `googlesheets` usage *does not require* you to use `%>%` though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.
+
+```{r load-package}
 library(googlesheets)
 suppressMessages(library(dplyr))
 ```
 
 ### See some spreadsheets you can access
 
-The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
 ```{r list-sheets, eval = NOT_CRAN}
 (my_sheets <- gs_ls())
@@ -99,7 +100,6 @@ gap <- gap %>% gs_gs()
 ```{r register-sheet-cran-only, include = FALSE, eval = !NOT_CRAN}
 gap <- gs_gap_key() %>% gs_key(lookup = FALSE, visibility = "public")
 ```
-
 
 The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
@@ -242,7 +242,7 @@ There are two ways to edit cells within an existing worksheet of an existing spr
   
 If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
 
-We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
+We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.
 
 ```{r edit-cells, eval = NOT_CRAN}
 ## foo <- gs_new("foo")
@@ -344,7 +344,7 @@ file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 
 ### Authorization using OAuth2
  
-If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
+If you use a function that requires authorization, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
  
 ```{r gs_auth, eval = FALSE}
 # Give googlesheets permission to access your spreadsheets and google drive

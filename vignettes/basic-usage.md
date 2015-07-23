@@ -8,6 +8,8 @@ Jenny Bryan, Joanna Zhao
 
 
 
+First we load the `googlesheets` package and `dplyr`, from which we use the `%>%` pipe operator, among other things. `googlesheets` usage *does not require* you to use `%>%` though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.
+
 
 ```r
 library(googlesheets)
@@ -16,7 +18,7 @@ suppressMessages(library(dplyr))
 
 ### See some spreadsheets you can access
 
-The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
 
 
 ```r
@@ -24,7 +26,7 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 #> Source: local data frame [42 x 10]
 #> 
 #>                 sheet_title        author perm version             updated
-#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-20 22:13:25
+#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-23 01:39:25
 #> 2               gas_mileage      woo.kara    r     new 2015-07-20 01:08:07
 #> 3               TAGS v6.0ns     m.hawksey    r     new 2015-07-14 08:59:57
 #> 4  test-gs-jenny-121c66d79…      gspreadr   rw     new 2015-07-06 17:08:26
@@ -45,7 +47,7 @@ my_sheets %>% glimpse()
 #> $ author      (chr) "joannazhaoo", "woo.kara", "m.hawksey", "gspreadr"...
 #> $ perm        (chr) "r", "r", "r", "rw", "rw", "r", "rw", "r", "r", "r...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2015-07-20 22:13:25, 2015-07-20 01:08:07, 2015-07...
+#> $ updated     (time) 2015-07-23 01:39:25, 2015-07-20 01:08:07, 2015-07...
 #> $ sheet_key   (chr) "1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1DoMXh2m3F...
@@ -80,7 +82,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-20 22:19:31 GMT
+#>   Date of googlesheets registration: 2015-07-23 01:41:01 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -125,7 +127,6 @@ gap <- gap %>% gs_gs()
 #> Authentication will be used.
 #> Sheet successfully identifed: "Gapminder"
 ```
-
 
 
 
@@ -345,9 +346,9 @@ readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
 readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.034            0.143            1.016
-#> sys.self         0.001            0.021            0.053
-#> elapsed          1.029            0.782            2.178
+#> user.self        0.032            0.155            1.091
+#> sys.self         0.001            0.016            0.051
+#> elapsed          1.224            0.715            2.515
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -558,8 +559,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-20 22:19:51 GMT
-#>     Date of last spreadsheet update: 2015-07-20 22:19:48 GMT
+#>   Date of googlesheets registration: 2015-07-23 01:41:22 GMT
+#>     Date of last spreadsheet update: 2015-07-23 01:41:20 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -568,8 +569,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1OBRGUa3d4RkwXJcnbyN8f0fa1WqHCjM34-Ie_PWyaB0
-#> Browser URL: https://docs.google.com/spreadsheets/d/1OBRGUa3d4RkwXJcnbyN8f0fa1WqHCjM34-Ie_PWyaB0/
+#> Key: 1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y
+#> Browser URL: https://docs.google.com/spreadsheets/d/1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
@@ -583,7 +584,7 @@ There are two ways to edit cells within an existing worksheet of an existing spr
   
 If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
 
-We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.
+We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.
 
 
 ```r
@@ -686,8 +687,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-20 22:20:23 GMT
-#>     Date of last spreadsheet update: 2015-07-20 22:20:21 GMT
+#>   Date of googlesheets registration: 2015-07-23 01:41:59 GMT
+#>     Date of last spreadsheet update: 2015-07-23 01:41:57 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -696,8 +697,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 14EJWUvfIjRW7Z-pIStWfkG7XvhJKVBU9gxVIrnddTJM
-#> Browser URL: https://docs.google.com/spreadsheets/d/14EJWUvfIjRW7Z-pIStWfkG7XvhJKVBU9gxVIrnddTJM/
+#> Key: 1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4
+#> Browser URL: https://docs.google.com/spreadsheets/d/1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -721,8 +722,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-20 22:20:29 GMT
-#>     Date of last spreadsheet update: 2015-07-20 22:20:27 GMT
+#>   Date of googlesheets registration: 2015-07-23 01:42:04 GMT
+#>     Date of last spreadsheet update: 2015-07-23 01:42:02 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -735,8 +736,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1UPE1nDcjsm5qiD1dsuWMcgUahMQyXRE6ofb9boaZ2iE
-#> Browser URL: https://docs.google.com/spreadsheets/d/1UPE1nDcjsm5qiD1dsuWMcgUahMQyXRE6ofb9boaZ2iE/
+#> Key: 1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y
+#> Browser URL: https://docs.google.com/spreadsheets/d/1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled "Asia"
 #> Source: local data frame [5 x 6]
@@ -810,7 +811,7 @@ file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 
 ### Authorization using OAuth2
  
-If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
+If you use a function that requires authorization, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:
  
 
 ```r
@@ -827,9 +828,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-07-20 22:19:28 GMT
+#>                  date: 2015-07-23 01:40:58 GMT
 #>          access token: valid
-#>  peek at access token: ya29....oOPjQ
+#>  peek at access token: ya29....ZuaTw
 #> peek at refresh token: 1/zNh...ATCKT
 user_session_info
 #> $displayName
@@ -839,13 +840,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2015-07-20 22:19:28 GMT"
+#> [1] "2015-07-23 01:40:58 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....oOPjQ"
+#> [1] "ya29....ZuaTw"
 #> 
 #> $peek_ref
 #> [1] "1/zNh...ATCKT"

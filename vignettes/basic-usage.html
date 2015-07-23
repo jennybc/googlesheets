@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jenny Bryan, Joanna Zhao" />
 
-<meta name="date" content="2015-07-20" />
+<meta name="date" content="2015-07-22" />
 
 <title>googlesheets Basic Usage</title>
 
@@ -54,7 +54,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">googlesheets Basic Usage</h1>
 <h4 class="author"><em>Jenny Bryan, Joanna Zhao</em></h4>
-<h4 class="date"><em>2015-07-20</em></h4>
+<h4 class="date"><em>2015-07-22</em></h4>
 </div>
 
 <div id="TOC">
@@ -73,16 +73,17 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </ul>
 </div>
 
+<p>First we load the <code>googlesheets</code> package and <code>dplyr</code>, from which we use the <code>%&gt;%</code> pipe operator, among other things. <code>googlesheets</code> usage <em>does not require</em> you to use <code>%&gt;%</code> though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
 <span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</code></pre>
 <div id="see-some-spreadsheets-you-can-access" class="section level3">
 <h3>See some spreadsheets you can access</h3>
-<p>The <code>gs_ls()</code> function returns the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).</p>
+<p>The <code>gs_ls()</code> function returns the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).</p>
 <pre class="sourceCode r"><code class="sourceCode r">(my_sheets &lt;-<span class="st"> </span><span class="kw">gs_ls</span>())
 <span class="co">#&gt; Source: local data frame [42 x 10]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                 sheet_title        author perm version             updated</span>
-<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-20 22:13:25</span>
+<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-23 01:39:25</span>
 <span class="co">#&gt; 2               gas_mileage      woo.kara    r     new 2015-07-20 01:08:07</span>
 <span class="co">#&gt; 3               TAGS v6.0ns     m.hawksey    r     new 2015-07-14 08:59:57</span>
 <span class="co">#&gt; 4  test-gs-jenny-121c66d79…      gspreadr   rw     new 2015-07-06 17:08:26</span>
@@ -103,7 +104,7 @@ my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 <span class="co">#&gt; $ author      (chr) &quot;joannazhaoo&quot;, &quot;woo.kara&quot;, &quot;m.hawksey&quot;, &quot;gspreadr&quot;...</span>
 <span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r...</span>
 <span class="co">#&gt; $ version     (chr) &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;...</span>
-<span class="co">#&gt; $ updated     (time) 2015-07-20 22:13:25, 2015-07-20 01:08:07, 2015-07...</span>
+<span class="co">#&gt; $ updated     (time) 2015-07-23 01:39:25, 2015-07-20 01:08:07, 2015-07...</span>
 <span class="co">#&gt; $ sheet_key   (chr) &quot;1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE&quot;, &quot;1...</span>
 <span class="co">#&gt; $ ws_feed     (chr) &quot;https://spreadsheets.google.com/feeds/worksheets/...</span>
 <span class="co">#&gt; $ alternate   (chr) &quot;https://docs.google.com/spreadsheets/d/1DoMXh2m3F...</span>
@@ -127,7 +128,7 @@ my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 gap
 <span class="co">#&gt;                   Spreadsheet title: Gapminder</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:19:31 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:41:01 GMT</span>
 <span class="co">#&gt;     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
@@ -369,9 +370,9 @@ readfuns &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st
 readfuns &lt;-<span class="st"> </span><span class="kw">sapply</span>(readfuns, get, <span class="dt">USE.NAMES =</span> <span class="ot">TRUE</span>)
 <span class="kw">sapply</span>(readfuns, jfun)
 <span class="co">#&gt;            gs_read_csv gs_read_listfeed gs_read_cellfeed</span>
-<span class="co">#&gt; user.self        0.034            0.143            1.016</span>
-<span class="co">#&gt; sys.self         0.001            0.021            0.053</span>
-<span class="co">#&gt; elapsed          1.029            0.782            2.178</span>
+<span class="co">#&gt; user.self        0.032            0.155            1.091</span>
+<span class="co">#&gt; sys.self         0.001            0.016            0.051</span>
+<span class="co">#&gt; elapsed          1.224            0.715            2.515</span>
 <span class="co">#&gt; user.child       0.000            0.000            0.000</span>
 <span class="co">#&gt; sys.child        0.000            0.000            0.000</span></code></pre>
 </div>
@@ -569,8 +570,8 @@ gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</s
 foo
 <span class="co">#&gt;                   Spreadsheet title: foo</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:19:51 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-20 22:19:48 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:41:22 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-23 01:41:20 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -579,8 +580,8 @@ foo
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; Sheet1: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1OBRGUa3d4RkwXJcnbyN8f0fa1WqHCjM34-Ie_PWyaB0</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1OBRGUa3d4RkwXJcnbyN8f0fa1WqHCjM34-Ie_PWyaB0/</span></code></pre>
+<span class="co">#&gt; Key: 1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y/</span></code></pre>
 <p>By default, there will be an empty worksheet called “Sheet1”, but you can control it’s title, extent, and initial data with additional arguments to <code>gs_new()</code> (see <code>gs_edit_cells()</code> in the next section). You can also add, rename, and delete worksheets within an existing sheet via <code>gs_ws_new()</code>, <code>gs_ws_rename()</code>, and <code>gs_ws_delete()</code>. Copy an entire spreadsheet with <code>gs_copy()</code>.</p>
 </div>
 <div id="edit-cells" class="section level3">
@@ -591,7 +592,7 @@ foo
 <li><code>gs_add_row()</code> can add a new row to the bottom of an existing cell rectangle</li>
 </ul>
 <p>If you have the choice, <code>gs_add_row()</code> is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">list feed</a>. <code>gs_edit_cells()</code> relies on <a href="https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request">batch editing</a> on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">cell feed</a>.</p>
-<p>We’ll work within the completely empty sheet created above, <code>foo</code>. If your edit populates the sheet with everything it should have, set <code>trim = TRUE</code> and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and any future consumption via the cell feed will be much faster.</p>
+<p>We’ll work within the completely empty sheet created above, <code>foo</code>. If your edit populates the sheet with everything it should have, set <code>trim = TRUE</code> and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.</p>
 <pre class="sourceCode r"><code class="sourceCode r">## foo &lt;- gs_new(&quot;foo&quot;)
 ## initialize the worksheets
 foo &lt;-<span class="st"> </span>foo %&gt;%<span class="st"> </span><span class="kw">gs_ws_new</span>(<span class="st">&quot;edit_cells&quot;</span>)
@@ -679,8 +680,8 @@ iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span cl
 iris_ss
 <span class="co">#&gt;                   Spreadsheet title: iris</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:20:23 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-20 22:20:21 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:41:59 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-23 01:41:57 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -689,8 +690,8 @@ iris_ss
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; iris: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 14EJWUvfIjRW7Z-pIStWfkG7XvhJKVBU9gxVIrnddTJM</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/14EJWUvfIjRW7Z-pIStWfkG7XvhJKVBU9gxVIrnddTJM/</span>
+<span class="co">#&gt; Key: 1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4/</span>
 iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; Accessing worksheet titled &quot;iris&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 5]</span>
@@ -709,8 +710,8 @@ iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 gap_xlsx
 <span class="co">#&gt;                   Spreadsheet title: mini-gap</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-20 22:20:29 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-20 22:20:27 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:42:04 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-23 01:42:02 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -723,8 +724,8 @@ gap_xlsx
 <span class="co">#&gt; Europe: 1000 x 26</span>
 <span class="co">#&gt; Oceania: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1UPE1nDcjsm5qiD1dsuWMcgUahMQyXRE6ofb9boaZ2iE</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1UPE1nDcjsm5qiD1dsuWMcgUahMQyXRE6ofb9boaZ2iE/</span>
+<span class="co">#&gt; Key: 1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y/</span>
 gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Asia&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 6]</span>
@@ -777,7 +778,7 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 </div>
 <div id="authorization-using-oauth2" class="section level3">
 <h3>Authorization using OAuth2</h3>
-<p>If you use a function that requires authentication, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:</p>
+<p>If you use a function that requires authorization, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:</p>
 <pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Give googlesheets permission to access your spreadsheets and google drive</span>
 <span class="kw">gs_auth</span>() </code></pre>
 <p>Use <code>gs_auth(new_user = TRUE)</code>, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.</p>
@@ -785,9 +786,9 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <pre class="sourceCode r"><code class="sourceCode r">user_session_info &lt;-<span class="st"> </span><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2015-07-20 22:19:28 GMT</span>
+<span class="co">#&gt;                  date: 2015-07-23 01:40:58 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....oOPjQ</span>
+<span class="co">#&gt;  peek at access token: ya29....ZuaTw</span>
 <span class="co">#&gt; peek at refresh token: 1/zNh...ATCKT</span>
 user_session_info
 <span class="co">#&gt; $displayName</span>
@@ -797,13 +798,13 @@ user_session_info
 <span class="co">#&gt; [1] &quot;gspreadr@gmail.com&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $date</span>
-<span class="co">#&gt; [1] &quot;2015-07-20 22:19:28 GMT&quot;</span>
+<span class="co">#&gt; [1] &quot;2015-07-23 01:40:58 GMT&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $token_valid</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_acc</span>
-<span class="co">#&gt; [1] &quot;ya29....oOPjQ&quot;</span>
+<span class="co">#&gt; [1] &quot;ya29....ZuaTw&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_ref</span>
 <span class="co">#&gt; [1] &quot;1/zNh...ATCKT&quot;</span></code></pre>
