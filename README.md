@@ -24,7 +24,7 @@ Think of `googlesheets` as a read/write CMS that you (or your less R-obsessed fr
 
 Use a [Google Form](http://www.google.com/forms/about/) to conduct a survey, which populates a Google Sheet.
 
-Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en). Take advantage of [data validation](https://support.google.com/docs/answer/139705?hl=en) to limit the crazy on the way in.
+Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en). Take advantage of [data validation](https://support.google.com/docs/answer/139705?hl=en) to limit the crazy on the way in. You do not have to be online to edit a Google Sheet! Work offline via [the Chrome browser](https://support.google.com/docs/answer/2375012?hl=en), the [Sheets app for Android](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en), or the [Sheets app for iOS](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8).
 
 There are various ways to harvest web data directly into a Google Sheet. For example:
 
@@ -98,7 +98,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-30 00:50:51 GMT
+#>   Date of googlesheets registration: 2015-07-30 01:03:58 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
