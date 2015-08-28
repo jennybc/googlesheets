@@ -34,17 +34,17 @@ This token is now in an obvious location for use in (local) testing via `testtha
 
 Prior to tests that require authorization, put this token into force.
 
-```r
+```{r eval = FALSE}
 gs_auth(token = "googlesheets_token.rds")
 ```
 
 or, more realistically,
 
-```r
+```{r eval = FALSE}
 suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 ```
 
-A line like this will be at the top of your testing files, but presumably outside of actual tests or expectations. Here's [an example](https://github.com/jennybc/googlesheets/blob/a1a4d877c7a0296f1c95e9f59b03ef4c1ac369b5/tests/testthat/test-gs-ls.R#L3). I also like to [explicitly suspend authenticated access](https://github.com/jennybc/googlesheets/blob/a1a4d877c7a0296f1c95e9f59b03ef4c1ac369b5/tests/testthat/test-gs-ls.R#L39) at the end of every testing file.
+A line like this will be at the top of your testing files, but presumably outside of actual tests or expectations. Here's [an example](https://github.com/jennybc/googlesheets/blob/a1a4d877c7a0296f1c95e9f59b03ef4c1ac369b5/tests/testthat/test-gs-ls.R#L3). I also like to [explicitly suspend authenticated access](https://github.com/jennybc/googlesheets/blob/a1a4d877c7a0296f1c95e9f59b03ef4c1ac369b5/tests/testthat/test-gs-ls.R#L39) at the end of every testing file (note: `gs_auth_suspect()` is unexported ... hmmm, should I export so others could use?).
 
 #### 3. Encrypt the token file and send to Travis
 

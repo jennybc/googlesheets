@@ -27,11 +27,13 @@ This token is now in an obvious location for use in (local) testing via `testtha
 
 Prior to tests that require authorization, put this token into force.
 
+
 ```r
 gs_auth(token = "googlesheets_token.rds")
 ```
 
 or, more realistically,
+
 
 ```r
 suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
