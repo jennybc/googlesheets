@@ -128,15 +128,15 @@ gap %>%
 gap_1row <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1))
 gap_1row
 
-# convert to a named character vector
+# convert to a named (character) vector
 gap_1row %>% gs_simplify_cellfeed()
 
 # Example: single column
 gap_1col <- gap %>% gs_read_cellfeed("Europe", range = cell_cols(3))
 gap_1col
 
-# convert to a un-named character vector and drop the variable name
-gap_1col %>% gs_simplify_cellfeed(notation = "none", col_names = TRUE)
+# drop the variable name and convert to an un-named (integer) vector
+gap_1col %>% gs_simplify_cellfeed(notation = "none")
 
 ## ----new-sheet, eval = NOT_CRAN------------------------------------------
 foo <- gs_new("foo")

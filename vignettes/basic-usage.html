@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jenny Bryan, Joanna Zhao" />
 
-<meta name="date" content="2015-07-22" />
+<meta name="date" content="2015-08-28" />
 
 <title>googlesheets Basic Usage</title>
 
@@ -18,23 +18,41 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
+div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
 table.sourceCode { width: 100%; line-height: 100%; }
 td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
 td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; }
-code > span.dt { color: #902000; }
-code > span.dv { color: #40a070; }
-code > span.bn { color: #40a070; }
-code > span.fl { color: #40a070; }
-code > span.ch { color: #4070a0; }
-code > span.st { color: #4070a0; }
-code > span.co { color: #60a0b0; font-style: italic; }
-code > span.ot { color: #007020; }
-code > span.al { color: #ff0000; font-weight: bold; }
-code > span.fu { color: #06287e; }
-code > span.er { color: #ff0000; font-weight: bold; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 <style type="text/css">
   pre:not([class]) {
@@ -43,7 +61,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </style>
 
 
-<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%7D%0Apre%20%7B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+<link href="data:text/css;charset=utf-8,body%7Bbackground%2Dcolor%3A%23fff%3Bmargin%3A1em%20auto%3Bmax%2Dwidth%3A700px%3Boverflow%3Avisible%3Bpadding%2Dleft%3A2em%3Bpadding%2Dright%3A2em%3Bfont%2Dfamily%3A%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3Bfont%2Dsize%3A14px%3Bline%2Dheight%3A1%2E35%7D%23header%7Btext%2Dalign%3Acenter%7D%23TOC%7Bclear%3Aboth%3Bmargin%3A0%200%2010px%2010px%3Bpadding%3A4px%3Bwidth%3A400px%3Bborder%3A1px%20solid%20%23CCCCCC%3Bborder%2Dradius%3A5px%3Bbackground%2Dcolor%3A%23f6f6f6%3Bfont%2Dsize%3A13px%3Bline%2Dheight%3A1%2E3%7D%23TOC%20%2Etoctitle%7Bfont%2Dweight%3Abold%3Bfont%2Dsize%3A15px%3Bmargin%2Dleft%3A5px%7D%23TOC%20ul%7Bpadding%2Dleft%3A40px%3Bmargin%2Dleft%3A%2D1%2E5em%3Bmargin%2Dtop%3A5px%3Bmargin%2Dbottom%3A5px%7D%23TOC%20ul%20ul%7Bmargin%2Dleft%3A%2D2em%7D%23TOC%20li%7Bline%2Dheight%3A16px%7Dtable%7Bmargin%3A1em%20auto%3Bborder%2Dwidth%3A1px%3Bborder%2Dcolor%3A%23DDDDDD%3Bborder%2Dstyle%3Aoutset%3Bborder%2Dcollapse%3Acollapse%7Dtable%20th%7Bborder%2Dwidth%3A2px%3Bpadding%3A5px%3Bborder%2Dstyle%3Ainset%7Dtable%20td%7Bborder%2Dwidth%3A1px%3Bborder%2Dstyle%3Ainset%3Bline%2Dheight%3A18px%3Bpadding%3A5px%205px%7Dtable%2C%20table%20th%2C%20table%20td%7Bborder%2Dleft%2Dstyle%3Anone%3Bborder%2Dright%2Dstyle%3Anone%7Dtable%20thead%2C%20table%20tr%2Eeven%7Bbackground%2Dcolor%3A%23f7f7f7%7Dp%7Bmargin%3A0%2E5em%200%7Dblockquote%7Bbackground%2Dcolor%3A%23f6f6f6%3Bpadding%3A0%2E25em%200%2E75em%7Dhr%7Bborder%2Dstyle%3Asolid%3Bborder%3Anone%3Bborder%2Dtop%3A1px%20solid%20%23777%3Bmargin%3A28px%200%7Ddl%7Bmargin%2Dleft%3A0%7Ddl%20dd%7Bmargin%2Dbottom%3A13px%3Bmargin%2Dleft%3A13px%7Ddl%20dt%7Bfont%2Dweight%3Abold%7Dul%7Bmargin%2Dtop%3A0%7Dul%20li%7Blist%2Dstyle%3Acircle%20outside%7Dul%20ul%7Bmargin%2Dbottom%3A0%7Dpre%2C%20code%7Bbackground%2Dcolor%3A%23f7f7f7%3Bborder%2Dradius%3A3px%3Bcolor%3A%23333%7Dpre%7Bwhite%2Dspace%3Apre%2Dwrap%3Bborder%2Dradius%3A3px%3Bmargin%3A5px%200px%2010px%200px%3Bpadding%3A10px%7Dpre%3Anot%28%5Bclass%5D%29%7Bbackground%2Dcolor%3A%23f7f7f7%7Dcode%7Bfont%2Dfamily%3AConsolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3Bfont%2Dsize%3A85%25%7Dp%20%3E%20code%2C%20li%20%3E%20code%7Bpadding%3A2px%200px%7Ddiv%2Efigure%7Btext%2Dalign%3Acenter%7Dimg%7Bbackground%2Dcolor%3A%23FFFFFF%3Bpadding%3A2px%3Bborder%3A1px%20solid%20%23DDDDDD%3Bborder%2Dradius%3A3px%3Bborder%3A1px%20solid%20%23CCCCCC%3Bmargin%3A0%205px%7Dh1%7Bmargin%2Dtop%3A0%3Bfont%2Dsize%3A35px%3Bline%2Dheight%3A40px%7Dh2%7Bborder%2Dbottom%3A4px%20solid%20%23f7f7f7%3Bpadding%2Dtop%3A10px%3Bpadding%2Dbottom%3A2px%3Bfont%2Dsize%3A145%25%7Dh3%7Bborder%2Dbottom%3A2px%20solid%20%23f7f7f7%3Bpadding%2Dtop%3A10px%3Bfont%2Dsize%3A120%25%7Dh4%7Bborder%2Dbottom%3A1px%20solid%20%23f7f7f7%3Bmargin%2Dleft%3A8px%3Bfont%2Dsize%3A105%25%7Dh5%2C%20h6%7Bborder%2Dbottom%3A1px%20solid%20%23ccc%3Bfont%2Dsize%3A105%25%7Da%7Bcolor%3A%230033dd%3Btext%2Ddecoration%3Anone%7Da%3Ahover%7Bcolor%3A%236666ff%7Da%3Avisited%7Bcolor%3A%23800080%7Da%3Avisited%3Ahover%7Bcolor%3A%23BB00BB%7Da%5Bhref%5E%3D%22http%3A%22%5D%7Btext%2Ddecoration%3Aunderline%7Da%5Bhref%5E%3D%22https%3A%22%5D%7Btext%2Ddecoration%3Aunderline%7Dcode%20%3E%20span%2Ekw%7Bcolor%3A%23555%3Bfont%2Dweight%3Abold%7Dcode%20%3E%20span%2Edt%7Bcolor%3A%23902000%7Dcode%20%3E%20span%2Edv%7Bcolor%3A%2340a070%7Dcode%20%3E%20span%2Ebn%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Efl%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Ech%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Est%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Eco%7Bcolor%3A%23888888%3Bfont%2Dstyle%3Aitalic%7Dcode%20%3E%20span%2Eot%7Bcolor%3A%23007020%7Dcode%20%3E%20span%2Eal%7Bcolor%3A%23ff0000%3Bfont%2Dweight%3Abold%7Dcode%20%3E%20span%2Efu%7Bcolor%3A%23900%3Bfont%2Dweight%3Abold%7Dcode%20%3E%20span%2Eer%7Bcolor%3A%23a61717%3Bbackground%2Dcolor%3A%23e3d2d2%7D" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -54,7 +72,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <div id="header">
 <h1 class="title">googlesheets Basic Usage</h1>
 <h4 class="author"><em>Jenny Bryan, Joanna Zhao</em></h4>
-<h4 class="date"><em>2015-07-22</em></h4>
+<h4 class="date"><em>2015-08-28</em></h4>
 </div>
 
 <div id="TOC">
@@ -74,48 +92,48 @@ code > span.er { color: #ff0000; font-weight: bold; }
 </div>
 
 <p>First we load the <code>googlesheets</code> package and <code>dplyr</code>, from which we use the <code>%&gt;%</code> pipe operator, among other things. <code>googlesheets</code> usage <em>does not require</em> you to use <code>%&gt;%</code> though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
-<span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
+<span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</code></pre></div>
 <div id="see-some-spreadsheets-you-can-access" class="section level3">
 <h3>See some spreadsheets you can access</h3>
 <p>The <code>gs_ls()</code> function returns the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).</p>
-<pre class="sourceCode r"><code class="sourceCode r">(my_sheets &lt;-<span class="st"> </span><span class="kw">gs_ls</span>())
-<span class="co">#&gt; Source: local data frame [42 x 10]</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(my_sheets &lt;-<span class="st"> </span><span class="kw">gs_ls</span>())
+<span class="co">#&gt; Source: local data frame [43 x 10]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;                 sheet_title        author perm version             updated</span>
-<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-23 01:39:25</span>
-<span class="co">#&gt; 2               gas_mileage      woo.kara    r     new 2015-07-20 01:08:07</span>
-<span class="co">#&gt; 3               TAGS v6.0ns     m.hawksey    r     new 2015-07-14 08:59:57</span>
-<span class="co">#&gt; 4  test-gs-jenny-121c66d79…      gspreadr   rw     new 2015-07-06 17:08:26</span>
-<span class="co">#&gt; 5  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14</span>
-<span class="co">#&gt; 6           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22</span>
-<span class="co">#&gt; 7                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10</span>
-<span class="co">#&gt; 8   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23</span>
-<span class="co">#&gt; 9  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51</span>
-<span class="co">#&gt; 10         Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44</span>
+<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-08-28 20:11:32</span>
+<span class="co">#&gt; 2               TAGS v6.0ns     m.hawksey    r     new 2015-08-24 09:46:54</span>
+<span class="co">#&gt; 3               gas_mileage      woo.kara    r     new 2015-08-01 17:00:16</span>
+<span class="co">#&gt; 4                      vægt      gspreadr   rw     new 2015-07-29 23:14:11</span>
+<span class="co">#&gt; 5       commas-and-percents      gspreadr   rw     new 2015-07-28 04:21:15</span>
+<span class="co">#&gt; 6  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14</span>
+<span class="co">#&gt; 7           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22</span>
+<span class="co">#&gt; 8                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10</span>
+<span class="co">#&gt; 9   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23</span>
+<span class="co">#&gt; 10 Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51</span>
 <span class="co">#&gt; ..                      ...           ...  ...     ...                 ...</span>
 <span class="co">#&gt; Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self</span>
 <span class="co">#&gt;   (chr), alt_key (chr)</span>
 <span class="co"># (expect a prompt to authenticate with Google interactively HERE)</span>
 my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
-<span class="co">#&gt; Observations: 42</span>
+<span class="co">#&gt; Observations: 43</span>
 <span class="co">#&gt; Variables:</span>
-<span class="co">#&gt; $ sheet_title (chr) &quot;Copy of Twitter Archiver v2.1&quot;, &quot;gas_mileage&quot;, &quot;T...</span>
-<span class="co">#&gt; $ author      (chr) &quot;joannazhaoo&quot;, &quot;woo.kara&quot;, &quot;m.hawksey&quot;, &quot;gspreadr&quot;...</span>
-<span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r...</span>
+<span class="co">#&gt; $ sheet_title (chr) &quot;Copy of Twitter Archiver v2.1&quot;, &quot;TAGS v6.0ns&quot;, &quot;g...</span>
+<span class="co">#&gt; $ author      (chr) &quot;joannazhaoo&quot;, &quot;m.hawksey&quot;, &quot;woo.kara&quot;, &quot;gspreadr&quot;...</span>
+<span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;...</span>
 <span class="co">#&gt; $ version     (chr) &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;...</span>
-<span class="co">#&gt; $ updated     (time) 2015-07-23 01:39:25, 2015-07-20 01:08:07, 2015-07...</span>
+<span class="co">#&gt; $ updated     (time) 2015-08-28 20:11:32, 2015-08-24 09:46:54, 2015-08...</span>
 <span class="co">#&gt; $ sheet_key   (chr) &quot;1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE&quot;, &quot;1...</span>
 <span class="co">#&gt; $ ws_feed     (chr) &quot;https://spreadsheets.google.com/feeds/worksheets/...</span>
 <span class="co">#&gt; $ alternate   (chr) &quot;https://docs.google.com/spreadsheets/d/1DoMXh2m3F...</span>
 <span class="co">#&gt; $ self        (chr) &quot;https://spreadsheets.google.com/feeds/spreadsheet...</span>
-<span class="co">#&gt; $ alt_key     (chr) NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span></code></pre>
+<span class="co">#&gt; $ alt_key     (chr) NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span></code></pre></div>
 </div>
 <div id="get-a-google-spreadsheet-to-practice-with" class="section level3">
 <h3>Get a Google spreadsheet to practice with</h3>
 <p>Don’t worry if you don’t have any suitable Google Sheets lying around! We’ve published a sheet for you to practice with and have built functions into <code>googlesheets</code> to help you access it. The example sheet holds some of the <a href="https://github.com/jennybc/gapminder">Gapminder data</a>; feel free to <a href="https://w3id.org/people/jennybc/googlesheets_gap_url">visit the Sheet in the browser</a>. The code below will put a copy of this sheet into your Drive, titled “Gapminder”.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_gap</span>() %&gt;%<span class="st"> </span>
-<span class="st">  </span><span class="kw">gs_copy</span>(<span class="dt">to =</span> <span class="st">&quot;Gapminder&quot;</span>)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_gap</span>() %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">gs_copy</span>(<span class="dt">to =</span> <span class="st">&quot;Gapminder&quot;</span>)</code></pre></div>
 <p>If that seems to have worked, go check for a sheet named “Gapminder” in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. You could also run <code>gs_ls()</code> again and make sure the Gapminder sheet is listed.</p>
 </div>
 <div id="register-a-spreadsheet" class="section level3">
@@ -123,12 +141,12 @@ my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 <p>If you plan to consume data from a sheet or edit it, you must first <strong>register</strong> it. This is how <code>googlesheets</code> records important info about the sheet that is required downstream by the Google Sheets or Google Drive APIs. Once registered, you can print the result to get some basic info about the sheet.</p>
 <p><code>googlesheets</code> provides several registration functions. Specifying the sheet by title? Use <code>gs_title()</code>. By key? Use <code>gs_key()</code>. You get the idea.</p>
 <p><em>We’re using the built-in functions <code>gs_gap_key()</code> and <code>gs_gap_url()</code> to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.</em></p>
-<pre class="sourceCode r"><code class="sourceCode r">gap &lt;-<span class="st"> </span><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap &lt;-<span class="st"> </span><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>)
 <span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span>
 gap
 <span class="co">#&gt;                   Spreadsheet title: Gapminder</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:41:01 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:13:51 GMT</span>
 <span class="co">#&gt;     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
@@ -171,7 +189,7 @@ third_party_gap &lt;-<span class="st"> </span>GAP_URL %&gt;%
 <span class="co"># Re-register it!</span>
 gap &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_gs</span>()
 <span class="co">#&gt; Authentication will be used.</span>
-<span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span></code></pre>
+<span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span></code></pre></div>
 <p>The registration functions <code>gs_title()</code>, <code>gs_key()</code>, <code>gs_url()</code>, and <code>gs_gs()</code> return a registered sheet as a <code>googlesheet</code> object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered <code>googlesheet</code> object, ready to be stored or piped into the next command.</p>
 <p><em>We export a utility function, <code>extract_key_from_url()</code>, to help you get and store the key from a browser URL. Registering via browser URL is fine, but registering by key is probably a better idea in the long-run.</em></p>
 </div>
@@ -180,7 +198,7 @@ gap &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class
 <div id="ignorance-is-bliss" class="section level4">
 <h4>Ignorance is bliss</h4>
 <p>If you want to consume the data in a worksheet and get something rectangular back, use the all-purpose function <code>gs_read()</code>. By default, it reads all the data in a worksheet.</p>
-<pre class="sourceCode r"><code class="sourceCode r">oceania &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">oceania &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Oceania&quot;</span>
 oceania
 <span class="co">#&gt; Source: local data frame [24 x 6]</span>
@@ -213,9 +231,9 @@ oceania
 <span class="co">#&gt; $ year      (int) 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...</span>
 <span class="co">#&gt; $ lifeExp   (dbl) 69.120, 70.330, 70.930, 71.100, 71.930, 73.490, 74.7...</span>
 <span class="co">#&gt; $ pop       (int) 8691212, 9712569, 10794968, 11872264, 13177000, 1407...</span>
-<span class="co">#&gt; $ gdpPercap (dbl) 10039.60, 10949.65, 12217.23, 14526.12, 16788.63, 18...</span></code></pre>
+<span class="co">#&gt; $ gdpPercap (dbl) 10039.60, 10949.65, 12217.23, 14526.12, 16788.63, 18...</span></code></pre></div>
 <p>You can target specific cells via the <code>range =</code> argument. The simplest usage is to specify an Excel-like cell range, such as range = “D12:F15” or range = “R1C12:R6C15”. The cell rectangle can be specified in various other ways, using helper functions.</p>
-<pre class="sourceCode r"><code class="sourceCode r">gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="dv">2</span>, <span class="dt">range =</span> <span class="st">&quot;A1:D8&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="dv">2</span>, <span class="dt">range =</span> <span class="st">&quot;A1:D8&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Americas&quot;</span>
 <span class="co">#&gt; Source: local data frame [7 x 4]</span>
 <span class="co">#&gt; </span>
@@ -268,7 +286,7 @@ gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 <span class="co">#&gt; 1  28.801  8425333  779.4453</span>
 <span class="co">#&gt; 2  30.332  9240934  820.8530</span>
 <span class="co">#&gt; 3  31.997 10267083  853.1007</span>
-<span class="co">#&gt; 4  34.020 11537966  836.1971</span></code></pre>
+<span class="co">#&gt; 4  34.020 11537966  836.1971</span></code></pre></div>
 <p><code>gs_read()</code> is a wrapper that bundles together the most common methods to read data from the API and transform it for downstream use. You can refine it’s behavior further, by passing more arguments via <code>...</code>. Read the help file for more details.</p>
 <p>If <code>gs_read()</code> doesn’t do what you need, then keep reading for the underlying functions to read and post-process data.</p>
 </div>
@@ -280,7 +298,7 @@ gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 <li><code>gs_read_listfeed()</code>: Gets data via the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">“list feed”</a>, which consumes data row-by-row. Like <code>gs_read_csv()</code>, this is appropriate when your data occupies a nice rectangle. You will again get a <code>tbl_df</code> back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support (#17).</li>
 <li><code>gs_read_cellfeed()</code>: Get data via the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">“cell feed”</a>, which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It is invoked by <code>gs_read()</code> whenever the <code>range =</code> argument is used. It works great for modest amounts of data but can be rather slow otherwise. <code>gs_read_cellfeed()</code> returns a <code>tbl_df</code> with <strong>one row per cell</strong>. You can target specific cells via the <code>range</code> argument. See below for demos of <code>gs_reshape_cellfeed()</code> and <code>gs_simplify_cellfeed()</code> which help with post-processing.</li>
 </ul>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get the data for worksheet &quot;Oceania&quot;: the super-fast csv way</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get the data for worksheet &quot;Oceania&quot;: the super-fast csv way</span>
 oceania_csv &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_csv</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Oceania&quot;</span>
 <span class="kw">str</span>(oceania_csv)
@@ -359,28 +377,28 @@ oceania_cell_feed
 <span class="co">#&gt; 8    B2     R2C2   2   2   Oceania</span>
 <span class="co">#&gt; 9    C2     R2C3   2   3      1952</span>
 <span class="co">#&gt; 10   D2     R2C4   2   4     69.12</span>
-<span class="co">#&gt; ..  ...      ... ... ...       ...</span></code></pre>
+<span class="co">#&gt; ..  ...      ... ... ...       ...</span></code></pre></div>
 </div>
 <div id="quick-speed-comparison" class="section level4">
 <h4>Quick speed comparison</h4>
 <p>Let’s consume all the data for Africa by all 3 methods and see how long it takes.</p>
-<pre class="sourceCode r"><code class="sourceCode r">jfun &lt;-<span class="st"> </span>function(readfun)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">jfun &lt;-<span class="st"> </span>function(readfun)
   <span class="kw">system.time</span>(<span class="kw">do.call</span>(readfun, <span class="kw">list</span>(<span class="kw">gs_gap</span>(), <span class="dt">ws =</span> <span class="st">&quot;Africa&quot;</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)))
 readfuns &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;gs_read_csv&quot;</span>, <span class="st">&quot;gs_read_listfeed&quot;</span>, <span class="st">&quot;gs_read_cellfeed&quot;</span>)
 readfuns &lt;-<span class="st"> </span><span class="kw">sapply</span>(readfuns, get, <span class="dt">USE.NAMES =</span> <span class="ot">TRUE</span>)
 <span class="kw">sapply</span>(readfuns, jfun)
 <span class="co">#&gt;            gs_read_csv gs_read_listfeed gs_read_cellfeed</span>
-<span class="co">#&gt; user.self        0.032            0.155            1.091</span>
-<span class="co">#&gt; sys.self         0.001            0.016            0.051</span>
-<span class="co">#&gt; elapsed          1.224            0.715            2.515</span>
+<span class="co">#&gt; user.self        0.036            0.147            1.070</span>
+<span class="co">#&gt; sys.self         0.002            0.014            0.057</span>
+<span class="co">#&gt; elapsed          0.426            0.748            2.619</span>
 <span class="co">#&gt; user.child       0.000            0.000            0.000</span>
-<span class="co">#&gt; sys.child        0.000            0.000            0.000</span></code></pre>
+<span class="co">#&gt; sys.child        0.000            0.000            0.000</span></code></pre></div>
 </div>
 <div id="post-processing-data-from-the-cell-feed" class="section level4">
 <h4>Post-processing data from the cell feed</h4>
 <p>If you consume data from the cell feed with <code>gs_read_cellfeed(..., range = ...)</code>, you get a data.frame back with <strong>one row per cell</strong>. The package offers two functions to post-process this into something more useful, <code>gs_reshape_cellfeed()</code> and <code>gs_simplify_cellfeed()</code>.</p>
 <p>To reshape into a table, use <code>gs_reshape_cellfeed()</code>. You can signal that the first row contains column names (or not) with <code>col_names = TRUE</code> (or <code>FALSE</code>). Or you can provide a character vector of names. This is inspired by the <code>col_names</code> argument of <code>readxl::read_excel()</code> and <code>readr::read_delim()</code>, which generalizes the <code>header</code> argument of <code>read.table()</code>.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Reshape: instead of one row per cell, make a nice rectangular data.frame</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Reshape: instead of one row per cell, make a nice rectangular data.frame</span>
 australia_cell_feed &lt;-<span class="st"> </span>gap %&gt;%
 <span class="st">  </span><span class="kw">gs_read_cellfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>, <span class="dt">range =</span> <span class="st">&quot;A1:F13&quot;</span>) 
 <span class="co">#&gt; Accessing worksheet titled &quot;Oceania&quot;</span>
@@ -480,9 +498,9 @@ gap %&gt;%
 <span class="co">#&gt; 1 Australia   Oceania        1952</span>
 <span class="co">#&gt; 2 Australia   Oceania        1957</span>
 <span class="co">#&gt; 3 Australia   Oceania        1962</span>
-<span class="co">#&gt; 4 Australia   Oceania        1967</span></code></pre>
+<span class="co">#&gt; 4 Australia   Oceania        1967</span></code></pre></div>
 <p>To extract the cell data into an atomic vector, possibly named, use <code>gs_simplify_cellfeed()</code>. You can signal that the first row contains column names (or not) with <code>col_names = TRUE</code> (or <code>FALSE</code>). There are several arguments to control conversion.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Example: first row only</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Example: first row only</span>
 gap_1row &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_cellfeed</span>(<span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">1</span>))
 <span class="co">#&gt; Accessing worksheet titled &quot;Europe&quot;</span>
 gap_1row
@@ -496,7 +514,7 @@ gap_1row
 <span class="co">#&gt; 5   E1     R1C5   1   5       pop</span>
 <span class="co">#&gt; 6   F1     R1C6   1   6 gdpPercap</span>
 
-<span class="co"># convert to a named character vector</span>
+<span class="co"># convert to a named (character) vector</span>
 gap_1row %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</span>()
 <span class="co">#&gt;          A1          B1          C1          D1          E1          F1 </span>
 <span class="co">#&gt;   &quot;country&quot; &quot;continent&quot;      &quot;year&quot;   &quot;lifeExp&quot;       &quot;pop&quot; &quot;gdpPercap&quot;</span>
@@ -520,58 +538,47 @@ gap_1col
 <span class="co">#&gt; 10  C10    R10C3  10   3      1992</span>
 <span class="co">#&gt; ..  ...      ... ... ...       ...</span>
 
-<span class="co"># convert to a un-named character vector and drop the variable name</span>
-gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</span>(<span class="dt">notation =</span> <span class="st">&quot;none&quot;</span>, <span class="dt">col_names =</span> <span class="ot">TRUE</span>)
-<span class="co">#&gt;   [1] &quot;year&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot;</span>
-<span class="co">#&gt;  [11] &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot;</span>
-<span class="co">#&gt;  [21] &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot;</span>
-<span class="co">#&gt;  [31] &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot;</span>
-<span class="co">#&gt;  [41] &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot;</span>
-<span class="co">#&gt;  [51] &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot;</span>
-<span class="co">#&gt;  [61] &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot;</span>
-<span class="co">#&gt;  [71] &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot;</span>
-<span class="co">#&gt;  [81] &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot;</span>
-<span class="co">#&gt;  [91] &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot;</span>
-<span class="co">#&gt; [101] &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot;</span>
-<span class="co">#&gt; [111] &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot;</span>
-<span class="co">#&gt; [121] &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot;</span>
-<span class="co">#&gt; [131] &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot;</span>
-<span class="co">#&gt; [141] &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot;</span>
-<span class="co">#&gt; [151] &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot;</span>
-<span class="co">#&gt; [161] &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot;</span>
-<span class="co">#&gt; [171] &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot;</span>
-<span class="co">#&gt; [181] &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot;</span>
-<span class="co">#&gt; [191] &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot;</span>
-<span class="co">#&gt; [201] &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot;</span>
-<span class="co">#&gt; [211] &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot;</span>
-<span class="co">#&gt; [221] &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot;</span>
-<span class="co">#&gt; [231] &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot;</span>
-<span class="co">#&gt; [241] &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot;</span>
-<span class="co">#&gt; [251] &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot;</span>
-<span class="co">#&gt; [261] &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot;</span>
-<span class="co">#&gt; [271] &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot;</span>
-<span class="co">#&gt; [281] &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot;</span>
-<span class="co">#&gt; [291] &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot;</span>
-<span class="co">#&gt; [301] &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot;</span>
-<span class="co">#&gt; [311] &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot;</span>
-<span class="co">#&gt; [321] &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot;</span>
-<span class="co">#&gt; [331] &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot; &quot;1957&quot; &quot;1962&quot;</span>
-<span class="co">#&gt; [341] &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot; &quot;2007&quot; &quot;1952&quot;</span>
-<span class="co">#&gt; [351] &quot;1957&quot; &quot;1962&quot; &quot;1967&quot; &quot;1972&quot; &quot;1977&quot; &quot;1982&quot; &quot;1987&quot; &quot;1992&quot; &quot;1997&quot; &quot;2002&quot;</span>
-<span class="co">#&gt; [361] &quot;2007&quot;</span></code></pre>
+<span class="co"># drop the variable name and convert to an un-named (integer) vector</span>
+gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</span>(<span class="dt">notation =</span> <span class="st">&quot;none&quot;</span>)
+<span class="co">#&gt;   [1] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957</span>
+<span class="co">#&gt;  [15] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967</span>
+<span class="co">#&gt;  [29] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977</span>
+<span class="co">#&gt;  [43] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987</span>
+<span class="co">#&gt;  [57] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997</span>
+<span class="co">#&gt;  [71] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007</span>
+<span class="co">#&gt;  [85] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957</span>
+<span class="co">#&gt;  [99] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967</span>
+<span class="co">#&gt; [113] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977</span>
+<span class="co">#&gt; [127] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987</span>
+<span class="co">#&gt; [141] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997</span>
+<span class="co">#&gt; [155] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007</span>
+<span class="co">#&gt; [169] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957</span>
+<span class="co">#&gt; [183] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967</span>
+<span class="co">#&gt; [197] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977</span>
+<span class="co">#&gt; [211] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987</span>
+<span class="co">#&gt; [225] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997</span>
+<span class="co">#&gt; [239] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007</span>
+<span class="co">#&gt; [253] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957</span>
+<span class="co">#&gt; [267] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967</span>
+<span class="co">#&gt; [281] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977</span>
+<span class="co">#&gt; [295] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987</span>
+<span class="co">#&gt; [309] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997</span>
+<span class="co">#&gt; [323] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007</span>
+<span class="co">#&gt; [337] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957</span>
+<span class="co">#&gt; [351] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007</span></code></pre></div>
 </div>
 </div>
 <div id="create-sheets" class="section level3">
 <h3>Create sheets</h3>
 <p>You can use <code>googlesheets</code> to create new spreadsheets.</p>
-<pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span><span class="kw">gs_new</span>(<span class="st">&quot;foo&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span><span class="kw">gs_new</span>(<span class="st">&quot;foo&quot;</span>)
 <span class="co">#&gt; Sheet &quot;foo&quot; created in Google Drive.</span>
 <span class="co">#&gt; Worksheet dimensions: 1000 x 26.</span>
 foo
 <span class="co">#&gt;                   Spreadsheet title: foo</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:41:22 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-23 01:41:20 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:14:09 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-08-28 20:14:07 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -580,8 +587,8 @@ foo
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; Sheet1: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y/</span></code></pre>
+<span class="co">#&gt; Key: 1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8/</span></code></pre></div>
 <p>By default, there will be an empty worksheet called “Sheet1”, but you can control it’s title, extent, and initial data with additional arguments to <code>gs_new()</code> (see <code>gs_edit_cells()</code> in the next section). You can also add, rename, and delete worksheets within an existing sheet via <code>gs_ws_new()</code>, <code>gs_ws_rename()</code>, and <code>gs_ws_delete()</code>. Copy an entire spreadsheet with <code>gs_copy()</code>.</p>
 </div>
 <div id="edit-cells" class="section level3">
@@ -593,7 +600,7 @@ foo
 </ul>
 <p>If you have the choice, <code>gs_add_row()</code> is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">list feed</a>. <code>gs_edit_cells()</code> relies on <a href="https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request">batch editing</a> on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">cell feed</a>.</p>
 <p>We’ll work within the completely empty sheet created above, <code>foo</code>. If your edit populates the sheet with everything it should have, set <code>trim = TRUE</code> and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.</p>
-<pre class="sourceCode r"><code class="sourceCode r">## foo &lt;- gs_new(&quot;foo&quot;)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## foo &lt;- gs_new(&quot;foo&quot;)
 ## initialize the worksheets
 foo &lt;-<span class="st"> </span>foo %&gt;%<span class="st"> </span><span class="kw">gs_ws_new</span>(<span class="st">&quot;edit_cells&quot;</span>)
 <span class="co">#&gt; Worksheet &quot;edit_cells&quot; added to sheet &quot;foo&quot;.</span>
@@ -657,7 +664,7 @@ foo %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 <span class="co">#&gt; 3          4.7         3.2          1.3         0.2  setosa</span>
 <span class="co">#&gt; 4          4.6         3.1          1.5         0.2  setosa</span>
 <span class="co">#&gt; 5          5.0         3.6          1.4         0.2  setosa</span>
-<span class="co">#&gt; 6          5.4         3.9          1.7         0.4  setosa</span></code></pre>
+<span class="co">#&gt; 6          5.4         3.9          1.7         0.4  setosa</span></code></pre></div>
 <p>Go to <a href="https://docs.google.com/spreadsheets/u/0/">your Google Sheets home screen</a>, find the new sheet <code>foo</code> and look at it. You should see some iris data in the worksheets named <code>edit_cells</code> and <code>add_row</code>.</p>
 <p>Note how we always store the returned value from <code>gs_edit_cells()</code> (and all other sheet editing functions). That’s because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.</p>
 <p>Read the function documentation for <code>gs_edit_cells()</code> for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the <code>byrow =</code> argument.</p>
@@ -665,14 +672,14 @@ foo %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 <div id="delete-sheets" class="section level3">
 <h3>Delete sheets</h3>
 <p>Let’s clean up by deleting the <code>foo</code> spreadsheet we’ve been playing with.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_delete</span>(foo)
-<span class="co">#&gt; Success. &quot;foo&quot; moved to trash in Google Drive.</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_delete</span>(foo)
+<span class="co">#&gt; Success. &quot;foo&quot; moved to trash in Google Drive.</span></code></pre></div>
 <p>If you’d rather specify sheets for deletion by title, look at <code>gs_grepdel()</code> and <code>gs_vecdel()</code>. These functions also allow the deletion of multiple sheets at once.</p>
 </div>
 <div id="upload-delimited-files-or-excel-workbooks" class="section level3">
 <h3>Upload delimited files or Excel workbooks</h3>
 <p>Here’s how we can create a new spreadsheet from a suitable local file. First, we’ll write then upload a comma-delimited excerpt from the iris data.</p>
-<pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
 <span class="st">  </span><span class="kw">head</span>(<span class="dv">5</span>) %&gt;%
 <span class="st">  </span><span class="kw">write.csv</span>(<span class="st">&quot;iris.csv&quot;</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)
 iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span class="st">&quot;iris.csv&quot;</span>)
@@ -680,8 +687,8 @@ iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span cl
 iris_ss
 <span class="co">#&gt;                   Spreadsheet title: iris</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:41:59 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-23 01:41:57 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:14:38 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-08-28 20:14:36 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -690,8 +697,8 @@ iris_ss
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; iris: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4/</span>
+<span class="co">#&gt; Key: 1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE/</span>
 iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; Accessing worksheet titled &quot;iris&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 5]</span>
@@ -703,15 +710,15 @@ iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; 4          4.6         3.1          1.5         0.2  setosa</span>
 <span class="co">#&gt; 5          5.0         3.6          1.4         0.2  setosa</span>
 <span class="kw">file.remove</span>(<span class="st">&quot;iris.csv&quot;</span>)
-<span class="co">#&gt; [1] TRUE</span></code></pre>
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
 <p>Now we’ll upload a multi-sheet Excel workbook. Slowly.</p>
-<pre class="sourceCode r"><code class="sourceCode r">gap_xlsx &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span class="kw">system.file</span>(<span class="st">&quot;mini-gap.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;googlesheets&quot;</span>))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap_xlsx &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span class="kw">system.file</span>(<span class="st">&quot;mini-gap.xlsx&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;googlesheets&quot;</span>))
 <span class="co">#&gt; &quot;mini-gap.xlsx&quot; uploaded to Google Drive and converted to a Google Sheet named &quot;mini-gap&quot;</span>
 gap_xlsx
 <span class="co">#&gt;                   Spreadsheet title: mini-gap</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-07-23 01:42:04 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-07-23 01:42:02 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:14:42 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-08-28 20:14:41 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -724,8 +731,8 @@ gap_xlsx
 <span class="co">#&gt; Europe: 1000 x 26</span>
 <span class="co">#&gt; Oceania: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y/</span>
+<span class="co">#&gt; Key: 1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU/</span>
 gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Asia&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 6]</span>
@@ -735,9 +742,9 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <span class="co">#&gt; 2     Bahrain      Asia 1952  50.939    120447 9867.0848</span>
 <span class="co">#&gt; 3  Bangladesh      Asia 1952  37.484  46886859  684.2442</span>
 <span class="co">#&gt; 4    Cambodia      Asia 1952  39.417   4693836  368.4693</span>
-<span class="co">#&gt; 5       China      Asia 1952  44.000 556263527  400.4486</span></code></pre>
+<span class="co">#&gt; 5       China      Asia 1952  44.000 556263527  400.4486</span></code></pre></div>
 <p>And we clean up after ourselves on Google Drive.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_vecdel</span>(<span class="kw">c</span>(<span class="st">&quot;iris&quot;</span>, <span class="st">&quot;mini-gap&quot;</span>))
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_vecdel</span>(<span class="kw">c</span>(<span class="st">&quot;iris&quot;</span>, <span class="st">&quot;mini-gap&quot;</span>))
 <span class="co">#&gt; Authentication will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;mini-gap&quot;</span>
 <span class="co">#&gt; Success. &quot;mini-gap&quot; moved to trash in Google Drive.</span>
@@ -747,12 +754,12 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <span class="co">#&gt; [1] TRUE TRUE</span>
 ## achieves same as:
 ## gs_delete(iris_ss)
-## gs_delete(gap_xlsx)</code></pre>
+## gs_delete(gap_xlsx)</code></pre></div>
 </div>
 <div id="download-sheets-as-csv-pdf-or-xlsx-file" class="section level3">
 <h3>Download sheets as csv, pdf, or xlsx file</h3>
 <p>You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%
 <span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">ws =</span> <span class="st">&quot;Africa&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;gapminder-africa.csv&quot;</span>)
 <span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span>
 <span class="co">#&gt; Accessing worksheet titled &quot;Africa&quot;</span>
@@ -765,30 +772,30 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <span class="co">#&gt; 3 Algeria    Africa 1962  48.303 11000948  2550.817</span>
 <span class="co">#&gt; 4 Algeria    Africa 1967  51.407 12760499  3246.992</span>
 <span class="co">#&gt; 5 Algeria    Africa 1972  54.518 14760787  4182.664</span>
-<span class="co">#&gt; 6 Algeria    Africa 1977  58.014 17152804  4910.417</span></code></pre>
+<span class="co">#&gt; 6 Algeria    Africa 1977  58.014 17152804  4910.417</span></code></pre></div>
 <p>Download the entire spreadsheet as an Excel workbook.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%<span class="st"> </span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">to =</span> <span class="st">&quot;gapminder.xlsx&quot;</span>)
 <span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span>
-<span class="co">#&gt; Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder.xlsx</span></code></pre>
+<span class="co">#&gt; Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder.xlsx</span></code></pre></div>
 <p>Go check it out in Excel, if you wish!</p>
 <p>And now we clean up the downloaded files.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">file.remove</span>(<span class="kw">c</span>(<span class="st">&quot;gapminder.xlsx&quot;</span>, <span class="st">&quot;gapminder-africa.csv&quot;</span>))
-<span class="co">#&gt; [1] TRUE TRUE</span></code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">file.remove</span>(<span class="kw">c</span>(<span class="st">&quot;gapminder.xlsx&quot;</span>, <span class="st">&quot;gapminder-africa.csv&quot;</span>))
+<span class="co">#&gt; [1] TRUE TRUE</span></code></pre></div>
 </div>
 <div id="authorization-using-oauth2" class="section level3">
 <h3>Authorization using OAuth2</h3>
 <p>If you use a function that requires authorization, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Give googlesheets permission to access your spreadsheets and google drive</span>
-<span class="kw">gs_auth</span>() </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Give googlesheets permission to access your spreadsheets and google drive</span>
+<span class="kw">gs_auth</span>() </code></pre></div>
 <p>Use <code>gs_auth(new_user = TRUE)</code>, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.</p>
 <p>The function <code>gs_user()</code> will print and return some information about the current authenticated user and session.</p>
-<pre class="sourceCode r"><code class="sourceCode r">user_session_info &lt;-<span class="st"> </span><span class="kw">gs_user</span>()
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">user_session_info &lt;-<span class="st"> </span><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2015-07-23 01:40:58 GMT</span>
+<span class="co">#&gt;                  date: 2015-08-28 20:13:49 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....ZuaTw</span>
+<span class="co">#&gt;  peek at access token: ya29....HxXMk</span>
 <span class="co">#&gt; peek at refresh token: 1/zNh...ATCKT</span>
 user_session_info
 <span class="co">#&gt; $displayName</span>
@@ -798,16 +805,16 @@ user_session_info
 <span class="co">#&gt; [1] &quot;gspreadr@gmail.com&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $date</span>
-<span class="co">#&gt; [1] &quot;2015-07-23 01:40:58 GMT&quot;</span>
+<span class="co">#&gt; [1] &quot;2015-08-28 20:13:49 GMT&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $token_valid</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_acc</span>
-<span class="co">#&gt; [1] &quot;ya29....ZuaTw&quot;</span>
+<span class="co">#&gt; [1] &quot;ya29....HxXMk&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_ref</span>
-<span class="co">#&gt; [1] &quot;1/zNh...ATCKT&quot;</span></code></pre>
+<span class="co">#&gt; [1] &quot;1/zNh...ATCKT&quot;</span></code></pre></div>
 </div>
 <div id="old-google-sheets" class="section level3">
 <h3>“Old” Google Sheets</h3>

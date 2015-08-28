@@ -87,8 +87,11 @@ test_that("We can simplify data from the cell feed", {
   foo_simple2 <- foo %>% gs_simplify_cellfeed(col_names = FALSE)
   expect_is(foo_simple2, "character")
 
-  foo_simple3 <- foo %>% gs_simplify_cellfeed(convert = FALSE)
-  expect_equivalent(foo_simple3,
+  foo_simple3 <- foo %>% gs_simplify_cellfeed(col_names = TRUE)
+  expect_is(foo_simple3, "integer")
+
+  foo_simple4 <- foo %>% gs_simplify_cellfeed(convert = FALSE)
+  expect_equivalent(foo_simple4,
                     rep(seq(from = 1952, to = 2007, by = 5), 2) %>%
                       as.character())
 

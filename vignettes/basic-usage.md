@@ -23,31 +23,31 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 
 ```r
 (my_sheets <- gs_ls())
-#> Source: local data frame [42 x 10]
+#> Source: local data frame [43 x 10]
 #> 
 #>                 sheet_title        author perm version             updated
-#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-07-23 01:39:25
-#> 2               gas_mileage      woo.kara    r     new 2015-07-20 01:08:07
-#> 3               TAGS v6.0ns     m.hawksey    r     new 2015-07-14 08:59:57
-#> 4  test-gs-jenny-121c66d79…      gspreadr   rw     new 2015-07-06 17:08:26
-#> 5  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14
-#> 6           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22
-#> 7                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10
-#> 8   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
-#> 9  Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
-#> 10         Projects_2013_14    david.orme    r     new 2015-06-08 08:59:44
+#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-08-28 20:11:32
+#> 2               TAGS v6.0ns     m.hawksey    r     new 2015-08-24 09:46:54
+#> 3               gas_mileage      woo.kara    r     new 2015-08-01 17:00:16
+#> 4                      vægt      gspreadr   rw     new 2015-07-29 23:14:11
+#> 5       commas-and-percents      gspreadr   rw     new 2015-07-28 04:21:15
+#> 6  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14
+#> 7           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22
+#> 8                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10
+#> 9   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
+#> 10 Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
 #> ..                      ...           ...  ...     ...                 ...
 #> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
 #>   (chr), alt_key (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 42
+#> Observations: 43
 #> Variables:
-#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "gas_mileage", "T...
-#> $ author      (chr) "joannazhaoo", "woo.kara", "m.hawksey", "gspreadr"...
-#> $ perm        (chr) "r", "r", "r", "rw", "rw", "r", "rw", "r", "r", "r...
+#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "TAGS v6.0ns", "g...
+#> $ author      (chr) "joannazhaoo", "m.hawksey", "woo.kara", "gspreadr"...
+#> $ perm        (chr) "r", "r", "r", "rw", "rw", "rw", "r", "rw", "r", "...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2015-07-23 01:39:25, 2015-07-20 01:08:07, 2015-07...
+#> $ updated     (time) 2015-08-28 20:11:32, 2015-08-24 09:46:54, 2015-08...
 #> $ sheet_key   (chr) "1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1DoMXh2m3F...
@@ -82,7 +82,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-23 01:41:01 GMT
+#>   Date of googlesheets registration: 2015-08-28 20:13:51 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -346,9 +346,9 @@ readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
 readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.032            0.155            1.091
-#> sys.self         0.001            0.016            0.051
-#> elapsed          1.224            0.715            2.515
+#> user.self        0.036            0.147            1.070
+#> sys.self         0.002            0.014            0.057
+#> elapsed          0.426            0.748            2.619
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -482,7 +482,7 @@ gap_1row
 #> 5   E1     R1C5   1   5       pop
 #> 6   F1     R1C6   1   6 gdpPercap
 
-# convert to a named character vector
+# convert to a named (character) vector
 gap_1row %>% gs_simplify_cellfeed()
 #>          A1          B1          C1          D1          E1          F1 
 #>   "country" "continent"      "year"   "lifeExp"       "pop" "gdpPercap"
@@ -506,45 +506,34 @@ gap_1col
 #> 10  C10    R10C3  10   3      1992
 #> ..  ...      ... ... ...       ...
 
-# convert to a un-named character vector and drop the variable name
-gap_1col %>% gs_simplify_cellfeed(notation = "none", col_names = TRUE)
-#>   [1] "year" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
-#>  [11] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
-#>  [21] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
-#>  [31] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
-#>  [41] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
-#>  [51] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
-#>  [61] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
-#>  [71] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
-#>  [81] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
-#>  [91] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
-#> [101] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
-#> [111] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
-#> [121] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
-#> [131] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
-#> [141] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
-#> [151] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
-#> [161] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
-#> [171] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
-#> [181] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
-#> [191] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
-#> [201] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
-#> [211] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
-#> [221] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
-#> [231] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
-#> [241] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
-#> [251] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
-#> [261] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
-#> [271] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
-#> [281] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
-#> [291] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
-#> [301] "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992"
-#> [311] "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972" "1977" "1982"
-#> [321] "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962" "1967" "1972"
-#> [331] "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952" "1957" "1962"
-#> [341] "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002" "2007" "1952"
-#> [351] "1957" "1962" "1967" "1972" "1977" "1982" "1987" "1992" "1997" "2002"
-#> [361] "2007"
+# drop the variable name and convert to an un-named (integer) vector
+gap_1col %>% gs_simplify_cellfeed(notation = "none")
+#>   [1] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957
+#>  [15] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967
+#>  [29] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977
+#>  [43] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987
+#>  [57] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997
+#>  [71] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007
+#>  [85] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957
+#>  [99] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967
+#> [113] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977
+#> [127] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987
+#> [141] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997
+#> [155] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007
+#> [169] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957
+#> [183] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967
+#> [197] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977
+#> [211] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987
+#> [225] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997
+#> [239] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007
+#> [253] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957
+#> [267] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967
+#> [281] 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977
+#> [295] 1982 1987 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987
+#> [309] 1992 1997 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997
+#> [323] 2002 2007 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007
+#> [337] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007 1952 1957
+#> [351] 1962 1967 1972 1977 1982 1987 1992 1997 2002 2007
 ```
 
 ### Create sheets
@@ -559,8 +548,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-23 01:41:22 GMT
-#>     Date of last spreadsheet update: 2015-07-23 01:41:20 GMT
+#>   Date of googlesheets registration: 2015-08-28 20:14:09 GMT
+#>     Date of last spreadsheet update: 2015-08-28 20:14:07 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -569,8 +558,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y
-#> Browser URL: https://docs.google.com/spreadsheets/d/1jDMiJ3DTdSexNiFH1bz9VrNKHulxEi2gymcuTt49d9Y/
+#> Key: 1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8
+#> Browser URL: https://docs.google.com/spreadsheets/d/1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
@@ -687,8 +676,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-23 01:41:59 GMT
-#>     Date of last spreadsheet update: 2015-07-23 01:41:57 GMT
+#>   Date of googlesheets registration: 2015-08-28 20:14:38 GMT
+#>     Date of last spreadsheet update: 2015-08-28 20:14:36 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -697,8 +686,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4
-#> Browser URL: https://docs.google.com/spreadsheets/d/1siYLOsSq7CVZXKby3gMtc59Rlp69-cEYA6g-xtZcok4/
+#> Key: 1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE
+#> Browser URL: https://docs.google.com/spreadsheets/d/1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
@@ -722,8 +711,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-23 01:42:04 GMT
-#>     Date of last spreadsheet update: 2015-07-23 01:42:02 GMT
+#>   Date of googlesheets registration: 2015-08-28 20:14:42 GMT
+#>     Date of last spreadsheet update: 2015-08-28 20:14:41 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -736,8 +725,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y
-#> Browser URL: https://docs.google.com/spreadsheets/d/1e0Kjnwdrx7RSVxKnpcKVqY4MpZOq1Q-853Dd4wyff6Y/
+#> Key: 1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU
+#> Browser URL: https://docs.google.com/spreadsheets/d/1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled "Asia"
 #> Source: local data frame [5 x 6]
@@ -828,9 +817,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-07-23 01:40:58 GMT
+#>                  date: 2015-08-28 20:13:49 GMT
 #>          access token: valid
-#>  peek at access token: ya29....ZuaTw
+#>  peek at access token: ya29....HxXMk
 #> peek at refresh token: 1/zNh...ATCKT
 user_session_info
 #> $displayName
@@ -840,13 +829,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2015-07-23 01:40:58 GMT"
+#> [1] "2015-08-28 20:13:49 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....ZuaTw"
+#> [1] "ya29....HxXMk"
 #> 
 #> $peek_ref
 #> [1] "1/zNh...ATCKT"

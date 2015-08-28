@@ -53,13 +53,14 @@ gs_simplify_cellfeed <- function(
 
   notation <- match.arg(notation)
 
-  if(is.null(col_names) &&
-     min(x$row) == 1 &&
-     max(x$row) > 1 &&
-     dplyr::n_distinct(x$col) == 1) {
-    col_names <-  TRUE
-  } else {
-    col_names <- FALSE
+  if(is.null(col_names)) {
+    if(min(x$row) == 1 &&
+       max(x$row) > 1 &&
+       dplyr::n_distinct(x$col) == 1) {
+      col_names <-  TRUE
+    } else {
+      col_names <- FALSE
+    }
   }
   stopifnot(identical(col_names, TRUE) || identical(col_names, FALSE))
 
