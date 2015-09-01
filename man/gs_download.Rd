@@ -4,7 +4,7 @@
 \alias{gs_download}
 \title{Download a spreadsheet}
 \usage{
-gs_download(from, ws = NULL, to = "my_sheet.xlsx", overwrite = FALSE,
+gs_download(from, ws = NULL, to = NULL, overwrite = FALSE,
   verbose = TRUE)
 }
 \arguments{
@@ -15,12 +15,18 @@ object}
 respectively, of the worksheet}
 
 \item{to}{path to write file; file extension must be one of .csv, .pdf, or
-.xlsx, which dictates the export format}
+.xlsx, which dictates the export format; defaults to \code{foo.xlsx} where
+\code{foo} is a safe filename constructed from the title of the Sheet being
+downloaded}
 
 \item{overwrite}{logical, indicating whether to overwrite an existing local
 file}
 
 \item{verbose}{logical; do you want informative messages?}
+}
+\value{
+The normalized path of the downloaded file, after confirmed success,
+  or \code{NULL}, otherwise, invisibly.
 }
 \description{
 Export a Google Sheet as a .csv, .pdf, or .xlsx file. You can download a

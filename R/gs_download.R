@@ -15,10 +15,15 @@
 #' @template ss_from
 #' @template ws
 #' @param to path to write file; file extension must be one of .csv, .pdf, or
-#'   .xlsx, which dictates the export format
+#'   .xlsx, which dictates the export format; defaults to \code{foo.xlsx} where
+#'   \code{foo} is a safe filename constructed from the title of the Sheet being
+#'   downloaded
 #' @param overwrite logical, indicating whether to overwrite an existing local
 #'   file
 #' @template verbose
+#'
+#' @return The normalized path of the downloaded file, after confirmed success,
+#'   or \code{NULL}, otherwise, invisibly.
 #'
 #' @examples
 #' \dontrun{
@@ -28,10 +33,15 @@
 #'
 #' @export
 gs_download <-
-  function(from, ws = NULL, to = "my_sheet.xlsx",
-           overwrite = FALSE, verbose = TRUE) {
+  function(from, ws = NULL, to = NULL, overwrite = FALSE, verbose = TRUE) {
 
   stopifnot(inherits(from, "googlesheet"))
+
+  if(is.null(to)) {
+    to <- tolower(gsub('[^A-Za-z0-9]+', '-', from$sheet_title))
+    to <- gsub("^-|-$", '', to)
+    to <- paste0(to, ".xlsx")
+  }
 
   ext <- tools::file_ext(to)
   if(!(ext %in% c("csv", "pdf", "xlsx"))) {
@@ -70,22 +80,26 @@ gs_download <-
     stop(mess)
   }
 
-  if(interactive()) {
-    gdrive_GET(link, httr::write_disk(to, overwrite = overwrite),
-               httr::progress())
-  } else {
+  ## uncomment this once httr updates and progress() doesn't cry wolf #161
+#   if(interactive()) {
+#     gdrive_GET(link, httr::write_disk(to, overwrite = overwrite),
+#                httr::progress())
+#   } else {
     gdrive_GET(link, httr::write_disk(to, overwrite = overwrite))
-  }
+  # }
 
   if(file.exists(to)) {
 
+    to <- normalizePath(to)
     if(verbose) {
-      message(sprintf("Sheet successfully downloaded: %s", normalizePath(to)))
+      message(sprintf("Sheet successfully downloaded: %s", to))
     }
+    return(invisible(to))
 
   } else {
 
     stop(sprintf("Cannot confirm the file download :("))
+    return(invisible(NULL))
 
   }
 

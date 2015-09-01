@@ -5,7 +5,7 @@ suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 
 test_that("Spreadsheet can be exported", {
 
-  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
+  ss <- gs_ws_feed(mini_gap_ws_feed, lookup = FALSE)
 
   temp_dir <- tempdir()
 
@@ -29,16 +29,34 @@ test_that("Spreadsheet can be exported", {
 
 test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 
-  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
+  ss <- gs_ws_feed(mini_gap_ws_feed, lookup = FALSE)
 
   temp_dir <- tempdir()
 
-  to <- file.path(temp_dir, "sheet_one.csv")
-  expect_message(ss %>% gs_download(to = to, overwrite = TRUE),
+  to_nominal <- file.path(temp_dir, "sheet_one.csv")
+  expect_message(to_actual <-
+                   ss %>% gs_download(to = to_nominal, overwrite = TRUE),
                  "successfully downloaded")
 
-  expect_true(file.exists(to))
-  expect_true(file.remove(to))
+  expect_true(file.exists(to_actual))
+  expect_true(identical(normalizePath(to_nominal), normalizePath(to_actual)))
+  expect_true(file.remove(to_actual))
+
+})
+
+test_that("Spreadsheet can be exported w/o specifying 'to'", {
+
+  ss <- gs_ws_feed(mini_gap_ws_feed, lookup = FALSE)
+  ss_copy <- gs_copy(ss, to = p_("tri'cky sheétnamE"))
+
+  expect_message(to_actual <-
+                   ss_copy %>% gs_download(overwrite = TRUE),
+                 "successfully downloaded")
+
+  expect_true(file.exists(to_actual))
+  expect_match(basename(to_actual), "tri-cky-she-tname\\.xlsx")
+  expect_true(file.remove(to_actual))
+  gs_delete(ss_copy)
 
 })
 
