@@ -72,5 +72,8 @@ gs_reshape_cellfeed <- function(x, col_names = TRUE, verbose = TRUE) {
     dplyr::select_(~ row, ~ col, ~ cell_text) %>%
     tidyr::spread_("col", "cell_text", convert = TRUE) %>%
     dplyr::select_(~ -row) %>%
-    stats::setNames(var_names)
+    stats::setNames(var_names) %>%
+    readr::type_convert() %>%
+    dplyr::mutate_each_(dplyr::funs(force_na_type), var_names)
+
 }

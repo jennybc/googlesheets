@@ -14,10 +14,11 @@ License: MIT + file LICENSE
 LazyData: true
 Imports:
     cellranger (>= 1.0.0),
-    dplyr (>= 0.4.0),
+    dplyr (>= 0.4.2),
     ggplot2,
     httr (>= 0.6.1),
     plyr,
+    readr,
     stats,
     stringr,
     tidyr,

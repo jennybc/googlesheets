@@ -57,3 +57,23 @@ construct_url_from_key <- function(key) {
 isTOGGLE <- function(x) {
   is.null(x) || isTRUE(x) || identical(x, FALSE)
 }
+
+force_na_type <-
+  function(x, type = c("logical", "integer", "double", "real",
+                       "complex", "character")) {
+    if(all(is.na(x))) {
+      type <- match.arg(type)
+      na <- switch(type,
+                   logical = NA,
+                   integer = NA_integer_,
+                   double = NA_real_,
+                   real = NA_real_,
+                   complex = NA_complex_,
+                   character = NA_character_,
+                   NA)
+      rep_len(na, length(x))
+    } else {
+      x
+    }
+  }
+

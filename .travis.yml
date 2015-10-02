@@ -9,6 +9,8 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_84f43c85142c_key -iv $encrypted_84f43c85142c_iv
   -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
 - echo "options(repos = c(CRAN='https://cran.rstudio.com/'))" > ~/.Rprofile
+r_github_packages:
+- hadley/readr
 r_binary_packages:
 - dplyr
 - XML

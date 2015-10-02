@@ -69,9 +69,10 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub:
+Or you can get the development version from GitHub (at the moment it depends in a development version of [`readr`](https://github.com/hadley/readr)):
 
 ```{r eval = FALSE}
+devtools::install_github("hadley/readr")
 devtools::install_github("jennybc/googlesheets")
 ```
 

@@ -47,9 +47,10 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub:
+Or you can get the development version from GitHub (at the moment it depends in a development version of [`readr`](https://github.com/hadley/readr)):
 
 ``` r
+devtools::install_github("hadley/readr")
 devtools::install_github("jennybc/googlesheets")
 ```
 
@@ -98,7 +99,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-07-30 01:03:58 GMT
+#>   Date of googlesheets registration: 2015-10-01 22:17:25 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -132,13 +133,14 @@ str(africa)
 head(africa)
 #> Source: local data frame [6 x 6]
 #> 
-#>   country continent year lifeExp      pop gdpPercap
-#> 1 Algeria    Africa 1952  43.077  9279525  2449.008
-#> 2 Algeria    Africa 1957  45.685 10270856  3013.976
-#> 3 Algeria    Africa 1962  48.303 11000948  2550.817
-#> 4 Algeria    Africa 1967  51.407 12760499  3246.992
-#> 5 Algeria    Africa 1972  54.518 14760787  4182.664
-#> 6 Algeria    Africa 1977  58.014 17152804  4910.417
+#>   country continent  year lifeExp      pop gdpPercap
+#>     (chr)     (chr) (int)   (dbl)    (int)     (dbl)
+#> 1 Algeria    Africa  1952  43.077  9279525  2449.008
+#> 2 Algeria    Africa  1957  45.685 10270856  3013.976
+#> 3 Algeria    Africa  1962  48.303 11000948  2550.817
+#> 4 Algeria    Africa  1967  51.407 12760499  3246.992
+#> 5 Algeria    Africa  1972  54.518 14760787  4182.664
+#> 6 Algeria    Africa  1977  58.014 17152804  4910.417
 ```
 
 Some of the many ways to target specific cells:
@@ -189,6 +191,7 @@ iris_ss %>%
 #> Source: local data frame [4 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#>          (chr)       (chr)        (chr)       (chr)   (chr)
 #> 1         what          is            a       sepal anyway?
 #> 2          4.9           3          1.4         0.2  setosa
 #> 3          4.7         3.2          1.3         0.2  setosa
