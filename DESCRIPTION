@@ -18,7 +18,7 @@ Imports:
     ggplot2,
     httr (>= 0.6.1),
     plyr,
-    readr,
+    readr (> 0.1),
     stats,
     stringr,
     tidyr,

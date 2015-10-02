@@ -47,7 +47,7 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub (at the moment it depends in a development version of [`readr`](https://github.com/hadley/readr)):
+Or you can get the development version from GitHub (which currently depends on the development version of [`readr`](https://github.com/hadley/readr)):
 
 ``` r
 devtools::install_github("hadley/readr")
@@ -99,7 +99,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-10-01 22:17:25 GMT
+#>   Date of googlesheets registration: 2015-10-02 21:03:03 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
