@@ -35,7 +35,7 @@ extract_key_from_url <- function(url) {
 #' @param key character, unique key for a spreadsheet
 #' @param visibility character, either "private" (default) or "public",
 #'   indicating whether further requests will be made with or without
-#'   authentication, respectively
+#'   authorization, respectively
 #'
 #' @keywords internal
 construct_ws_feed_from_key <- function(key, visibility = "private") {

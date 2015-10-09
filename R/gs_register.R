@@ -26,7 +26,7 @@
 #'   \item \code{visibility} visibility of spreadsheet (Google's confusing
 #'     vocabulary); actually, does not describe a property of spreadsheet
 #'     itself but rather whether requests will be made with or without
-#'     authentication
+#'     authorization
 #'   \item \code{is_public} logical indicating visibility is "public" (meaning
 #'     unauthenticated requests will be sent), as opposed to "private" (meaning
 #'     authenticated requests will be sent)
@@ -45,7 +45,7 @@
 #' }
 #'
 #' Since the spreadsheets feed contains private user data, \code{googlesheets}
-#' must use authentication to access it. So a \code{googlesheet} object will
+#' must be properly authorized to access it. So a \code{googlesheet} object will
 #' only contain info from the spreadsheets feed if \code{lookup = TRUE}, which
 #' directs us to look up sheet-identifying information in the spreadsheets feed.
 #'
@@ -55,8 +55,8 @@
 #'   holding sheet title, key, browser URL or worksheets feed OR, in the case of
 #'   \code{gs_gs} only, a \code{googlesheet} object
 #' @param lookup logical, optional. Controls whether \code{googlesheets} will
-#'   place authenticated API requests during registration. If unspecified, will
-#'   be set to \code{TRUE} if authentication has previously been used in this R
+#'   place authorized API requests during registration. If unspecified, will
+#'   be set to \code{TRUE} if authorization has previously been used in this R
 #'   session, if working directory contains a file named \code{.httr-oauth}, or
 #'   if \code{x} is a worksheets feed or \code{googlesheet} object that
 #'   specifies "public" visibility.
@@ -193,7 +193,7 @@ set_lookup <- function(lookup = NULL, visibility = NULL, verbose = TRUE) {
   }
 
   if(verbose) {
-    sprintf("Authentication will %sbe used.", if(lookup) "" else "not ") %>%
+    sprintf("Authorization will %sbe used.", if(lookup) "" else "not ") %>%
       message()
   }
 

@@ -11,7 +11,7 @@ construct_ws_feed_from_key(key, visibility = "private")
 
 \item{visibility}{character, either "private" (default) or "public",
   indicating whether further requests will be made with or without
-  authentication, respectively}
+  authorization, respectively}
 }
 \description{
 Construct a worksheets feed from a key

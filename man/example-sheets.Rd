@@ -25,15 +25,16 @@ the key, browser URL, worksheets feed or \code{\link{googlesheet}}
   object corresponding to one of the example sheets
 }
 \description{
-These functions return information on some public Google Sheets we've made
-available for examples and testing. For example, function names that include
-\code{gap} refer to a spreadsheet based on the Gapminder data. This sheet is
-"published to the web" and you can visit it in the browser:
+These functions return information on some Google Sheets we've published to
+the web for use in examples and testing. For example, function names that
+start with \code{gap_} refer to a spreadsheet based on the Gapminder data,
+which you can visit it in the browser:
 }
 \details{
 \itemize{
 
-\item \href{https://w3id.org/people/jennybc/googlesheets_gap_url}{Gapminder sheet}
+\item \href{https://w3id.org/people/jennybc/googlesheets_gap_url}{Gapminder
+sheet}
 
 }
 }

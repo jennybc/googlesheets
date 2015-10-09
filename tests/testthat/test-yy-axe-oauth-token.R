@@ -1,4 +1,4 @@
-context("suspend authentication")
+context("suspend authorization")
 
 ## remove the google token, to make 100% sure the remaining tests run w/o auth
 

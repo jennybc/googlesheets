@@ -27,7 +27,7 @@ Lists spreadsheets that the user would see in the Google Sheets home screen:
 information available from the
 \href{https://developers.google.com/google-apps/spreadsheets/#retrieving_a_list_of_spreadsheets}{spreadsheets
 feed} of the Google Sheets API. Since this is non-public user data, use of
-\code{gs_ls} will require authentication.
+\code{gs_ls} will require authorization
 }
 \details{
 This listing gives a \emph{partial} view of the sheets available for access
