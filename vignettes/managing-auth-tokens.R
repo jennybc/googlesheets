@@ -14,7 +14,7 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 
 ## ----make-clean, include = FALSE, eval = NOT_CRAN------------------------
 ## if previous compilation errored out, intended clean up may be incomplete
-googlesheets::gs_grepdel("^iris$", verbose = FALSE)
+googlesheets::gs_grepdel("^iris_bit$", verbose = FALSE)
 
 ## ------------------------------------------------------------------------
 library(googlesheets)

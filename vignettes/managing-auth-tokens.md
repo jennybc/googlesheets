@@ -92,9 +92,9 @@ You can use `gs_user()` to see there is currently a valid token in force, who th
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-10-10 22:44:49 GMT
+#>                  date: 2015-10-10 23:03:07 GMT
 #>          access token: valid
-#>  peek at access token: ya29....db_-8
+#>  peek at access token: ya29....aH5WE
 #> peek at refresh token: 1/zNh...ATCKT
 ```
 
@@ -278,7 +278,7 @@ At this point, if you blindly bundle the package and send it to win-builder or C
 
 ```r
 git2r::branch_target(git2r::head(git2r::repository('..')))
-#> [1] "837fed540fd6bdb24386b1de15139daf252f8d75"
+#> [1] "c27adbc71d095e9f88571f31991bc004a485842d"
 #devtools::session_info("googlesheets")
 ```
 
