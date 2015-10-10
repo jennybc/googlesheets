@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
 token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
-#suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
+suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 
 ## ----make-clean, include = FALSE, eval = NOT_CRAN------------------------
 ## if previous compilation errored out, intended clean up may be incomplete
@@ -31,6 +31,9 @@ iris_ss %>%
 
 ## ----include = FALSE, eval = NOT_CRAN------------------------------------
 gs_grepdel("^iris_bit$")
+
+## ------------------------------------------------------------------------
+gs_user()
 
 ## ----eval = FALSE--------------------------------------------------------
 #  library(googlesheets)

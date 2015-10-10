@@ -16,7 +16,7 @@ This vignette explains Google auth token management for anyone who wants to use 
   * Cron job
   * Unattended script on a server
   * Automated unit tests, e.g. [`testthat`](http://r-pkgs.had.co.nz/tests.html)
-  * Continuous integration, e.g. [Travis CI](https://travis-ci.org)
+  * Hosted continuous integration, e.g. [Travis CI](https://travis-ci.org)
   
 Since `googlesheets` gets its authorization functionality from [`httr`](https://cran.r-project.org/web/packages/httr/index.html), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
 
@@ -73,36 +73,58 @@ iris_ss %>%
 
 `googlesheets` uses [Google's OAuth 2.0 flow for Installed Applications](https://developers.google.com/identity/protocols/OAuth2#installed) to work with the Drive and Sheets APIs.
 
-![](google-oauth-flow.png)
+![](img/google-oauth-flow.png)
 
 The `googlesheets` package plays the role of "Your App" in this figure and you are the User.
 
 The first time you do something that requires authorization, `googlesheets` must request a **token** on your behalf. You can also trigger this manually with `gs_auth()`. You, the user, will be taken to the browser for "User login & consent":
 
-![](user-login-consent-3in-wide.png)
+![](img/user-login-consent-3in-wide.png)
 
 This is where you *authenticate* yourself, so that `googlesheets` can subsequently place *authorized* requests on your behalf.
 
 Behind the scenes, `googlesheets` uses `httr::oauth2.0_token()` (and ultimately `httr::init_oauth2.0()`) to complete the "authorization code, exchange code for token, token response" ping pong and store a **token**. This token is stored in an environment within `googlesheets` and is attached to subsequent API requests as necessary.
 
+You can use `gs_user()` to see there is currently a valid token in force, who the associated Google user is, etc.:
+
+
+```r
+gs_user()
+#>           displayName: google sheets
+#>          emailAddress: gspreadr@gmail.com
+#>                  date: 2015-10-10 22:44:49 GMT
+#>          access token: valid
+#>  peek at access token: ya29....db_-8
+#> peek at refresh token: 1/zNh...ATCKT
+```
+
 ## Where do tokens live in between R sessions?
 
 By default, when `googlesheets` gets a token for you, it's stored in memory for use in the current R session AND it's cached to a file named `.httr-oauth` in current working directory. This caching behavior comes from `httr`.
 
-![](google-oauth-flow-plus-httr-oauth-cache.png)
+![](img/google-oauth-flow-plus-httr-oauth-cache.png)
 
 Note: If you use RStudio, the file browser hides most dotfiles, including `.httr-oauth`. From R itself, you can use `list.files(all.files = TRUE)` to get a list of files in current working directory, including dotfiles. It's a good idea to inform yourself about the presence/absence/location of `.httr-oauth`, especially if you're having trouble with non-interactive authorization.
 
 In subsequent R sessions, at the first need for authorization, `googlesheets` looks for a cached token in `.httr-oauth` before initiating the entire OAuth 2.0 flow. Many APIs limit the number of active tokens per account, so it's better to refresh existing tokens than to request completely new ones. More on refreshing later.
 
-![](google-oauth-flow-plus-load-from-cache.png)
+![](img/google-oauth-flow-plus-load-from-cache.png)
 
 #### Another chance to stop reading this document
 
-If your usage is pretty simple, you may only need to make sure that the token cached in `.httr-oauth` is the one you want (e.g., associated with the correct Google user) and make sure this file lives alongside your R script or R Markdown file. Specifically, you must make sure that `.httr-oauth` will be found in working directory when your script runs or your `.Rmd` is rendered.  If you are relying on automatic loading from cache in `.httr-oauth`, this error message is **highly suggestive** of a mis-specified path, i.e. that `httr-oauth` cannot be found at runtime: "oauth_listener() needs an interactive environment".
+If your usage is pretty simple, you may only need to make sure that the token cached in `.httr-oauth` is the one you want (e.g., associated with the correct Google user) and make sure this file lives alongside your R script or R Markdown file. If you are relying on automatic loading from cache in `.httr-oauth`, this error message is **highly suggestive** of a mis-specified path, i.e. that `httr-oauth` cannot be found at runtime: "oauth_listener() needs an interactive environment".
 
-![](google-oauth-flow-no-token-found.png)
+![](img/google-oauth-flow-no-token-found.png)
 
+Here is a workflow that is doomed to fail:
+
+  * You write an R script `/path/to/directoryA/foo.R` or an R Markdown document `/path/to/directoryA/foo.Rmd`.
+  * You develop and test it interactively with working directory set to an *entirely different directory*, such as `/path/to/directoryB/`.
+  * Your Google token is therefore cached to `/path/to/directoryB/.httr-oauth`.
+  * You run `foo.R` or render `foo.Rmd` and get an error. Why? Because `.httr-oauth` is not in working directory at runtime.
+  
+You must make sure that `.httr-oauth` will be found in working directory when your script runs or your `.Rmd` is rendered.  
+  
 ## Don't publish your tokens
 
 Tokens, stored in `.httr-oauth` or elsewhere, grant whoever's got them the power to deal on your behalf with an API, in our case Sheets and Drive. So protect them as you would your username and password. In particular, if you're using a version control system, you should exclude files that contain tokens. For example, you want to list `.httr-oauth` in your `.gitignore` file.
@@ -120,7 +142,7 @@ token <- gs_auth()
 saveRDS(token, file = "googlesheets_token.rds")
 ```
 
-![](google-oauth-flow-explicit-token-storage.png)
+![](img/google-oauth-flow-explicit-token-storage.png)
 
 Things to think about:
 
@@ -140,7 +162,7 @@ gs_auth(token = "googlesheets_token.rds")
 suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 ```
 
-![](google-oauth-flow-explicit-token-load.png)
+![](img/google-oauth-flow-explicit-token-load.png)
 
 Things to think about:
 
@@ -152,7 +174,7 @@ What's the difference between token storage in `.httr-oauth` and what we do abov
 
 The OAuth 2.0 tokens used by `googlesheets` actually consist of a **refresh token** and an **access token**. Refresh tokens are quite durable, whereas access tokens are highly perishable. Part of the beauty of `httr` is that it automatically uses a valid refresh token to obtain a new access token. That's what's happening whenever you see this message: "Auto-refreshing stale OAuth token."
 
-![](refresh-tokens-refresh.png)
+![](img/refresh-tokens-refresh.png)
 
 If your refresh token is invalid (or no where to be found), then any token-requiring request will trigger the entire OAuth 2.0 flow In particular, you'll need to redo "User login & Consent" in the browser. If this happens in a non-interactive setting, this will therefore lead to some sort of failure.
 
@@ -168,7 +190,7 @@ You should design your workflow to reuse existing refresh tokens whenever possib
   
 The latter point is the most relevant to an active project. If you're developing around a Google API, it is very easy to burn through 25 refresh tokens if you aren't careful, which causes earlier ones to silently fall off the end and become invalid. If those are the tokens you have placed on a server or on Travis CI, then you will start to get failures there.
 
-![](refresh-tokens-fall-off-the-end.png)
+![](img/refresh-tokens-fall-off-the-end.png)
 
 ## Tokens for testing
 
@@ -256,7 +278,7 @@ At this point, if you blindly bundle the package and send it to win-builder or C
 
 ```r
 git2r::branch_target(git2r::head(git2r::repository('..')))
-#> [1] "117dacb306913ef3d2baa0262f1b76642e664bcd"
+#> [1] "837fed540fd6bdb24386b1de15139daf252f8d75"
 #devtools::session_info("googlesheets")
 ```
 
