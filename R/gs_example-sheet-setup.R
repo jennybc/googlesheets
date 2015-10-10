@@ -15,7 +15,7 @@ assign("gap_fallback_key", "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ",
 #'
 #' These functions return information on some Google Sheets we've published to
 #' the web for use in examples and testing. For example, function names that
-#' start with \code{gap_} refer to a spreadsheet based on the Gapminder data,
+#' start with \code{gs_gap_} refer to a spreadsheet based on the Gapminder data,
 #' which you can visit it in the browser:
 #'
 #' \itemize{

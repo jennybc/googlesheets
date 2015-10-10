@@ -10,6 +10,7 @@ On 2015-07-29 the Sheets REST API went down. See [issue #153 ](https://github.co
 
 As a result of that I learned the following, which maybe handy in future:
 
+  * [Google Apps Status Dashboard](http://www.google.com/appsstatus#hl=en&v=status)
   * [apps-api-issues](https://code.google.com/a/google.com/p/apps-api-issues/) is a general landing page: "a place to report issues with the Google Apps APIs"
   * there's a section for the Sheets API, with links to
     - the [documentation](https://developers.google.com/google-apps/spreadsheets/) *obviously I've known about this for a while and have read the whole damn thing*

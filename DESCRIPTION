@@ -8,11 +8,11 @@ Authors@R: c(
     )
 URL: https://github.com/jennybc/googlesheets
 BugReports: https://github.com/jennybc/googlesheets/issues
-Depends:
+Depends: 
     R (>= 3.2.0)
 License: MIT + file LICENSE
 LazyData: true
-Imports:
+Imports: 
     cellranger (>= 1.0.0),
     dplyr (>= 0.4.2),
     ggplot2,
@@ -25,8 +25,9 @@ Imports:
     utils,
     XML,
     xml2
-Suggests:
+Suggests: 
     covr,
     knitr,
-    testthat
+    testthat,
+    rmarkdown
 VignetteBuilder: knitr

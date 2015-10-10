@@ -18,36 +18,37 @@ suppressMessages(library(dplyr))
 
 ### See some spreadsheets you can access
 
-The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).
+The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).
 
 
 ```r
 (my_sheets <- gs_ls())
-#> Source: local data frame [43 x 10]
+#> Source: local data frame [51 x 10]
 #> 
-#>                 sheet_title        author perm version             updated
-#> 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-08-28 20:11:32
-#> 2               TAGS v6.0ns     m.hawksey    r     new 2015-08-24 09:46:54
-#> 3               gas_mileage      woo.kara    r     new 2015-08-01 17:00:16
-#> 4                      vægt      gspreadr   rw     new 2015-07-29 23:14:11
-#> 5       commas-and-percents      gspreadr   rw     new 2015-07-28 04:21:15
-#> 6  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14
-#> 7           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22
-#> 8                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10
-#> 9   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23
-#> 10 Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51
-#> ..                      ...           ...  ...     ...                 ...
-#> Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self
-#>   (chr), alt_key (chr)
+#>                 sheet_title        author  perm version
+#>                       (chr)         (chr) (chr)   (chr)
+#> 1  Copy of Twitter Archive…   joannazhaoo     r     new
+#> 2      test-gs-iris-private      gspreadr    rw     new
+#> 3                  my_sheet      gspreadr    rw     new
+#> 4  STAT545 - 2015 - TA Sch…        ksamuk    rw     new
+#> 5  Supervisor Interests (R… silwood.mast…     r     new
+#> 6               TAGS v6.0ns     m.hawksey     r     new
+#> 7               gas_mileage      woo.kara     r     new
+#> 8          Flight Risk JSON         chris     r     new
+#> 9   EasyTweetSheet - Shared     m.hawksey     r     new
+#> 10             #rhizo15 #tw     m.hawksey     r     new
+#> ..                      ...           ...   ...     ...
+#> Variables not shown: updated (time), sheet_key (chr), ws_feed (chr),
+#>   alternate (chr), self (chr), alt_key (chr)
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 43
-#> Variables:
-#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "TAGS v6.0ns", "g...
-#> $ author      (chr) "joannazhaoo", "m.hawksey", "woo.kara", "gspreadr"...
-#> $ perm        (chr) "r", "r", "r", "rw", "rw", "rw", "r", "rw", "r", "...
+#> Observations: 51
+#> Variables: 10
+#> $ sheet_title (chr) "Copy of Twitter Archiver v2.1", "test-gs-iris-pri...
+#> $ author      (chr) "joannazhaoo", "gspreadr", "gspreadr", "ksamuk", "...
+#> $ perm        (chr) "r", "rw", "rw", "rw", "r", "r", "r", "r", "r", "r...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2015-08-28 20:11:32, 2015-08-24 09:46:54, 2015-08...
+#> $ updated     (time) 2015-10-10 21:56:25, 2015-10-09 00:25:47, 2015-10...
 #> $ sheet_key   (chr) "1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1DoMXh2m3F...
@@ -82,7 +83,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-08-28 20:13:51 GMT
+#>   Date of googlesheets registration: 2015-10-10 21:57:58 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -105,7 +106,7 @@ gap
 #> [1] "1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ"
 third_party_gap <- GAP_KEY %>%
   gs_key()
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "test-gs-gapminder"
 
 # Need to access a sheet you do not own but you have a sharing link?
@@ -117,14 +118,14 @@ third_party_gap <- GAP_URL %>%
 #> Sheet-identifying info appears to be a browser URL.
 #> googlesheets will attempt to extract sheet key from the URL.
 #> Putative key: 1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "test-gs-gapminder"
 # note: registration via URL may not work for "old" sheets
 
 # Worried that a spreadsheet's registration is out-of-date?
 # Re-register it!
 gap <- gap %>% gs_gs()
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "Gapminder"
 ```
 
@@ -147,18 +148,19 @@ oceania <- gap %>% gs_read(ws = "Oceania")
 oceania
 #> Source: local data frame [24 x 6]
 #> 
-#>      country continent year lifeExp      pop gdpPercap
-#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
-#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
-#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
-#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
-#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
-#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
-#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
-#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
-#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
-#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
-#> ..       ...       ...  ...     ...      ...       ...
+#>      country continent  year lifeExp      pop gdpPercap
+#>        (chr)     (chr) (int)   (dbl)    (int)     (dbl)
+#> 1  Australia   Oceania  1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania  1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania  1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania  1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania  1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania  1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania  1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania  1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania  1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania  1997   78.83 18565243  26997.94
+#> ..       ...       ...   ...     ...      ...       ...
 str(oceania)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':	24 obs. of  6 variables:
 #>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
@@ -169,7 +171,7 @@ str(oceania)
 #>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
 glimpse(oceania)
 #> Observations: 24
-#> Variables:
+#> Variables: 6
 #> $ country   (chr) "Australia", "Australia", "Australia", "Australia", ...
 #> $ continent (chr) "Oceania", "Oceania", "Oceania", "Oceania", "Oceania...
 #> $ year      (int) 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...
@@ -186,52 +188,57 @@ gap %>% gs_read(ws = 2, range = "A1:D8")
 #> Accessing worksheet titled "Americas"
 #> Source: local data frame [7 x 4]
 #> 
-#>     country continent year lifeExp
-#> 1 Argentina  Americas 1952  62.485
-#> 2 Argentina  Americas 1957  64.399
-#> 3 Argentina  Americas 1962  65.142
-#> 4 Argentina  Americas 1967  65.634
-#> 5 Argentina  Americas 1972  67.065
-#> 6 Argentina  Americas 1977  68.481
-#> 7 Argentina  Americas 1982  69.942
+#>     country continent  year lifeExp
+#>       (chr)     (chr) (int)   (dbl)
+#> 1 Argentina  Americas  1952  62.485
+#> 2 Argentina  Americas  1957  64.399
+#> 3 Argentina  Americas  1962  65.142
+#> 4 Argentina  Americas  1967  65.634
+#> 5 Argentina  Americas  1972  67.065
+#> 6 Argentina  Americas  1977  68.481
+#> 7 Argentina  Americas  1982  69.942
 gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
 #> Accessing worksheet titled "Europe"
 #> Source: local data frame [3 x 6]
 #> 
-#>   country continent year lifeExp     pop gdpPercap
-#> 1 Albania    Europe 1952   55.23 1282697  1601.056
-#> 2 Albania    Europe 1957   59.28 1476505  1942.284
-#> 3 Albania    Europe 1962   64.82 1728137  2312.889
+#>   country continent  year lifeExp     pop gdpPercap
+#>     (chr)     (chr) (int)   (dbl)   (int)     (dbl)
+#> 1 Albania    Europe  1952   55.23 1282697  1601.056
+#> 2 Albania    Europe  1957   59.28 1476505  1942.284
+#> 3 Albania    Europe  1962   64.82 1728137  2312.889
 gap %>% gs_read(ws = "Europe", range = cell_rows(100:103), col_names = FALSE)
 #> Accessing worksheet titled "Europe"
 #> Source: local data frame [4 x 6]
 #> 
-#>        X1     X2   X3    X4      X5        X6
-#> 1 Finland Europe 1962 68.75 4491443  9371.843
-#> 2 Finland Europe 1967 69.83 4605744 10921.636
-#> 3 Finland Europe 1972 70.87 4639657 14358.876
-#> 4 Finland Europe 1977 72.52 4738902 15605.423
+#>        X1     X2    X3    X4      X5        X6
+#>     (chr)  (chr) (int) (dbl)   (int)     (dbl)
+#> 1 Finland Europe  1962 68.75 4491443  9371.843
+#> 2 Finland Europe  1967 69.83 4605744 10921.636
+#> 3 Finland Europe  1972 70.87 4639657 14358.876
+#> 4 Finland Europe  1977 72.52 4738902 15605.423
 gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
 #> Accessing worksheet titled "Africa"
 #> Source: local data frame [624 x 4]
 #> 
-#>    country continent year lifeExp
-#> 1  Algeria    Africa 1952  43.077
-#> 2  Algeria    Africa 1957  45.685
-#> 3  Algeria    Africa 1962  48.303
-#> 4  Algeria    Africa 1967  51.407
-#> 5  Algeria    Africa 1972  54.518
-#> 6  Algeria    Africa 1977  58.014
-#> 7  Algeria    Africa 1982  61.368
-#> 8  Algeria    Africa 1987  65.799
-#> 9  Algeria    Africa 1992  67.744
-#> 10 Algeria    Africa 1997  69.152
-#> ..     ...       ...  ...     ...
+#>    country continent  year lifeExp
+#>      (chr)     (chr) (int)   (dbl)
+#> 1  Algeria    Africa  1952  43.077
+#> 2  Algeria    Africa  1957  45.685
+#> 3  Algeria    Africa  1962  48.303
+#> 4  Algeria    Africa  1967  51.407
+#> 5  Algeria    Africa  1972  54.518
+#> 6  Algeria    Africa  1977  58.014
+#> 7  Algeria    Africa  1982  61.368
+#> 8  Algeria    Africa  1987  65.799
+#> 9  Algeria    Africa  1992  67.744
+#> 10 Algeria    Africa  1997  69.152
+#> ..     ...       ...   ...     ...
 gap %>% gs_read(ws = "Asia", range = cell_limits(c(1, 4), c(5, NA)))
 #> Accessing worksheet titled "Asia"
 #> Source: local data frame [4 x 3]
 #> 
 #>   lifeExp      pop gdpPercap
+#>     (dbl)    (dbl)     (dbl)
 #> 1  28.801  8425333  779.4453
 #> 2  30.332  9240934  820.8530
 #> 3  31.997 10267083  853.1007
@@ -266,18 +273,19 @@ str(oceania_csv)
 oceania_csv
 #> Source: local data frame [24 x 6]
 #> 
-#>      country continent year lifeExp      pop gdpPercap
-#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
-#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
-#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
-#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
-#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
-#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
-#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
-#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
-#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
-#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
-#> ..       ...       ...  ...     ...      ...       ...
+#>      country continent  year lifeExp      pop gdpPercap
+#>        (chr)     (chr) (int)   (dbl)    (int)     (dbl)
+#> 1  Australia   Oceania  1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania  1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania  1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania  1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania  1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania  1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania  1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania  1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania  1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania  1997   78.83 18565243  26997.94
+#> ..       ...       ...   ...     ...      ...       ...
 
 # Get the data for worksheet "Oceania": the less-fast tabular way ("list feed")
 oceania_list_feed <- gap %>% gs_read_listfeed(ws = "Oceania") 
@@ -293,18 +301,19 @@ str(oceania_list_feed)
 oceania_list_feed
 #> Source: local data frame [24 x 6]
 #> 
-#>      country continent year lifeexp      pop gdppercap
-#> 1  Australia   Oceania 1952   69.12  8691212  10039.60
-#> 2  Australia   Oceania 1957   70.33  9712569  10949.65
-#> 3  Australia   Oceania 1962   70.93 10794968  12217.23
-#> 4  Australia   Oceania 1967   71.10 11872264  14526.12
-#> 5  Australia   Oceania 1972   71.93 13177000  16788.63
-#> 6  Australia   Oceania 1977   73.49 14074100  18334.20
-#> 7  Australia   Oceania 1982   74.74 15184200  19477.01
-#> 8  Australia   Oceania 1987   76.32 16257249  21888.89
-#> 9  Australia   Oceania 1992   77.56 17481977  23424.77
-#> 10 Australia   Oceania 1997   78.83 18565243  26997.94
-#> ..       ...       ...  ...     ...      ...       ...
+#>      country continent  year lifeexp      pop gdppercap
+#>        (chr)     (chr) (int)   (dbl)    (int)     (dbl)
+#> 1  Australia   Oceania  1952   69.12  8691212  10039.60
+#> 2  Australia   Oceania  1957   70.33  9712569  10949.65
+#> 3  Australia   Oceania  1962   70.93 10794968  12217.23
+#> 4  Australia   Oceania  1967   71.10 11872264  14526.12
+#> 5  Australia   Oceania  1972   71.93 13177000  16788.63
+#> 6  Australia   Oceania  1977   73.49 14074100  18334.20
+#> 7  Australia   Oceania  1982   74.74 15184200  19477.01
+#> 8  Australia   Oceania  1987   76.32 16257249  21888.89
+#> 9  Australia   Oceania  1992   77.56 17481977  23424.77
+#> 10 Australia   Oceania  1997   78.83 18565243  26997.94
+#> ..       ...       ...   ...     ...      ...       ...
 
 # Get the data for worksheet "Oceania": the slow cell-by-cell way ("cell feed")
 oceania_cell_feed <- gap %>% gs_read_cellfeed(ws = "Oceania") 
@@ -320,18 +329,19 @@ str(oceania_cell_feed)
 oceania_cell_feed
 #> Source: local data frame [150 x 5]
 #> 
-#>    cell cell_alt row col cell_text
-#> 1    A1     R1C1   1   1   country
-#> 2    B1     R1C2   1   2 continent
-#> 3    C1     R1C3   1   3      year
-#> 4    D1     R1C4   1   4   lifeExp
-#> 5    E1     R1C5   1   5       pop
-#> 6    F1     R1C6   1   6 gdpPercap
-#> 7    A2     R2C1   2   1 Australia
-#> 8    B2     R2C2   2   2   Oceania
-#> 9    C2     R2C3   2   3      1952
-#> 10   D2     R2C4   2   4     69.12
-#> ..  ...      ... ... ...       ...
+#>     cell cell_alt   row   col cell_text
+#>    (chr)    (chr) (int) (int)     (chr)
+#> 1     A1     R1C1     1     1   country
+#> 2     B1     R1C2     1     2 continent
+#> 3     C1     R1C3     1     3      year
+#> 4     D1     R1C4     1     4   lifeExp
+#> 5     E1     R1C5     1     5       pop
+#> 6     F1     R1C6     1     6 gdpPercap
+#> 7     A2     R2C1     2     1 Australia
+#> 8     B2     R2C2     2     2   Oceania
+#> 9     C2     R2C3     2     3      1952
+#> 10    D2     R2C4     2     4     69.12
+#> ..   ...      ...   ...   ...       ...
 ```
 
 #### Quick speed comparison
@@ -346,9 +356,9 @@ readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
 readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.036            0.147            1.070
-#> sys.self         0.002            0.014            0.057
-#> elapsed          0.426            0.748            2.619
+#> user.self        0.038            0.158            1.047
+#> sys.self         0.001            0.016            0.037
+#> elapsed          0.481            0.940            2.588
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -376,18 +386,19 @@ str(australia_cell_feed)
 oceania_cell_feed
 #> Source: local data frame [150 x 5]
 #> 
-#>    cell cell_alt row col cell_text
-#> 1    A1     R1C1   1   1   country
-#> 2    B1     R1C2   1   2 continent
-#> 3    C1     R1C3   1   3      year
-#> 4    D1     R1C4   1   4   lifeExp
-#> 5    E1     R1C5   1   5       pop
-#> 6    F1     R1C6   1   6 gdpPercap
-#> 7    A2     R2C1   2   1 Australia
-#> 8    B2     R2C2   2   2   Oceania
-#> 9    C2     R2C3   2   3      1952
-#> 10   D2     R2C4   2   4     69.12
-#> ..  ...      ... ... ...       ...
+#>     cell cell_alt   row   col cell_text
+#>    (chr)    (chr) (int) (int)     (chr)
+#> 1     A1     R1C1     1     1   country
+#> 2     B1     R1C2     1     2 continent
+#> 3     C1     R1C3     1     3      year
+#> 4     D1     R1C4     1     4   lifeExp
+#> 5     E1     R1C5     1     5       pop
+#> 6     F1     R1C6     1     6 gdpPercap
+#> 7     A2     R2C1     2     1 Australia
+#> 8     B2     R2C2     2     2   Oceania
+#> 9     C2     R2C3     2     3      1952
+#> 10    D2     R2C4     2     4     69.12
+#> ..   ...      ...   ...   ...       ...
 australia_reshaped <- australia_cell_feed %>% gs_reshape_cellfeed()
 str(australia_reshaped)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':	12 obs. of  6 variables:
@@ -400,19 +411,20 @@ str(australia_reshaped)
 australia_reshaped
 #> Source: local data frame [12 x 6]
 #> 
-#>      country continent year lifeExp      pop gdpPercap
-#> 1  Australia   Oceania 1952  69.120  8691212  10039.60
-#> 2  Australia   Oceania 1957  70.330  9712569  10949.65
-#> 3  Australia   Oceania 1962  70.930 10794968  12217.23
-#> 4  Australia   Oceania 1967  71.100 11872264  14526.12
-#> 5  Australia   Oceania 1972  71.930 13177000  16788.63
-#> 6  Australia   Oceania 1977  73.490 14074100  18334.20
-#> 7  Australia   Oceania 1982  74.740 15184200  19477.01
-#> 8  Australia   Oceania 1987  76.320 16257249  21888.89
-#> 9  Australia   Oceania 1992  77.560 17481977  23424.77
-#> 10 Australia   Oceania 1997  78.830 18565243  26997.94
-#> 11 Australia   Oceania 2002  80.370 19546792  30687.75
-#> 12 Australia   Oceania 2007  81.235 20434176  34435.37
+#>      country continent  year lifeExp      pop gdpPercap
+#>        (chr)     (chr) (int)   (dbl)    (int)     (dbl)
+#> 1  Australia   Oceania  1952  69.120  8691212  10039.60
+#> 2  Australia   Oceania  1957  70.330  9712569  10949.65
+#> 3  Australia   Oceania  1962  70.930 10794968  12217.23
+#> 4  Australia   Oceania  1967  71.100 11872264  14526.12
+#> 5  Australia   Oceania  1972  71.930 13177000  16788.63
+#> 6  Australia   Oceania  1977  73.490 14074100  18334.20
+#> 7  Australia   Oceania  1982  74.740 15184200  19477.01
+#> 8  Australia   Oceania  1987  76.320 16257249  21888.89
+#> 9  Australia   Oceania  1992  77.560 17481977  23424.77
+#> 10 Australia   Oceania  1997  78.830 18565243  26997.94
+#> 11 Australia   Oceania  2002  80.370 19546792  30687.75
+#> 12 Australia   Oceania  2007  81.235 20434176  34435.37
 
 # Example: first 3 rows
 gap_3rows <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1:3))
@@ -420,21 +432,23 @@ gap_3rows <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1:3))
 gap_3rows %>% head()
 #> Source: local data frame [6 x 5]
 #> 
-#>   cell cell_alt row col cell_text
-#> 1   A1     R1C1   1   1   country
-#> 2   B1     R1C2   1   2 continent
-#> 3   C1     R1C3   1   3      year
-#> 4   D1     R1C4   1   4   lifeExp
-#> 5   E1     R1C5   1   5       pop
-#> 6   F1     R1C6   1   6 gdpPercap
+#>    cell cell_alt   row   col cell_text
+#>   (chr)    (chr) (int) (int)     (chr)
+#> 1    A1     R1C1     1     1   country
+#> 2    B1     R1C2     1     2 continent
+#> 3    C1     R1C3     1     3      year
+#> 4    D1     R1C4     1     4   lifeExp
+#> 5    E1     R1C5     1     5       pop
+#> 6    F1     R1C6     1     6 gdpPercap
 
 # convert to a data.frame (by default, column names found in first row)
 gap_3rows %>% gs_reshape_cellfeed()
 #> Source: local data frame [2 x 6]
 #> 
-#>   country continent year lifeExp     pop gdpPercap
-#> 1 Albania    Europe 1952   55.23 1282697  1601.056
-#> 2 Albania    Europe 1957   59.28 1476505  1942.284
+#>   country continent  year lifeExp     pop gdpPercap
+#>     (chr)     (chr) (int)   (dbl)   (int)     (dbl)
+#> 1 Albania    Europe  1952   55.23 1282697  1601.056
+#> 2 Albania    Europe  1957   59.28 1476505  1942.284
 
 # arbitrary cell range, column names no longer available in first row
 gap %>%
@@ -444,6 +458,7 @@ gap %>%
 #> Source: local data frame [4 x 3]
 #> 
 #>       X4       X5       X6
+#>    (dbl)    (dbl)    (dbl)
 #> 1 80.370 19546792 30687.75
 #> 2 81.235 20434176 34435.37
 #> 3 69.390  1994794 10556.58
@@ -458,6 +473,7 @@ gap %>%
 #> Source: local data frame [4 x 3]
 #> 
 #>   thing_one thing_two thing_three
+#>       (chr)     (chr)       (int)
 #> 1 Australia   Oceania        1952
 #> 2 Australia   Oceania        1957
 #> 3 Australia   Oceania        1962
@@ -474,13 +490,14 @@ gap_1row <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1))
 gap_1row
 #> Source: local data frame [6 x 5]
 #> 
-#>   cell cell_alt row col cell_text
-#> 1   A1     R1C1   1   1   country
-#> 2   B1     R1C2   1   2 continent
-#> 3   C1     R1C3   1   3      year
-#> 4   D1     R1C4   1   4   lifeExp
-#> 5   E1     R1C5   1   5       pop
-#> 6   F1     R1C6   1   6 gdpPercap
+#>    cell cell_alt   row   col cell_text
+#>   (chr)    (chr) (int) (int)     (chr)
+#> 1    A1     R1C1     1     1   country
+#> 2    B1     R1C2     1     2 continent
+#> 3    C1     R1C3     1     3      year
+#> 4    D1     R1C4     1     4   lifeExp
+#> 5    E1     R1C5     1     5       pop
+#> 6    F1     R1C6     1     6 gdpPercap
 
 # convert to a named (character) vector
 gap_1row %>% gs_simplify_cellfeed()
@@ -493,18 +510,19 @@ gap_1col <- gap %>% gs_read_cellfeed("Europe", range = cell_cols(3))
 gap_1col
 #> Source: local data frame [361 x 5]
 #> 
-#>    cell cell_alt row col cell_text
-#> 1    C1     R1C3   1   3      year
-#> 2    C2     R2C3   2   3      1952
-#> 3    C3     R3C3   3   3      1957
-#> 4    C4     R4C3   4   3      1962
-#> 5    C5     R5C3   5   3      1967
-#> 6    C6     R6C3   6   3      1972
-#> 7    C7     R7C3   7   3      1977
-#> 8    C8     R8C3   8   3      1982
-#> 9    C9     R9C3   9   3      1987
-#> 10  C10    R10C3  10   3      1992
-#> ..  ...      ... ... ...       ...
+#>     cell cell_alt   row   col cell_text
+#>    (chr)    (chr) (int) (int)     (chr)
+#> 1     C1     R1C3     1     3      year
+#> 2     C2     R2C3     2     3      1952
+#> 3     C3     R3C3     3     3      1957
+#> 4     C4     R4C3     4     3      1962
+#> 5     C5     R5C3     5     3      1967
+#> 6     C6     R6C3     6     3      1972
+#> 7     C7     R7C3     7     3      1977
+#> 8     C8     R8C3     8     3      1982
+#> 9     C9     R9C3     9     3      1987
+#> 10   C10    R10C3    10     3      1992
+#> ..   ...      ...   ...   ...       ...
 
 # drop the variable name and convert to an un-named (integer) vector
 gap_1col %>% gs_simplify_cellfeed(notation = "none")
@@ -548,8 +566,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-08-28 20:14:09 GMT
-#>     Date of last spreadsheet update: 2015-08-28 20:14:07 GMT
+#>   Date of googlesheets registration: 2015-10-10 21:58:19 GMT
+#>     Date of last spreadsheet update: 2015-10-10 21:58:17 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -558,8 +576,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8
-#> Browser URL: https://docs.google.com/spreadsheets/d/1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8/
+#> Key: 18oPN8P35-UcvwhmGg4Z9l-3eZqUIMYsOOHFEWQ1sBKc
+#> Browser URL: https://docs.google.com/spreadsheets/d/18oPN8P35-UcvwhmGg4Z9l-3eZqUIMYsOOHFEWQ1sBKc/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
@@ -592,7 +610,7 @@ foo <- foo %>%
 #> Range affected by the update: "A1:E7"
 #> Worksheet "edit_cells" successfully updated with 35 new value(s).
 #> Accessing worksheet titled "edit_cells"
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "foo"
 #> Accessing worksheet titled "edit_cells"
 #> Worksheet "edit_cells" dimensions changed to 7 x 5.
@@ -604,7 +622,7 @@ foo <- foo %>%
 #> Range affected by the update: "A1:E2"
 #> Worksheet "add_row" successfully updated with 10 new value(s).
 #> Accessing worksheet titled "add_row"
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "foo"
 #> Accessing worksheet titled "add_row"
 #> Worksheet "add_row" dimensions changed to 2 x 5.
@@ -625,6 +643,7 @@ foo %>% gs_read(ws = "edit_cells")
 #> Source: local data frame [6 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#>          (dbl)       (dbl)        (dbl)       (dbl)   (chr)
 #> 1          5.1         3.5          1.4         0.2  setosa
 #> 2          4.9         3.0          1.4         0.2  setosa
 #> 3          4.7         3.2          1.3         0.2  setosa
@@ -636,6 +655,7 @@ foo %>% gs_read(ws = "add_row")
 #> Source: local data frame [6 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#>          (dbl)       (dbl)        (dbl)       (dbl)   (chr)
 #> 1          5.1         3.5          1.4         0.2  setosa
 #> 2          4.9         3.0          1.4         0.2  setosa
 #> 3          4.7         3.2          1.3         0.2  setosa
@@ -676,8 +696,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-08-28 20:14:38 GMT
-#>     Date of last spreadsheet update: 2015-08-28 20:14:36 GMT
+#>   Date of googlesheets registration: 2015-10-10 21:59:01 GMT
+#>     Date of last spreadsheet update: 2015-10-10 21:58:58 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -686,13 +706,14 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE
-#> Browser URL: https://docs.google.com/spreadsheets/d/1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE/
+#> Key: 1CILlVP4g24-3_6cV7S-7honwEEmUKBAK0Qflf1IlbKM
+#> Browser URL: https://docs.google.com/spreadsheets/d/1CILlVP4g24-3_6cV7S-7honwEEmUKBAK0Qflf1IlbKM/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled "iris"
 #> Source: local data frame [5 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+#>          (dbl)       (dbl)        (dbl)       (dbl)   (chr)
 #> 1          5.1         3.5          1.4         0.2  setosa
 #> 2          4.9         3.0          1.4         0.2  setosa
 #> 3          4.7         3.2          1.3         0.2  setosa
@@ -711,8 +732,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-08-28 20:14:42 GMT
-#>     Date of last spreadsheet update: 2015-08-28 20:14:41 GMT
+#>   Date of googlesheets registration: 2015-10-10 21:59:08 GMT
+#>     Date of last spreadsheet update: 2015-10-10 21:59:05 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -725,18 +746,19 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU
-#> Browser URL: https://docs.google.com/spreadsheets/d/1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU/
+#> Key: 1cCOXyK0zslTnl6PBssvAwPIubpTlVmCsdjuglHUbxys
+#> Browser URL: https://docs.google.com/spreadsheets/d/1cCOXyK0zslTnl6PBssvAwPIubpTlVmCsdjuglHUbxys/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled "Asia"
 #> Source: local data frame [5 x 6]
 #> 
-#>       country continent year lifeExp       pop gdpPercap
-#> 1 Afghanistan      Asia 1952  28.801   8425333  779.4453
-#> 2     Bahrain      Asia 1952  50.939    120447 9867.0848
-#> 3  Bangladesh      Asia 1952  37.484  46886859  684.2442
-#> 4    Cambodia      Asia 1952  39.417   4693836  368.4693
-#> 5       China      Asia 1952  44.000 556263527  400.4486
+#>       country continent  year lifeExp       pop gdpPercap
+#>         (chr)     (chr) (int)   (dbl)     (int)     (dbl)
+#> 1 Afghanistan      Asia  1952  28.801   8425333  779.4453
+#> 2     Bahrain      Asia  1952  50.939    120447 9867.0848
+#> 3  Bangladesh      Asia  1952  37.484  46886859  684.2442
+#> 4    Cambodia      Asia  1952  39.417   4693836  368.4693
+#> 5       China      Asia  1952  44.000 556263527  400.4486
 ```
 
 And we clean up after ourselves on Google Drive.
@@ -744,10 +766,10 @@ And we clean up after ourselves on Google Drive.
 
 ```r
 gs_vecdel(c("iris", "mini-gap"))
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "mini-gap"
 #> Success. "mini-gap" moved to trash in Google Drive.
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "iris"
 #> Success. "iris" moved to trash in Google Drive.
 #> [1] TRUE TRUE
@@ -766,7 +788,7 @@ gs_title("Gapminder") %>%
   gs_download(ws = "Africa", to = "gapminder-africa.csv")
 #> Sheet successfully identifed: "Gapminder"
 #> Accessing worksheet titled "Africa"
-#> Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder-africa.csv
+#> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/vignettes/gapminder-africa.csv
 ## is it there? yes!
 read.csv("gapminder-africa.csv") %>% head()
 #>   country continent year lifeExp      pop gdpPercap
@@ -785,7 +807,7 @@ Download the entire spreadsheet as an Excel workbook.
 gs_title("Gapminder") %>% 
   gs_download(to = "gapminder.xlsx")
 #> Sheet successfully identifed: "Gapminder"
-#> Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder.xlsx
+#> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/vignettes/gapminder.xlsx
 ```
 
 Go check it out in Excel, if you wish!
@@ -817,9 +839,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-08-28 20:13:49 GMT
+#>                  date: 2015-10-10 21:57:55 GMT
 #>          access token: valid
-#>  peek at access token: ya29....HxXMk
+#>  peek at access token: ya29....s6sV0
 #> peek at refresh token: 1/zNh...ATCKT
 user_session_info
 #> $displayName
@@ -829,13 +851,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2015-08-28 20:13:49 GMT"
+#> [1] "2015-10-10 21:57:55 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....HxXMk"
+#> [1] "ya29....s6sV0"
 #> 
 #> $peek_ref
 #> [1] "1/zNh...ATCKT"

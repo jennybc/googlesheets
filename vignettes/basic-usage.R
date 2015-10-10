@@ -1,13 +1,9 @@
 ## ---- echo = FALSE-------------------------------------------------------
-if(identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
-  NOT_CRAN <- TRUE
-} else {
-  NOT_CRAN <- FALSE
-}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  purl = if(NOT_CRAN) TRUE else FALSE
+  purl = NOT_CRAN
 )
 
 ## ----auth, include = FALSE, eval = NOT_CRAN------------------------------

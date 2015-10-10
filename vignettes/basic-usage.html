@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jenny Bryan, Joanna Zhao" />
 
-<meta name="date" content="2015-08-28" />
+<meta name="date" content="2015-10-10" />
 
 <title>googlesheets Basic Usage</title>
 
@@ -61,7 +61,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </style>
 
 
-<link href="data:text/css;charset=utf-8,body%7Bbackground%2Dcolor%3A%23fff%3Bmargin%3A1em%20auto%3Bmax%2Dwidth%3A700px%3Boverflow%3Avisible%3Bpadding%2Dleft%3A2em%3Bpadding%2Dright%3A2em%3Bfont%2Dfamily%3A%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3Bfont%2Dsize%3A14px%3Bline%2Dheight%3A1%2E35%7D%23header%7Btext%2Dalign%3Acenter%7D%23TOC%7Bclear%3Aboth%3Bmargin%3A0%200%2010px%2010px%3Bpadding%3A4px%3Bwidth%3A400px%3Bborder%3A1px%20solid%20%23CCCCCC%3Bborder%2Dradius%3A5px%3Bbackground%2Dcolor%3A%23f6f6f6%3Bfont%2Dsize%3A13px%3Bline%2Dheight%3A1%2E3%7D%23TOC%20%2Etoctitle%7Bfont%2Dweight%3Abold%3Bfont%2Dsize%3A15px%3Bmargin%2Dleft%3A5px%7D%23TOC%20ul%7Bpadding%2Dleft%3A40px%3Bmargin%2Dleft%3A%2D1%2E5em%3Bmargin%2Dtop%3A5px%3Bmargin%2Dbottom%3A5px%7D%23TOC%20ul%20ul%7Bmargin%2Dleft%3A%2D2em%7D%23TOC%20li%7Bline%2Dheight%3A16px%7Dtable%7Bmargin%3A1em%20auto%3Bborder%2Dwidth%3A1px%3Bborder%2Dcolor%3A%23DDDDDD%3Bborder%2Dstyle%3Aoutset%3Bborder%2Dcollapse%3Acollapse%7Dtable%20th%7Bborder%2Dwidth%3A2px%3Bpadding%3A5px%3Bborder%2Dstyle%3Ainset%7Dtable%20td%7Bborder%2Dwidth%3A1px%3Bborder%2Dstyle%3Ainset%3Bline%2Dheight%3A18px%3Bpadding%3A5px%205px%7Dtable%2C%20table%20th%2C%20table%20td%7Bborder%2Dleft%2Dstyle%3Anone%3Bborder%2Dright%2Dstyle%3Anone%7Dtable%20thead%2C%20table%20tr%2Eeven%7Bbackground%2Dcolor%3A%23f7f7f7%7Dp%7Bmargin%3A0%2E5em%200%7Dblockquote%7Bbackground%2Dcolor%3A%23f6f6f6%3Bpadding%3A0%2E25em%200%2E75em%7Dhr%7Bborder%2Dstyle%3Asolid%3Bborder%3Anone%3Bborder%2Dtop%3A1px%20solid%20%23777%3Bmargin%3A28px%200%7Ddl%7Bmargin%2Dleft%3A0%7Ddl%20dd%7Bmargin%2Dbottom%3A13px%3Bmargin%2Dleft%3A13px%7Ddl%20dt%7Bfont%2Dweight%3Abold%7Dul%7Bmargin%2Dtop%3A0%7Dul%20li%7Blist%2Dstyle%3Acircle%20outside%7Dul%20ul%7Bmargin%2Dbottom%3A0%7Dpre%2C%20code%7Bbackground%2Dcolor%3A%23f7f7f7%3Bborder%2Dradius%3A3px%3Bcolor%3A%23333%7Dpre%7Bwhite%2Dspace%3Apre%2Dwrap%3Bborder%2Dradius%3A3px%3Bmargin%3A5px%200px%2010px%200px%3Bpadding%3A10px%7Dpre%3Anot%28%5Bclass%5D%29%7Bbackground%2Dcolor%3A%23f7f7f7%7Dcode%7Bfont%2Dfamily%3AConsolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3Bfont%2Dsize%3A85%25%7Dp%20%3E%20code%2C%20li%20%3E%20code%7Bpadding%3A2px%200px%7Ddiv%2Efigure%7Btext%2Dalign%3Acenter%7Dimg%7Bbackground%2Dcolor%3A%23FFFFFF%3Bpadding%3A2px%3Bborder%3A1px%20solid%20%23DDDDDD%3Bborder%2Dradius%3A3px%3Bborder%3A1px%20solid%20%23CCCCCC%3Bmargin%3A0%205px%7Dh1%7Bmargin%2Dtop%3A0%3Bfont%2Dsize%3A35px%3Bline%2Dheight%3A40px%7Dh2%7Bborder%2Dbottom%3A4px%20solid%20%23f7f7f7%3Bpadding%2Dtop%3A10px%3Bpadding%2Dbottom%3A2px%3Bfont%2Dsize%3A145%25%7Dh3%7Bborder%2Dbottom%3A2px%20solid%20%23f7f7f7%3Bpadding%2Dtop%3A10px%3Bfont%2Dsize%3A120%25%7Dh4%7Bborder%2Dbottom%3A1px%20solid%20%23f7f7f7%3Bmargin%2Dleft%3A8px%3Bfont%2Dsize%3A105%25%7Dh5%2C%20h6%7Bborder%2Dbottom%3A1px%20solid%20%23ccc%3Bfont%2Dsize%3A105%25%7Da%7Bcolor%3A%230033dd%3Btext%2Ddecoration%3Anone%7Da%3Ahover%7Bcolor%3A%236666ff%7Da%3Avisited%7Bcolor%3A%23800080%7Da%3Avisited%3Ahover%7Bcolor%3A%23BB00BB%7Da%5Bhref%5E%3D%22http%3A%22%5D%7Btext%2Ddecoration%3Aunderline%7Da%5Bhref%5E%3D%22https%3A%22%5D%7Btext%2Ddecoration%3Aunderline%7Dcode%20%3E%20span%2Ekw%7Bcolor%3A%23555%3Bfont%2Dweight%3Abold%7Dcode%20%3E%20span%2Edt%7Bcolor%3A%23902000%7Dcode%20%3E%20span%2Edv%7Bcolor%3A%2340a070%7Dcode%20%3E%20span%2Ebn%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Efl%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Ech%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Est%7Bcolor%3A%23d14%7Dcode%20%3E%20span%2Eco%7Bcolor%3A%23888888%3Bfont%2Dstyle%3Aitalic%7Dcode%20%3E%20span%2Eot%7Bcolor%3A%23007020%7Dcode%20%3E%20span%2Eal%7Bcolor%3A%23ff0000%3Bfont%2Dweight%3Abold%7Dcode%20%3E%20span%2Efu%7Bcolor%3A%23900%3Bfont%2Dweight%3Abold%7Dcode%20%3E%20span%2Eer%7Bcolor%3A%23a61717%3Bbackground%2Dcolor%3A%23e3d2d2%7D" rel="stylesheet" type="text/css" />
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0A%7D%0Apre%20%7B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -72,7 +72,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">googlesheets Basic Usage</h1>
 <h4 class="author"><em>Jenny Bryan, Joanna Zhao</em></h4>
-<h4 class="date"><em>2015-08-28</em></h4>
+<h4 class="date"><em>2015-10-10</em></h4>
 </div>
 
 <div id="TOC">
@@ -96,33 +96,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</code></pre></div>
 <div id="see-some-spreadsheets-you-can-access" class="section level3">
 <h3>See some spreadsheets you can access</h3>
-<p>The <code>gs_ls()</code> function returns the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: authentication).</p>
+<p>The <code>gs_ls()</code> function returns the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(my_sheets &lt;-<span class="st"> </span><span class="kw">gs_ls</span>())
-<span class="co">#&gt; Source: local data frame [43 x 10]</span>
+<span class="co">#&gt; Source: local data frame [51 x 10]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;                 sheet_title        author perm version             updated</span>
-<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo    r     new 2015-08-28 20:11:32</span>
-<span class="co">#&gt; 2               TAGS v6.0ns     m.hawksey    r     new 2015-08-24 09:46:54</span>
-<span class="co">#&gt; 3               gas_mileage      woo.kara    r     new 2015-08-01 17:00:16</span>
-<span class="co">#&gt; 4                      vægt      gspreadr   rw     new 2015-07-29 23:14:11</span>
-<span class="co">#&gt; 5       commas-and-percents      gspreadr   rw     new 2015-07-28 04:21:15</span>
-<span class="co">#&gt; 6  Tweet Collector (TAGS v…      gspreadr   rw     new 2015-07-01 13:43:14</span>
-<span class="co">#&gt; 7           #TalkPay Tweets      iskaldur    r     new 2015-07-01 08:06:22</span>
-<span class="co">#&gt; 8                  for_sean      gspreadr   rw     new 2015-06-23 18:33:10</span>
-<span class="co">#&gt; 9   EasyTweetSheet - Shared     m.hawksey    r     new 2015-06-18 16:07:23</span>
-<span class="co">#&gt; 10 Supervisor Interests (R… silwood.mast…    r     new 2015-06-08 08:59:51</span>
-<span class="co">#&gt; ..                      ...           ...  ...     ...                 ...</span>
-<span class="co">#&gt; Variables not shown: sheet_key (chr), ws_feed (chr), alternate (chr), self</span>
-<span class="co">#&gt;   (chr), alt_key (chr)</span>
+<span class="co">#&gt;                 sheet_title        author  perm version</span>
+<span class="co">#&gt;                       (chr)         (chr) (chr)   (chr)</span>
+<span class="co">#&gt; 1  Copy of Twitter Archive…   joannazhaoo     r     new</span>
+<span class="co">#&gt; 2      test-gs-iris-private      gspreadr    rw     new</span>
+<span class="co">#&gt; 3                  my_sheet      gspreadr    rw     new</span>
+<span class="co">#&gt; 4  STAT545 - 2015 - TA Sch…        ksamuk    rw     new</span>
+<span class="co">#&gt; 5  Supervisor Interests (R… silwood.mast…     r     new</span>
+<span class="co">#&gt; 6               TAGS v6.0ns     m.hawksey     r     new</span>
+<span class="co">#&gt; 7               gas_mileage      woo.kara     r     new</span>
+<span class="co">#&gt; 8          Flight Risk JSON         chris     r     new</span>
+<span class="co">#&gt; 9   EasyTweetSheet - Shared     m.hawksey     r     new</span>
+<span class="co">#&gt; 10             #rhizo15 #tw     m.hawksey     r     new</span>
+<span class="co">#&gt; ..                      ...           ...   ...     ...</span>
+<span class="co">#&gt; Variables not shown: updated (time), sheet_key (chr), ws_feed (chr),</span>
+<span class="co">#&gt;   alternate (chr), self (chr), alt_key (chr)</span>
 <span class="co"># (expect a prompt to authenticate with Google interactively HERE)</span>
 my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
-<span class="co">#&gt; Observations: 43</span>
-<span class="co">#&gt; Variables:</span>
-<span class="co">#&gt; $ sheet_title (chr) &quot;Copy of Twitter Archiver v2.1&quot;, &quot;TAGS v6.0ns&quot;, &quot;g...</span>
-<span class="co">#&gt; $ author      (chr) &quot;joannazhaoo&quot;, &quot;m.hawksey&quot;, &quot;woo.kara&quot;, &quot;gspreadr&quot;...</span>
-<span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;...</span>
+<span class="co">#&gt; Observations: 51</span>
+<span class="co">#&gt; Variables: 10</span>
+<span class="co">#&gt; $ sheet_title (chr) &quot;Copy of Twitter Archiver v2.1&quot;, &quot;test-gs-iris-pri...</span>
+<span class="co">#&gt; $ author      (chr) &quot;joannazhaoo&quot;, &quot;gspreadr&quot;, &quot;gspreadr&quot;, &quot;ksamuk&quot;, &quot;...</span>
+<span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r...</span>
 <span class="co">#&gt; $ version     (chr) &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;...</span>
-<span class="co">#&gt; $ updated     (time) 2015-08-28 20:11:32, 2015-08-24 09:46:54, 2015-08...</span>
+<span class="co">#&gt; $ updated     (time) 2015-10-10 21:56:25, 2015-10-09 00:25:47, 2015-10...</span>
 <span class="co">#&gt; $ sheet_key   (chr) &quot;1DoMXh2m3FGPoZAle9vnzg763D9FESTU506iqWkUTwtE&quot;, &quot;1...</span>
 <span class="co">#&gt; $ ws_feed     (chr) &quot;https://spreadsheets.google.com/feeds/worksheets/...</span>
 <span class="co">#&gt; $ alternate   (chr) &quot;https://docs.google.com/spreadsheets/d/1DoMXh2m3F...</span>
@@ -146,7 +147,7 @@ my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 gap
 <span class="co">#&gt;                   Spreadsheet title: Gapminder</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:13:51 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-10-10 21:57:58 GMT</span>
 <span class="co">#&gt;     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
@@ -169,7 +170,7 @@ gap
 <span class="co">#&gt; [1] &quot;1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ&quot;</span>
 third_party_gap &lt;-<span class="st"> </span>GAP_KEY %&gt;%
 <span class="st">  </span><span class="kw">gs_key</span>()
-<span class="co">#&gt; Authentication will be used.</span>
+<span class="co">#&gt; Authorization will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;test-gs-gapminder&quot;</span>
 
 <span class="co"># Need to access a sheet you do not own but you have a sharing link?</span>
@@ -181,14 +182,14 @@ third_party_gap &lt;-<span class="st"> </span>GAP_URL %&gt;%
 <span class="co">#&gt; Sheet-identifying info appears to be a browser URL.</span>
 <span class="co">#&gt; googlesheets will attempt to extract sheet key from the URL.</span>
 <span class="co">#&gt; Putative key: 1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ</span>
-<span class="co">#&gt; Authentication will be used.</span>
+<span class="co">#&gt; Authorization will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;test-gs-gapminder&quot;</span>
 <span class="co"># note: registration via URL may not work for &quot;old&quot; sheets</span>
 
 <span class="co"># Worried that a spreadsheet's registration is out-of-date?</span>
 <span class="co"># Re-register it!</span>
 gap &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_gs</span>()
-<span class="co">#&gt; Authentication will be used.</span>
+<span class="co">#&gt; Authorization will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span></code></pre></div>
 <p>The registration functions <code>gs_title()</code>, <code>gs_key()</code>, <code>gs_url()</code>, and <code>gs_gs()</code> return a registered sheet as a <code>googlesheet</code> object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered <code>googlesheet</code> object, ready to be stored or piped into the next command.</p>
 <p><em>We export a utility function, <code>extract_key_from_url()</code>, to help you get and store the key from a browser URL. Registering via browser URL is fine, but registering by key is probably a better idea in the long-run.</em></p>
@@ -203,18 +204,19 @@ gap &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class
 oceania
 <span class="co">#&gt; Source: local data frame [24 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      country continent year lifeExp      pop gdpPercap</span>
-<span class="co">#&gt; 1  Australia   Oceania 1952   69.12  8691212  10039.60</span>
-<span class="co">#&gt; 2  Australia   Oceania 1957   70.33  9712569  10949.65</span>
-<span class="co">#&gt; 3  Australia   Oceania 1962   70.93 10794968  12217.23</span>
-<span class="co">#&gt; 4  Australia   Oceania 1967   71.10 11872264  14526.12</span>
-<span class="co">#&gt; 5  Australia   Oceania 1972   71.93 13177000  16788.63</span>
-<span class="co">#&gt; 6  Australia   Oceania 1977   73.49 14074100  18334.20</span>
-<span class="co">#&gt; 7  Australia   Oceania 1982   74.74 15184200  19477.01</span>
-<span class="co">#&gt; 8  Australia   Oceania 1987   76.32 16257249  21888.89</span>
-<span class="co">#&gt; 9  Australia   Oceania 1992   77.56 17481977  23424.77</span>
-<span class="co">#&gt; 10 Australia   Oceania 1997   78.83 18565243  26997.94</span>
-<span class="co">#&gt; ..       ...       ...  ...     ...      ...       ...</span>
+<span class="co">#&gt;      country continent  year lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;        (chr)     (chr) (int)   (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  Australia   Oceania  1952   69.12  8691212  10039.60</span>
+<span class="co">#&gt; 2  Australia   Oceania  1957   70.33  9712569  10949.65</span>
+<span class="co">#&gt; 3  Australia   Oceania  1962   70.93 10794968  12217.23</span>
+<span class="co">#&gt; 4  Australia   Oceania  1967   71.10 11872264  14526.12</span>
+<span class="co">#&gt; 5  Australia   Oceania  1972   71.93 13177000  16788.63</span>
+<span class="co">#&gt; 6  Australia   Oceania  1977   73.49 14074100  18334.20</span>
+<span class="co">#&gt; 7  Australia   Oceania  1982   74.74 15184200  19477.01</span>
+<span class="co">#&gt; 8  Australia   Oceania  1987   76.32 16257249  21888.89</span>
+<span class="co">#&gt; 9  Australia   Oceania  1992   77.56 17481977  23424.77</span>
+<span class="co">#&gt; 10 Australia   Oceania  1997   78.83 18565243  26997.94</span>
+<span class="co">#&gt; ..       ...       ...   ...     ...      ...       ...</span>
 <span class="kw">str</span>(oceania)
 <span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:</span>
 <span class="co">#&gt;  $ country  : chr  &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; ...</span>
@@ -225,7 +227,7 @@ oceania
 <span class="co">#&gt;  $ gdpPercap: num  10040 10950 12217 14526 16789 ...</span>
 <span class="kw">glimpse</span>(oceania)
 <span class="co">#&gt; Observations: 24</span>
-<span class="co">#&gt; Variables:</span>
+<span class="co">#&gt; Variables: 6</span>
 <span class="co">#&gt; $ country   (chr) &quot;Australia&quot;, &quot;Australia&quot;, &quot;Australia&quot;, &quot;Australia&quot;, ...</span>
 <span class="co">#&gt; $ continent (chr) &quot;Oceania&quot;, &quot;Oceania&quot;, &quot;Oceania&quot;, &quot;Oceania&quot;, &quot;Oceania...</span>
 <span class="co">#&gt; $ year      (int) 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...</span>
@@ -237,52 +239,57 @@ oceania
 <span class="co">#&gt; Accessing worksheet titled &quot;Americas&quot;</span>
 <span class="co">#&gt; Source: local data frame [7 x 4]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;     country continent year lifeExp</span>
-<span class="co">#&gt; 1 Argentina  Americas 1952  62.485</span>
-<span class="co">#&gt; 2 Argentina  Americas 1957  64.399</span>
-<span class="co">#&gt; 3 Argentina  Americas 1962  65.142</span>
-<span class="co">#&gt; 4 Argentina  Americas 1967  65.634</span>
-<span class="co">#&gt; 5 Argentina  Americas 1972  67.065</span>
-<span class="co">#&gt; 6 Argentina  Americas 1977  68.481</span>
-<span class="co">#&gt; 7 Argentina  Americas 1982  69.942</span>
+<span class="co">#&gt;     country continent  year lifeExp</span>
+<span class="co">#&gt;       (chr)     (chr) (int)   (dbl)</span>
+<span class="co">#&gt; 1 Argentina  Americas  1952  62.485</span>
+<span class="co">#&gt; 2 Argentina  Americas  1957  64.399</span>
+<span class="co">#&gt; 3 Argentina  Americas  1962  65.142</span>
+<span class="co">#&gt; 4 Argentina  Americas  1967  65.634</span>
+<span class="co">#&gt; 5 Argentina  Americas  1972  67.065</span>
+<span class="co">#&gt; 6 Argentina  Americas  1977  68.481</span>
+<span class="co">#&gt; 7 Argentina  Americas  1982  69.942</span>
 gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">1</span>:<span class="dv">4</span>))
 <span class="co">#&gt; Accessing worksheet titled &quot;Europe&quot;</span>
 <span class="co">#&gt; Source: local data frame [3 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;   country continent year lifeExp     pop gdpPercap</span>
-<span class="co">#&gt; 1 Albania    Europe 1952   55.23 1282697  1601.056</span>
-<span class="co">#&gt; 2 Albania    Europe 1957   59.28 1476505  1942.284</span>
-<span class="co">#&gt; 3 Albania    Europe 1962   64.82 1728137  2312.889</span>
+<span class="co">#&gt;   country continent  year lifeExp     pop gdpPercap</span>
+<span class="co">#&gt;     (chr)     (chr) (int)   (dbl)   (int)     (dbl)</span>
+<span class="co">#&gt; 1 Albania    Europe  1952   55.23 1282697  1601.056</span>
+<span class="co">#&gt; 2 Albania    Europe  1957   59.28 1476505  1942.284</span>
+<span class="co">#&gt; 3 Albania    Europe  1962   64.82 1728137  2312.889</span>
 gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">100</span>:<span class="dv">103</span>), <span class="dt">col_names =</span> <span class="ot">FALSE</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Europe&quot;</span>
 <span class="co">#&gt; Source: local data frame [4 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;        X1     X2   X3    X4      X5        X6</span>
-<span class="co">#&gt; 1 Finland Europe 1962 68.75 4491443  9371.843</span>
-<span class="co">#&gt; 2 Finland Europe 1967 69.83 4605744 10921.636</span>
-<span class="co">#&gt; 3 Finland Europe 1972 70.87 4639657 14358.876</span>
-<span class="co">#&gt; 4 Finland Europe 1977 72.52 4738902 15605.423</span>
+<span class="co">#&gt;        X1     X2    X3    X4      X5        X6</span>
+<span class="co">#&gt;     (chr)  (chr) (int) (dbl)   (int)     (dbl)</span>
+<span class="co">#&gt; 1 Finland Europe  1962 68.75 4491443  9371.843</span>
+<span class="co">#&gt; 2 Finland Europe  1967 69.83 4605744 10921.636</span>
+<span class="co">#&gt; 3 Finland Europe  1972 70.87 4639657 14358.876</span>
+<span class="co">#&gt; 4 Finland Europe  1977 72.52 4738902 15605.423</span>
 gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Africa&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_cols</span>(<span class="dv">1</span>:<span class="dv">4</span>))
 <span class="co">#&gt; Accessing worksheet titled &quot;Africa&quot;</span>
 <span class="co">#&gt; Source: local data frame [624 x 4]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;    country continent year lifeExp</span>
-<span class="co">#&gt; 1  Algeria    Africa 1952  43.077</span>
-<span class="co">#&gt; 2  Algeria    Africa 1957  45.685</span>
-<span class="co">#&gt; 3  Algeria    Africa 1962  48.303</span>
-<span class="co">#&gt; 4  Algeria    Africa 1967  51.407</span>
-<span class="co">#&gt; 5  Algeria    Africa 1972  54.518</span>
-<span class="co">#&gt; 6  Algeria    Africa 1977  58.014</span>
-<span class="co">#&gt; 7  Algeria    Africa 1982  61.368</span>
-<span class="co">#&gt; 8  Algeria    Africa 1987  65.799</span>
-<span class="co">#&gt; 9  Algeria    Africa 1992  67.744</span>
-<span class="co">#&gt; 10 Algeria    Africa 1997  69.152</span>
-<span class="co">#&gt; ..     ...       ...  ...     ...</span>
+<span class="co">#&gt;    country continent  year lifeExp</span>
+<span class="co">#&gt;      (chr)     (chr) (int)   (dbl)</span>
+<span class="co">#&gt; 1  Algeria    Africa  1952  43.077</span>
+<span class="co">#&gt; 2  Algeria    Africa  1957  45.685</span>
+<span class="co">#&gt; 3  Algeria    Africa  1962  48.303</span>
+<span class="co">#&gt; 4  Algeria    Africa  1967  51.407</span>
+<span class="co">#&gt; 5  Algeria    Africa  1972  54.518</span>
+<span class="co">#&gt; 6  Algeria    Africa  1977  58.014</span>
+<span class="co">#&gt; 7  Algeria    Africa  1982  61.368</span>
+<span class="co">#&gt; 8  Algeria    Africa  1987  65.799</span>
+<span class="co">#&gt; 9  Algeria    Africa  1992  67.744</span>
+<span class="co">#&gt; 10 Algeria    Africa  1997  69.152</span>
+<span class="co">#&gt; ..     ...       ...   ...     ...</span>
 gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_limits</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="kw">c</span>(<span class="dv">5</span>, <span class="ot">NA</span>)))
 <span class="co">#&gt; Accessing worksheet titled &quot;Asia&quot;</span>
 <span class="co">#&gt; Source: local data frame [4 x 3]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;     (dbl)    (dbl)     (dbl)</span>
 <span class="co">#&gt; 1  28.801  8425333  779.4453</span>
 <span class="co">#&gt; 2  30.332  9240934  820.8530</span>
 <span class="co">#&gt; 3  31.997 10267083  853.1007</span>
@@ -312,18 +319,19 @@ oceania_csv &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><sp
 oceania_csv
 <span class="co">#&gt; Source: local data frame [24 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      country continent year lifeExp      pop gdpPercap</span>
-<span class="co">#&gt; 1  Australia   Oceania 1952   69.12  8691212  10039.60</span>
-<span class="co">#&gt; 2  Australia   Oceania 1957   70.33  9712569  10949.65</span>
-<span class="co">#&gt; 3  Australia   Oceania 1962   70.93 10794968  12217.23</span>
-<span class="co">#&gt; 4  Australia   Oceania 1967   71.10 11872264  14526.12</span>
-<span class="co">#&gt; 5  Australia   Oceania 1972   71.93 13177000  16788.63</span>
-<span class="co">#&gt; 6  Australia   Oceania 1977   73.49 14074100  18334.20</span>
-<span class="co">#&gt; 7  Australia   Oceania 1982   74.74 15184200  19477.01</span>
-<span class="co">#&gt; 8  Australia   Oceania 1987   76.32 16257249  21888.89</span>
-<span class="co">#&gt; 9  Australia   Oceania 1992   77.56 17481977  23424.77</span>
-<span class="co">#&gt; 10 Australia   Oceania 1997   78.83 18565243  26997.94</span>
-<span class="co">#&gt; ..       ...       ...  ...     ...      ...       ...</span>
+<span class="co">#&gt;      country continent  year lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;        (chr)     (chr) (int)   (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  Australia   Oceania  1952   69.12  8691212  10039.60</span>
+<span class="co">#&gt; 2  Australia   Oceania  1957   70.33  9712569  10949.65</span>
+<span class="co">#&gt; 3  Australia   Oceania  1962   70.93 10794968  12217.23</span>
+<span class="co">#&gt; 4  Australia   Oceania  1967   71.10 11872264  14526.12</span>
+<span class="co">#&gt; 5  Australia   Oceania  1972   71.93 13177000  16788.63</span>
+<span class="co">#&gt; 6  Australia   Oceania  1977   73.49 14074100  18334.20</span>
+<span class="co">#&gt; 7  Australia   Oceania  1982   74.74 15184200  19477.01</span>
+<span class="co">#&gt; 8  Australia   Oceania  1987   76.32 16257249  21888.89</span>
+<span class="co">#&gt; 9  Australia   Oceania  1992   77.56 17481977  23424.77</span>
+<span class="co">#&gt; 10 Australia   Oceania  1997   78.83 18565243  26997.94</span>
+<span class="co">#&gt; ..       ...       ...   ...     ...      ...       ...</span>
 
 <span class="co"># Get the data for worksheet &quot;Oceania&quot;: the less-fast tabular way (&quot;list feed&quot;)</span>
 oceania_list_feed &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>) 
@@ -339,18 +347,19 @@ oceania_list_feed &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </sp
 oceania_list_feed
 <span class="co">#&gt; Source: local data frame [24 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      country continent year lifeexp      pop gdppercap</span>
-<span class="co">#&gt; 1  Australia   Oceania 1952   69.12  8691212  10039.60</span>
-<span class="co">#&gt; 2  Australia   Oceania 1957   70.33  9712569  10949.65</span>
-<span class="co">#&gt; 3  Australia   Oceania 1962   70.93 10794968  12217.23</span>
-<span class="co">#&gt; 4  Australia   Oceania 1967   71.10 11872264  14526.12</span>
-<span class="co">#&gt; 5  Australia   Oceania 1972   71.93 13177000  16788.63</span>
-<span class="co">#&gt; 6  Australia   Oceania 1977   73.49 14074100  18334.20</span>
-<span class="co">#&gt; 7  Australia   Oceania 1982   74.74 15184200  19477.01</span>
-<span class="co">#&gt; 8  Australia   Oceania 1987   76.32 16257249  21888.89</span>
-<span class="co">#&gt; 9  Australia   Oceania 1992   77.56 17481977  23424.77</span>
-<span class="co">#&gt; 10 Australia   Oceania 1997   78.83 18565243  26997.94</span>
-<span class="co">#&gt; ..       ...       ...  ...     ...      ...       ...</span>
+<span class="co">#&gt;      country continent  year lifeexp      pop gdppercap</span>
+<span class="co">#&gt;        (chr)     (chr) (int)   (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  Australia   Oceania  1952   69.12  8691212  10039.60</span>
+<span class="co">#&gt; 2  Australia   Oceania  1957   70.33  9712569  10949.65</span>
+<span class="co">#&gt; 3  Australia   Oceania  1962   70.93 10794968  12217.23</span>
+<span class="co">#&gt; 4  Australia   Oceania  1967   71.10 11872264  14526.12</span>
+<span class="co">#&gt; 5  Australia   Oceania  1972   71.93 13177000  16788.63</span>
+<span class="co">#&gt; 6  Australia   Oceania  1977   73.49 14074100  18334.20</span>
+<span class="co">#&gt; 7  Australia   Oceania  1982   74.74 15184200  19477.01</span>
+<span class="co">#&gt; 8  Australia   Oceania  1987   76.32 16257249  21888.89</span>
+<span class="co">#&gt; 9  Australia   Oceania  1992   77.56 17481977  23424.77</span>
+<span class="co">#&gt; 10 Australia   Oceania  1997   78.83 18565243  26997.94</span>
+<span class="co">#&gt; ..       ...       ...   ...     ...      ...       ...</span>
 
 <span class="co"># Get the data for worksheet &quot;Oceania&quot;: the slow cell-by-cell way (&quot;cell feed&quot;)</span>
 oceania_cell_feed &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_cellfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>) 
@@ -366,18 +375,19 @@ oceania_cell_feed &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </sp
 oceania_cell_feed
 <span class="co">#&gt; Source: local data frame [150 x 5]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;    cell cell_alt row col cell_text</span>
-<span class="co">#&gt; 1    A1     R1C1   1   1   country</span>
-<span class="co">#&gt; 2    B1     R1C2   1   2 continent</span>
-<span class="co">#&gt; 3    C1     R1C3   1   3      year</span>
-<span class="co">#&gt; 4    D1     R1C4   1   4   lifeExp</span>
-<span class="co">#&gt; 5    E1     R1C5   1   5       pop</span>
-<span class="co">#&gt; 6    F1     R1C6   1   6 gdpPercap</span>
-<span class="co">#&gt; 7    A2     R2C1   2   1 Australia</span>
-<span class="co">#&gt; 8    B2     R2C2   2   2   Oceania</span>
-<span class="co">#&gt; 9    C2     R2C3   2   3      1952</span>
-<span class="co">#&gt; 10   D2     R2C4   2   4     69.12</span>
-<span class="co">#&gt; ..  ...      ... ... ...       ...</span></code></pre></div>
+<span class="co">#&gt;     cell cell_alt   row   col cell_text</span>
+<span class="co">#&gt;    (chr)    (chr) (int) (int)     (chr)</span>
+<span class="co">#&gt; 1     A1     R1C1     1     1   country</span>
+<span class="co">#&gt; 2     B1     R1C2     1     2 continent</span>
+<span class="co">#&gt; 3     C1     R1C3     1     3      year</span>
+<span class="co">#&gt; 4     D1     R1C4     1     4   lifeExp</span>
+<span class="co">#&gt; 5     E1     R1C5     1     5       pop</span>
+<span class="co">#&gt; 6     F1     R1C6     1     6 gdpPercap</span>
+<span class="co">#&gt; 7     A2     R2C1     2     1 Australia</span>
+<span class="co">#&gt; 8     B2     R2C2     2     2   Oceania</span>
+<span class="co">#&gt; 9     C2     R2C3     2     3      1952</span>
+<span class="co">#&gt; 10    D2     R2C4     2     4     69.12</span>
+<span class="co">#&gt; ..   ...      ...   ...   ...       ...</span></code></pre></div>
 </div>
 <div id="quick-speed-comparison" class="section level4">
 <h4>Quick speed comparison</h4>
@@ -388,9 +398,9 @@ readfuns &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st
 readfuns &lt;-<span class="st"> </span><span class="kw">sapply</span>(readfuns, get, <span class="dt">USE.NAMES =</span> <span class="ot">TRUE</span>)
 <span class="kw">sapply</span>(readfuns, jfun)
 <span class="co">#&gt;            gs_read_csv gs_read_listfeed gs_read_cellfeed</span>
-<span class="co">#&gt; user.self        0.036            0.147            1.070</span>
-<span class="co">#&gt; sys.self         0.002            0.014            0.057</span>
-<span class="co">#&gt; elapsed          0.426            0.748            2.619</span>
+<span class="co">#&gt; user.self        0.038            0.158            1.047</span>
+<span class="co">#&gt; sys.self         0.001            0.016            0.037</span>
+<span class="co">#&gt; elapsed          0.481            0.940            2.588</span>
 <span class="co">#&gt; user.child       0.000            0.000            0.000</span>
 <span class="co">#&gt; sys.child        0.000            0.000            0.000</span></code></pre></div>
 </div>
@@ -413,18 +423,19 @@ australia_cell_feed &lt;-<span class="st"> </span>gap %&gt;%
 oceania_cell_feed
 <span class="co">#&gt; Source: local data frame [150 x 5]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;    cell cell_alt row col cell_text</span>
-<span class="co">#&gt; 1    A1     R1C1   1   1   country</span>
-<span class="co">#&gt; 2    B1     R1C2   1   2 continent</span>
-<span class="co">#&gt; 3    C1     R1C3   1   3      year</span>
-<span class="co">#&gt; 4    D1     R1C4   1   4   lifeExp</span>
-<span class="co">#&gt; 5    E1     R1C5   1   5       pop</span>
-<span class="co">#&gt; 6    F1     R1C6   1   6 gdpPercap</span>
-<span class="co">#&gt; 7    A2     R2C1   2   1 Australia</span>
-<span class="co">#&gt; 8    B2     R2C2   2   2   Oceania</span>
-<span class="co">#&gt; 9    C2     R2C3   2   3      1952</span>
-<span class="co">#&gt; 10   D2     R2C4   2   4     69.12</span>
-<span class="co">#&gt; ..  ...      ... ... ...       ...</span>
+<span class="co">#&gt;     cell cell_alt   row   col cell_text</span>
+<span class="co">#&gt;    (chr)    (chr) (int) (int)     (chr)</span>
+<span class="co">#&gt; 1     A1     R1C1     1     1   country</span>
+<span class="co">#&gt; 2     B1     R1C2     1     2 continent</span>
+<span class="co">#&gt; 3     C1     R1C3     1     3      year</span>
+<span class="co">#&gt; 4     D1     R1C4     1     4   lifeExp</span>
+<span class="co">#&gt; 5     E1     R1C5     1     5       pop</span>
+<span class="co">#&gt; 6     F1     R1C6     1     6 gdpPercap</span>
+<span class="co">#&gt; 7     A2     R2C1     2     1 Australia</span>
+<span class="co">#&gt; 8     B2     R2C2     2     2   Oceania</span>
+<span class="co">#&gt; 9     C2     R2C3     2     3      1952</span>
+<span class="co">#&gt; 10    D2     R2C4     2     4     69.12</span>
+<span class="co">#&gt; ..   ...      ...   ...   ...       ...</span>
 australia_reshaped &lt;-<span class="st"> </span>australia_cell_feed %&gt;%<span class="st"> </span><span class="kw">gs_reshape_cellfeed</span>()
 <span class="kw">str</span>(australia_reshaped)
 <span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    12 obs. of  6 variables:</span>
@@ -437,19 +448,20 @@ australia_reshaped &lt;-<span class="st"> </span>australia_cell_feed %&gt;%<span
 australia_reshaped
 <span class="co">#&gt; Source: local data frame [12 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;      country continent year lifeExp      pop gdpPercap</span>
-<span class="co">#&gt; 1  Australia   Oceania 1952  69.120  8691212  10039.60</span>
-<span class="co">#&gt; 2  Australia   Oceania 1957  70.330  9712569  10949.65</span>
-<span class="co">#&gt; 3  Australia   Oceania 1962  70.930 10794968  12217.23</span>
-<span class="co">#&gt; 4  Australia   Oceania 1967  71.100 11872264  14526.12</span>
-<span class="co">#&gt; 5  Australia   Oceania 1972  71.930 13177000  16788.63</span>
-<span class="co">#&gt; 6  Australia   Oceania 1977  73.490 14074100  18334.20</span>
-<span class="co">#&gt; 7  Australia   Oceania 1982  74.740 15184200  19477.01</span>
-<span class="co">#&gt; 8  Australia   Oceania 1987  76.320 16257249  21888.89</span>
-<span class="co">#&gt; 9  Australia   Oceania 1992  77.560 17481977  23424.77</span>
-<span class="co">#&gt; 10 Australia   Oceania 1997  78.830 18565243  26997.94</span>
-<span class="co">#&gt; 11 Australia   Oceania 2002  80.370 19546792  30687.75</span>
-<span class="co">#&gt; 12 Australia   Oceania 2007  81.235 20434176  34435.37</span>
+<span class="co">#&gt;      country continent  year lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;        (chr)     (chr) (int)   (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  Australia   Oceania  1952  69.120  8691212  10039.60</span>
+<span class="co">#&gt; 2  Australia   Oceania  1957  70.330  9712569  10949.65</span>
+<span class="co">#&gt; 3  Australia   Oceania  1962  70.930 10794968  12217.23</span>
+<span class="co">#&gt; 4  Australia   Oceania  1967  71.100 11872264  14526.12</span>
+<span class="co">#&gt; 5  Australia   Oceania  1972  71.930 13177000  16788.63</span>
+<span class="co">#&gt; 6  Australia   Oceania  1977  73.490 14074100  18334.20</span>
+<span class="co">#&gt; 7  Australia   Oceania  1982  74.740 15184200  19477.01</span>
+<span class="co">#&gt; 8  Australia   Oceania  1987  76.320 16257249  21888.89</span>
+<span class="co">#&gt; 9  Australia   Oceania  1992  77.560 17481977  23424.77</span>
+<span class="co">#&gt; 10 Australia   Oceania  1997  78.830 18565243  26997.94</span>
+<span class="co">#&gt; 11 Australia   Oceania  2002  80.370 19546792  30687.75</span>
+<span class="co">#&gt; 12 Australia   Oceania  2007  81.235 20434176  34435.37</span>
 
 <span class="co"># Example: first 3 rows</span>
 gap_3rows &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_cellfeed</span>(<span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">1</span>:<span class="dv">3</span>))
@@ -457,21 +469,23 @@ gap_3rows &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span
 gap_3rows %&gt;%<span class="st"> </span><span class="kw">head</span>()
 <span class="co">#&gt; Source: local data frame [6 x 5]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;   cell cell_alt row col cell_text</span>
-<span class="co">#&gt; 1   A1     R1C1   1   1   country</span>
-<span class="co">#&gt; 2   B1     R1C2   1   2 continent</span>
-<span class="co">#&gt; 3   C1     R1C3   1   3      year</span>
-<span class="co">#&gt; 4   D1     R1C4   1   4   lifeExp</span>
-<span class="co">#&gt; 5   E1     R1C5   1   5       pop</span>
-<span class="co">#&gt; 6   F1     R1C6   1   6 gdpPercap</span>
+<span class="co">#&gt;    cell cell_alt   row   col cell_text</span>
+<span class="co">#&gt;   (chr)    (chr) (int) (int)     (chr)</span>
+<span class="co">#&gt; 1    A1     R1C1     1     1   country</span>
+<span class="co">#&gt; 2    B1     R1C2     1     2 continent</span>
+<span class="co">#&gt; 3    C1     R1C3     1     3      year</span>
+<span class="co">#&gt; 4    D1     R1C4     1     4   lifeExp</span>
+<span class="co">#&gt; 5    E1     R1C5     1     5       pop</span>
+<span class="co">#&gt; 6    F1     R1C6     1     6 gdpPercap</span>
 
 <span class="co"># convert to a data.frame (by default, column names found in first row)</span>
 gap_3rows %&gt;%<span class="st"> </span><span class="kw">gs_reshape_cellfeed</span>()
 <span class="co">#&gt; Source: local data frame [2 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;   country continent year lifeExp     pop gdpPercap</span>
-<span class="co">#&gt; 1 Albania    Europe 1952   55.23 1282697  1601.056</span>
-<span class="co">#&gt; 2 Albania    Europe 1957   59.28 1476505  1942.284</span>
+<span class="co">#&gt;   country continent  year lifeExp     pop gdpPercap</span>
+<span class="co">#&gt;     (chr)     (chr) (int)   (dbl)   (int)     (dbl)</span>
+<span class="co">#&gt; 1 Albania    Europe  1952   55.23 1282697  1601.056</span>
+<span class="co">#&gt; 2 Albania    Europe  1957   59.28 1476505  1942.284</span>
 
 <span class="co"># arbitrary cell range, column names no longer available in first row</span>
 gap %&gt;%
@@ -481,6 +495,7 @@ gap %&gt;%
 <span class="co">#&gt; Source: local data frame [4 x 3]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;       X4       X5       X6</span>
+<span class="co">#&gt;    (dbl)    (dbl)    (dbl)</span>
 <span class="co">#&gt; 1 80.370 19546792 30687.75</span>
 <span class="co">#&gt; 2 81.235 20434176 34435.37</span>
 <span class="co">#&gt; 3 69.390  1994794 10556.58</span>
@@ -495,6 +510,7 @@ gap %&gt;%
 <span class="co">#&gt; Source: local data frame [4 x 3]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   thing_one thing_two thing_three</span>
+<span class="co">#&gt;       (chr)     (chr)       (int)</span>
 <span class="co">#&gt; 1 Australia   Oceania        1952</span>
 <span class="co">#&gt; 2 Australia   Oceania        1957</span>
 <span class="co">#&gt; 3 Australia   Oceania        1962</span>
@@ -506,13 +522,14 @@ gap_1row &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span 
 gap_1row
 <span class="co">#&gt; Source: local data frame [6 x 5]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;   cell cell_alt row col cell_text</span>
-<span class="co">#&gt; 1   A1     R1C1   1   1   country</span>
-<span class="co">#&gt; 2   B1     R1C2   1   2 continent</span>
-<span class="co">#&gt; 3   C1     R1C3   1   3      year</span>
-<span class="co">#&gt; 4   D1     R1C4   1   4   lifeExp</span>
-<span class="co">#&gt; 5   E1     R1C5   1   5       pop</span>
-<span class="co">#&gt; 6   F1     R1C6   1   6 gdpPercap</span>
+<span class="co">#&gt;    cell cell_alt   row   col cell_text</span>
+<span class="co">#&gt;   (chr)    (chr) (int) (int)     (chr)</span>
+<span class="co">#&gt; 1    A1     R1C1     1     1   country</span>
+<span class="co">#&gt; 2    B1     R1C2     1     2 continent</span>
+<span class="co">#&gt; 3    C1     R1C3     1     3      year</span>
+<span class="co">#&gt; 4    D1     R1C4     1     4   lifeExp</span>
+<span class="co">#&gt; 5    E1     R1C5     1     5       pop</span>
+<span class="co">#&gt; 6    F1     R1C6     1     6 gdpPercap</span>
 
 <span class="co"># convert to a named (character) vector</span>
 gap_1row %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</span>()
@@ -525,18 +542,19 @@ gap_1col &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span 
 gap_1col
 <span class="co">#&gt; Source: local data frame [361 x 5]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;    cell cell_alt row col cell_text</span>
-<span class="co">#&gt; 1    C1     R1C3   1   3      year</span>
-<span class="co">#&gt; 2    C2     R2C3   2   3      1952</span>
-<span class="co">#&gt; 3    C3     R3C3   3   3      1957</span>
-<span class="co">#&gt; 4    C4     R4C3   4   3      1962</span>
-<span class="co">#&gt; 5    C5     R5C3   5   3      1967</span>
-<span class="co">#&gt; 6    C6     R6C3   6   3      1972</span>
-<span class="co">#&gt; 7    C7     R7C3   7   3      1977</span>
-<span class="co">#&gt; 8    C8     R8C3   8   3      1982</span>
-<span class="co">#&gt; 9    C9     R9C3   9   3      1987</span>
-<span class="co">#&gt; 10  C10    R10C3  10   3      1992</span>
-<span class="co">#&gt; ..  ...      ... ... ...       ...</span>
+<span class="co">#&gt;     cell cell_alt   row   col cell_text</span>
+<span class="co">#&gt;    (chr)    (chr) (int) (int)     (chr)</span>
+<span class="co">#&gt; 1     C1     R1C3     1     3      year</span>
+<span class="co">#&gt; 2     C2     R2C3     2     3      1952</span>
+<span class="co">#&gt; 3     C3     R3C3     3     3      1957</span>
+<span class="co">#&gt; 4     C4     R4C3     4     3      1962</span>
+<span class="co">#&gt; 5     C5     R5C3     5     3      1967</span>
+<span class="co">#&gt; 6     C6     R6C3     6     3      1972</span>
+<span class="co">#&gt; 7     C7     R7C3     7     3      1977</span>
+<span class="co">#&gt; 8     C8     R8C3     8     3      1982</span>
+<span class="co">#&gt; 9     C9     R9C3     9     3      1987</span>
+<span class="co">#&gt; 10   C10    R10C3    10     3      1992</span>
+<span class="co">#&gt; ..   ...      ...   ...   ...       ...</span>
 
 <span class="co"># drop the variable name and convert to an un-named (integer) vector</span>
 gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</span>(<span class="dt">notation =</span> <span class="st">&quot;none&quot;</span>)
@@ -577,8 +595,8 @@ gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</s
 foo
 <span class="co">#&gt;                   Spreadsheet title: foo</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:14:09 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-08-28 20:14:07 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-10-10 21:58:19 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-10-10 21:58:17 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -587,8 +605,8 @@ foo
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; Sheet1: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1bhucbwQHmk9_3CB7I-mTzZYo7hr_jz631Y0BhKMkFU8/</span></code></pre></div>
+<span class="co">#&gt; Key: 18oPN8P35-UcvwhmGg4Z9l-3eZqUIMYsOOHFEWQ1sBKc</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/18oPN8P35-UcvwhmGg4Z9l-3eZqUIMYsOOHFEWQ1sBKc/</span></code></pre></div>
 <p>By default, there will be an empty worksheet called “Sheet1”, but you can control it’s title, extent, and initial data with additional arguments to <code>gs_new()</code> (see <code>gs_edit_cells()</code> in the next section). You can also add, rename, and delete worksheets within an existing sheet via <code>gs_ws_new()</code>, <code>gs_ws_rename()</code>, and <code>gs_ws_delete()</code>. Copy an entire spreadsheet with <code>gs_copy()</code>.</p>
 </div>
 <div id="edit-cells" class="section level3">
@@ -615,7 +633,7 @@ foo &lt;-<span class="st"> </span>foo %&gt;%
 <span class="co">#&gt; Range affected by the update: &quot;A1:E7&quot;</span>
 <span class="co">#&gt; Worksheet &quot;edit_cells&quot; successfully updated with 35 new value(s).</span>
 <span class="co">#&gt; Accessing worksheet titled &quot;edit_cells&quot;</span>
-<span class="co">#&gt; Authentication will be used.</span>
+<span class="co">#&gt; Authorization will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;foo&quot;</span>
 <span class="co">#&gt; Accessing worksheet titled &quot;edit_cells&quot;</span>
 <span class="co">#&gt; Worksheet &quot;edit_cells&quot; dimensions changed to 7 x 5.</span>
@@ -627,7 +645,7 @@ foo &lt;-<span class="st"> </span>foo %&gt;%<span class="st"> </span>
 <span class="co">#&gt; Range affected by the update: &quot;A1:E2&quot;</span>
 <span class="co">#&gt; Worksheet &quot;add_row&quot; successfully updated with 10 new value(s).</span>
 <span class="co">#&gt; Accessing worksheet titled &quot;add_row&quot;</span>
-<span class="co">#&gt; Authentication will be used.</span>
+<span class="co">#&gt; Authorization will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;foo&quot;</span>
 <span class="co">#&gt; Accessing worksheet titled &quot;add_row&quot;</span>
 <span class="co">#&gt; Worksheet &quot;add_row&quot; dimensions changed to 2 x 5.</span>
@@ -648,6 +666,7 @@ foo %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 <span class="co">#&gt; Source: local data frame [6 x 5]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
+<span class="co">#&gt;          (dbl)       (dbl)        (dbl)       (dbl)   (chr)</span>
 <span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
 <span class="co">#&gt; 2          4.9         3.0          1.4         0.2  setosa</span>
 <span class="co">#&gt; 3          4.7         3.2          1.3         0.2  setosa</span>
@@ -659,6 +678,7 @@ foo %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 <span class="co">#&gt; Source: local data frame [6 x 5]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
+<span class="co">#&gt;          (dbl)       (dbl)        (dbl)       (dbl)   (chr)</span>
 <span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
 <span class="co">#&gt; 2          4.9         3.0          1.4         0.2  setosa</span>
 <span class="co">#&gt; 3          4.7         3.2          1.3         0.2  setosa</span>
@@ -687,8 +707,8 @@ iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span cl
 iris_ss
 <span class="co">#&gt;                   Spreadsheet title: iris</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:14:38 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-08-28 20:14:36 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-10-10 21:59:01 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-10-10 21:58:58 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -697,13 +717,14 @@ iris_ss
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; iris: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1gM-5lNQ8SnAh88XBiHn4ylCLw6r59vOIC3jOHp8PCpE/</span>
+<span class="co">#&gt; Key: 1CILlVP4g24-3_6cV7S-7honwEEmUKBAK0Qflf1IlbKM</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1CILlVP4g24-3_6cV7S-7honwEEmUKBAK0Qflf1IlbKM/</span>
 iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; Accessing worksheet titled &quot;iris&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 5]</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
+<span class="co">#&gt;          (dbl)       (dbl)        (dbl)       (dbl)   (chr)</span>
 <span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
 <span class="co">#&gt; 2          4.9         3.0          1.4         0.2  setosa</span>
 <span class="co">#&gt; 3          4.7         3.2          1.3         0.2  setosa</span>
@@ -717,8 +738,8 @@ iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 gap_xlsx
 <span class="co">#&gt;                   Spreadsheet title: mini-gap</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2015-08-28 20:14:42 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2015-08-28 20:14:41 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2015-10-10 21:59:08 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-10-10 21:59:05 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -731,24 +752,25 @@ gap_xlsx
 <span class="co">#&gt; Europe: 1000 x 26</span>
 <span class="co">#&gt; Oceania: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1CiNyKtvKpD4O2m1pu9KHWcbs_dZlEL2TO-TDVfTNKIU/</span>
+<span class="co">#&gt; Key: 1cCOXyK0zslTnl6PBssvAwPIubpTlVmCsdjuglHUbxys</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1cCOXyK0zslTnl6PBssvAwPIubpTlVmCsdjuglHUbxys/</span>
 gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Asia&quot;</span>
 <span class="co">#&gt; Source: local data frame [5 x 6]</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt;       country continent year lifeExp       pop gdpPercap</span>
-<span class="co">#&gt; 1 Afghanistan      Asia 1952  28.801   8425333  779.4453</span>
-<span class="co">#&gt; 2     Bahrain      Asia 1952  50.939    120447 9867.0848</span>
-<span class="co">#&gt; 3  Bangladesh      Asia 1952  37.484  46886859  684.2442</span>
-<span class="co">#&gt; 4    Cambodia      Asia 1952  39.417   4693836  368.4693</span>
-<span class="co">#&gt; 5       China      Asia 1952  44.000 556263527  400.4486</span></code></pre></div>
+<span class="co">#&gt;       country continent  year lifeExp       pop gdpPercap</span>
+<span class="co">#&gt;         (chr)     (chr) (int)   (dbl)     (int)     (dbl)</span>
+<span class="co">#&gt; 1 Afghanistan      Asia  1952  28.801   8425333  779.4453</span>
+<span class="co">#&gt; 2     Bahrain      Asia  1952  50.939    120447 9867.0848</span>
+<span class="co">#&gt; 3  Bangladesh      Asia  1952  37.484  46886859  684.2442</span>
+<span class="co">#&gt; 4    Cambodia      Asia  1952  39.417   4693836  368.4693</span>
+<span class="co">#&gt; 5       China      Asia  1952  44.000 556263527  400.4486</span></code></pre></div>
 <p>And we clean up after ourselves on Google Drive.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_vecdel</span>(<span class="kw">c</span>(<span class="st">&quot;iris&quot;</span>, <span class="st">&quot;mini-gap&quot;</span>))
-<span class="co">#&gt; Authentication will be used.</span>
+<span class="co">#&gt; Authorization will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;mini-gap&quot;</span>
 <span class="co">#&gt; Success. &quot;mini-gap&quot; moved to trash in Google Drive.</span>
-<span class="co">#&gt; Authentication will be used.</span>
+<span class="co">#&gt; Authorization will be used.</span>
 <span class="co">#&gt; Sheet successfully identifed: &quot;iris&quot;</span>
 <span class="co">#&gt; Success. &quot;iris&quot; moved to trash in Google Drive.</span>
 <span class="co">#&gt; [1] TRUE TRUE</span>
@@ -763,7 +785,7 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">ws =</span> <span class="st">&quot;Africa&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;gapminder-africa.csv&quot;</span>)
 <span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span>
 <span class="co">#&gt; Accessing worksheet titled &quot;Africa&quot;</span>
-<span class="co">#&gt; Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder-africa.csv</span>
+<span class="co">#&gt; Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/vignettes/gapminder-africa.csv</span>
 ## is it there? yes!
 <span class="kw">read.csv</span>(<span class="st">&quot;gapminder-africa.csv&quot;</span>) %&gt;%<span class="st"> </span><span class="kw">head</span>()
 <span class="co">#&gt;   country continent year lifeExp      pop gdpPercap</span>
@@ -777,7 +799,7 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">to =</span> <span class="st">&quot;gapminder.xlsx&quot;</span>)
 <span class="co">#&gt; Sheet successfully identifed: &quot;Gapminder&quot;</span>
-<span class="co">#&gt; Sheet successfully downloaded: /Users/jenny/research/googlesheets/vignettes/gapminder.xlsx</span></code></pre></div>
+<span class="co">#&gt; Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/vignettes/gapminder.xlsx</span></code></pre></div>
 <p>Go check it out in Excel, if you wish!</p>
 <p>And now we clean up the downloaded files.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">file.remove</span>(<span class="kw">c</span>(<span class="st">&quot;gapminder.xlsx&quot;</span>, <span class="st">&quot;gapminder-africa.csv&quot;</span>))
@@ -793,9 +815,9 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">user_session_info &lt;-<span class="st"> </span><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2015-08-28 20:13:49 GMT</span>
+<span class="co">#&gt;                  date: 2015-10-10 21:57:55 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....HxXMk</span>
+<span class="co">#&gt;  peek at access token: ya29....s6sV0</span>
 <span class="co">#&gt; peek at refresh token: 1/zNh...ATCKT</span>
 user_session_info
 <span class="co">#&gt; $displayName</span>
@@ -805,13 +827,13 @@ user_session_info
 <span class="co">#&gt; [1] &quot;gspreadr@gmail.com&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $date</span>
-<span class="co">#&gt; [1] &quot;2015-08-28 20:13:49 GMT&quot;</span>
+<span class="co">#&gt; [1] &quot;2015-10-10 21:57:55 GMT&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $token_valid</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_acc</span>
-<span class="co">#&gt; [1] &quot;ya29....HxXMk&quot;</span>
+<span class="co">#&gt; [1] &quot;ya29....s6sV0&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_ref</span>
 <span class="co">#&gt; [1] &quot;1/zNh...ATCKT&quot;</span></code></pre></div>
