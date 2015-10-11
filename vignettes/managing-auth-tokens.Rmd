@@ -92,7 +92,7 @@ This is where you *authenticate* yourself, so that `googlesheets` can subsequent
 
 Behind the scenes, `googlesheets` uses `httr::oauth2.0_token()` (and ultimately `httr::init_oauth2.0()`) to complete the "authorization code, exchange code for token, token response" ping pong and store a **token**. This token is stored in an environment within `googlesheets` and is attached to subsequent API requests as necessary.
 
-You can use `gs_user()` to see there is currently a valid token in force, who the associated Google user is, etc.:
+You can use `gs_user()` to see if there is currently a valid token in force, who the associated Google user is, etc.:
 
 ```{r}
 gs_user()
@@ -112,18 +112,18 @@ In subsequent R sessions, at the first need for authorization, `googlesheets` lo
 
 #### Another chance to stop reading this document
 
-If your usage is pretty simple, you may only need to make sure that the token cached in `.httr-oauth` is the one you want (e.g., associated with the correct Google user) and make sure this file lives alongside your R script or R Markdown file. If you are relying on automatic loading from cache in `.httr-oauth`, this error message is **highly suggestive** of a mis-specified path, i.e. that `httr-oauth` cannot be found at runtime: "oauth_listener() needs an interactive environment".
+If your usage is pretty simple, you may only need to make sure that the token cached in `.httr-oauth` is the one you want (e.g., associated with the correct Google user) and make sure this file lives alongside your R script or R Markdown file. If you are relying on automatic loading from cache in `.httr-oauth`, this error message is **highly suggestive** that `.httr-oauth` cannot be found at runtime: "oauth_listener() needs an interactive environment".
 
 ![](img/google-oauth-flow-no-token-found.png)
 
 Here is a workflow that is doomed to fail:
 
-  * You write an R script `/path/to/directoryA/foo.R` or an R Markdown document `/path/to/directoryA/foo.Rmd`.
+  * You create an R script `/path/to/directoryA/foo.R` or an R Markdown document `/path/to/directoryA/foo.Rmd`.
   * You develop and test it interactively with working directory set to an *entirely different directory*, such as `/path/to/directoryB/`.
   * Your Google token is therefore cached to `/path/to/directoryB/.httr-oauth`.
-  * You run `foo.R` or render `foo.Rmd` and get an error. Why? Because `.httr-oauth` is not in working directory at runtime.
+  * You run `foo.R` or render `foo.Rmd` "for real", e.g, with working directory set to `/path/to/directoryA/`, and get an error. Why? Because `.httr-oauth` is not in working directory at runtime.
   
-You must make sure that `.httr-oauth` will be found in working directory when your script runs or your `.Rmd` is rendered.  
+You must make sure that `.httr-oauth` will be found in working directory when your script runs or your `.Rmd` is rendered.
   
 ## Don't publish your tokens
 
@@ -170,11 +170,11 @@ What's the difference between token storage in `.httr-oauth` and what we do abov
 
 ## Token expiration and refresh
 
-The OAuth 2.0 tokens used by `googlesheets` actually consist of a **refresh token** and an **access token**. Refresh tokens are quite durable, whereas access tokens are highly perishable. Part of the beauty of `httr` is that it automatically uses a valid refresh token to obtain a new access token. That's what's happening whenever you see this message: "Auto-refreshing stale OAuth token."
+There are actually two different kinds of tokens in the OAuth 2.0 flow used by `googlesheets`: a **refresh token** and an **access token**. Refresh tokens are quite durable, whereas access tokens are highly perishable. Access tokens are what's actually attached to requests. Part of the beauty of `httr` is that it automatically uses a valid refresh token to obtain a new access token. That's what's happening whenever you see this message: "Auto-refreshing stale OAuth token."
 
 ![](img/refresh-tokens-refresh.png)
 
-If your refresh token is invalid (or no where to be found), then any token-requiring request will trigger the entire OAuth 2.0 flow In particular, you'll need to redo "User login & Consent" in the browser. If this happens in a non-interactive setting, this will therefore lead to some sort of failure.
+If your access token has expired (or doesn't exist) and your refresh token is invalid (or no where to be found), then any token-requiring request will trigger the entire OAuth 2.0 flow. In particular, you'll need to redo "User login & Consent" in the browser. If this happens in a non-interactive setting, this will therefore lead to some sort of failure.
 
 You should design your workflow to reuse existing refresh tokens whenever possible. Don't just take my word for it, here's the [official Google advice](https://developers.google.com/identity/protocols/OAuth2):
 
@@ -208,7 +208,7 @@ In affected testing files, we explicitly put the token into force:
 suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 ```
 
-run the tests that require authorization and then suspend token usage (but do NOT revoke the token itself):
+run the tests that require authorization and then suspend token usage (but do NOT revoke the refresh token):
 
 ```{r eval = FALSE}
 gs_auth_suspend(verbose = FALSE)
@@ -229,7 +229,7 @@ If you want to check the `googlesheets` package, you will need to store a valid 
 
 ## Encrypting tokens for hosted continuous integration
 
-If you want to use `googlesheets` with hosted continuous integration, such as [Travis CI](https://travis-ci.org), you need to secure your token, e.g., the `googlesheets_token.rds` file described above. I have only done this in the context of `testthat` and Travis CI, but I imagine something very similar would apply to other testing approaches and CI services. I describe this here as a template for testing other packages that wrap an API and that make authorized requests in the unit tests. This has evolved from instructions originally worked out by Noam Ross.
+If you want to use `googlesheets` with hosted continuous integration, such as [Travis CI](https://travis-ci.org), you need to secure your token on the host, e.g., the `googlesheets_token.rds` file described above. I have only done this in the context of `testthat` and Travis CI, but I imagine something very similar would apply to other testing approaches and CI services. I describe this here as a template for testing other packages that wrap an API and that make authorized requests in the unit tests. This has evolved from instructions originally worked out by Noam Ross. These instructions assume you've set up continuous integration and, in particular, that you have an existing `.travis.yml` file.
 
 OAuth 2.0 tokens are, sadly, too large to be stored as environment variables, so we must instead follow the instructions for [encrypting files](http://docs.travis-ci.com/user/encrypting-files/). This requires the [Travis command line client](https://github.com/travis-ci/travis.rb#readme) which, in turn, requires a [Ruby installation](https://www.ruby-lang.org/en/documentation/installation/).
 
