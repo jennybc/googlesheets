@@ -58,7 +58,7 @@ gs_user()
 ## ----eval = FALSE--------------------------------------------------------
 #  gs_auth_suspend(verbose = FALSE)
 
-## ----eval = NOT_CRAN-----------------------------------------------------
-git2r::branch_target(git2r::head(git2r::repository('..')))
+## ----include = FALSE, eval = NOT_CRAN------------------------------------
+#git2r::branch_target(git2r::head(git2r::repository('..')))
 #devtools::session_info("googlesheets")
 

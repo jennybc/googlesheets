@@ -270,8 +270,8 @@ __Do not get mixed up re: what gets ignored where.__
 
 At this point, if you blindly bundle the package and send it to win-builder or CRAN, the unencrypted token will be included. So remember to add `tests/testthat/googlesheets_token.rds` to `.Rbuildignore` prior to such submissions, perhaps in a dedicated branch. You will also need to take care in tests and vignettes that no token-requiring code is executed by CRAN.
 
-```{r eval = NOT_CRAN}
-git2r::branch_target(git2r::head(git2r::repository('..')))
+```{r include = FALSE, eval = NOT_CRAN}
+#git2r::branch_target(git2r::head(git2r::repository('..')))
 #devtools::session_info("googlesheets")
 ```
 

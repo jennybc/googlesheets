@@ -92,9 +92,9 @@ You can use `gs_user()` to see there is currently a valid token in force, who th
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-10-10 23:03:07 GMT
+#>                  date: 2015-10-11 00:40:02 GMT
 #>          access token: valid
-#>  peek at access token: ya29....aH5WE
+#>  peek at access token: ya29....VK4nE
 #> peek at refresh token: 1/zNh...ATCKT
 ```
 
@@ -276,9 +276,4 @@ __Do not get mixed up re: what gets ignored where.__
 At this point, if you blindly bundle the package and send it to win-builder or CRAN, the unencrypted token will be included. So remember to add `tests/testthat/googlesheets_token.rds` to `.Rbuildignore` prior to such submissions, perhaps in a dedicated branch. You will also need to take care in tests and vignettes that no token-requiring code is executed by CRAN.
 
 
-```r
-git2r::branch_target(git2r::head(git2r::repository('..')))
-#> [1] "c27adbc71d095e9f88571f31991bc004a485842d"
-#devtools::session_info("googlesheets")
-```
 

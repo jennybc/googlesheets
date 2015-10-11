@@ -149,9 +149,9 @@ iris_ss %&gt;%<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2015-10-10 23:03:07 GMT</span>
+<span class="co">#&gt;                  date: 2015-10-11 00:40:02 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....aH5WE</span>
+<span class="co">#&gt;  peek at access token: ya29....VK4nE</span>
 <span class="co">#&gt; peek at refresh token: 1/zNh...ATCKT</span></code></pre></div>
 </div>
 <div id="where-do-tokens-live-in-between-r-sessions" class="section level2">
@@ -278,9 +278,6 @@ tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token
 <li>Why do we NOT Rbuildignore the unencrypted token? If you put <code>token_file.rds</code> in <code>.Rbuildignore</code>, it will not be copied over into the <code>my_package.Rcheck</code> directory during <code>R CMD check</code>, and your tests will fail.</li>
 </ul>
 <p>At this point, if you blindly bundle the package and send it to win-builder or CRAN, the unencrypted token will be included. So remember to add <code>tests/testthat/googlesheets_token.rds</code> to <code>.Rbuildignore</code> prior to such submissions, perhaps in a dedicated branch. You will also need to take care in tests and vignettes that no token-requiring code is executed by CRAN.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">git2r::<span class="kw">branch_target</span>(git2r::<span class="kw">head</span>(git2r::<span class="kw">repository</span>(<span class="st">'..'</span>)))
-<span class="co">#&gt; [1] &quot;c27adbc71d095e9f88571f31991bc004a485842d&quot;</span>
-<span class="co">#devtools::session_info(&quot;googlesheets&quot;)</span></code></pre></div>
 </div>
 
 
