@@ -8,6 +8,8 @@ Jenny Bryan
 
 
 
+*This is a draft vignette for the [`googlesheets` package](https://github.com/jennybc/googlesheets). Feel free to provide feedback in an issue.*
+
 ## Who should read this
 
 This vignette explains Google auth token management for anyone who wants to use `googlesheets` in code that runs non-interactively. Examples:
@@ -92,9 +94,9 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-10-11 19:23:38 GMT
+#>                  date: 2015-10-12 05:06:17 GMT
 #>          access token: valid
-#>  peek at access token: ya29....51kB0
+#>  peek at access token: ya29....HWXm4
 #> peek at refresh token: 1/zNh...ATCKT
 ```
 

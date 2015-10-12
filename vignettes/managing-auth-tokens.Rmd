@@ -33,6 +33,8 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 googlesheets::gs_grepdel("^iris_bit$", verbose = FALSE)
 ```
 
+*This is a draft vignette for the [`googlesheets` package](https://github.com/jennybc/googlesheets). Feel free to provide feedback in an issue.*
+
 ## Who should read this
 
 This vignette explains Google auth token management for anyone who wants to use `googlesheets` in code that runs non-interactively. Examples:
