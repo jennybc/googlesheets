@@ -1,7 +1,7 @@
 #' Visual overview of populated cells
 #'
 #' \emph{This function is still experimental. Expect it to change! Or
-#' disappear?} This function plots a data frame and gives a sense of what sort
+#' disappear?} This function plots a data.frame and gives a sense of what sort
 #' of data is where (e.g. character vs. numeric vs factor). Empty cells (ie.
 #' \code{NA}'s) are also indicated. The purpose is to get oriented to sheets
 #' that contain more than one data rectangle. Right now, due to the tabular,
@@ -33,6 +33,11 @@
 #' }
 #' @export
 gs_inspect <- function(x) {
+
+  if(!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("gs_inspect() requires the suggested package `ggplot2`.\n",
+         "Use install.packages(\"ggplot2\") to install and then retry.")
+  }
 
   stopifnot(x %>% inherits(c("data.frame", "tbl_df")))
 

@@ -14,7 +14,7 @@ a ggplot object
 }
 \description{
 \emph{This function is still experimental. Expect it to change! Or
-disappear?} This function plots a data frame and gives a sense of what sort
+disappear?} This function plots a data.frame and gives a sense of what sort
 of data is where (e.g. character vs. numeric vs factor). Empty cells (ie.
 \code{NA}'s) are also indicated. The purpose is to get oriented to sheets
 that contain more than one data rectangle. Right now, due to the tabular,

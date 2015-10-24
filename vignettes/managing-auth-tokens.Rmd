@@ -55,7 +55,7 @@ Reading from a Sheet that is "published to the web" does not require authorizati
 
 ```{r}
 library(googlesheets)
-library(magrittr)
+library(dplyr)
 gs_gap_key() %>%
   gs_key(lookup = FALSE) %>% 
   gs_read() %>% 
