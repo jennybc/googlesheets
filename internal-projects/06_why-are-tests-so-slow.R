@@ -13,7 +13,7 @@ library("testthat")
 
 ## damn you render and your hard-wiring of wd = dir where file lives!
 ## if I don't commit this abomination, existing .httr-oauth cannot be found :(
-if (basename(getwd()) == "data-for-demo") {
+if (basename(getwd()) == "internal-projects") {
   setwd("..")
 }
 
