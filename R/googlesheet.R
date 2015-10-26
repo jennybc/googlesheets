@@ -15,6 +15,7 @@ googlesheet <- function() {
                  updated = character() %>% as.POSIXct(),
                  reg_date = character() %>% as.POSIXct(),
                  visibility = character(),
+                 lookup = NA,
                  is_public = logical(),
                  author = character(),
                  email = character(),
@@ -28,9 +29,10 @@ googlesheet <- function() {
 }
 
 as.googlesheet <-
-  function(x, ssf = NULL, verbose = TRUE, ...) UseMethod("as.googlesheet")
+  function(x, ssf = NULL, lookup, verbose = TRUE, ...) UseMethod("as.googlesheet")
 
-as.googlesheet.ws_feed <- function(x, ssf = NULL, verbose = TRUE, ...) {
+as.googlesheet.ws_feed <-
+  function(x, ssf = NULL, lookup, verbose = TRUE, ...) {
 
   req <- gsheets_GET(x)
 
@@ -60,6 +62,7 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL, verbose = TRUE, ...) {
   ss$reg_date <- req$headers$date %>% httr::parse_http_date()
 
   ss$visibility <- req$url %>% dirname() %>% basename()
+  ss$lookup <- lookup
   ss$is_public <- ss$visibility == "public"
 
   ss$author <- req$content %>%

@@ -75,7 +75,7 @@ gs_title <- function(x, verbose = TRUE) {
 
   x <- structure(ssf$ws_feed, class = "ws_feed")
   x %>%
-    as.googlesheet(ssf, verbose)
+    as.googlesheet(ssf, lookup = TRUE, verbose)
 
 }
 
@@ -104,7 +104,7 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
 
   x <- structure(x, class = "ws_feed")
   x %>%
-    as.googlesheet(ssf, verbose)
+    as.googlesheet(ssf, lookup, verbose)
 
 }
 
@@ -116,9 +116,8 @@ gs_url <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
             stringr::str_detect(x, "^https://"))
 
   if(verbose) {
-    paste0("Sheet-identifying info appears to be a browser URL.\n",
-           "googlesheets will attempt to extract sheet key from the URL.") %>%
-      message()
+    message("Sheet-identifying info appears to be a browser URL.\n",
+            "googlesheets will attempt to extract sheet key from the URL.")
   }
 
   x <- extract_key_from_url(x)
@@ -152,7 +151,7 @@ gs_ws_feed <- function(x, lookup = NULL, verbose = TRUE) {
 
   x <- structure(x, class = "ws_feed")
   x %>%
-    as.googlesheet(ssf, verbose)
+    as.googlesheet(ssf, lookup, verbose)
 
 }
 
@@ -171,7 +170,7 @@ gs_gs <- function(x, visibility = NULL, verbose = TRUE) {
 
   key <- extract_key_from_url(x$ws_feed)
   key %>%
-    gs_key(visibility = visibility, verbose = verbose)
+    gs_key(lookup = x$lookup, visibility = visibility, verbose = verbose)
 
 }
 
