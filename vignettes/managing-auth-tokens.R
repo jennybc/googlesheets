@@ -18,7 +18,7 @@ googlesheets::gs_grepdel("^iris_bit$", verbose = FALSE)
 
 ## ------------------------------------------------------------------------
 library(googlesheets)
-library(magrittr)
+suppressPackageStartupMessages(library(dplyr))
 gs_gap_key() %>%
   gs_key(lookup = FALSE) %>% 
   gs_read() %>% 

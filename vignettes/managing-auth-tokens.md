@@ -31,7 +31,7 @@ Reading from a Sheet that is "published to the web" does not require authorizati
 
 ```r
 library(googlesheets)
-library(magrittr)
+suppressPackageStartupMessages(library(dplyr))
 gs_gap_key() %>%
   gs_key(lookup = FALSE) %>% 
   gs_read() %>% 
@@ -94,9 +94,9 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-10-12 05:06:17 GMT
+#>                  date: 2015-10-26 23:03:31 GMT
 #>          access token: valid
-#>  peek at access token: ya29....HWXm4
+#>  peek at access token: ya29....rDR68
 #> peek at refresh token: 1/zNh...ATCKT
 ```
 

@@ -10,7 +10,7 @@
 
 <meta name="author" content="Jenny Bryan" />
 
-<meta name="date" content="2015-10-11" />
+<meta name="date" content="2015-10-26" />
 
 <title>Managing OAuth Tokens</title>
 
@@ -72,7 +72,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="header">
 <h1 class="title">Managing OAuth Tokens</h1>
 <h4 class="author"><em>Jenny Bryan</em></h4>
-<h4 class="date"><em>2015-10-11</em></h4>
+<h4 class="date"><em>2015-10-26</em></h4>
 </div>
 
 <div id="TOC">
@@ -107,7 +107,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Which Google Sheets activities require authorization? And which do not?</p>
 <p>Reading from a Sheet that is “published to the web” does not require authorization, if and only if you identify the Sheet via key or URL:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
-<span class="kw">library</span>(magrittr)
+<span class="kw">suppressPackageStartupMessages</span>(<span class="kw">library</span>(dplyr))
 <span class="kw">gs_gap_key</span>() %&gt;%
 <span class="st">  </span><span class="kw">gs_key</span>(<span class="dt">lookup =</span> <span class="ot">FALSE</span>) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_read</span>() %&gt;%<span class="st"> </span>
@@ -150,9 +150,9 @@ iris_ss %&gt;%<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2015-10-12 05:06:17 GMT</span>
+<span class="co">#&gt;                  date: 2015-10-26 23:03:31 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....HWXm4</span>
+<span class="co">#&gt;  peek at access token: ya29....rDR68</span>
 <span class="co">#&gt; peek at refresh token: 1/zNh...ATCKT</span></code></pre></div>
 </div>
 <div id="where-do-tokens-live-in-between-r-sessions" class="section level2">
