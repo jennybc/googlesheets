@@ -54,6 +54,12 @@ devtools::install_github("hadley/readr")
 devtools::install_github("jennybc/googlesheets")
 ```
 
+If you use Windows, you may want to install the development version of `xml2`. This will improve handling of encoding when reading Sheets:
+
+``` r
+devtools::install_github("hadley/xml2")
+```
+
 ### Take a look at the vignette
 
 Read [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) on GitHub.
@@ -99,7 +105,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-10-02 21:03:03 GMT
+#>   Date of googlesheets registration: 2015-10-29 15:06:57 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -162,7 +168,7 @@ iris_ss <- gs_new("iris", input = head(iris, 3), trim = TRUE)
 #> Range affected by the update: "A1:E4"
 #> Worksheet "Sheet1" successfully updated with 20 new value(s).
 #> Accessing worksheet titled "Sheet1"
-#> Authentication will be used.
+#> Authorization will be used.
 #> Sheet successfully identifed: "iris"
 #> Accessing worksheet titled "Sheet1"
 #> Worksheet "Sheet1" dimensions changed to 4 x 5.
@@ -203,7 +209,7 @@ Download this precious thing (other formats are possible):
 ``` r
 iris_ss %>% 
   gs_download(to = "iris-ish-stuff.csv", overwrite = TRUE)
-#> Sheet successfully downloaded: /Users/jenny/research/googlesheets/iris-ish-stuff.csv
+#> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/iris-ish-stuff.csv
 ```
 
 Clean up our mess:
