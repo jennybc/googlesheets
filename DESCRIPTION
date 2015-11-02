@@ -31,3 +31,4 @@ Suggests:
     testthat,
     rmarkdown
 VignetteBuilder: knitr
+RoxygenNote: 5.0.0
