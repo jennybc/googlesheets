@@ -157,5 +157,14 @@ test_that("Row input is given the proper length", {
 
 })
 
+test_that("We can add multiple rows", {
+  ws <- "shipwrecks"
+  input <- dplyr::data_frame(id = c("Dona Paz", "USS Arizona"), wreckdate = c("1987-12-20", "1941-12-07"))
+
+  ss <- ss %>% gs_add_row(ws = ws, input = input)
+  expect_is(ss, "googlesheet")
+  expect_equal(ss %>% gs_read(ws = ws) %>% tail(2), input)
+})
+
 gs_grepdel(TEST, verbose = FALSE)
 gs_auth_suspend(verbose = FALSE)

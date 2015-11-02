@@ -39,6 +39,15 @@
 
 gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
 
+  nrows <- nrow(input)
+  if (!is.null(nrows) && nrows > 1) {
+
+    for (i in seq_len(nrows)) {
+      ss <- Recall(ss = ss, ws = ws, input = input[i, ], verbose = verbose)
+    }
+    return(invisible(ss))
+  }
+
   ## this fxn defined in gs_edit_cells.R
   input <- as_character_vector(input, col_names = FALSE)
 
