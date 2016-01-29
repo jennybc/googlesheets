@@ -72,11 +72,11 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
     ## numeric columns have an NA for empty cells
     ## character columns have "" for empty cells
     ## hence the value of na.strings
-    req %>%
-      httr::content(type = "text/csv", na.strings = c("", "NA"),
-                    encoding = "UTF-8", ...) %>%
-      dplyr::as_data_frame() %>%
-      dplyr::as.tbl()
+    ## req %>%
+    ##   httr::content(type = "text/csv", na.strings = c("", "NA"),
+    ##                 encoding = "UTF-8", ...) %>%
+    ##   dplyr::as_data_frame() %>%
+    ##   dplyr::as.tbl()
     ## in future, I'm interested in using readr::read_csv(), either directly
     ## or indirectly, if httr make it the parser when MIME type is text/csv
     ## won't do it know because doesn't support vector valued na.strings,
@@ -86,9 +86,9 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
     ## https://github.com/hadley/readr/issues/114
     ## https://github.com/hadley/readr/issues/125
     ## parsing content "by hand" with readr_csv() might look like so:
-    ## req %>%
-    ##   httr::content(type = "text", encoding = "UTF-8") %>%
-    ##   readr::read_csv()
+    req %>%
+      httr::content(type = "text", encoding = "UTF-8") %>%
+      readr::read_csv()
   }
 
 }
