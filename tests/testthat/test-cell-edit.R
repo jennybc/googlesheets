@@ -86,7 +86,7 @@ test_that("2-dimensional things can be uploaded", {
   # update w/ a data.frame, col_names = FALSE
   ss <- ss %>% gs_edit_cells(ws, iris_ish, col_names = FALSE)
   Sys.sleep(1)
-  tmp <- ss %>% gs_read(ws, header = FALSE) # header goes to read.csv()
+  tmp <- ss %>% gs_read(ws, col_names = FALSE) # col_names goes to read_csv()
   names(tmp) <- names(iris_ish) # I know these disagree, so just equate them
   expect_equivalent(tmp, iris_ish)
 
@@ -133,7 +133,8 @@ test_that("We can add a row", {
   ss <- ss %>% gs_add_row(ws = ws, input = c("Dona Paz", "1987-12-20"))
   expect_is(ss, "googlesheet")
   expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
-               dplyr::data_frame(id = "Dona Paz", wreckdate = "1987-12-20"))
+               dplyr::data_frame(id = "Dona Paz",
+                                 wreckdate = as.Date("1987-12-20")))
 
 })
 
@@ -143,8 +144,11 @@ test_that("Row input is given the proper length", {
   expect_message(ss <- ss %>% gs_add_row(ws = ws, input = "Vasa"),
                  "too short")
   expect_is(ss, "googlesheet")
-  expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
-               dplyr::data_frame(id = "Vasa", wreckdate = NA_character_))
+  ## integer vs double date problem
+  ## https://github.com/hadley/readr/issues/357
+  ## so just suppress date for now
+  expect_equivalent(ss %>% gs_read(ws = ws, col_types = "cc") %>% tail(1),
+                    dplyr::data_frame(id = "Vasa", wreckdate = NA_character_))
 
   expect_message(ss <- ss %>%
                    gs_add_row(ws = ws,
@@ -153,7 +157,8 @@ test_that("Row input is given the proper length", {
                  "too long")
   expect_is(ss, "googlesheet")
   expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
-               dplyr::data_frame(id = "USS Arizona", wreckdate = "1941-12-07"))
+               dplyr::data_frame(id = "USS Arizona",
+                                 wreckdate = as.Date("1941-12-07")))
 
 })
 

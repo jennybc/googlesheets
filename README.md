@@ -1,3 +1,4 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/web/packages/googlesheets/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
 
@@ -47,10 +48,9 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub (which currently depends on the development version of [`readr`](https://github.com/hadley/readr)):
+Or you can get the development version from GitHub (which you will need if you are using [`httr v1.1.0`](https://github.com/hadley/httr)):
 
 ``` r
-devtools::install_github("hadley/readr")
 devtools::install_github("jennybc/googlesheets")
 ```
 
@@ -105,7 +105,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-10-29 15:06:57 GMT
+#>   Date of googlesheets registration: 2016-02-04 17:56:05 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -128,6 +128,7 @@ Read all the data in a worksheet:
 ``` r
 africa <- gs_read(gap)
 #> Accessing worksheet titled "Africa"
+#> No encoding supplied: defaulting to UTF-8.
 str(africa)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    624 obs. of  6 variables:
 #>  $ country  : chr  "Algeria" "Algeria" "Algeria" "Algeria" ...
@@ -194,6 +195,7 @@ Look at what we have wrought:
 iris_ss %>% 
   gs_read()
 #> Accessing worksheet titled "Sheet1"
+#> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [4 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -209,6 +211,7 @@ Download this precious thing (other formats are possible):
 ``` r
 iris_ss %>% 
   gs_download(to = "iris-ish-stuff.csv", overwrite = TRUE)
+#> No encoding supplied: defaulting to UTF-8.
 #> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/iris-ish-stuff.csv
 ```
 

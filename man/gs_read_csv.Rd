@@ -14,9 +14,7 @@ object}
 respectively, of the worksheet}
 
 \item{...}{Further arguments to be passed to the csv parser. This is
-currently \code{\link{read.csv}}, but expect a switch to
-\code{readr::read_csv} in the not-too-distant future! Note that by default
-\code{\link{read.csv}} is called with \code{stringsAsFactors = FALSE}.}
+\code{\link[readr]{read_csv}}.}
 
 \item{verbose}{logical; do you want informative messages?}
 }
@@ -29,8 +27,9 @@ This function reads all data from a worksheet and returns it as a
 the data is NOT actually written to file during this process. Data is read
 from the "maximal data rectangle", i.e. the rectangle spanned by the maximal
 row and column extent of the data. Empty cells within this rectangle will be
-assigned NA. This is the fastest method of data consumption, so use it as
-long as you can tolerate the lack of control re: which cells are being read.
+assigned \code{NA}. This is the fastest method of data consumption, so use it
+as long as you can tolerate the lack of control re: which cells are being
+read.
 }
 \details{
 How does this compare to consumption via the list feed, implemented by

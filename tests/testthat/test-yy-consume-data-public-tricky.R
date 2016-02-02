@@ -9,15 +9,16 @@ test_that("We can handle embedded empty cells via csv", {
   expect_equal(which(is.na(dat_csv$country)), c(3L, 5L))
   expect_equal(which(is.na(dat_csv$year)), c(5L, 6L))
   expect_equal(which(is.na(dat_csv$pop)), 5L)
-  expect_true(all(is.na(dat_csv$X)))
+  expect_true(all(is.na(dat_csv[[4]])))
   expect_equal(which(is.na(dat_csv$continent)), c(2L, 5L))
   expect_equal(which(is.na(dat_csv$lifeExp)), 5L)
   expect_equal(which(is.na(dat_csv$gdpPercap)), 4:5)
 
-  expect_equal(vapply(dat_csv, class, character(1)),
-               c(country = "character", year = "integer", pop = "integer",
-                 X = "logical", continent = "character",
-                 lifeExp = "numeric", gdpPercap = "numeric"))
+  ## unnamed column is character now instead of logical
+  expect_equivalent(vapply(dat_csv, class, character(1)),
+                    c(country = "character", year = "integer", pop = "integer",
+                      "character", continent = "character",
+                      lifeExp = "numeric", gdpPercap = "numeric"))
 
 })
 
@@ -44,6 +45,8 @@ test_that("We can handle embedded empty cells via cell feed", {
 
   ## for comparison
   dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
+  names(dat_csv)[4] <- "X4"
+  dat_csv$X4 <- rep(NA, nrow(dat_csv))
 
   raw_cf <- ss %>% gs_read_cellfeed("embedded_empty_cells")
   expect_equal(dim(raw_cf), c(38L, 5L))
@@ -55,22 +58,14 @@ test_that("We can handle embedded empty cells via cell feed", {
   ## bug (now fixed) where NA_character_ mishandled by all.equal
   class(dat_cf) <- "data.frame"
   class(dat_csv) <- "data.frame"
-  expect_identical(dat_cf, dat_csv %>% dplyr::rename(X4 = X))
+
+  expect_equal(dat_cf, dat_csv)
 
   raw_cf <- ss %>%
     gs_read_cellfeed("embedded_empty_cells", return_empty = TRUE)
   expect_equal(dim(raw_cf), c(56L, 5L))
   dat_cf <- raw_cf %>% gs_reshape_cellfeed()
   class(dat_cf) <- "data.frame"
-
-  ## when return_empty = TRUE, empty character cells show up as "", not
-  ## NA_character_
-  ## also the missing variable name is "X" from the cell feed ... comply here
-  dat_cf <- dat_cf %>%
-    dplyr::mutate(country = ifelse(country == "", NA, country),
-                  continent = ifelse(continent == "", NA, continent)) %>%
-    dplyr::rename(X = X4)
-
   expect_identical(dat_cf, dat_csv)
 
 })
@@ -90,8 +85,8 @@ test_that("We can cope with tricky column names", {
   diabolical <- gs_read_csv(ss, "diabolical_column_names")
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical),
-                   c("id", "content", "X4.3", "X", "lifeExp", "X.1",
-                     "Fahrvergnügen", "Hey.space"))
+                   c("id", "content", "4.3", NA_character_, "lifeExp",
+                     NA_character_, "Fahrvergnügen", "Hey space"))
 
   ## wait to deal with the list feed after I merge this and then merge the
   ## 'switch-to-xml2' branch ... the overlap with boilerplate names will be

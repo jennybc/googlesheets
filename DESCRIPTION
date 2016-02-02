@@ -1,6 +1,6 @@
 Package: googlesheets
 Title: Manage Google Spreadsheets from R
-Version: 0.1.0.9000
+Version: 0.1.0.9001
 Description: Interact with Google Sheets from R.
 Authors@R: c(
     person("Jennifer", "Bryan", , "jenny@stat.ubc.ca", c("aut", "cre")),
@@ -15,9 +15,9 @@ LazyData: true
 Imports:
     cellranger (>= 1.0.0),
     dplyr (>= 0.4.2),
-    httr (>= 0.6.1),
+    httr (>= 1.1.0),
     plyr,
-    readr (> 0.1),
+    readr (>= 0.2.2),
     stats,
     stringr,
     tidyr,
@@ -31,4 +31,4 @@ Suggests:
     testthat,
     rmarkdown
 VignetteBuilder: knitr
-RoxygenNote: 5.0.0
+RoxygenNote: 5.0.1.9000

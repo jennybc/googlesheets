@@ -47,14 +47,16 @@ test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 test_that("Spreadsheet can be exported w/o specifying 'to'", {
 
   ss <- gs_ws_feed(mini_gap_ws_feed, lookup = FALSE)
-  ss_copy <- gs_copy(ss, to = p_("tri'cky sheétnamE"))
+  #ss_copy <- gs_copy(ss, to = p_("tri'cky sheétnamE"))
+  ss_copy <- gs_copy(ss, to = p_("foo-sheet"))
 
   expect_message(to_actual <-
                    ss_copy %>% gs_download(overwrite = TRUE),
                  "successfully downloaded")
 
   expect_true(file.exists(to_actual))
-  expect_match(basename(to_actual), "tri-cky-she-tname\\.xlsx")
+  #expect_match(basename(to_actual), "tri-cky-she-tname\\.xlsx")
+  expect_match(basename(to_actual), "foo-sheet\\.xlsx")
   expect_true(file.remove(to_actual))
   gs_delete(ss_copy)
 

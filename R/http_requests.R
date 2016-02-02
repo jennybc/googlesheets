@@ -124,10 +124,12 @@ gsheets_PUT <- function(url, the_body) {
 
   httr::stop_for_status(req)
 
-  req$content <- httr::content(req, type = "text/xml")
+  req$content <- httr::content(req, type = "text", encoding = "UTF-8") %>%
+    xml2::read_xml()
+
   if(!is.null(req$content)) {
     ## known example of this: POST request triggered by gs_ws_new()
-    req$content <- XML::xmlToList(req$content)
+    req$content <- xml2::as_list(req$content)
   }
 
   req
@@ -203,7 +205,15 @@ gdrive_GET <- function(url, ...) {
 
   httr::stop_for_status(req)
 
-  req$content <- httr::content(req)
+  ## FIXME: get rid of all auto-parsing here, not just for text/csv
+  if(req$headers$`content-type` == "text/csv") {
+    ## FIXME: is there a way to write gs_read_csv() that could share code w/
+    ## this? there I check for empty content, which is probably wise
+    req$content <- req %>%
+      httr::content(as = "text")
+  } else {
+    req$content <- httr::content(req)
+  }
 
   req
 

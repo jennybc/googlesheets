@@ -1,8 +1,5 @@
 ---
-output:
-#  html_document
-  md_document:
-    variant: markdown_github
+output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -69,10 +66,9 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub (which currently depends on the development version of [`readr`](https://github.com/hadley/readr)):
+Or you can get the development version from GitHub (which you will need if you are using [`httr v1.1.0`](https://github.com/hadley/httr)):
 
 ```{r eval = FALSE}
-devtools::install_github("hadley/readr")
 devtools::install_github("jennybc/googlesheets")
 ```
 
