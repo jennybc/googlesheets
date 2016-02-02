@@ -9,6 +9,8 @@
 #' @param file path to the file to upload
 #' @param sheet_title the title of the spreadsheet; optional, if not specified
 #'   then the name of the file will be used
+#' @param parents (optional) folder ID where to upload the file, if not
+#'   specified then the file will be uploaded to the root folder
 #' @template verbose
 #'
 #' @examples
@@ -22,7 +24,7 @@
 #' }
 #'
 #' @export
-gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
+gs_upload <- function(file, sheet_title = NULL, parents, verbose = TRUE) {
 
   if(!file.exists(file)) {
     stop(sprintf("\"%s\" does not exist!", file))
@@ -40,10 +42,17 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
     sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
   }
 
+  body <- list(title = sheet_title,
+               mimeType = "application/vnd.google-apps.spreadsheet")
+
+  ## specify the target folder
+  if (!missing(parents)) {
+    body <- c(body, list(parents = list(list(id = parents))))
+  }
+
   req <- gdrive_POST(
-    url = "https://www.googleapis.com/drive/v2/files",
-    body = list(title = sheet_title,
-                mimeType = "application/vnd.google-apps.spreadsheet"))
+    url  = "https://www.googleapis.com/drive/v2/files",
+    body = body)
 
   new_sheet_key <- httr::content(req)$id
 
