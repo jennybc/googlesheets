@@ -2,7 +2,7 @@
 % Please edit documentation in R/gs_add_row.R
 \name{gs_add_row}
 \alias{gs_add_row}
-\title{Append a row to a spreadsheet}
+\title{Append rows to a spreadsheet}
 \usage{
 gs_add_row(ss, ws = 1, input = "", verbose = TRUE)
 }
@@ -20,7 +20,7 @@ data.frame}
 \item{verbose}{logical; do you want informative messages?}
 }
 \description{
-Add a row to an existing worksheet within an existing spreadsheet. This is
+Add rows to an existing worksheet within an existing spreadsheet. This is
 based on the
 \href{https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds}{list
 feed}, which has a strong assumption that the data occupies a neat rectangle
@@ -37,6 +37,9 @@ row. If you get \code{Error : No matches}, that suggests the worksheet
 doesn't meet these minimum requirements. In the future, we will try harder to
 populate the sheet as necessary, e.g. create default variable names in a
 header row and be able to cope with \code{input} being the first row of data.
+
+If \code{input} is two-dimensional, internally we call \code{gs_add_row} once
+per input row.
 }
 \examples{
 \dontrun{

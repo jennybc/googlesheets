@@ -164,7 +164,8 @@ test_that("Row input is given the proper length", {
 
 test_that("We can add multiple rows", {
   ws <- "shipwrecks"
-  input <- dplyr::data_frame(id = c("Dona Paz", "USS Arizona"), wreckdate = c("1987-12-20", "1941-12-07"))
+  input <- dplyr::data_frame(id = c("Dona Paz", "USS Arizona"),
+                             wreckdate = as.Date(c("1987-12-20", "1941-12-07")))
 
   ss <- ss %>% gs_add_row(ws = ws, input = input)
   expect_is(ss, "googlesheet")

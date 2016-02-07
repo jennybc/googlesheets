@@ -7,4 +7,5 @@
   - Columns that look like dates or date-times will be read in as such (vs. as character). Read the [`readr` vignette on column types](https://cran.r-project.org/web/packages/readr/vignettes/column-types.html) to better understand its automatic variable conversion behavior.
   - Columns that consist entirely of empty cells will be *character* instead of *logical*, i.e. the `NA`s will be `NA_character_` vs `NA`.
   - "Column names are left as is, not munged into valid R identifiers (i.e. there is no check.names = TRUE)." *This means you can get column names that are `NA`. I am considering adding an argument to `gs_read*()` functions to request that variable names be processed through `make.names()` or similar.*
+* `gs_add_row()` now works for two-dimensional `input`, by calling itself once per row of input (#188, @jimhester).
 

@@ -1,6 +1,6 @@
-#' Append a row to a spreadsheet
+#' Append rows to a spreadsheet
 #'
-#' Add a row to an existing worksheet within an existing spreadsheet. This is
+#' Add rows to an existing worksheet within an existing spreadsheet. This is
 #' based on the
 #' \href{https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds}{list
 #' feed}, which has a strong assumption that the data occupies a neat rectangle
@@ -16,6 +16,9 @@
 #' doesn't meet these minimum requirements. In the future, we will try harder to
 #' populate the sheet as necessary, e.g. create default variable names in a
 #' header row and be able to cope with \code{input} being the first row of data.
+#'
+#' If \code{input} is two-dimensional, internally we call \code{gs_add_row} once
+#' per input row.
 #'
 #' @template ss
 #' @template ws
