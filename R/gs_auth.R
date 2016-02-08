@@ -154,15 +154,17 @@ token_exists <- function(verbose = TRUE) {
 
   if(is.null(.state$token)) {
     if(verbose) {
-      message("No authorization yet in this session!")
 
       if(file.exists(".httr-oauth")) {
-        message(paste("NOTE: a .httr-oauth file exists in current working",
-                      "directory.\n Run gs_auth() to use the",
-                      "credentials cached in .httr-oauth for this session."))
+        message("A .httr-oauth file exists in current working ",
+                "directory.\nWhen/if needed, the credentials cached in ",
+                ".httr-oauth will be used for this session.\nOr run gs_auth() ",
+                "for explicit authentication and authorization.")
       } else {
-        message(paste("No .httr-oauth file exists in current working directory.",
-                      "Run gs_auth() to provide credentials."))
+        message("No .httr-oauth file exists in current working directory.\n",
+                "When/if needed, 'googlesheets' will initiate authentication ",
+                "and authorization.\nOr run gs_auth() to trigger this ",
+                "explicitly.")
       }
 
     }
