@@ -6,11 +6,9 @@ env:
   - CRAN: http://cran.rstudio.com
   - NOT_CRAN: true
 before_install:
-- openssl aes-256-cbc -K $encrypted_84f43c85142c_key -iv $encrypted_84f43c85142c_iv
+- openssl aes-256-cbc -K $encrypted_1ac2f65e8ef8_key -iv $encrypted_1ac2f65e8ef8_iv
   -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
 - echo "options(repos = c(CRAN='http://cran.rstudio.com/'))" > ~/.Rprofile
-#r_github_packages:
-#- hadley/readr
 r_binary_packages:
 - dplyr
 - XML
