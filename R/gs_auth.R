@@ -89,7 +89,7 @@ gs_auth <- function(token = NULL,
   if(is.null(token)) {
 
     scope_list <- c("https://spreadsheets.google.com/feeds",
-                    "https://docs.google.com/feeds")
+                    "https://www.googleapis.com/auth/drive")
 
     googlesheets_app <- httr::oauth_app("google", key = key, secret = secret)
 
