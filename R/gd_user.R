@@ -26,12 +26,13 @@ google_user <- function() {
 
 }
 
-#' Retrieve information about authorized user
+#' Retrieve information about the current Google user
 #'
-#' Display information about a user that has been authorized via \code{gs_auth}:
-#' the user's display name, email, the date-time of info lookup, and the
-#' validity of the current access token. This is a subset of the information
-#' available from
+#' Display information about the Google user that has authorized
+#' \code{\link{googlesheets}} to call the Drive and Sheets APIs on their behalf.
+#' Returns and prints the user's display name, email, the date-time of info
+#' lookup, and the validity of the current access token. This is a subset of the
+#' information available from
 #' \href{https://developers.google.com/drive/v2/reference/about/get}{the "about"
 #' endpoint} of the Drive API.
 #'
@@ -46,9 +47,9 @@ google_user <- function() {
 #' }
 #'
 #' @export
-gs_user <- function(verbose = TRUE) {
+gd_user <- function(verbose = TRUE) {
 
-  if(token_exists(verbose) && is_legit_token(.state$token)) {
+  if(token_exists(verbose = verbose) && is_legit_token(.state$token)) {
 
     token <- .state$token
 
@@ -83,7 +84,6 @@ gs_user <- function(verbose = TRUE) {
 
   } else {
 
-    if(verbose) message("No user currently authorized.")
     ret <- NULL
 
   }
@@ -91,3 +91,7 @@ gs_user <- function(verbose = TRUE) {
   invisible(ret)
 
 }
+
+#' @export
+#' @rdname gd_user
+gs_user <- gd_user
