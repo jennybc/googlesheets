@@ -1,6 +1,6 @@
 context("consume data with private visibility")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 ## consuming data owned by authorized user, namely gspreadr
 ss <- gs_ws_feed(iris_pvt_ws_feed, verbose = FALSE)

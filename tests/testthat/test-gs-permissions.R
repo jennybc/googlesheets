@@ -1,6 +1,6 @@
 context("permissions")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 new_ss <- gs_new(p_("test-gs-permissions"), verbose = FALSE)
 gap_ss <- gs_gap()

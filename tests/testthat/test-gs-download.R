@@ -1,7 +1,6 @@
 context("download sheets")
 
-## this function requires authorization absolutely
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 test_that("Spreadsheet can be exported", {
 

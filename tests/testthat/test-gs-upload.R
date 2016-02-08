@@ -1,6 +1,6 @@
 context("upload sheets")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 test_that("Nonexistent or wrong-extension files throw error", {
 

@@ -1,6 +1,6 @@
 context("edit cells")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 pts_copy <- p_("pts-copy")
 ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
