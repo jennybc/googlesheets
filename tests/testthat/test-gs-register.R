@@ -129,4 +129,4 @@ test_that("Print method for googlesheet works", {
 
 })
 
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

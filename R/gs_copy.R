@@ -52,8 +52,7 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
     ## =`
     new_ss$sheet_title <- to
     if(verbose) {
-      message(sprintf("Successful copy! New sheet is titled \"%s\".",
-                      new_ss$sheet_title))
+      mpf("Successful copy! New sheet is titled \"%s\".", new_ss$sheet_title)
     }
     new_ss %>%
       invisible()

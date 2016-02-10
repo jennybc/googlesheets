@@ -135,8 +135,7 @@ gs_perm_add <- function(ss, email = NULL,
   }
 
   if(req$status_code == 200 && verbose) {
-    message(sprintf("Success. New Permission added for \"%s\" as a %s.",
-                    who, perm$role))
+    mpf("Success. New Permission added for \"%s\" as a %s.", who, perm$role)
   }
 
   invisible(perm)
@@ -204,8 +203,8 @@ gs_perm_edit <- function(ss, email = NULL, perm_id = NULL,
       who <- perm$email
     }
     if(req$status_code == 200) {
-      message(sprintf("Success. Permission updated for %s from %s to %s.",
-                      who, perm$role, role))
+      mpf("Success. Permission updated for %s from %s to %s.",
+          who, perm$role, role)
     }
   }
 

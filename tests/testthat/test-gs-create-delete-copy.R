@@ -105,4 +105,4 @@ test_that("gs_delete() throws error on non-googlesheet input", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

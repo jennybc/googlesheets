@@ -122,9 +122,7 @@ gs_url <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
 
   x <- extract_key_from_url(x)
 
-  if(verbose) {
-    message(sprintf("Putative key: %s", x))
-  }
+  if(verbose) mpf("Putative key: %s", x)
 
   x %>%
     gs_key(lookup, visibility, verbose)

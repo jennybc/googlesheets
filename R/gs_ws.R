@@ -73,12 +73,12 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
   if(ws_title_exist) {
     this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
     if(verbose) {
-      message(sprintf("Worksheet \"%s\" added to sheet \"%s\".",
-                      this_ws$ws_title, ss$sheet_title))
+      mpf("Worksheet \"%s\" added to sheet \"%s\".",
+          this_ws$ws_title, ss$sheet_title)
     }
   } else {
-    message(sprintf(paste("Cannot verify whether worksheet \"%s\" was added",
-                          "to sheet \"%s\"."), ws_title, ss$sheet_title))
+    mpf(paste("Cannot verify whether worksheet \"%s\" was added",
+              "to sheet \"%s\"."), ws_title, ss$sheet_title)
     return(invisible(NULL))
   }
 
@@ -92,8 +92,8 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   if(verbose) {
     this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
-    message(sprintf("Worksheet dimensions: %d x %d.",
-                    this_ws$row_extent, this_ws$col_extent))
+    mpf("Worksheet dimensions: %d x %d.",
+        this_ws$row_extent, this_ws$col_extent)
   }
 
   invisible(ss)
@@ -140,12 +140,12 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
   if(verbose) {
     if(ws_title_exist) {
-      message(sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                            "deleted from sheet \"%s\"."),
-                      this_ws$ws_title, ss_refresh$sheet_title))
+      mpf(paste("Cannot verify whether worksheet \"%s\" was",
+                "deleted from sheet \"%s\"."),
+          this_ws$ws_title, ss_refresh$sheet_title)
     } else {
-      message(sprintf("Worksheet \"%s\" deleted from sheet \"%s\".",
-                      this_ws$ws_title, ss$sheet_title))
+      mpf("Worksheet \"%s\" deleted from sheet \"%s\".",
+          this_ws$ws_title, ss$sheet_title)
     }
   }
 
@@ -204,10 +204,10 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 
   if(verbose) {
     if(from_is_gone && to_is_there) {
-      message(sprintf("Worksheet \"%s\" renamed to \"%s\".", from_title, to))
+      mpf("Worksheet \"%s\" renamed to \"%s\".", from_title, to)
     } else {
-      message(sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                            "renamed to \"%s\"."), from_title, to))
+      mpf(paste("Cannot verify whether worksheet \"%s\" was",
+                "renamed to \"%s\"."), from_title, to)
     }
   }
 
@@ -279,8 +279,8 @@ gs_ws_resize <- function(ss, ws = 1,
                        c(row_extent, col_extent))
 
   if(verbose && success) {
-    message(sprintf("Worksheet \"%s\" dimensions changed to %d x %d.",
-                    this_ws$ws_title, new_row_extent, new_col_extent))
+    mpf("Worksheet \"%s\" dimensions changed to %d x %d.",
+        this_ws$ws_title, new_row_extent, new_col_extent)
   }
 
   ss_refresh %>%
@@ -377,7 +377,7 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
     stop(sprintf("Spreadsheet only contains %d worksheets.", ss$n_ws))
   }
   if(verbose) {
-    message(sprintf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws]))
+    mpf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws])
   }
   ss$ws[ws, ]
 }

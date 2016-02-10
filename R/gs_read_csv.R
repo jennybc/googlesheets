@@ -64,7 +64,7 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
   }
 
   if(is.null(req$content) || length(req$content) == 0L) {
-    message(sprintf("Worksheet \"%s\" is empty.", this_ws$ws_title))
+    mpf("Worksheet \"%s\" is empty.", this_ws$ws_title)
     dplyr::data_frame()
   } else {
     req %>%

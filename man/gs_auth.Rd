@@ -10,13 +10,13 @@ gs_auth(token = NULL, new_user = FALSE,
   cache = getOption("googlesheets.httr_oauth_cache"), verbose = TRUE)
 }
 \arguments{
-\item{token}{an actual token object or the path to a valid token stored as an
-\code{.rds} file}
+\item{token}{optional; an actual token object or the path to a valid token
+stored as an \code{.rds} file}
 
 \item{new_user}{logical, defaults to \code{FALSE}. Set to \code{TRUE} if you
 want to wipe the slate clean and re-authenticate with the same or different
-Google account. This deletes the \code{.httr-oauth} file in current working
-directory.}
+Google account. This disables the \code{.httr-oauth} file in current
+working directory.}
 
 \item{key, secret}{the "Client ID" and "Client secret" for the application;
 defaults to the ID and secret built into the \code{googlesheets} package}
@@ -31,12 +31,12 @@ an OAuth token object, specifically a
   \code{\link[=Token-class]{Token2.0}}, invisibly
 }
 \description{
-Authorize \code{googlesheets} to access your Google user data. You will be
+Authorize \code{googlesheets} to view and manage your files. You will be
 directed to a web browser, asked to sign in to your Google account, and to
-grant \code{googlesheets} access to user data for Google Spreadsheets and
-Google Drive. These user credentials are cached in a file named
-\code{.httr-oauth} in the current working directory, from where they can be
-automatically refreshed, as necessary.
+grant \code{googlesheets} permission to operate on your behalf with Google
+Sheets and Google Drive. By default, these user credentials are cached in a
+file named \code{.httr-oauth} in the current working directory, from where
+they can be automatically refreshed, as necessary.
 }
 \details{
 Most users, most of the time, do not need to call this function
@@ -45,21 +45,21 @@ requires authorization. Even when called, the default arguments will often
 suffice. However, when necessary, this function allows the user to
 
 \itemize{
-  \item store a token -- the token is invisibly returned and can be assigned
-  to an object or written to an \code{.rds} file
-  \item read the token from an \code{.rds} file or pre-existing object in the
-  workspace
+  \item force the creation of a new token
+  \item retrieve current token as an object, for possible storage to an
+  \code{.rds} file
+  \item read the token from an object or from an \code{.rds} file
   \item provide your own app key and secret -- this requires setting up a new
   project in
   \href{https://console.developers.google.com}{Google Developers Console}
   \item prevent caching of credentials in \code{.httr-oauth}
 }
 
-In a call to \code{gs_auth}, the user can provide the token, app key and
-secret explicitly and can dictate whether credentials will be cached in
-\code{.httr_oauth}. If unspecified, these arguments are controlled via
-options, which, if undefined at the time \code{googlesheets} is loaded, are
-defined like so:
+In a direct call to \code{gs_auth}, the user can provide the token, app key
+and secret explicitly and can dictate whether interactively-obtained
+credentials will be cached in \code{.httr_oauth}. If unspecified, these
+arguments are controlled via options, which, if undefined at the time
+\code{googlesheets} is loaded, are defined like so:
 
 \describe{
   \item{key}{Set to option \code{googlesheets.client_id}, which defaults to
@@ -67,7 +67,7 @@ defined like so:
   \item{secret}{Set to option \code{googlesheets.client_secret}, which
   defaults to a client secret that ships with the package}
   \item{cache}{Set to option \code{googlesheets.httr_oauth_cache}, which
-  defaults to TRUE}
+  defaults to \code{TRUE}}
 }
 
 To override these defaults in persistent way, predefine one or more of
@@ -81,10 +81,27 @@ See \code{\link[base]{Startup}} for possible locations for this file and the
 implications thereof.
 
 More detail is available from
-\href{https://developers.google.com/identity/protocols/OAuth2}{Using OAuth
-2.0 to Access Google APIs}. This function executes the "installed
-application" flow. See \code{\link{gs_webapp_auth_url}} and
-\code{\link{gs_webapp_get_token}} for functions that execute the "web server
-application" flow.
+\href{https://developers.google.com/identity/protocols/OAuth2InstalledApp}{Using
+OAuth 2.0 for Installed Applications}. See \code{\link{gs_webapp_auth_url}}
+and \code{\link{gs_webapp_get_token}} for functions that execute the "web
+server application" flow.
+}
+\examples{
+\dontrun{
+## load/refresh existing credentials, if available
+## otherwise, go to browser for authentication and authorization
+gs_auth()
+
+## force a new token to be obtained
+gs_auth(new_user = TRUE)
+
+## store token in an object and then to file
+ttt <- gs_auth()
+saveRDS(ttt, "ttt.rds")
+
+## load a pre-existing token
+gs_auth(token = ttt)       # from an object
+gs_auth(token = "ttt.rds") # from .rds file
+}
 }
 

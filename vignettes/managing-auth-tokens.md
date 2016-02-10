@@ -39,6 +39,7 @@ gs_gap_key() %>%
 #> Authorization will not be used.
 #> Worksheets feed constructed with public visibility
 #> Accessing worksheet titled "Africa"
+#> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [3 x 6]
 #> 
 #>   country continent  year lifeExp      pop gdpPercap
@@ -60,6 +61,7 @@ iris_ss <- gs_new("iris_bit", input = head(iris, 3), trim = TRUE, verbose = FALS
 iris_ss %>% 
   gs_read()
 #> Accessing worksheet titled "Sheet1"
+#> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [3 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -94,10 +96,10 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-10-26 23:03:31 GMT
+#>                  date: 2016-02-16 06:43:32 GMT
 #>          access token: valid
-#>  peek at access token: ya29....rDR68
-#> peek at refresh token: 1/zNh...ATCKT
+#>  peek at access token: ya29....5SjPw
+#> peek at refresh token: 1/LxW...4wRNU
 ```
 
 ## Where do tokens live in between R sessions?

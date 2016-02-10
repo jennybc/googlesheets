@@ -77,3 +77,4 @@ force_na_type <-
     }
   }
 
+mpf <- function(...) message(sprintf(...))

@@ -95,4 +95,4 @@ test_that("Old Sheets can be exported", {
 
 })
 
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

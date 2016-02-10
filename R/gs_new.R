@@ -78,7 +78,7 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
 
   if(inherits(ss, "googlesheet")) {
     if(verbose) {
-      message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
+      mpf("Sheet \"%s\" created in Google Drive.", ss$sheet_title)
     }
   } else {
     stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
@@ -115,8 +115,7 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
   }
 
   if(verbose) {
-    message(sprintf("Worksheet dimensions: %d x %d.",
-                    ss$ws$row_extent, ss$ws$col_extent))
+    mpf("Worksheet dimensions: %d x %d.", ss$ws$row_extent, ss$ws$col_extent)
   }
 
   invisible(ss)

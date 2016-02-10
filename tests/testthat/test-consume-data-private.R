@@ -33,4 +33,4 @@ test_that("We can get all data from the exportcsv link (pvt)", {
 
 })
 
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

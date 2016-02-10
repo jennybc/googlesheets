@@ -7,7 +7,7 @@ google_user <- function() {
 
   ## require pre-existing token, to avoid recursion that would arise if
   ## gdrive_GET() called gs_auth()
-  if(token_exists(verbose = FALSE) && is_legit_token(.state$token)) {
+  if(token_available(verbose = FALSE) && is_legit_token(.state$token)) {
 
     ## docs here
     ## https://developers.google.com/drive/v2/reference/about
@@ -49,7 +49,7 @@ google_user <- function() {
 #' @export
 gd_user <- function(verbose = TRUE) {
 
-  if(token_exists(verbose = verbose) && is_legit_token(.state$token)) {
+  if(token_available(verbose = verbose) && is_legit_token(.state$token)) {
 
     token <- .state$token
 

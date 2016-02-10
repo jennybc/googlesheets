@@ -173,4 +173,4 @@ test_that("We can add multiple rows", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

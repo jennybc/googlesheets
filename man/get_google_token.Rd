@@ -2,12 +2,17 @@
 % Please edit documentation in R/gs_auth.R
 \name{get_google_token}
 \alias{get_google_token}
-\title{Retrieve Google token from environment}
+\title{Produce Google token}
 \usage{
-get_google_token()
+get_google_token(verbose = FALSE)
+}
+\value{
+a \code{request} object (an S3 class provided by \code{httr})
 }
 \description{
-Get token if it's previously stored, else prompt user to get one.
+If token is not already available, call \code{\link{gs_auth}} to either load
+from cache or initiate OAuth2.0 flow. Return the token -- not "bare" but,
+rather, prepared for inclusion in downstream requests.
 }
 \keyword{internal}
 

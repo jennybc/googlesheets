@@ -75,7 +75,7 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   range <- limits %>%
     cellranger::as.range()
   if(verbose) {
-    message(sprintf("Range affected by the update: \"%s\"", range))
+    mpf("Range affected by the update: \"%s\"", range)
   }
   limits <- limits %>%
     limit_list()

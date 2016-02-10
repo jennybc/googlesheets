@@ -58,31 +58,25 @@ gsheets_GET <-
 #' @keywords internal
 gsheets_POST <- function(url, the_body) {
 
-  token <- get_google_token()
+  # send xml to sheets api
+  content_type <- "application/atom+xml"
 
-  if(is.null(token)) {
-    stop("Must be authorized user in order to perform request")
-  } else {
-    # send xml to sheets api
-    content_type <- "application/atom+xml"
+  req <-
+    httr::POST(url,
+               config = c(get_google_token(),
+                          httr::add_headers("Content-Type" = content_type)),
+               body = the_body)
+  httr::stop_for_status(req)
 
-    req <-
-      httr::POST(url,
-                 config = c(token,
-                            httr::add_headers("Content-Type" = content_type)),
-                 body = the_body)
-    httr::stop_for_status(req)
+  req$content <- httr::content(req, as = "text", encoding = "UTF-8")
 
-    req$content <- httr::content(req, as = "text", encoding = "UTF-8")
-
-    if(!is.null(req$content)) {
-      ## known example of this: POST request triggered by gs_ws_new()
-      req$content <- req$content %>% xml2::read_xml()
-    }
-
-    req
-
+  if(!is.null(req$content)) {
+    ## known example of this: POST request triggered by gs_ws_new()
+    req$content <- req$content %>% xml2::read_xml()
   }
+
+  req
+
 }
 
 #' Create DELETE request
@@ -110,15 +104,9 @@ gsheets_DELETE <- function(url) {
 #' @keywords internal
 gsheets_PUT <- function(url, the_body) {
 
-  token <- get_google_token()
-
-  if(is.null(token)) {
-    stop("Must be authorized in order to perform request")
-  }
-
   req <-
     httr::PUT(url,
-              config = c(token,
+              config = c(get_google_token(),
                          httr::add_headers("Content-Type" = "application/atom+xml")),
               body = the_body)
 
@@ -149,16 +137,9 @@ gsheets_PUT <- function(url, the_body) {
 #' @keywords internal
 gdrive_POST <- function(url, ...) {
 
-  token <- get_google_token()
-
-  if(is.null(token)) {
-    stop("Must be authorized user in order to perform request")
-  } else {
-
-    req <- httr::POST(url, config = token, encode = "json", ...)
-    httr::stop_for_status(req)
-    req
-  }
+  req <- httr::POST(url, get_google_token(), encode = "json", ...)
+  httr::stop_for_status(req)
+  req
 }
 
 #' Make PUT request to Google Drive API
@@ -170,17 +151,8 @@ gdrive_POST <- function(url, ...) {
 #' @keywords internal
 gdrive_PUT <- function(url, ...) {
 
-  token <- get_google_token()
-
-  if(is.null(token)) {
-    stop("Must be authorized in order to perform request")
-  } else {
-
-    req <- httr::PUT(url, config = token, ...)
-  }
-
+  req <- httr::PUT(url, get_google_token(), ...)
   httr::stop_for_status(req)
-
   req
 
 }
@@ -195,13 +167,7 @@ gdrive_PUT <- function(url, ...) {
 #' @keywords internal
 gdrive_GET <- function(url, ...) {
 
-  token <- get_google_token()
-
-  if(is.null(token)) {
-    stop("Must be authorized in order to perform request")
-  } else {
-    req <- httr::GET(url, config = token, ...)
-  }
+  req <- httr::GET(url, get_google_token(), ...)
 
   httr::stop_for_status(req)
 

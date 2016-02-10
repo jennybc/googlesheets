@@ -33,4 +33,4 @@ test_that("Different file formats can be uploaded", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

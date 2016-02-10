@@ -36,4 +36,4 @@ test_that("Regexes work for limiting sheet listing", {
 
 })
 
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

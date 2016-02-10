@@ -92,7 +92,7 @@ gs_download <-
 
     to <- normalizePath(to)
     if(verbose) {
-      message(sprintf("Sheet successfully downloaded: %s", to))
+      mpf("Sheet successfully downloaded: %s", to)
     }
     return(invisible(to))
 
