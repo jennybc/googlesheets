@@ -191,10 +191,11 @@ gs_perm_edit <- function(ss, email = NULL, perm_id = NULL,
   }
 
   # updates a permission
-  req <- gdrive_PUT(perm$selfLink,
-                    body = list("role" = role,
-                                "additionalRoles" = comm),
-                    encode = "json")
+  req <- httr::PUT(perm$selfLink, get_google_token(),
+                   body = list("role" = role,
+                               "additionalRoles" = comm),
+                   encode = "json")
+  httr::stop_for_status(req)
 
   if(verbose) {
     if(is.na(perm$email) && perm$type == "anyone") {

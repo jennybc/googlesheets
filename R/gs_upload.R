@@ -51,9 +51,10 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
                               path = paste0("upload/drive/v2/files/",
                                             new_sheet_key))
 
-  ret <-
-    gdrive_PUT(put_url, query = list(uploadType = "media", convert = "true"),
-               body = httr::upload_file(file))
+  ret <- httr::PUT(put_url, get_google_token(),
+                   query = list(uploadType = "media", convert = "true"),
+                   body = httr::upload_file(file))
+  httr::stop_for_status(ret)
   ## TO DO: use ret to assess success?
 
   ss_df <- gs_ls()

@@ -96,22 +96,6 @@ gdrive_POST <- function(url, ...) {
   req
 }
 
-#' Make PUT request to Google Drive API
-#'
-#' Used in gs_upload()
-#'
-#' @inheritParams gdrive_POST
-#'
-#' @keywords internal
-gdrive_PUT <- function(url, ...) {
-
-  req <- httr::PUT(url, get_google_token(), ...)
-  httr::stop_for_status(req)
-  req
-
-}
-
-
 #' Make GET request to Google Drive API
 #'
 #' Used in gs_download()
