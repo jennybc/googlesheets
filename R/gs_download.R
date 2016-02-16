@@ -37,28 +37,35 @@ gs_download <-
 
   stopifnot(inherits(from, "googlesheet"))
 
-  if(is.null(to)) {
+  if (is.null(to)) {
     to <- tolower(gsub('[^A-Za-z0-9]+', '-', from$sheet_title))
     to <- gsub("^-|-$", '', to)
     to <- paste0(to, ".xlsx")
   }
 
   ext <- tools::file_ext(to)
-  if(!(ext %in% c("csv", "pdf", "xlsx"))) {
+  if (!(ext %in% c("csv", "pdf", "xlsx"))) {
     stop(sprintf("Cannot download Google spreadsheet as this format: %s", ext))
   }
 
-  if(is.null(ws)) {
+  if (is.null(ws)) {
 
     key <- gs_get_alt_key(from)
-    the_url <-
-      paste("https://www.googleapis.com/drive/v2/files", key, sep = "/")
 
-    req <- gdrive_GET(the_url)
+    url <- httr::modify_url(.state$gd_base_url_v2,
+                            path = c("drive", "v2", "files",key))
+    req <- httr::GET(url, get_google_token())
+    httr::stop_for_status(req)
+    if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+      stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+    }
+    req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+      jsonlite::fromJSON()
+
     export_links <- c(
-      csv = req$content$exportLinks$'text/csv', # first sheet only
-      pdf = req$content$exportLinks$'application/pdf',
-      xlsx = req$content$exportLinks$'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+      csv = req$exportLinks$'text/csv', # first sheet only
+      pdf = req$exportLinks$'application/pdf',
+      xlsx = req$exportLinks$'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
   } else {
 
@@ -80,19 +87,14 @@ gs_download <-
     stop(mess)
   }
 
-  ## uncomment this once httr updates and progress() doesn't cry wolf #161
-#   if(interactive()) {
-#     gdrive_GET(link, httr::write_disk(to, overwrite = overwrite),
-#                httr::progress())
-#   } else {
-    gdrive_GET(link, httr::write_disk(to, overwrite = overwrite))
-  # }
+  httr::GET(link, get_google_token(), httr::progress(),
+            httr::write_disk(to, overwrite = overwrite))
 
-  if(file.exists(to)) {
+  if (file.exists(to)) {
 
     to <- normalizePath(to)
     if(verbose) {
-      mpf("Sheet successfully downloaded: %s", to)
+      mpf("Sheet successfully downloaded:\n%s", to)
     }
     return(invisible(to))
 

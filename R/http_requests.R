@@ -1,3 +1,9 @@
+# store base urls in the '.state' internal environment (created in gs_auth.R)
+.state$gd_base_url_v2 <- "https://www.googleapis.com"
+#.state$gd_base_url_v2 <- "https://www.googleapis.com/drive/v2"
+#.state$gd_base_url_v3 <- "https://www.googleapis.com/drive/v3"
+#.state$gs_base_url <- "https://spreadsheets.google.com/feeds"
+
 #' Create GET request
 #'
 #' Make GET request to Google Sheets API.
@@ -94,31 +100,4 @@ gdrive_POST <- function(url, ...) {
   req <- httr::POST(url, get_google_token(), encode = "json", ...)
   httr::stop_for_status(req)
   req
-}
-
-#' Make GET request to Google Drive API
-#'
-#' Used in gs_download()
-#'
-#' @inheritParams gdrive_POST
-#'
-#' @keywords internal
-gdrive_GET <- function(url, ...) {
-
-  req <- httr::GET(url, get_google_token(), ...)
-
-  httr::stop_for_status(req)
-
-  ## FIXME: get rid of all auto-parsing here, not just for text/csv
-  if(req$headers$`content-type` == "text/csv") {
-    ## FIXME: is there a way to write gs_read_csv() that could share code w/
-    ## this? there I check for empty content, which is probably wise
-    req$content <- req %>%
-      httr::content(as = "text")
-  } else {
-    req$content <- httr::content(req)
-  }
-
-  req
-
 }

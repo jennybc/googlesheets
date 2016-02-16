@@ -78,3 +78,12 @@ force_na_type <-
   }
 
 mpf <- function(...) message(sprintf(...))
+
+## TEMPORARY: once I depend on purrr, import this from there
+`%||%` <- function(x, y) {
+  if (is.null(x)) {
+    y
+  } else {
+    x
+  }
+}

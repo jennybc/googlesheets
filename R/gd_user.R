@@ -6,16 +6,22 @@
 google_user <- function() {
 
   ## require pre-existing token, to avoid recursion that would arise if
-  ## gdrive_GET() called gs_auth()
-  if(token_available(verbose = FALSE) && is_legit_token(.state$token)) {
+  ## this function called gs_auth()
+  if (token_available(verbose = FALSE)) {
 
-    ## docs here
     ## https://developers.google.com/drive/v2/reference/about
-    req <- gdrive_GET("https://www.googleapis.com/drive/v2/about")
+    url <- httr::modify_url(.state$gd_base_url_v2,
+                            path = c("drive", "v2", "about"))
+    req <- httr::GET(url, get_google_token())
+    httr::stop_for_status(req)
+    if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+      stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+    }
+    rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+      jsonlite::fromJSON()
 
-    user_stuff <- req$content$user
-    list(displayName = user_stuff$displayName,
-         emailAddress = user_stuff$emailAddress,
+    list(displayName = rc$user$displayName,
+         emailAddress = rc$user$emailAddress,
          date = req$headers$date %>% httr::parse_http_date())
 
   } else {

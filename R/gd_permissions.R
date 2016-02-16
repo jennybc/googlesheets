@@ -31,17 +31,19 @@
 #' @keywords internal
 gs_perm_ls <- function(ss, filter = NULL) {
 
-  the_url <- paste("https://www.googleapis.com/drive/v2/files", ss$sheet_key,
-                   "permissions", sep = "/")
+  url <- httr::modify_url(
+    .state$gd_base_url_v2,
+    path = c("drive", "v2", "files", ss$sheet_key, "permissions"))
+  req <- httr::GET(url, get_google_token())
+  httr::stop_for_status(req)
+  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+  }
+  req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON()
 
-  req <- gdrive_GET(the_url)
-
-  ## the additionRoles field, if present, will be a list of length one :(
-  jfun <- function(x) lapply(x, function(y) if(is.list(y)) y[[1]] else y)
-  perm_tbl <- req$content$items %>%
-    lapply(jfun) %>%
-    lapply(dplyr::as_data_frame) %>%
-    dplyr::bind_rows() %>%
+  perm_tbl <- req$items %>%
+    dplyr::as.tbl() %>%
     dplyr::rename_(email = ~ emailAddress, perm_id = ~ id)
 
   if(!is.null(filter)) {

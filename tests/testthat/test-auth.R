@@ -39,7 +39,7 @@ gs_deauth(verbose = FALSE)
 
 ## PUT THE MAIN TESTING TOKEN INTO FORCE via R object
 ttt <- readRDS("googlesheets_token.rds")
-uuu <- gs_auth(token = ttt)
+uuu <- suppressMessages(gs_auth(token = ttt))
 
 test_that("Testing token is in force, again", expect_true(token_available()))
 test_that("Behavior is same when token from obj or rds",

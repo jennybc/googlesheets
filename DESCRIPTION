@@ -16,6 +16,7 @@ Imports:
     cellranger (>= 1.0.0),
     dplyr (>= 0.4.2),
     httr (>= 1.1.0),
+    jsonlite,
     plyr,
     readr (>= 0.2.2),
     stats,
