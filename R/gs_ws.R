@@ -132,7 +132,8 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
   this_ws <- ss %>% gs_ws(ws)
 
-  req <- gsheets_DELETE(this_ws$ws_id)
+  req <- httr::DELETE(this_ws$ws_id, get_google_token())
+  httr::stop_for_status(req)
 
   ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 

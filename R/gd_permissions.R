@@ -242,9 +242,9 @@ gs_perm_delete <- function(ss, email = NULL, perm_id = NULL, verbose = TRUE) {
   } else {
     perm <- gs_perm_ls(ss, email)
   }
-  the_url <- perm$selfLink
 
-  gsheets_DELETE(the_url)
+  req <- httr::DELETE(perm$selfLink, get_google_token())
+  httr::stop_for_status(req)
 
   status <- !(perm$perm_id %in% gs_perm_ls(ss)$perm_id)
 

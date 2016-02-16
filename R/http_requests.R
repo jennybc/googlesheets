@@ -79,21 +79,6 @@ gsheets_POST <- function(url, the_body) {
 
 }
 
-#' Create DELETE request
-#'
-#' Make DELETE request to Google Sheets API.
-#'
-#' @param url the url of the page to retrieve
-#'
-#' @keywords internal
-gsheets_DELETE <- function(url) {
-  req <- httr::DELETE(url, get_google_token())
-  httr::stop_for_status(req)
-  ## I haven't found any use yet for this return value, but adding for symmetry
-  ## with other http functions
-  req
-}
-
 #' Create PUT request
 #'
 #' Make PUT request to Google Sheets API.
