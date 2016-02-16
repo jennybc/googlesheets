@@ -79,37 +79,6 @@ gsheets_POST <- function(url, the_body) {
 
 }
 
-#' Create PUT request
-#'
-#' Make PUT request to Google Sheets API.
-#'
-#' @param url the url of the page to retrieve
-#' @param the_body body of PUT request
-#'
-#' @keywords internal
-gsheets_PUT <- function(url, the_body) {
-
-  req <-
-    httr::PUT(url,
-              config = c(get_google_token(),
-                         httr::add_headers("Content-Type" = "application/atom+xml")),
-              body = the_body)
-
-  httr::stop_for_status(req)
-
-  req$content <- httr::content(req, type = "text", encoding = "UTF-8") %>%
-    xml2::read_xml()
-
-  if(!is.null(req$content)) {
-    ## known example of this: POST request triggered by gs_ws_new()
-    req$content <- xml2::as_list(req$content)
-  }
-
-  req
-
-}
-
-
 #' Make POST request to Google Drive API
 #'
 #' Used in gs_new(), gs_delete(), gs_copy()

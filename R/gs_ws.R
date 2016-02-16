@@ -341,8 +341,13 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
       sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
   }
 
-  req <- gsheets_PUT(this_ws$edit, the_body)
-  ## TO DO (?): inspect req
+  req <-
+    httr::PUT(this_ws$edit,
+              config = c(get_google_token(),
+                         httr::add_headers("Content-Type" = "application/atom+xml")),
+              body = the_body)
+  httr::stop_for_status(req)
+
   req$url %>%
     extract_key_from_url() %>%
     gs_key(verbose = verbose)
