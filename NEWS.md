@@ -1,4 +1,4 @@
-# googlesheets 0.1.0.9000
+# googlesheets 0.1.0.9001
 
 * Added a `NEWS.md` file to track changes to the package.
 * To become compatible with `httr v1.1.0`, we now require that version.
@@ -8,5 +8,6 @@
   - Columns that look like dates or date-times will, by default, be read in as such (vs. as character). 
   - Columns that consist entirely of empty cells will be *character* instead of *logical*, i.e. the `NA`s will be `NA_character_` vs `NA`.
   - "Column names are left as is, not munged into valid R identifiers (i.e. there is no check.names = TRUE)." This means you can get column names that are `NA`. I am considering adding an argument to `gs_read*()` functions to request that variable names be processed through `make.names()` or similar.
-* `gs_add_row()` now works for two-dimensional `input`, by calling itself once per row of input (#188, @jimhester).
-
+* `gs_add_row()` now works for two-dimensional `input`, by calling itself once per row of `input` (#188, @jimhester).
+* Updated the scope for the Drive API. It is possible that new/updated Drive functions will require a token obtained with the new scope. This could mean that tokens stored and loaded from file in a non-interactive environment will need to be remade.
+* Newly exported function `gs_deauth()` allows you to suspend the current token and, optionally, disable the `.httr-oauth` token cache file by renaming it to `.httr-oauth-SUSPENDED`.
