@@ -16,7 +16,7 @@
 #' write.csv(head(iris, 5), "iris.csv", row.names = FALSE)
 #' iris_ss <- gs_upload("iris.csv")
 #' iris_ss
-#' gs_read_listfeed(iris_ss)
+#' gs_read(iris_ss)
 #' file.remove("iris.csv")
 #' gs_delete(iris_ss)
 #' }
@@ -24,54 +24,63 @@
 #' @export
 gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
 
-  if(!file.exists(file)) {
-    stop(sprintf("\"%s\" does not exist!", file))
+  if (!file.exists(file)) {
+    spf("\"%s\" does not exist!", file)
   }
 
-  ext <- c("xls", "xlsx", "csv", "tsv", "txt", "tab", "xlsm", "xlt",
-           "xltx", "xltm", "ods")
-
-  if(!(tools::file_ext(file) %in% ext)) {
-    stop(sprintf(paste("Cannot convert file with this extension to a Google",
-                       "Spreadsheet: %s"), tools::file_ext(file)))
+  valid_ext <- c("xls", "xlsx", "csv", "tsv", "txt", "tab", "xlsm", "xlt",
+                 "xltx", "xltm", "ods")
+  ext <- tools::file_ext(file)
+  if (!(ext %in% valid_ext)) {
+    spf("Cannot convert file with this extension to a Google Sheet: %s", ext)
   }
 
-  if(is.null(sheet_title)) {
+  if (is.null(sheet_title)) {
     sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
   }
 
-  req <- gdrive_POST(
-    url = "https://www.googleapis.com/drive/v2/files",
-    body = list(title = sheet_title,
-                mimeType = "application/vnd.google-apps.spreadsheet"))
+  ## upload metadata --> get a fileId (Drive-speak) or key (Sheets-speak)
+  the_url <- file.path(.state$gd_base_url_v2, "drive", "v2", "files")
+  the_body <- list(title = sheet_title,
+                   mimeType = "application/vnd.google-apps.spreadsheet")
+  req <- httr::POST(the_url, get_google_token(),
+                    body = the_body, encode = "json")
+  httr::stop_for_status(req)
+  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+  }
+  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON()
+  new_key <- rc$id
 
-  new_sheet_key <- httr::content(req)$id
-
-  put_url <- httr::modify_url("https://www.googleapis.com/",
-                              path = paste0("upload/drive/v2/files/",
-                                            new_sheet_key))
-
-  ret <- httr::PUT(put_url, get_google_token(),
-                   query = list(uploadType = "media", convert = "true"),
-                   body = httr::upload_file(file))
-  httr::stop_for_status(ret)
-  ## TO DO: use ret to assess success?
+  ## the actual file upload
+  the_url <-
+    file.path(.state$gd_base_url_v2, "upload", "drive", "v2", "files", new_key)
+  the_url <-
+    httr::modify_url(the_url,
+                     query = list(uploadType = "media", convert = TRUE))
+  req <- httr::PUT(the_url, get_google_token(), body = httr::upload_file(file))
+  httr::stop_for_status(req)
+  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+  }
+  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON()
 
   ss_df <- gs_ls()
-  success <- new_sheet_key %in% ss_df$sheet_key
+  success <- new_key %in% ss_df$sheet_key
 
-  if(success) {
-    if(verbose) {
-      sprintf(paste("\"%s\" uploaded to Google Drive and converted",
-                    "to a Google Sheet named \"%s\""),
-              basename(file), sheet_title) %>%
-        message()
+  if (success) {
+    if (verbose) {
+      mpf(paste0("File uploaded to Google Drive:\n%s\n",
+                 "As the Google Sheet named:\n%s"),
+          file, sheet_title)
     }
   } else {
-    stop(sprintf("Cannot confirm the file upload :("))
+    spf("Cannot confirm the file upload :(")
   }
 
-  new_sheet_key %>%
+  new_key %>%
     gs_key(verbose = FALSE) %>%
     invisible()
 

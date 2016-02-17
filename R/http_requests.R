@@ -53,20 +53,3 @@ gsheets_GET <-
   req
 
 }
-
-#' Make POST request to Google Drive API
-#'
-#' Used in gs_new(), gs_delete(), gs_copy()
-#'
-#' @param url the url of the page to retrieve
-#' @param ... optional; further named parameters, such as \code{query},
-#'   \code{path}, etc, passed on to \code{\link[httr]{modify_url}}. Unnamed
-#'   parameters will be combined with \code{\link[httr]{config}}.
-#'
-#' @keywords internal
-gdrive_POST <- function(url, ...) {
-
-  req <- httr::POST(url, get_google_token(), encode = "json", ...)
-  httr::stop_for_status(req)
-  req
-}

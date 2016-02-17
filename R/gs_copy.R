@@ -31,31 +31,37 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
   the_body <- list("title" = to)
 
   the_url <-
-    paste("https://www.googleapis.com/drive/v2/files", key, "copy", sep = "/")
+    file.path(.state$gd_base_url_v2, "drive", "v2", "files", key, "copy")
+  req <- httr::POST(the_url, get_google_token(),
+                    encode = "json", body = the_body)
+  httr::stop_for_status(req)
+  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+  }
+  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON()
 
-  req <- gdrive_POST(the_url, body = the_body)
-
-  new_key <- httr::content(req)$id
+  new_key <- rc$id
 
   new_ss <- try(gs_key(new_key, verbose = FALSE), silent = TRUE)
 
   cannot_find_sheet <- inherits(new_ss, "try-error")
 
-  if(cannot_find_sheet) {
-    if(verbose) {
+  if (cannot_find_sheet) {
+    if (verbose) {
       message("Cannot verify whether spreadsheet copy was successful.")
     }
-    invisible(NULL)
-  } else {
-    ## this looks crazy but unless I sleep for several seconds, new_ss reflects
-    ## the default "copy of ..." title instead of sheet title requested in `to
-    ## =`
-    new_ss$sheet_title <- to
-    if(verbose) {
-      mpf("Successful copy! New sheet is titled \"%s\".", new_ss$sheet_title)
-    }
-    new_ss %>%
-      invisible()
+    return(invisible(NULL))
   }
 
-}
+  ## this looks crazy but unless I sleep for several seconds, new_ss reflects
+  ## the default "copy of ..." title instead of sheet title requested in `to
+  ## =`
+  new_ss$sheet_title <- to
+  if (verbose) {
+    mpf("Successful copy! New sheet is titled \"%s\".", new_ss$sheet_title)
+  }
+  new_ss %>%
+    invisible()
+
+  }

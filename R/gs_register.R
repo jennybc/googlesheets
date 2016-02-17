@@ -88,16 +88,15 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
   lookup <- set_lookup(lookup, visibility, verbose)
   visibility <- set_visibility(visibility, lookup)
 
-  if(lookup) {
+  if (lookup) {
     ssf <- x %>%
       gs_lookup("sheet_key", verbose)
     x <- ssf$ws_feed
   } else {
     x <- x %>%
       construct_ws_feed_from_key(visibility)
-    if(verbose) {
-      sprintf("Worksheets feed constructed with %s visibility", visibility) %>%
-        message()
+    if (verbose) {
+      mpf("Worksheets feed constructed with %s visibility", visibility)
     }
     ssf <- NULL
   }

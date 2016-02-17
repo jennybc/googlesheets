@@ -128,9 +128,8 @@ gs_auth <- function(token = NULL,
     }
     .state$token <- google_token
   } else {
-    stop(paste("Input provided via 'token' is neither a",
-               "token,\nnor a path to an .rds file containing a token."),
-         call. = FALSE)
+    spf("Input provided via 'token' is neither a",
+        "token,\nnor a path to an .rds file containing a token.")
   }
 
   .state$user <- google_user()

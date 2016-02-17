@@ -116,14 +116,21 @@ gs_perm_add <- function(ss, email = NULL,
     comm <- NULL
   }
 
-  req <- gdrive_POST(the_url, query = query,
-                     body = list("value" = email,
-                                 "type" = type,
-                                 "role" = role,
-                                 "withLink" = with_link,
-                                 "additionalRoles" = comm))
+  req <- httr::POST(the_url, get_google_token(), encode = "json",
+                    query = query,
+                    body = list("value" = email,
+                                "type" = type,
+                                "role" = role,
+                                "withLink" = with_link,
+                                "additionalRoles" = comm))
+  httr::stop_for_status(req)
+  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+  }
+  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON()
 
-  new_perm_id <- req %>% httr::content() %>% '[['("id")
+  new_perm_id <- rc[['id']]
   perm <- ss %>% gs_perm_ls(filter = new_perm_id)
 
   if(perm$type == "anyone") {
@@ -136,7 +143,7 @@ gs_perm_add <- function(ss, email = NULL,
     }
   }
 
-  if(req$status_code == 200 && verbose) {
+  if(httr::status_code(req) == 200 && verbose) {
     mpf("Success. New Permission added for \"%s\" as a %s.", who, perm$role)
   }
 

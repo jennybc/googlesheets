@@ -31,33 +31,27 @@
 #' @export
 gs_delete <- function(ss, verbose = TRUE) {
 
-  if(!inherits(ss, "googlesheet")) {
-    mess <-
-      paste("Input must be a 'googlesheet'.",
-            "Trying to delete by title? See gs_grepdel() and gs_vecdel().",
-            sep = "\n")
-    stop(mess)
+  if (!inherits(ss, "googlesheet")) {
+    spf("Input must be a 'googlesheet'.\n",
+        "Trying to delete by title? See gs_grepdel() and gs_vecdel().")
   }
 
   key <- gs_get_alt_key(ss)
-  the_url <- paste("https://www.googleapis.com/drive/v2/files",
-                   key, "trash", sep = "/")
+  the_url <- file.path(.state$gd_base_url_v2, "drive", "v2", "files", key)
 
-  post <- gdrive_POST(the_url, body = NULL)
-  status <- post$status_code
+  req <- httr::DELETE(the_url, get_google_token())
+  httr::stop_for_status(req)
+  status <- httr::status_code(req)
 
-  if(verbose) {
-    if(status == 200L) {
-      sprintf("Success. \"%s\" moved to trash in Google Drive.",
-              ss$sheet_title) %>%
-        message()
+  if (verbose) {
+    if (status == 204L) {
+      mpf("Success. \"%s\" moved to trash in Google Drive.", ss$sheet_title)
     } else {
-      sprintf("Oops. \"%s\" was NOT deleted.", ss$sheet_title) %>%
-        message()
+      mpf("Oops. \"%s\" was NOT deleted.", ss$sheet_title)
     }
   }
 
-  if(status == 200L) invisible(TRUE) else invisible(FALSE)
+  if(status == 204L) invisible(TRUE) else invisible(FALSE)
 
 }
 

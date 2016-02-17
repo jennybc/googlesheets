@@ -59,29 +59,32 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
                    verbose = TRUE) {
 
   current_sheets <- gs_ls(regex = title, fixed = TRUE, verbose = FALSE)
-  if(!is.null(current_sheets)) {
-    mess <- paste("At least one sheet matching \"%s\" already exists, so you",
-                  "may need to identify by key, not title, in future.") %>%
-      sprintf(title)
-    warning(mess)
+  if (!is.null(current_sheets)) {
+    wpf(paste("At least one sheet matching \"%s\" already exists, so you",
+              "may\nneed to identify by key, not title, in future."), title)
   }
 
+  the_url <- file.path(.state$gd_base_url_v2, "drive", "v2", "files")
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
+  req <- httr::POST(the_url, get_google_token(),
+                    encode = "json", body = the_body)
+  httr::stop_for_status(req)
+  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
+    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+  }
+  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+    jsonlite::fromJSON()
 
-  req <-
-    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files",
-                body = the_body)
-
-  ss <- httr::content(req)$id %>%
+  ss <- rc$id %>%
     gs_key(verbose = FALSE)
 
-  if(inherits(ss, "googlesheet")) {
-    if(verbose) {
+  if (inherits(ss, "googlesheet")) {
+    if (verbose) {
       mpf("Sheet \"%s\" created in Google Drive.", ss$sheet_title)
     }
   } else {
-    stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
+    spf("Unable to create Sheet \"%s\" in Google Drive.", title)
   }
 
   if(!is.null(ws_title)) {
