@@ -37,8 +37,7 @@ gs_perm_ls <- function(ss, filter = NULL) {
   req <- httr::GET(url, get_google_token())
   httr::stop_for_status(req)
   stop_for_content_type(req, "application/json; charset=UTF-8")
-  req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-    jsonlite::fromJSON()
+  req <- content_as_json_UTF8(req)
 
   perm_tbl <- req$items %>%
     dplyr::as.tbl() %>%
@@ -122,12 +121,9 @@ gs_perm_add <- function(ss, email = NULL,
                                 "withLink" = with_link,
                                 "additionalRoles" = comm))
   httr::stop_for_status(req)
-  stop_for_content_type(req, "application/json; charset=UTF-8")
-  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-    jsonlite::fromJSON()
+  rc <- content_as_json_UTF8(req)
 
-  new_perm_id <- rc[['id']]
-  perm <- ss %>% gs_perm_ls(filter = new_perm_id)
+  perm <- ss %>% gs_perm_ls(filter = rc$id)
 
   if(perm$type == "anyone") {
     who <- perm$type

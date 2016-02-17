@@ -132,13 +132,12 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 
   req <- httr::POST(
     file.path(this_ws$cellsfeed, "batch"),
+    get_google_token(),
     body = update_feed,
-    config = c(get_google_token(),
-               httr::add_headers("Content-Type" = "application/atom+xml")))
+    httr::add_headers("Content-Type" = "application/atom+xml")
+  )
   httr::stop_for_status(req)
-  stop_for_content_type(req, "application/atom+xml; charset=UTF-8")
-  req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-    xml2::read_xml()
+  req <- content_as_xml_UTF8(req)
 
   cell_status <-
     req %>%

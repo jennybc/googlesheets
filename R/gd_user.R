@@ -14,9 +14,7 @@ google_user <- function() {
                             path = c("drive", "v2", "about"))
     req <- httr::GET(url, get_google_token())
     httr::stop_for_status(req)
-    stop_for_content_type(req, "application/json; charset=UTF-8")
-    rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-      jsonlite::fromJSON()
+    rc <- content_as_json_UTF8(req)
 
     list(displayName = rc$user$displayName,
          emailAddress = rc$user$emailAddress,

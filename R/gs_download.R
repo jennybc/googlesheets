@@ -52,13 +52,10 @@ gs_download <-
 
     key <- gs_get_alt_key(from)
 
-    url <- httr::modify_url(.state$gd_base_url_v2,
-                            path = c("drive", "v2", "files",key))
+    url <- file.path(.state$gd_base_url_v2, "drive", "v2", "files",key)
     req <- httr::GET(url, get_google_token())
     httr::stop_for_status(req)
-    stop_for_content_type(req, "application/json; charset=UTF-8")
-    req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-      jsonlite::fromJSON()
+    req <- content_as_json_UTF8(req)
 
     export_links <- c(
       csv = req$exportLinks$'text/csv', # first sheet only

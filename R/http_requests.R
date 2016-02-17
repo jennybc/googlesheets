@@ -45,9 +45,7 @@ gsheets_GET <-
   # This is only FALSE when calling gs_ws_modify() where we are using regex
   # substitution, waiting for xml2 to support XML editing
   if(to_xml) {
-    req$content <- req %>%
-      httr::content(as = "text", encoding = "UTF-8") %>%
-      xml2::read_xml()
+    req$content <- content_as_xml_UTF8(req)
   }
 
   req

@@ -46,9 +46,7 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
   req <- httr::POST(the_url, get_google_token(),
                     body = the_body, encode = "json")
   httr::stop_for_status(req)
-  stop_for_content_type(req, "application/json; charset=UTF-8")
-  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-    jsonlite::fromJSON()
+  rc <- content_as_json_UTF8(req)
   new_key <- rc$id
 
   ## the actual file upload
@@ -59,9 +57,7 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
                      query = list(uploadType = "media", convert = TRUE))
   req <- httr::PUT(the_url, get_google_token(), body = httr::upload_file(file))
   httr::stop_for_status(req)
-  stop_for_content_type(req, "application/json; charset=UTF-8")
-  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-    jsonlite::fromJSON()
+  rc <- content_as_json_UTF8(req)
 
   ss_df <- gs_ls()
   success <- new_key %in% ss_df$sheet_key

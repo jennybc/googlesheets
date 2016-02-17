@@ -70,9 +70,7 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
   req <- httr::POST(the_url, get_google_token(),
                     encode = "json", body = the_body)
   httr::stop_for_status(req)
-  stop_for_content_type(req, "application/json; charset=UTF-8")
-  rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
-    jsonlite::fromJSON()
+  rc <- content_as_json_UTF8(req)
 
   ss <- rc$id %>%
     gs_key(verbose = FALSE)

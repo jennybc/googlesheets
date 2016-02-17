@@ -349,8 +349,8 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   req <-
     httr::PUT(this_ws$edit,
-              config = c(get_google_token(),
-                         httr::add_headers("Content-Type" = "application/atom+xml")),
+              get_google_token(),
+              httr::add_headers("Content-Type" = "application/atom+xml"),
               body = the_body)
   httr::stop_for_status(req)
 
