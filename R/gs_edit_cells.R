@@ -136,9 +136,7 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
     config = c(get_google_token(),
                httr::add_headers("Content-Type" = "application/atom+xml")))
   httr::stop_for_status(req)
-  if (req$headers$`content-type` != "application/atom+xml; charset=UTF-8") {
-    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
-  }
+  stop_for_content_type(req, "application/atom+xml; charset=UTF-8")
   req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
     xml2::read_xml()
 

@@ -101,8 +101,7 @@ gs_webapp_get_token <-
                              client_secret = client_secret,
                              redirect_uri = redirect_uri,
                              grant_type = "authorization_code"), verbose = TRUE)
-    stopifnot(identical(httr::headers(req)$`content-type`,
-                        "application/json; charset=utf-8"))
+    stop_for_content_type(req, "application/json; charset=utf-8")
     # content of req will contain access_token, token_type, expires_in
     token <- httr::content(req, type = "application/json")
 

@@ -52,16 +52,7 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   req <- gsheets_GET(this_ws$exportcsv, to_xml = FALSE,
                      use_auth = !ss$is_public)
-
-  if(req$headers$`content-type` != "text/csv") {
-    stop("Cannot access this sheet via csv.\n",
-         "Are you sure you have permission to access this Sheet?\n",
-         "If this Sheet is supposed to be public, make sure it is\n",
-         "\"published to the web\",\nwhich is NOT the same as\n",
-         "\"public on the web\".\n",
-         sprintf("status_code: %s\n", req$status_code),
-         sprintf("content-type: %s\n", req$headers$`content-type`))
-  }
+  stop_for_content_type(req, "text/csv")
 
   if(is.null(req$content) || length(req$content) == 0L) {
     mpf("Worksheet \"%s\" is empty.", this_ws$ws_title)

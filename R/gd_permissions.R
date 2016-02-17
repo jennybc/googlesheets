@@ -36,9 +36,7 @@ gs_perm_ls <- function(ss, filter = NULL) {
     path = c("drive", "v2", "files", ss$sheet_key, "permissions"))
   req <- httr::GET(url, get_google_token())
   httr::stop_for_status(req)
-  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
-    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
-  }
+  stop_for_content_type(req, "application/json; charset=UTF-8")
   req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
     jsonlite::fromJSON()
 
@@ -124,9 +122,7 @@ gs_perm_add <- function(ss, email = NULL,
                                 "withLink" = with_link,
                                 "additionalRoles" = comm))
   httr::stop_for_status(req)
-  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
-    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
-  }
+  stop_for_content_type(req, "application/json; charset=UTF-8")
   rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
     jsonlite::fromJSON()
 

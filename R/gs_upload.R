@@ -46,9 +46,7 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
   req <- httr::POST(the_url, get_google_token(),
                     body = the_body, encode = "json")
   httr::stop_for_status(req)
-  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
-    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
-  }
+  stop_for_content_type(req, "application/json; charset=UTF-8")
   rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
     jsonlite::fromJSON()
   new_key <- rc$id
@@ -61,9 +59,7 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
                      query = list(uploadType = "media", convert = TRUE))
   req <- httr::PUT(the_url, get_google_token(), body = httr::upload_file(file))
   httr::stop_for_status(req)
-  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
-    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
-  }
+  stop_for_content_type(req, "application/json; charset=UTF-8")
   rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
     jsonlite::fromJSON()
 

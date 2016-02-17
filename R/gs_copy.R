@@ -35,9 +35,7 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
   req <- httr::POST(the_url, get_google_token(),
                     encode = "json", body = the_body)
   httr::stop_for_status(req)
-  if (req$headers$`content-type` != "application/json; charset=UTF-8") {
-    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
-  }
+  stop_for_content_type(req, "application/json; charset=UTF-8")
   rc <- httr::content(req, as = "text", encoding = "UTF-8") %>%
     jsonlite::fromJSON()
 
