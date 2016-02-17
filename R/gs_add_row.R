@@ -71,8 +71,7 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
 
   if(length(input) > nc) {
     if(verbose) {
-      sprintf(paste("Input is too long. Only first %d elements will be",
-                    "used."), nc) %>% message()
+      mpf("Input is too long. Only first %d elements will be used.", nc)
     }
     input <- input[seq_len(nc)]
   } else if(length(input) < nc) {
@@ -96,16 +95,22 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
                  namespaceDefinitions = c("http://www.w3.org/2005/Atom",
                   gsx = "http://schemas.google.com/spreadsheets/2006/extended"))
 
-  req <- gsheets_POST(lf_post_link, XML::toString.XMLNode(new_row))
-  if(req$status_code == 201L) {
-    if(verbose) {
+  req <- httr::POST(
+    lf_post_link,
+    config = c(get_google_token(),
+               httr::add_headers("Content-Type" = "application/atom+xml")),
+    body = XML::toString.XMLNode(new_row)
+  )
+  httr::stop_for_status(req)
+
+  if (verbose) {
+    if (httr::status_code(req) == 201L) {
       message("Row successfully appended.")
-    }
-  } else {
-    if(verbose) {
+    } else {
       message("Unable to confirm that new row was added.")
     }
   }
+
   ss %>% gs_gs(verbose = FALSE) %>% invisible()
 
 }

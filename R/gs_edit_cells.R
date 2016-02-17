@@ -74,9 +74,7 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   ## user, i.e. learn it from anchor, instead of defaulting to A1
   range <- limits %>%
     cellranger::as.range()
-  if(verbose) {
-    mpf("Range affected by the update: \"%s\"", range)
-  }
+  if(verbose) mpf("Range affected by the update: \"%s\"", range)
   limits <- limits %>%
     limit_list()
 
@@ -88,7 +86,6 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                    max(this_ws$col_extent, limits$`max-col`),
                    verbose = verbose)
     Sys.sleep(sleep)
-
   }
 
   ## redundant with the default col_names-setting logic from cellranger :(
@@ -133,28 +130,31 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
     XML::addChildren(kids = update_entries) %>%
     XML::toString.XMLNode()
 
-  ## TO DO: according to our policy, we should be using the capability of
-  ## httr::POST() to append 'batch` here, but current version of gsheets_POST()
-  ## would not support that and other edits are coming there soon ... leave it
-  ## for now
-  req <-
-    gsheets_POST(paste(this_ws$cellsfeed, "batch", sep = "/"), update_feed)
+  req <- httr::POST(
+    file.path(this_ws$cellsfeed, "batch"),
+    body = update_feed,
+    config = c(get_google_token(),
+               httr::add_headers("Content-Type" = "application/atom+xml")))
+  httr::stop_for_status(req)
+  if (req$headers$`content-type` != "application/atom+xml; charset=UTF-8") {
+    stop(sprintf("Unexpected content-type:\n%s", req$headers$`content-type`))
+  }
+  req <- httr::content(req, as = "text", encoding = "UTF-8") %>%
+    xml2::read_xml()
 
   cell_status <-
-    req$content %>%
+    req %>%
     xml2::xml_find_all("atom:entry//batch:status", xml2::xml_ns(.)) %>%
     xml2::xml_attr("code")
 
-  if(verbose) {
-    if(all(cell_status == "200")) {
-      sprintf("Worksheet \"%s\" successfully updated with %d new value(s).",
-              this_ws$ws_title, length(input)) %>% message()
+  if (verbose) {
+    if (all(cell_status == "200")) {
+      mpf("Worksheet \"%s\" successfully updated with %d new value(s).",
+          this_ws$ws_title, length(input))
     } else {
-      sprintf(paste("Problems updating cells in worksheet \"%s\".",
-                    "Statuses returned:\n%s"),
-              this_ws$ws_title,
-              paste(unique(cell_status), collapse = ",")) %>%
-        message()
+      mpf(paste("Problems updating cells in worksheet \"%s\".",
+                "Statuses returned:\n%s"), this_ws$ws_title,
+              paste(unique(cell_status), collapse = ","))
     }
   }
 

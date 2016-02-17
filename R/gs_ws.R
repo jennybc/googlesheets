@@ -62,7 +62,13 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   the_body <- XML::toString.XMLNode(the_body)
 
-  req <- gsheets_POST(ss$ws_feed, the_body)
+  req <- httr::POST(
+    ss$ws_feed,
+    config = c(get_google_token(),
+               httr::add_headers("Content-Type" = "application/atom+xml")),
+    body = the_body
+  )
+  httr::stop_for_status(req)
 
   ss <- req$url %>%
     extract_key_from_url() %>%
@@ -70,7 +76,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
-  if(ws_title_exist) {
+  if (ws_title_exist) {
     this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
     if(verbose) {
       mpf("Worksheet \"%s\" added to sheet \"%s\".",
@@ -83,14 +89,14 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
   }
 
   dotdotdot <- list(...)
-  if(length(dotdotdot)) {
+  if (length(dotdotdot)) {
     gs_edit_cells_arg_list <-
       c(list(ss = ss), list(ws = this_ws$ws_title),
         dotdotdot, list(verbose = verbose))
     ss <- do.call(gs_edit_cells, gs_edit_cells_arg_list)
   }
 
-  if(verbose) {
+  if (verbose) {
     this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
     mpf("Worksheet dimensions: %d x %d.",
         this_ws$row_extent, this_ws$col_extent)
