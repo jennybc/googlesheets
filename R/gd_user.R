@@ -10,8 +10,7 @@ google_user <- function() {
   if (token_available(verbose = FALSE)) {
 
     ## https://developers.google.com/drive/v2/reference/about
-    url <- httr::modify_url(.state$gd_base_url_v2,
-                            path = c("drive", "v2", "about"))
+    url <- file.path(.state$gd_base_url, "drive/v2/about")
     req <- httr::GET(url, get_google_token())
     httr::stop_for_status(req)
     rc <- content_as_json_UTF8(req)

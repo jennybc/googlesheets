@@ -31,12 +31,9 @@
 #' @keywords internal
 gs_perm_ls <- function(ss, filter = NULL) {
 
-  url <- httr::modify_url(
-    .state$gd_base_url_v2,
-    path = c("drive", "v2", "files", ss$sheet_key, "permissions"))
+  url <- file.path(.state$gd_base_url_files_v2, ss$sheet_key, "permissions")
   req <- httr::GET(url, get_google_token())
   httr::stop_for_status(req)
-  stop_for_content_type(req, "application/json; charset=UTF-8")
   req <- content_as_json_UTF8(req)
 
   perm_tbl <- req$items %>%

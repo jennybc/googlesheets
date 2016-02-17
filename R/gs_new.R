@@ -64,10 +64,9 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
               "may\nneed to identify by key, not title, in future."), title)
   }
 
-  the_url <- file.path(.state$gd_base_url_v2, "drive", "v2", "files")
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
-  req <- httr::POST(the_url, get_google_token(),
+  req <- httr::POST(.state$gd_base_url_files_v2, get_google_token(),
                     encode = "json", body = the_body)
   httr::stop_for_status(req)
   rc <- content_as_json_UTF8(req)

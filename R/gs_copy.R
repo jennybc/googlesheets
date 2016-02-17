@@ -28,18 +28,14 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
     to <- paste("Copy of", from$sheet_title)
   }
 
+  the_url <- file.path(.state$gd_base_url_files_v2, key, "copy")
   the_body <- list("title" = to)
-
-  the_url <-
-    file.path(.state$gd_base_url_v2, "drive", "v2", "files", key, "copy")
   req <- httr::POST(the_url, get_google_token(),
                     encode = "json", body = the_body)
   httr::stop_for_status(req)
   rc <- content_as_json_UTF8(req)
 
-  new_key <- rc$id
-
-  new_ss <- try(gs_key(new_key, verbose = FALSE), silent = TRUE)
+  new_ss <- try(gs_key(rc$id, verbose = FALSE), silent = TRUE)
 
   cannot_find_sheet <- inherits(new_ss, "try-error")
 

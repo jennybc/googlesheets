@@ -52,7 +52,7 @@ gs_download <-
 
     key <- gs_get_alt_key(from)
 
-    url <- file.path(.state$gd_base_url_v2, "drive", "v2", "files",key)
+    url <- file.path(.state$gd_base_url_files_v2, key)
     req <- httr::GET(url, get_google_token())
     httr::stop_for_status(req)
     req <- content_as_json_UTF8(req)
