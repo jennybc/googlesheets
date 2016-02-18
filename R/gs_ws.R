@@ -314,30 +314,36 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
-  req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
+  req <- httr::GET(this_ws$ws_id, get_google_token())
+  httr::stop_for_status(req)
+  stop_for_content_type(req, expected = "application/atom+xml; charset=UTF-8")
+  ## yes, that's right
+  ## the content MUST be xml but I'm about to parse it as text
+  ## this nuttiness will go away when we can use xml2 to write xml
+  ## below I edit the xml using regex to avoid XML package pain
   the_body <- req %>% httr::content(as = "text", encoding = "UTF-8")
 
-  if(!is.null(to)) { # rename a worksheet
+  if (!is.null(to)) { # rename a worksheet
 
-    stopifnot(to %>% is.character(), length(to) == 1L)
+    stopifnot(is.character(to), length(to) == 1L)
 
-    if(to %in% gs_ws_ls(ss)) {
-      stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
-                         "\"%s\". Please choose another worksheet title."),
-                   to, ss$sheet_title))
+    if (to %in% gs_ws_ls(ss)) {
+      spf(paste("A worksheet titled \"%s\" already exists in sheet",
+                "\"%s\".\nPlease choose another worksheet title."),
+          to, ss$sheet_title)
     }
 
     ## TO DO: we should probably be doing something more XML-y here, instead
     ## of doing XML --> string --> regex based subsitution --> XML
     title_replacement <- paste0("\\1", to, "\\3")
-    the_body <- the_body %>%
-      sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
+    the_body <-
+      sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, the_body)
   }
 
-  if(!is.null(new_dim)) { # resize a worksheet
+  if (!is.null(new_dim)) { # resize a worksheet
 
-    stopifnot(new_dim %>% is.numeric(),
-              identical(new_dim %>% names(), c("row_extent", "col_extent")))
+    stopifnot(is.numeric(new_dim),
+              identical(names(new_dim), c("row_extent", "col_extent")))
 
     row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
     col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")

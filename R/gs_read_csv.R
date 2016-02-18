@@ -41,31 +41,33 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   this_ws <- gs_ws(ss, ws, verbose)
 
-  if(is.null(this_ws$exportcsv)) {
-    stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
-               "not offer the API access required by this function.",
-               "Consider converting it from an old Sheet to a new Sheet.",
-               "Or use another data consumption function, such as",
-               "gs_read_listfeed() or gs_read_cellfeed(). Or use gs_download()",
-               "to export it to a local file and then read it into R."))
+  if (is.null(this_ws$exportcsv)) {
+    stop("This appears to be an \"old\" Google Sheet. The old Sheets do\n",
+         "not offer the API access required by this function.\n",
+         "Consider converting it from an old Sheet to a new Sheet.\n",
+         "Or use another data consumption function, such as\n",
+         "gs_read_listfeed() or gs_read_cellfeed(). Or use gs_download()\n",
+         "to export it to a local file and then read it into R.",
+         call. = FALSE)
   }
 
-  req <- gsheets_GET(this_ws$exportcsv, to_xml = FALSE,
-                     use_auth = !ss$is_public)
+  if (ss$is_public) {
+    req <- httr::GET(this_ws$exportcsv)
+  } else {
+    req <- httr::GET(this_ws$exportcsv, get_google_token())
+  }
+  httr::stop_for_status(req)
   stop_for_content_type(req, "text/csv")
 
-  if(is.null(req$content) || length(req$content) == 0L) {
+  if (is.null(req$content) || length(req$content) == 0L) {
     mpf("Worksheet \"%s\" is empty.", this_ws$ws_title)
-    dplyr::data_frame()
-  } else {
-    req %>%
-      httr::content(as = "text") %>%
-      readr::read_csv(...)
-    ## empty cells in   numeric columns come as NA
-    ## empty cells in character columns come as ""
-    ## --> we like the `na = c("", NA)` default in readr::read_csv()
+    return(dplyr::data_frame())
   }
 
-}
-
-
+  req %>%
+    httr::content(as = "text") %>%
+    readr::read_csv(...)
+  ## empty cells in   numeric columns come as NA
+  ## empty cells in character columns come as ""
+  ## --> we like the `na = c("", NA)` default in readr::read_csv()
+  }

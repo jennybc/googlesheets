@@ -39,7 +39,6 @@
 #' }
 #'
 #' @export
-
 gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
 
   nrows <- nrow(input)
@@ -59,11 +58,19 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
   ## working!!
   ## http://stackoverflow.com/questions/11361956/limiting-the-resultset-size-on-a-google-spreadsheets-forms-list-feed
   ## http://stackoverflow.com/questions/27678331/retreive-a-range-of-rows-from-google-spreadsheet-using-list-based-feed-api-and
-  req <- gsheets_GET(this_ws$listfeed, query = list(`max-results` = 1))
+  the_url <- this_ws$listfeed
+  if (grepl("public", the_url)) {
+    req <- httr::GET(the_url, query = list(`max-results` = 1))
+  } else {
+    req <- httr::GET(the_url, get_google_token(),
+                     query = list(`max-results` = 1))
+  }
+  httr::stop_for_status(req)
+  rc <- content_as_xml_UTF8(req)
 
-  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  var_names <- req$content %>%
+  var_names <- rc %>%
     xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
     xml2::xml_find_all(".//gsx:*", ns) %>%
     xml2::xml_name()
@@ -82,7 +89,7 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
   }
   stopifnot(length(input) == nc)
 
-  lf_post_link <- req$content %>%
+  lf_post_link <- rc %>%
     xml2::xml_find_one("//feed:link[contains(@rel,'2005#post')]", ns) %>%
     xml2::xml_attr("href")
 

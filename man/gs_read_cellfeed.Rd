@@ -50,7 +50,7 @@ will return all cells, which defaults to 1000 rows and 26 columns.
 \dontrun{
 gap_ss <- gs_gap() # register the Gapminder example sheet
 first_4_rows <-
-  gs_read_cellfeed(gap_ss, "Asia", range = cell_limits(c(NA, 4)))
+  gs_read_cellfeed(gap_ss, ws = "Asia", range = cell_limits(c(NA, 4)))
 first_4_rows
 gs_reshape_cellfeed(first_4_rows)
 gs_reshape_cellfeed(gs_read_cellfeed(gap_ss, "Asia",

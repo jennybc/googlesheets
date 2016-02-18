@@ -41,37 +41,30 @@ gs_read_listfeed <- function(ss, ws = 1, verbose = TRUE) {
   stopifnot(inherits(ss, "googlesheet"))
 
   this_ws <- gs_ws(ss, ws, verbose)
-  req <- gsheets_GET(this_ws$listfeed)
+  the_url <- this_ws$listfeed
+  if (grepl("public", the_url)) {
+    req <- httr::GET(the_url)
+  } else {
+    req <- httr::GET(the_url, get_google_token())
+  }
+  httr::stop_for_status(req)
+  rc <- content_as_xml_UTF8(req)
 
-  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  var_names <- req$content %>%
+  var_names <- rc %>%
     xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
     xml2::xml_find_all(".//gsx:*", ns) %>%
     xml2::xml_name()
 
-  values <- req$content %>%
+  values <- rc %>%
     xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
     xml2::xml_text()
 
   dat <- matrix(values, ncol = length(var_names), byrow = TRUE,
-                dimnames = list(NULL, var_names)) %>%
-    ## convert to integer, numeric, etc. but w/ stringsAsFactors = FALSE
-    ## empty cells returned as empty string ""
-    plyr::alply(2, utils::type.convert,
-                na.strings = c("NA", ""), as.is = TRUE) %>%
-    ## get rid of attributes that are non-standard for tbl_dfs or data.frames
-    ## and that are an artefact of the above (specifically, I think, the use of
-    ## alply?); if I don't do this, the output is fugly when you str() it
-    `attr<-`("split_type", NULL) %>%
-    `attr<-`("split_labels", NULL) %>%
-    `attr<-`("dim", NULL) %>%
-    ## for some reason removing the non-standard dim attributes clobbers the
-    ## variable names, so those must be restored
-    `names<-`(var_names) %>%
-    ## convert to data.frame (tbl_df, actually)
-    dplyr::as_data_frame()
-
-  dat
+                dimnames = list(NULL, var_names))
+  dat %>%
+    dplyr::as_data_frame() %>%
+    readr::type_convert()
 
 }

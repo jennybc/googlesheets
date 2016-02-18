@@ -38,7 +38,7 @@
 #' \dontrun{
 #' gap_ss <- gs_gap() # register the Gapminder example sheet
 #' first_4_rows <-
-#'   gs_read_cellfeed(gap_ss, "Asia", range = cell_limits(c(NA, 4)))
+#'   gs_read_cellfeed(gap_ss, ws = "Asia", range = cell_limits(c(NA, 4)))
 #' first_4_rows
 #' gs_reshape_cellfeed(first_4_rows)
 #' gs_reshape_cellfeed(gs_read_cellfeed(gap_ss, "Asia",
@@ -67,21 +67,21 @@ gs_read_cellfeed <- function(
     ## is discussed in older internet threads re: the older gdata API; so if
     ## this stops working, consider that they finally stopped supporting this
     ## query parameter
-    query <- query %>% c(list("return-empty" = "true"))
+    query <- c(query , list("return-empty" = "true"))
   }
 
-  ## to prevent appending of "?=" to url when query elements are all NULL
-  if(query %>% unlist() %>% is.null()) {
-    query <- NULL
-    ## I think this can be eliminated upon next CRAN release of httr
-    ## https://github.com/hadley/httr/commit/6d06ad571316dcba5944a5e545c374b64d6979d6
+  the_url <- this_ws$cellsfeed
+  if (grepl("public", the_url)) {
+    req <- httr::GET(the_url, query = query)
+  } else {
+    req <- httr::GET(the_url, get_google_token(), query = query)
   }
+  httr::stop_for_status(req)
+  rc <- content_as_xml_UTF8(req)
 
-  req <- gsheets_GET(this_ws$cellsfeed, query = query)
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
-
-  x <- req$content %>%
+  x <- rc %>%
     xml2::xml_find_all("feed:entry", ns)
 
   if(length(x) == 0L) {

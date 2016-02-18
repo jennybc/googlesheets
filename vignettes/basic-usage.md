@@ -23,32 +23,32 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 
 ```r
 (my_sheets <- gs_ls())
-#> Source: local data frame [52 x 10]
+#> Source: local data frame [58 x 10]
 #> 
 #>                 sheet_title        author  perm version
 #>                       (chr)         (chr) (chr)   (chr)
 #> 1   EasyTweetSheet - Shared     m.hawksey     r     new
-#> 2              #rhizo15 #tw     m.hawksey     r     new
-#> 3               gas_mileage      woo.kara     r     new
-#> 4      test-gs-iris-private      gspreadr    rw     new
-#> 5               TAGS v6.0ns     m.hawksey     r     new
-#> 6                 less-than      gspreadr    rw     new
-#> 7  STAT545 - 2015 - TA Sch…        ksamuk    rw     new
-#> 8  Copy of Twitter Archive…   joannazhaoo     r     new
-#> 9  Ari's Anchor Text Scrap…      anahmani     r     new
-#> 10 Supervisor Interests (R… silwood.mast…     r     new
+#> 2                        yo      gspreadr    rw     new
+#> 3                  my_sheet      gspreadr    rw     new
+#> 4                 new_sheet      gspreadr    rw     new
+#> 5  Copy of test-gs-gapmind…      gspreadr    rw     new
+#> 6                        yo      gspreadr    rw     new
+#> 7  test-gs-jenny-a53a63af3…      gspreadr    rw     new
+#> 8              #rhizo15 #tw     m.hawksey     r     new
+#> 9               gas_mileage      woo.kara     r     new
+#> 10     test-gs-iris-private      gspreadr    rw     new
 #> ..                      ...           ...   ...     ...
 #> Variables not shown: updated (time), sheet_key (chr), ws_feed (chr),
 #>   alternate (chr), self (chr), alt_key (chr).
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 52
+#> Observations: 58
 #> Variables: 10
-#> $ sheet_title (chr) "EasyTweetSheet - Shared", "#rhizo15 #tw", "gas_mi...
-#> $ author      (chr) "m.hawksey", "m.hawksey", "woo.kara", "gspreadr", ...
-#> $ perm        (chr) "r", "r", "r", "rw", "r", "rw", "rw", "r", "r", "r...
+#> $ sheet_title (chr) "EasyTweetSheet - Shared", "yo", "my_sheet", "new_...
+#> $ author      (chr) "m.hawksey", "gspreadr", "gspreadr", "gspreadr", "...
+#> $ perm        (chr) "r", "rw", "rw", "rw", "rw", "rw", "rw", "r", "r",...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2016-02-15 15:44:41, 2016-02-09 09:49:12, 2016-02...
+#> $ updated     (time) 2016-02-18 22:42:15, 2016-02-18 02:09:12, 2016-02...
 #> $ sheet_key   (chr) "14mAbIi1UyZtJTDuIa7iMb80xYtXbxCr-TGlvFbPgi3E", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/14mAbIi1Uy...
@@ -79,11 +79,11 @@ If you plan to consume data from a sheet or edit it, you must first __register__
 
 ```r
 gap <- gs_title("Gapminder")
-#> Sheet successfully identifed: "Gapminder"
+#> Sheet successfully identified: "Gapminder"
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-16 06:42:34 GMT
+#>   Date of googlesheets registration: 2016-02-18 23:23:27 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -107,7 +107,7 @@ gap
 third_party_gap <- GAP_KEY %>%
   gs_key()
 #> Authorization will be used.
-#> Sheet successfully identifed: "test-gs-gapminder"
+#> Sheet successfully identified: "test-gs-gapminder"
 
 # Need to access a sheet you do not own but you have a sharing link?
 # Access it by URL!
@@ -119,14 +119,14 @@ third_party_gap <- GAP_URL %>%
 #> googlesheets will attempt to extract sheet key from the URL.
 #> Putative key: 1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ
 #> Authorization will be used.
-#> Sheet successfully identifed: "test-gs-gapminder"
+#> Sheet successfully identified: "test-gs-gapminder"
 # note: registration via URL may not work for "old" sheets
 
 # Worried that a spreadsheet's registration is out-of-date?
 # Re-register it!
 gap <- gap %>% gs_gs()
 #> Authorization will be used.
-#> Sheet successfully identifed: "Gapminder"
+#> Sheet successfully identified: "Gapminder"
 ```
 
 
@@ -359,9 +359,9 @@ readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #> No encoding supplied: defaulting to UTF-8.
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.032            0.137            1.151
-#> sys.self         0.003            0.016            0.057
-#> elapsed          0.359            0.960            2.478
+#> user.self        0.031            0.129            1.180
+#> sys.self         0.004            0.016            0.053
+#> elapsed          0.870            0.775            2.908
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -569,8 +569,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-16 06:42:52 GMT
-#>     Date of last spreadsheet update: 2016-02-16 06:42:50 GMT
+#>   Date of googlesheets registration: 2016-02-18 23:23:51 GMT
+#>     Date of last spreadsheet update: 2016-02-18 23:23:49 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -579,8 +579,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1BlH5xQeh7hgOAqXKUMPtQP4tDoTZ3BFu5NCsOxCZAQ4
-#> Browser URL: https://docs.google.com/spreadsheets/d/1BlH5xQeh7hgOAqXKUMPtQP4tDoTZ3BFu5NCsOxCZAQ4/
+#> Key: 1_UoO7HAUgflMXxyc7l3lnEMLxIsa3U71LxIs6oEa9yo
+#> Browser URL: https://docs.google.com/spreadsheets/d/1_UoO7HAUgflMXxyc7l3lnEMLxIsa3U71LxIs6oEa9yo/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()`.
@@ -614,7 +614,7 @@ foo <- foo %>%
 #> Worksheet "edit_cells" successfully updated with 35 new value(s).
 #> Accessing worksheet titled "edit_cells"
 #> Authorization will be used.
-#> Sheet successfully identifed: "foo"
+#> Sheet successfully identified: "foo"
 #> Accessing worksheet titled "edit_cells"
 #> Worksheet "edit_cells" dimensions changed to 7 x 5.
 
@@ -626,7 +626,7 @@ foo <- foo %>%
 #> Worksheet "add_row" successfully updated with 10 new value(s).
 #> Accessing worksheet titled "add_row"
 #> Authorization will be used.
-#> Sheet successfully identifed: "foo"
+#> Sheet successfully identified: "foo"
 #> Accessing worksheet titled "add_row"
 #> Worksheet "add_row" dimensions changed to 2 x 5.
 ## add the next 5 rows of data ... careful not to go too fast
@@ -697,12 +697,15 @@ iris %>%
   head(5) %>%
   write.csv("iris.csv", row.names = FALSE)
 iris_ss <- gs_upload("iris.csv")
-#> "iris.csv" uploaded to Google Drive and converted to a Google Sheet named "iris"
+#> File uploaded to Google Drive:
+#> iris.csv
+#> As the Google Sheet named:
+#> iris
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-16 06:43:20 GMT
-#>     Date of last spreadsheet update: 2016-02-16 06:43:19 GMT
+#>   Date of googlesheets registration: 2016-02-18 23:24:30 GMT
+#>     Date of last spreadsheet update: 2016-02-18 23:24:28 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -711,8 +714,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 1ttlHoES-Zor455Aiad_RUE3NZZzh9iXWImGkKXHqz24
-#> Browser URL: https://docs.google.com/spreadsheets/d/1ttlHoES-Zor455Aiad_RUE3NZZzh9iXWImGkKXHqz24/
+#> Key: 1Vg3ELb_VwqsQuFxbEW3l1A2SeF2NKcnM0smSWV8_HSM
+#> Browser URL: https://docs.google.com/spreadsheets/d/1Vg3ELb_VwqsQuFxbEW3l1A2SeF2NKcnM0smSWV8_HSM/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled "iris"
 #> No encoding supplied: defaulting to UTF-8.
@@ -734,12 +737,15 @@ Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ```r
 gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
-#> "mini-gap.xlsx" uploaded to Google Drive and converted to a Google Sheet named "mini-gap"
+#> File uploaded to Google Drive:
+#> /Users/jenny/rrr/googlesheets/inst/mini-gap.xlsx
+#> As the Google Sheet named:
+#> mini-gap
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-16 06:43:25 GMT
-#>     Date of last spreadsheet update: 2016-02-16 06:43:22 GMT
+#>   Date of googlesheets registration: 2016-02-18 23:24:35 GMT
+#>     Date of last spreadsheet update: 2016-02-18 23:24:33 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -752,8 +758,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1mc5ppppr63edG485JKoOvNSkNzxiz5Ln9k0hEuJweqI
-#> Browser URL: https://docs.google.com/spreadsheets/d/1mc5ppppr63edG485JKoOvNSkNzxiz5Ln9k0hEuJweqI/
+#> Key: 1sevQBrnngHnmfbDOHA0Aou9UXPr_e_b6yLf_wv2aAN0
+#> Browser URL: https://docs.google.com/spreadsheets/d/1sevQBrnngHnmfbDOHA0Aou9UXPr_e_b6yLf_wv2aAN0/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled "Asia"
 #> No encoding supplied: defaulting to UTF-8.
@@ -774,10 +780,14 @@ And we clean up after ourselves on Google Drive.
 ```r
 gs_vecdel(c("iris", "mini-gap"))
 #> Authorization will be used.
-#> Sheet successfully identifed: "mini-gap"
+#> Sheet successfully identified: "mini-gap"
+#> Warning: closing unused connection 6 (/Users/jenny/rrr/googlesheets/inst/
+#> mini-gap.xlsx)
+#> Warning: closing unused connection 5 (/Users/jenny/rrr/googlesheets/
+#> vignettes/iris.csv)
 #> Success. "mini-gap" moved to trash in Google Drive.
 #> Authorization will be used.
-#> Sheet successfully identifed: "iris"
+#> Sheet successfully identified: "iris"
 #> Success. "iris" moved to trash in Google Drive.
 #> [1] TRUE TRUE
 ## achieves same as:
@@ -793,10 +803,10 @@ You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spr
 ```r
 gs_title("Gapminder") %>%
   gs_download(ws = "Africa", to = "gapminder-africa.csv")
-#> Sheet successfully identifed: "Gapminder"
+#> Sheet successfully identified: "Gapminder"
 #> Accessing worksheet titled "Africa"
-#> No encoding supplied: defaulting to UTF-8.
-#> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/vignettes/gapminder-africa.csv
+#> Sheet successfully downloaded:
+#> /Users/jenny/rrr/googlesheets/vignettes/gapminder-africa.csv
 ## is it there? yes!
 read.csv("gapminder-africa.csv") %>% head()
 #>   country continent year lifeExp      pop gdpPercap
@@ -814,8 +824,9 @@ Download the entire spreadsheet as an Excel workbook.
 ```r
 gs_title("Gapminder") %>% 
   gs_download(to = "gapminder.xlsx")
-#> Sheet successfully identifed: "Gapminder"
-#> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/vignettes/gapminder.xlsx
+#> Sheet successfully identified: "Gapminder"
+#> Sheet successfully downloaded:
+#> /Users/jenny/rrr/googlesheets/vignettes/gapminder.xlsx
 ```
 
 Go check it out in Excel, if you wish!
@@ -847,9 +858,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-02-16 06:42:31 GMT
+#>                  date: 2016-02-18 23:23:24 GMT
 #>          access token: valid
-#>  peek at access token: ya29....9lF0w
+#>  peek at access token: ya29...._A0vg
 #> peek at refresh token: 1/LxW...4wRNU
 user_session_info
 #> $displayName
@@ -859,13 +870,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2016-02-16 06:42:31 GMT"
+#> [1] "2016-02-18 23:23:24 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....9lF0w"
+#> [1] "ya29...._A0vg"
 #> 
 #> $peek_ref
 #> [1] "1/LxW...4wRNU"

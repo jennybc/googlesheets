@@ -58,7 +58,6 @@ test_that("We get no error from gs_read_csv on an empty sheet (pub)", {
 
 test_that("We can't access sheet that is 'public on the web' (pub)", {
 
-  expect_error(gotcha_key %>% gs_key(lookup = FALSE),
-               "Not expecting content-type")
+  expect_error(gotcha_key %>% gs_key(lookup = FALSE), "content-type")
 
 })

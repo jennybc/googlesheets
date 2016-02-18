@@ -73,8 +73,8 @@ gs_download <-
   }
 
   ext_match <- grepl(ext, names(export_links))
-  if(any(ext_match)) {
-    link <- export_links %>% `[[`(ext)
+  if (any(ext_match)) {
+    link <- export_links[[ext]]
   } else {
     mess <- sprintf(paste("Download as a %s file is not supported for this",
                           "sheet. Is this perhaps an \"old\" Google Sheet?"),
@@ -82,8 +82,13 @@ gs_download <-
     stop(mess)
   }
 
-  httr::GET(link, get_google_token(), httr::progress(),
-            httr::write_disk(to, overwrite = overwrite))
+  if (interactive()) {
+    httr::GET(link, get_google_token(), httr::progress(),
+              httr::write_disk(to, overwrite = overwrite))
+  } else {
+    httr::GET(link, get_google_token(),
+              httr::write_disk(to, overwrite = overwrite))
+  }
 
   if (file.exists(to)) {
 

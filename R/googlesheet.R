@@ -31,26 +31,25 @@ googlesheet <- function() {
 as.googlesheet <-
   function(x, ssf = NULL, lookup, verbose = TRUE, ...) UseMethod("as.googlesheet")
 
-as.googlesheet.ws_feed <-
-  function(x, ssf = NULL, lookup, verbose = TRUE, ...) {
+as.googlesheet.ws_feed <- function(x, ssf = NULL,
+                                   lookup, verbose = TRUE, ...) {
 
-  req <- gsheets_GET(x)
-
-  if(grepl("html", req$headers[["content-type"]])) {
-    ## TO DO: give more specific error message. Have they said "public" when
-    ## they meant "private" or vice versa? What's the actual problem and
-    ## solution?
-    stop("Please check visibility settings.")
+  if (grepl("public", x)) {
+    req <- httr::GET(x)
+  } else {
+    req <- httr::GET(x, get_google_token())
   }
+  httr::stop_for_status(req)
+  rc <- content_as_xml_UTF8(req)
 
-  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
   ss <- googlesheet()
 
   ss$sheet_key <- req$url %>% extract_key_from_url()
-  ss$sheet_title <- req$content %>%
+  ss$sheet_title <- rc %>%
     xml2::xml_find_one("./feed:title", ns) %>% xml2::xml_text()
-  ss$n_ws <- req$content %>%
+  ss$n_ws <- rc %>%
     xml2::xml_find_one("./openSearch:totalResults", ns) %>%
     xml2::xml_text() %>%
     as.integer()
@@ -65,9 +64,9 @@ as.googlesheet.ws_feed <-
   ss$lookup <- lookup
   ss$is_public <- ss$visibility == "public"
 
-  ss$author <- req$content %>%
+  ss$author <- rc %>%
     xml2::xml_find_one("./feed:author/feed:name", ns) %>% xml2::xml_text()
-  ss$email <- req$content %>%
+  ss$email <- rc %>%
     xml2::xml_find_one("./feed:author/feed:email", ns) %>% xml2::xml_text()
 
   ss$perm <- ss$ws_feed %>%
@@ -75,7 +74,7 @@ as.googlesheet.ws_feed <-
     ifelse("r", "rw")
   ss$version <- "old" ## we revise this once we get the links, below ...
 
-  links <- req$content %>% xml2::xml_find_all("./feed:link", ns)
+  links <- rc %>% xml2::xml_find_all("./feed:link", ns)
   ss$links <- dplyr::data_frame_(list(
     rel = ~ links %>% xml2::xml_attr("rel"),
     type = ~ links %>% xml2::xml_attr("type"),
@@ -87,7 +86,7 @@ as.googlesheet.ws_feed <-
     ss$version <- "new"
   }
 
-  ws <- req$content %>% xml2::xml_find_all("./feed:entry", ns)
+  ws <- rc %>% xml2::xml_find_all("./feed:entry", ns)
   ws_info <- dplyr::data_frame_(list(
     ws_id = ~ ws %>% xml2::xml_find_all("feed:id", ns) %>% xml2::xml_text(),
     ws_key = ~ ws_id %>% basename(),

@@ -12,25 +12,19 @@ ss <- gs_ws_feed(iris_pvt_ws_feed, verbose = FALSE)
 ## see test-consume-data-public.R and test-consue-data-tricky.R
 
 test_that("We can get all data from the list feed (pvt)", {
-
   expect_equal_to_reference(gs_read_listfeed(ss),
                             "for_reference/iris_pvt_gs_read_listfeed.rds")
-
 })
 
 test_that("We can get all data from the cell feed (pvt)", {
-
   expect_equal_to_reference(gs_read_cellfeed(ss),
                             "for_reference/iris_pvt_gs_read_cellfeed.rds")
-
 })
 
 test_that("We can get all data from the exportcsv link (pvt)", {
-
   dat1 <- gs_read_csv(ss)
   names(dat1) <-  dat1 %>% names() %>% tolower()
   expect_equal_to_reference(dat1, "for_reference/iris_pvt_gs_read_listfeed.rds")
-
 })
 
 gs_deauth(verbose = FALSE)
