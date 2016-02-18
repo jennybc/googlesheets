@@ -96,7 +96,7 @@ Register a Sheet (in this case, by title):
 
 ``` r
 gap <- gs_title("Gapminder")
-#> Sheet successfully identifed: "Gapminder"
+#> Sheet successfully identified: "Gapminder"
 ```
 
 Here's a registered `googlesheet` object:
@@ -105,7 +105,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-04 17:56:05 GMT
+#>   Date of googlesheets registration: 2016-02-19 01:13:08 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -162,15 +162,14 @@ Create a new Sheet:
 
 ``` r
 iris_ss <- gs_new("iris", input = head(iris, 3), trim = TRUE)
-#> Warning in gs_new("iris", input = head(iris, 3), trim = TRUE): At least one
-#> sheet matching "iris" already exists, so you may need to identify by key,
-#> not title, in future.
+#> Warning: At least one sheet matching "iris" already exists, so you may
+#> need to identify by key, not title, in future.
 #> Sheet "iris" created in Google Drive.
 #> Range affected by the update: "A1:E4"
 #> Worksheet "Sheet1" successfully updated with 20 new value(s).
 #> Accessing worksheet titled "Sheet1"
 #> Authorization will be used.
-#> Sheet successfully identifed: "iris"
+#> Sheet successfully identified: "iris"
 #> Accessing worksheet titled "Sheet1"
 #> Worksheet "Sheet1" dimensions changed to 4 x 5.
 #> Worksheet dimensions: 4 x 5.
@@ -211,8 +210,8 @@ Download this precious thing (other formats are possible):
 ``` r
 iris_ss %>% 
   gs_download(to = "iris-ish-stuff.csv", overwrite = TRUE)
-#> No encoding supplied: defaulting to UTF-8.
-#> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/iris-ish-stuff.csv
+#> Sheet successfully downloaded:
+#> /Users/jenny/rrr/googlesheets/iris-ish-stuff.csv
 ```
 
 Clean up our mess:

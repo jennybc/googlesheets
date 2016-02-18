@@ -60,10 +60,15 @@ gs_read_listfeed <- function(ss, ws = 1, verbose = TRUE) {
   values <- rc %>%
     xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
     xml2::xml_text()
+  values[values == ""] <- NA_character_
 
   dat <- matrix(values, ncol = length(var_names), byrow = TRUE,
                 dimnames = list(NULL, var_names))
   dat %>%
+    ## https://github.com/hadley/dplyr/issues/876
+    ## https://github.com/hadley/dplyr/commit/9a23e869a027861ec6276abe60fe7bb29a536369
+    ## I can drop as.data.frame() once dplyr version >= 0.4.4
+    as.data.frame(stringsAsFactors = FALSE) %>%
     dplyr::as_data_frame() %>%
     readr::type_convert()
 
