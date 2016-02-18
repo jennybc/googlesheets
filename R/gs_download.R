@@ -45,7 +45,7 @@ gs_download <-
 
   ext <- tools::file_ext(to)
   if (!(ext %in% c("csv", "pdf", "xlsx"))) {
-    stop(sprintf("Cannot download Google spreadsheet as this format: %s", ext))
+    spf("Cannot download Google spreadsheet as this format: %s", ext)
   }
 
   if (is.null(ws)) {
@@ -100,7 +100,7 @@ gs_download <-
 
   } else {
 
-    stop(sprintf("Cannot confirm the file download :("))
+    spf("Cannot confirm the file download :(")
     return(invisible(NULL))
 
   }

@@ -47,8 +47,8 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
   ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
   if(ws_title_exist) {
-    stop(sprintf(paste("A worksheet titled \"%s\" already exists, please",
-                       "choose a different name."), ws_title))
+    spf(paste("A worksheet titled \"%s\" already exists, please",
+              "choose a different name."), ws_title)
   }
 
   the_body <-
@@ -385,14 +385,14 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
   if(is.character(ws)) {
     index <- match(ws, ss$ws$ws_title)
     if(is.na(index)) {
-      stop(sprintf("Worksheet %s not found.", ws))
+      spf("Worksheet %s not found.", ws)
     } else {
       ws <- index
     }
   }
   ws <- ws %>% as.integer()
   if(ws > ss$n_ws) {
-    stop(sprintf("Spreadsheet only contains %d worksheets.", ss$n_ws))
+    spf("Spreadsheet only contains %d worksheets.", ss$n_ws)
   }
   if(verbose) {
     mpf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws])

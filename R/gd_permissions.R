@@ -47,7 +47,7 @@ gs_perm_ls <- function(ss, filter = NULL) {
     if(any(ind)) {
       perm_tbl <- perm_tbl[ind, ]
     } else {
-      stop(sprintf("No matching permissions found: %s", filter))
+      spf("No matching permissions found: %s", filter)
     }
   }
 

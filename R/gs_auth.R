@@ -122,9 +122,9 @@ gs_auth <- function(token = NULL,
 
     google_token <- try(suppressWarnings(readRDS(token)), silent = TRUE)
     if (inherits(google_token, "try-error")) {
-      stop(sprintf("Cannot read token from alleged .rds file:\n%s", token))
+      spf("Cannot read token from alleged .rds file:\n%s", token)
     } else if (!is_legit_token(google_token, verbose = TRUE)) {
-      stop(sprintf("File does not contain a proper token:\n%s", token))
+      spf("File does not contain a proper token:\n%s", token)
     }
     .state$token <- google_token
   } else {
