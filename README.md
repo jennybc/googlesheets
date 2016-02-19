@@ -105,7 +105,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-19 01:13:08 GMT
+#>   Date of googlesheets registration: 2016-02-19 07:34:35 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -242,6 +242,7 @@ Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercon
 | gs\_add\_row()           | Append a row to pre-existing data table                   |
 | gs\_new()                | Create a new Sheet and optionally populate                |
 | gs\_copy()               | Copy a Sheet into a new Sheet                             |
+| gs\_rename()             | Rename an existing Sheet                                  |
 | gs\_ws\_ls()             | List the worksheets in a Sheet                            |
 | gs\_ws\_new()            | Create a new worksheet and optionally populate            |
 | gs\_ws\_rename()         | Rename a worksheet                                        |
@@ -252,6 +253,7 @@ Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercon
 | gs\_upload()             | Upload local file into a new Sheet                        |
 | gs\_download()           | Download a Sheet into a local file                        |
 | gs\_auth()               | Authorize the package                                     |
+| gs\_deauth()             | De-authorize the package                                  |
 | gs\_user()               | Get info about current user and auth status               |
 | gs\_webapp\_auth\_url()  | Facilitates auth by user of a Shiny app                   |
 | gs\_webapp\_get\_token() | Facilitates auth by user of a Shiny app                   |

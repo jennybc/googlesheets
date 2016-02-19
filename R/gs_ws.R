@@ -24,7 +24,7 @@
 #' @inheritParams gs_new
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @examples
 #' \dontrun{
@@ -114,7 +114,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #' @template ws
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @examples
 #' \dontrun{
@@ -174,7 +174,7 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 #' @param to character string for new title of worksheet
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @note Since the edit link is used in the PUT request, the version path in the
 #'   url changes everytime changes are made to the worksheet, hence consecutive
@@ -304,7 +304,7 @@ gs_ws_resize <- function(ss, ws = 1,
 #'   worksheet
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @keywords internal
 gs_ws_modify <- function(ss, from = NULL, to = NULL,

@@ -203,6 +203,7 @@ gs_edit_cells(), Edit specific cells
 gs_add_row(), Append a row to pre-existing data table
 gs_new(), Create a new Sheet and optionally populate
 gs_copy(), Copy a Sheet into a new Sheet
+gs_rename(), Rename an existing Sheet
 gs_ws_ls(), List the worksheets in a Sheet
 gs_ws_new(), Create a new worksheet and optionally populate
 gs_ws_rename(), Rename a worksheet
@@ -213,6 +214,7 @@ gs_vecdel(), Delete the named Sheets
 gs_upload(), Upload local file into a new Sheet
 gs_download(), Download a Sheet into a local file
 gs_auth(), Authorize the package
+gs_deauth(), De-authorize the package
 gs_user(), Get info about current user and auth status
 gs_webapp_auth_url(), Facilitates auth by user of a Shiny app
 gs_webapp_get_token(), Facilitates auth by user of a Shiny app

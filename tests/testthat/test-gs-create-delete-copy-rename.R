@@ -65,7 +65,7 @@ test_that("Spreadsheet can be created w/ only row or column specified", {
 
 })
 
-test_that("Spreadsheet can be copied and deleted", {
+test_that("Spreadsheet can be copied and multiple sheets can be deleted", {
 
   copy_of <- p_(paste("Copy of", iris_pvt_title))
   copy_ss <- gs_copy(gs_key(iris_pvt_key), to = copy_of)
@@ -83,6 +83,20 @@ test_that("Spreadsheet can be copied and deleted", {
 
 })
 
+test_that("gs_delete() throws error on non-googlesheet input", {
+  expect_error(gs_delete("yo"))
+})
+
+test_that("Sheet can be renamed", {
+  name1 <- p_("name1")
+  name2 <- p_("name2")
+  ss <- gs_ws_feed(mini_gap_ws_feed) %>% gs_copy(name1)
+  ss <- ss %>% gs_rename(to = name2)
+  ss_df <- gs_ls()
+  expect_false(name1 %in% ss_df$sheet_title)
+  expect_true(name2 %in% ss_df$sheet_title)
+})
+
 test_that("Old Sheets can be copied and deleted", {
 
   ## don't even bother if we can't see this sheet in the spreadsheets feed or if
@@ -95,12 +109,6 @@ test_that("Old Sheets can be copied and deleted", {
   expect_message(ss_copy <- ss %>% gs_copy(to = my_copy), "Successful copy!")
   Sys.sleep(1)
   expect_message(gs_delete(ss_copy), "moved to trash")
-
-})
-
-test_that("gs_delete() throws error on non-googlesheet input", {
-
-  expect_error(gs_delete("yo"))
 
 })
 

@@ -29,7 +29,7 @@
 #'   order to populate the new worksheet with data
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @seealso \code{\link{gs_edit_cells}} for specifics on populating the new
 #'   sheet with some data and \code{\link{gs_upload}} for creating a new

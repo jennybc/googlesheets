@@ -24,8 +24,15 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
   stopifnot(inherits(from, "googlesheet"))
 
   key <- gs_get_alt_key(from)
-  if(is.null(to)) {
+  if (is.null(to)) {
     to <- paste("Copy of", from$sheet_title)
+  }
+
+  current_sheets <- gs_ls(regex = to, fixed = TRUE, verbose = FALSE)
+
+  if (!is.null(current_sheets) && verbose) {
+    wpf(paste("At least one sheet matching \"%s\" already exists, so you",
+              "may\nneed to identify by key, not title, in future."), to)
   }
 
   the_url <- file.path(.state$gd_base_url_files_v2, key, "copy")
