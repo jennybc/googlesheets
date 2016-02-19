@@ -54,7 +54,7 @@ construct_url_from_key <- function(key) {
   sprintf(tmp, key)
 }
 
-isTOGGLE <- function(x) {
+is_toggle <- function(x) {
   is.null(x) || isTRUE(x) || identical(x, FALSE)
 }
 

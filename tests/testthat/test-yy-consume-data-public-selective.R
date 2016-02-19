@@ -112,3 +112,12 @@ test_that("Validation is in force for row / columns limits in the cell feed", {
   expect_error(gs_read_cellfeed(ss, range = cell_cols(24:30)), mess)
 
 })
+
+test_that("query params work on the list feed", {
+  oceania_fancy <- ss %>%
+    gs_read_listfeed(ws = "Oceania",
+                     reverse = TRUE, orderby = "gdppercap",
+                     sq = "lifeexp > 79 or year < 1960")
+  expect_equal_to_reference(oceania_fancy,
+                            "for_reference/gap_oceania_listfeed_query.rds")
+})

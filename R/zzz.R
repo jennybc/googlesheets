@@ -1,3 +1,4 @@
+# nocov start
 .onLoad <- function(libname, pkgname) {
 
   op <- options()
@@ -27,3 +28,5 @@
 .state$gd_base_url_files_v3 <-
   file.path(.state$gd_base_url, "drive", "v3", "files")
 #.state$gs_base_url <- "https://spreadsheets.google.com/feeds"
+
+# nocov end

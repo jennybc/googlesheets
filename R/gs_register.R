@@ -173,7 +173,7 @@ gs_gs <- function(x, visibility = NULL, verbose = TRUE) {
 
 set_lookup <- function(lookup = NULL, visibility = NULL, verbose = TRUE) {
 
-  stopifnot(isTOGGLE(lookup))
+  stopifnot(is_toggle(lookup))
 
   auth_seems_possible <- !is.null(.state$token) || file.exists(".httr-oauth")
 
