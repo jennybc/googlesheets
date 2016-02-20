@@ -247,3 +247,9 @@ is_legit_token <- function(x, verbose = FALSE) {
   TRUE
 
 }
+
+## useful when debugging
+gd_token <- gs_token <- function() {
+  if (!token_available(verbose = TRUE)) return(NULL)
+  .state$token$credentials$access_token
+}
