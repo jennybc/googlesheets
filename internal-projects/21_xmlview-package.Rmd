@@ -1,0 +1,29 @@
+---
+title: "Using xmlview package"
+output:
+  html_document:
+    keep_md: TRUE
+---
+
+This is more for interactive use.
+
+```{r}
+library(googlesheets)
+library(xml2)
+library(xmlview)
+
+if (!interactive()) {
+  gs_auth(file.path("..", "tests", "testthat", "googlesheets_token.rds"))
+}
+
+key <- "1oLRq_aSy5A6uh60-Hk3EZ3bcu-rGJBx_H7VuXRxn2FQ"
+ss <- gs_key(key)
+ws <- 1
+gs_read(ss)
+
+this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+req <- httr::GET(this_ws$listfeed, googlesheets:::get_google_token())
+rc <- googlesheets:::content_as_xml_UTF8(req)
+xml_view(rc)
+```
+
