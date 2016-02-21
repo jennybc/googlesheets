@@ -1,0 +1,17 @@
+---
+title: "Listing Drive files"
+output: github_document
+---
+
+Fodder for a `gd_ls()` function.
+
+```{r}
+devtools::load_all("..")
+gs_auth(file.path("..", "tests", "testthat", "googlesheets_token.rds"))
+drfiles <- httr::GET(.state$gd_base_url_files_v3, get_google_token())
+httr::status_code(drfiles)
+drfiles <- content_as_json_UTF8(drfiles)
+str(drfiles)
+head(drfiles$files)
+```
+
