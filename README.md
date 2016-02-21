@@ -105,7 +105,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-19 07:34:35 GMT
+#>   Date of googlesheets registration: 2016-02-21 21:03:10 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -121,6 +121,12 @@ gap
 #> 
 #> Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
 #> Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
+```
+
+Visit a registered `googlesheet` in the browser:
+
+``` r
+gap %>% gs_browse()
 ```
 
 Read all the data in a worksheet:
@@ -232,6 +238,7 @@ Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercon
 | gs\_key()                | Register a Sheet by key                                   |
 | gs\_url()                | Register a Sheet by URL                                   |
 | gs\_gs()                 | Re-register a `googlesheet`                               |
+| gs\_browse()             | Visit a registered `googlesheet` in the browser           |
 | gs\_read()               | Read data and let `googlesheets` figure out how           |
 | gs\_read\_csv()          | Read explicitly via the fast exportcsv link               |
 | gs\_read\_listfeed()     | Read explicitly via the list feed                         |

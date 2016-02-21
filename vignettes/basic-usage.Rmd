@@ -101,6 +101,16 @@ The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` r
 
 *We export a utility function, `extract_key_from_url()`, to help you get and store the key from a browser URL. Registering via browser URL is fine, but registering by key is probably a better idea in the long-run.*
 
+Use `gs_browse()` to visit the Sheet corresponding to a registered `googlesheet`
+in your browser. Optionally, you can specify the worksheet of interest.
+
+```{r eval = FALSE}
+gap %>% gs_browse()
+gap %>% gs_browse(ws = 2)
+gap %>%
+gs_browse(ws = "Europe")
+```
+
 ### Consume data
 
 #### Ignorance is bliss

@@ -69,6 +69,8 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL,
   ss$email <- rc %>%
     xml2::xml_find_one("./feed:author/feed:email", ns) %>% xml2::xml_text()
 
+  ## FIXME: this is way of setting perm is clearly incorrect; redo this based on
+  ## permissions or capabilities
   ss$perm <- ss$ws_feed %>%
     stringr::str_detect("values") %>%
     ifelse("r", "rw")
@@ -128,6 +130,10 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL,
       xml2::xml_attr("href")
   }) %>%
     dplyr::as_data_frame()
+
+  ws_info$gid <- ws_links$exportcsv %>%
+    stringr::str_extract("gid=[0-9]+") %>%
+    stringr::str_extract("[0-9]+")
 
   ss$ws <- dplyr::bind_cols(ws_info, ws_links)
 

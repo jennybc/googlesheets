@@ -55,6 +55,12 @@ gap <- gap %>% gs_gs()
 ## ----register-sheet-cran-only, include = FALSE, eval = !NOT_CRAN---------
 #  gap <- gs_gap_key() %>% gs_key(lookup = FALSE, visibility = "public")
 
+## ----eval = FALSE--------------------------------------------------------
+#  gap %>% gs_browse()
+#  gap %>% gs_browse(ws = 2)
+#  gap %>%
+#  gs_browse(ws = "Europe")
+
 ## ------------------------------------------------------------------------
 oceania <- gap %>% gs_read(ws = "Oceania")
 oceania

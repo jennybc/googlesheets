@@ -15,6 +15,8 @@ Issues or Sheets that have presented unexpected problems (some of which are prob
 
 *I'll be back ....*
 
+*TO DO: remember to include `visibility` (public vs private) from Sheet feeds in this exercise.*
+
 ``` r
 ##https://docs.google.com/spreadsheets/d/137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4/pubhtml
 library(googlesheets)
@@ -123,7 +125,7 @@ jsonlite::toJSON(meta, pretty = TRUE, auto_unbox = TRUE)
     ##   "version": "1252",
     ##   "webViewLink": "https://docs.google.com/spreadsheets/d/137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4/edit?usp=drivesdk",
     ##   "iconLink": "https://ssl.gstatic.com/docs/doclist/images/icon_11_spreadsheet_list.png",
-    ##   "thumbnailLink": "https://docs.google.com/feeds/vt?gd=true&id=137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4&v=0&s=AMedNnoAAAAAVsoKCbZHryuOczenVPnqo6d-M37LCUD_&sz=s220",
+    ##   "thumbnailLink": "https://docs.google.com/feeds/vt?gd=true&id=137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4&v=0&s=AMedNnoAAAAAVsoPRohv4w39eLVZSbPlqEXiqXsm0DN-&sz=s220",
     ##   "viewedByMe": true,
     ##   "viewedByMeTime": "2016-02-21T05:46:48.748Z",
     ##   "createdTime": "2016-02-20T00:06:43.577Z",

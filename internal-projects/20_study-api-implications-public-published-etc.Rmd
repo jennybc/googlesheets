@@ -17,6 +17,8 @@ Issues or Sheets that have presented unexpected problems (some of which are prob
     
 *I'll be back ....*
 
+*TO DO: remember to include `visibility` (public vs private) from Sheet feeds in this exercise.*
+
 ```{r}
 ##https://docs.google.com/spreadsheets/d/137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4/pubhtml
 library(googlesheets)

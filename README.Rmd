@@ -123,6 +123,12 @@ Here's a registered `googlesheet` object:
 gap
 ```
 
+Visit a registered `googlesheet` in the browser:
+
+```{r eval = FALSE}
+gap %>% gs_browse()
+```
+
 Read all the data in a worksheet:
 
 ```{r}
@@ -193,6 +199,7 @@ gs_title(), Register a Sheet by title
 gs_key(), Register a Sheet by key
 gs_url(), Register a Sheet by URL
 gs_gs(), Re-register a `googlesheet`
+gs_browse(), Visit a registered `googlesheet` in the browser
 gs_read(), Read data and let `googlesheets` figure out how
 gs_read_csv(), Read explicitly via the fast exportcsv link
 gs_read_listfeed(), Read explicitly via the list feed
