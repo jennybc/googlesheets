@@ -20,7 +20,7 @@
 #' @template ss
 #' @template ws
 #' @param ... Further arguments to be passed to the csv parser. This is
-#'   \code{\link[readr]{read_csv}}.
+#'   \code{\link[readr:read_delim]{readr::read_csv}}.
 #' @template verbose
 #'
 #' @family data consumption functions

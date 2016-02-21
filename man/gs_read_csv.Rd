@@ -14,7 +14,7 @@ object}
 respectively, of the worksheet}
 
 \item{...}{Further arguments to be passed to the csv parser. This is
-\code{\link[readr]{read_csv}}.}
+\code{\link[readr:read_delim]{readr::read_csv}}.}
 
 \item{verbose}{logical; do you want informative messages?}
 }
