@@ -121,3 +121,17 @@ test_that("query params work on the list feed", {
   expect_equal_to_reference(oceania_fancy,
                             "for_reference/gap_oceania_listfeed_query.rds")
 })
+
+test_that("readr parsing params are handled on the list feed", {
+
+  expect_message(oceania_tweaked <- ss %>%
+                   gs_read_listfeed(ws = "Oceania",
+                                    col_names = paste0("VAR", 1:6),
+                                    col_types = "cccnnn",
+                                    n_max = 5),
+                 "ignored")
+  expect_identical(names(oceania_tweaked), paste0("VAR", 1:6))
+  expect_equivalent(vapply(oceania_tweaked, class, character(1)),
+                    rep(c("character", "numeric"), each = 3))
+
+})

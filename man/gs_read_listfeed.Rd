@@ -5,7 +5,7 @@
 \title{Read data via the "list feed"}
 \usage{
 gs_read_listfeed(ss, ws = 1, reverse = NULL, orderby = NULL, sq = NULL,
-  verbose = TRUE)
+  ..., verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
@@ -23,6 +23,9 @@ actual API call.}
 \item{sq}{character, optional. Provides a structured query for row filtering
 in the actual API call.}
 
+\item{...}{Further arguments to control parsing, most of which are passed to
+\code{\link[readr:type_convert]{readr::type_convert}}.}
+
 \item{verbose}{logical; do you want informative messages?}
 }
 \value{
@@ -36,11 +39,29 @@ to hold variable or column names. The related function,
 it is generally faster and more resilient to, e.g. empty header cells or
 rows, so use it if you can. However, you may need to use this function if you
 are dealing with an "old" Google Sheet, which is beyond the reach of
-\code{\link{gs_read_csv}}. Consult the Google Sheets API documentation for
-more details about
+\code{\link{gs_read_csv}}. The list feed also has some ability to sort and
+filter rows via the API (more below). Consult the Google Sheets API
+documentation for more details about
 \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_list-based_feeds}{the
 list feed}.
 }
+\section{Data ingest philosophy}{
+
+
+  \code{\link{gs_read_csv}} is the "reference implementation" for ingesting
+  data from a Google Sheet. This, in turn, implies that
+  \code{\link[readr:read_delim]{readr::read_csv}} is the true reference. Use
+  the \code{...} argument to control parsing behavior.
+  \code{gs_read_listfeed} cannot actually pass the data through
+  \code{\link[readr:read_delim]{readr::read_csv}}, but instead uses
+  \code{\link[readr:type_convert]{readr::type_convert}}. Therefore, arguments
+  passed via \code{...} are used in different ways. Some are used directly in
+  \code{gs_read_listfeed} (example: \code{col_names}). Some are passed
+  through to \code{\link[readr:type_convert]{readr::type_convert}} (example:
+  \code{col_types}). Some are ignored because they are incompatible with the
+  list feed (example: \code{comment}).
+}
+
 \section{Column names}{
 
 
@@ -81,12 +102,21 @@ gap_ss <- gs_gap() # register the Gapminder example sheet
 oceania_lf <- gs_read_listfeed(gap_ss, ws = "Oceania")
 head(oceania_lf, 3)
 
+## do row ordering and filtering in the API call
 oceania_fancy <-
   gs_read_listfeed(gap_ss,
                    ws = "Oceania",
                    reverse = TRUE, orderby = "gdppercap",
                    sq = "lifeexp > 79 or year < 1960")
 oceania_fancy
+
+## modify data ingest in style of readr::read_csv, readr::type_convert
+oceania_tweaked <-
+  gs_read_listfeed(gap_ss,
+                   ws = "Oceania",
+                   col_names = paste0("VAR", 1:6),
+                   col_types = "cccnnn")
+oceania_tweaked
 }
 
 }

@@ -48,7 +48,7 @@ my_sheets %>% glimpse()
 #> $ author      (chr) "m.hawksey", "woo.kara", "gspreadr", "rpackagetest...
 #> $ perm        (chr) "r", "r", "rw", "r", "rw", "rw", "rw", "rw", "rw",...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2016-02-21 16:57:41, 2016-02-20 23:24:25, 2016-02...
+#> $ updated     (time) 2016-02-22 07:58:57, 2016-02-20 23:24:25, 2016-02...
 #> $ sheet_key   (chr) "14mAbIi1UyZtJTDuIa7iMb80xYtXbxCr-TGlvFbPgi3E", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
 #> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/14mAbIi1Uy...
@@ -83,7 +83,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-22 04:13:34 GMT
+#>   Date of googlesheets registration: 2016-02-22 08:15:55 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -265,7 +265,7 @@ If `gs_read()` doesn't do what you need, then keep reading for the underlying fu
 There are three ways to consume data from a worksheet within a Google spreadsheet. The order goes from fastest-but-more-limited to slowest-but-most-flexible:
 
   * `gs_read_csv()`: Don't let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the "exportcsv" link. For cases where `gs_read_csv()` and `gs_read_listfeed()` both work, we see that `gs_read_csv()` is around __50 times faster__. Use this when your data occupies a nice rectangle in the sheet and you're willing to consume all of it. You will get a `tbl_df` back, which is basically just a `data.frame`. In fact, you might want to use `gs_read_csv()` in other, less tidy scenarios and do further munging in R.
-  * `gs_read_listfeed()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `gs_read_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data, which we plan to support (#17).
+  * `gs_read_listfeed()`: Gets data via the ["list feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds), which consumes data row-by-row. Like `gs_read_csv()`, this is appropriate when your data occupies a nice rectangle. You will again get a `tbl_df` back, but your variable names may have been mangled (by Google, not us!). Specifically, variable names will be forcefully lowercased and all non-alpha-numeric characters will be removed. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data.
   * `gs_read_cellfeed()`: Get data via the ["cell feed"](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds), which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet. It is invoked by `gs_read()` whenever the `range =` argument is used. It works great for modest amounts of data but can be rather slow otherwise. `gs_read_cellfeed()` returns a `tbl_df` with __one row per cell__. You can target specific cells via the `range` argument. See below for demos of `gs_reshape_cellfeed()` and `gs_simplify_cellfeed()` which help with post-processing.
 
 
@@ -369,9 +369,9 @@ readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #> No encoding supplied: defaulting to UTF-8.
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.033            0.144            1.247
-#> sys.self         0.003            0.016            0.046
-#> elapsed          0.868            0.870            2.560
+#> user.self        0.032            0.138            1.258
+#> sys.self         0.003            0.014            0.055
+#> elapsed          0.979            1.175            2.545
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -579,8 +579,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-22 04:13:55 GMT
-#>     Date of last spreadsheet update: 2016-02-22 04:13:53 GMT
+#>   Date of googlesheets registration: 2016-02-22 08:16:17 GMT
+#>     Date of last spreadsheet update: 2016-02-22 08:16:16 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -589,8 +589,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1TLLtQ2Byy5rlRiV0zGQya9ncN-cm53fUE_KpMSjM-lo
-#> Browser URL: https://docs.google.com/spreadsheets/d/1TLLtQ2Byy5rlRiV0zGQya9ncN-cm53fUE_KpMSjM-lo/
+#> Key: 17PKCAr6Z0njAZnl7-umfogSAbNcOQwVTNlbalJprmqw
+#> Browser URL: https://docs.google.com/spreadsheets/d/17PKCAr6Z0njAZnl7-umfogSAbNcOQwVTNlbalJprmqw/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()` and rename one with `gs_rename()`.
@@ -714,8 +714,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-22 04:14:25 GMT
-#>     Date of last spreadsheet update: 2016-02-22 04:14:23 GMT
+#>   Date of googlesheets registration: 2016-02-22 08:16:47 GMT
+#>     Date of last spreadsheet update: 2016-02-22 08:16:45 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -724,8 +724,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 1eGWzlYLZNVZ5tGi0AE8IgUBrgVNsuJNteCmVziHgxPw
-#> Browser URL: https://docs.google.com/spreadsheets/d/1eGWzlYLZNVZ5tGi0AE8IgUBrgVNsuJNteCmVziHgxPw/
+#> Key: 146yUHauPAyRy-Wo-UWFFYixtf7vUVp6P48Yw1IgMv5Y
+#> Browser URL: https://docs.google.com/spreadsheets/d/146yUHauPAyRy-Wo-UWFFYixtf7vUVp6P48Yw1IgMv5Y/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled "iris"
 #> No encoding supplied: defaulting to UTF-8.
@@ -747,8 +747,6 @@ Now we'll upload a multi-sheet Excel workbook. Slowly.
 
 ```r
 gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
-#> Warning: closing unused connection 5 (/Users/jenny/rrr/googlesheets/
-#> vignettes/iris.csv)
 #> File uploaded to Google Drive:
 #> /Users/jenny/rrr/googlesheets/inst/mini-gap.xlsx
 #> As the Google Sheet named:
@@ -756,8 +754,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-22 04:14:30 GMT
-#>     Date of last spreadsheet update: 2016-02-22 04:14:28 GMT
+#>   Date of googlesheets registration: 2016-02-22 08:16:52 GMT
+#>     Date of last spreadsheet update: 2016-02-22 08:16:49 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -770,8 +768,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 18OT0LRLxB2ufP2dvG2UPteAYDyAGHdQiLSg-OYK7cXQ
-#> Browser URL: https://docs.google.com/spreadsheets/d/18OT0LRLxB2ufP2dvG2UPteAYDyAGHdQiLSg-OYK7cXQ/
+#> Key: 1HyGmEDNOXfkt_ksMDBly_VgwOBtqGJECfgD7hwJEkD8
+#> Browser URL: https://docs.google.com/spreadsheets/d/1HyGmEDNOXfkt_ksMDBly_VgwOBtqGJECfgD7hwJEkD8/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled "Asia"
 #> No encoding supplied: defaulting to UTF-8.
@@ -811,6 +809,8 @@ You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spr
 ```r
 gs_title("Gapminder") %>%
   gs_download(ws = "Africa", to = "gapminder-africa.csv")
+#> Warning: closing unused connection 6 (/Users/jenny/rrr/googlesheets/inst/
+#> mini-gap.xlsx)
 #> Sheet successfully identified: "Gapminder"
 #> Accessing worksheet titled "Africa"
 #> Sheet successfully downloaded:
@@ -866,9 +866,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-02-22 04:13:30 GMT
+#>                  date: 2016-02-22 08:15:53 GMT
 #>          access token: valid
-#>  peek at access token: ya29....6Fuag
+#>  peek at access token: ya29....ilxVw
 #> peek at refresh token: 1/LxW...4wRNU
 user_session_info
 #> $displayName
@@ -878,13 +878,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2016-02-22 04:13:30 GMT"
+#> [1] "2016-02-22 08:15:53 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....6Fuag"
+#> [1] "ya29....ilxVw"
 #> 
 #> $peek_ref
 #> [1] "1/LxW...4wRNU"
