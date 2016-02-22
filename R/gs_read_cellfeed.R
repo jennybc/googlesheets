@@ -2,7 +2,10 @@
 #'
 #' This function consumes data via the "cell feed", which, as the name suggests,
 #' retrieves data cell by cell. Note that the output is a \code{tbl_df} or
-#' \code{data.frame} with \strong{one row per cell}.
+#' \code{data.frame} with \strong{one row per cell}. Consult the Google Sheets API documentation for
+#' more details about
+#' \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_cell-based_feeds}{the
+#' cell feed}.
 #'
 #' Use the \code{range} argument to specify which cells you want to read. See
 #' the examples and the help file for the \link[=cell-specification]{cell
