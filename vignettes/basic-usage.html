@@ -145,7 +145,7 @@ my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 gap
 <span class="co">#&gt;                   Spreadsheet title: Gapminder</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-02-21 21:10:53 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-02-22 04:13:34 GMT</span>
 <span class="co">#&gt;     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
@@ -194,8 +194,7 @@ gap &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class
 <p>Use <code>gs_browse()</code> to visit the Sheet corresponding to a registered <code>googlesheet</code> in your browser. Optionally, you can specify the worksheet of interest.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap %&gt;%<span class="st"> </span><span class="kw">gs_browse</span>()
 gap %&gt;%<span class="st"> </span><span class="kw">gs_browse</span>(<span class="dt">ws =</span> <span class="dv">2</span>)
-gap %&gt;%
-<span class="kw">gs_browse</span>(<span class="dt">ws =</span> <span class="st">&quot;Europe&quot;</span>)</code></pre></div>
+gap %&gt;%<span class="st"> </span><span class="kw">gs_browse</span>(<span class="dt">ws =</span> <span class="st">&quot;Europe&quot;</span>)</code></pre></div>
 </div>
 <div id="consume-data" class="section level3">
 <h3>Consume data</h3>
@@ -404,9 +403,9 @@ readfuns &lt;-<span class="st"> </span><span class="kw">sapply</span>(readfuns, 
 <span class="kw">sapply</span>(readfuns, jfun)
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
 <span class="co">#&gt;            gs_read_csv gs_read_listfeed gs_read_cellfeed</span>
-<span class="co">#&gt; user.self        0.033            0.124            1.234</span>
-<span class="co">#&gt; sys.self         0.003            0.015            0.057</span>
-<span class="co">#&gt; elapsed          0.494            1.278            2.592</span>
+<span class="co">#&gt; user.self        0.033            0.144            1.247</span>
+<span class="co">#&gt; sys.self         0.003            0.016            0.046</span>
+<span class="co">#&gt; elapsed          0.868            0.870            2.560</span>
 <span class="co">#&gt; user.child       0.000            0.000            0.000</span>
 <span class="co">#&gt; sys.child        0.000            0.000            0.000</span></code></pre></div>
 </div>
@@ -601,8 +600,8 @@ gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</s
 foo
 <span class="co">#&gt;                   Spreadsheet title: foo</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-02-21 21:11:13 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2016-02-21 21:11:12 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-02-22 04:13:55 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-02-22 04:13:53 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -611,8 +610,8 @@ foo
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; Sheet1: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1V-27MTYcjvEelQgUU-NyE7Gf7_3PTfHik7IOhVjR6k0</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1V-27MTYcjvEelQgUU-NyE7Gf7_3PTfHik7IOhVjR6k0/</span></code></pre></div>
+<span class="co">#&gt; Key: 1TLLtQ2Byy5rlRiV0zGQya9ncN-cm53fUE_KpMSjM-lo</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1TLLtQ2Byy5rlRiV0zGQya9ncN-cm53fUE_KpMSjM-lo/</span></code></pre></div>
 <p>By default, there will be an empty worksheet called “Sheet1”, but you can control it’s title, extent, and initial data with additional arguments to <code>gs_new()</code> (see <code>gs_edit_cells()</code> in the next section). You can also add, rename, and delete worksheets within an existing sheet via <code>gs_ws_new()</code>, <code>gs_ws_rename()</code>, and <code>gs_ws_delete()</code>. Copy an entire spreadsheet with <code>gs_copy()</code> and rename one with <code>gs_rename()</code>.</p>
 </div>
 <div id="edit-cells" class="section level3">
@@ -718,8 +717,8 @@ iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span cl
 iris_ss
 <span class="co">#&gt;                   Spreadsheet title: iris</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-02-21 21:11:40 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2016-02-21 21:11:39 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-02-22 04:14:25 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-02-22 04:14:23 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -728,8 +727,8 @@ iris_ss
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; iris: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1E4l71V2Bg3M8-TJZK8ivc2coimbfc4FrTbHw2V3_mKM</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1E4l71V2Bg3M8-TJZK8ivc2coimbfc4FrTbHw2V3_mKM/</span>
+<span class="co">#&gt; Key: 1eGWzlYLZNVZ5tGi0AE8IgUBrgVNsuJNteCmVziHgxPw</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1eGWzlYLZNVZ5tGi0AE8IgUBrgVNsuJNteCmVziHgxPw/</span>
 iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; Accessing worksheet titled &quot;iris&quot;</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
@@ -755,8 +754,8 @@ iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 gap_xlsx
 <span class="co">#&gt;                   Spreadsheet title: mini-gap</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-02-21 21:11:44 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2016-02-21 21:11:42 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-02-22 04:14:30 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-02-22 04:14:28 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -769,8 +768,8 @@ gap_xlsx
 <span class="co">#&gt; Europe: 1000 x 26</span>
 <span class="co">#&gt; Oceania: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1x-t0zuszkJsz2hwtrw_nS4ZwQgnuEfTwf1cCBh78oRk</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1x-t0zuszkJsz2hwtrw_nS4ZwQgnuEfTwf1cCBh78oRk/</span>
+<span class="co">#&gt; Key: 18OT0LRLxB2ufP2dvG2UPteAYDyAGHdQiLSg-OYK7cXQ</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/18OT0LRLxB2ufP2dvG2UPteAYDyAGHdQiLSg-OYK7cXQ/</span>
 gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled &quot;Asia&quot;</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
@@ -835,9 +834,9 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">user_session_info &lt;-<span class="st"> </span><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2016-02-21 21:10:50 GMT</span>
+<span class="co">#&gt;                  date: 2016-02-22 04:13:30 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....Wid1w</span>
+<span class="co">#&gt;  peek at access token: ya29....6Fuag</span>
 <span class="co">#&gt; peek at refresh token: 1/LxW...4wRNU</span>
 user_session_info
 <span class="co">#&gt; $displayName</span>
@@ -847,13 +846,13 @@ user_session_info
 <span class="co">#&gt; [1] &quot;gspreadr@gmail.com&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $date</span>
-<span class="co">#&gt; [1] &quot;2016-02-21 21:10:50 GMT&quot;</span>
+<span class="co">#&gt; [1] &quot;2016-02-22 04:13:30 GMT&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $token_valid</span>
 <span class="co">#&gt; [1] TRUE</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_acc</span>
-<span class="co">#&gt; [1] &quot;ya29....Wid1w&quot;</span>
+<span class="co">#&gt; [1] &quot;ya29....6Fuag&quot;</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $peek_ref</span>
 <span class="co">#&gt; [1] &quot;1/LxW...4wRNU&quot;</span></code></pre></div>

@@ -58,8 +58,7 @@ gap <- gap %>% gs_gs()
 ## ----eval = FALSE--------------------------------------------------------
 #  gap %>% gs_browse()
 #  gap %>% gs_browse(ws = 2)
-#  gap %>%
-#  gs_browse(ws = "Europe")
+#  gap %>% gs_browse(ws = "Europe")
 
 ## ------------------------------------------------------------------------
 oceania <- gap %>% gs_read(ws = "Oceania")
