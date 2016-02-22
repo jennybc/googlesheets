@@ -70,7 +70,9 @@ gs_reshape_cellfeed <- function(x, col_names = TRUE, verbose = TRUE) {
 
   x_augmented %>%
     dplyr::select_(~ row, ~ col, ~ cell_text) %>%
-    tidyr::spread_("col", "cell_text", convert = TRUE) %>%
+    ## do not set 'convert = TRUE' here!
+    ## leave as character so readr::type_convert below handles it all
+    tidyr::spread_("col", "cell_text") %>%
     dplyr::select_(~ -row) %>%
     stats::setNames(var_names) %>%
     readr::type_convert() %>%

@@ -15,4 +15,4 @@
 * Newly exported function `gs_deauth()` allows you to suspend the current token and, optionally, disable the `.httr-oauth` token cache file by renaming it to `.httr-oauth-SUSPENDED`.
 * `gs_rename()` is a new function to rename an existing Sheet (#145).
 * `gs_read_listfeed()` now supports parameters to manipulate data in the API call itself: `reverse` inverts row order, `orderby` selects a column to sort on, `sq` accepts a structured query to filter rows. (#17)
- * `gs_browse()` is a new function to visit a Google Sheet in the browser.
+* `gs_browse()` is a new function to visit a Google Sheet in the browser.
