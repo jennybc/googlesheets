@@ -34,12 +34,8 @@ as.googlesheet <-
 as.googlesheet.ws_feed <- function(x, ssf = NULL,
                                    lookup, verbose = TRUE, ...) {
 
-  if (grepl("public", x)) {
-    req <- httr::GET(x)
-  } else {
-    req <- httr::GET(x, get_google_token())
-  }
-  httr::stop_for_status(req)
+  req <- httr::GET(x, omit_token_if(grepl("public", x))) %>%
+    httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")

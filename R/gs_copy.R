@@ -37,9 +37,9 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
 
   the_url <- file.path(.state$gd_base_url_files_v2, key, "copy")
   the_body <- list("title" = to)
-  req <- httr::POST(the_url, get_google_token(),
-                    encode = "json", body = the_body)
-  httr::stop_for_status(req)
+  req <-
+    httr::POST(the_url, google_token(), encode = "json", body = the_body) %>%
+    httr::stop_for_status()
   rc <- content_as_json_UTF8(req)
 
   new_ss <- try(gs_key(rc$id, verbose = FALSE), silent = TRUE)

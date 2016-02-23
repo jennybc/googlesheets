@@ -142,15 +142,22 @@ gs_auth <- function(token = NULL,
 #'
 #' If token is not already available, call \code{\link{gs_auth}} to either load
 #' from cache or initiate OAuth2.0 flow. Return the token -- not "bare" but,
-#' rather, prepared for inclusion in downstream requests.
+#' rather, prepared for inclusion in downstream requests. Use \code{gd_token} or
+#' \code{gs_token} to reveal the actual access token, suitable for use with
+#' \code{curl}.
 #'
 #' @return a \code{request} object (an S3 class provided by \code{httr})
 #'
 #' @keywords internal
-get_google_token <- function(verbose = FALSE) {
+google_token <- function(verbose = FALSE) {
   if (!token_available(verbose = verbose)) gs_auth(verbose = verbose)
   httr::config(token = .state$token)
 }
+
+#' @rdname google_token
+include_token_if <- function(cond) if(cond) google_token() else NULL
+#' @rdname google_token
+omit_token_if <- function(cond) if(cond) NULL else google_token()
 
 #' Check token availability
 #'

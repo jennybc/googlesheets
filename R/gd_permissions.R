@@ -32,8 +32,8 @@
 gs_perm_ls <- function(ss, filter = NULL) {
 
   url <- file.path(.state$gd_base_url_files_v2, ss$sheet_key, "permissions")
-  req <- httr::GET(url, get_google_token())
-  httr::stop_for_status(req)
+  req <- httr::GET(url, google_token()) %>%
+    httr::stop_for_status()
   req <- content_as_json_UTF8(req)
 
   perm_tbl <- req$items %>%
@@ -110,7 +110,7 @@ gs_perm_add <- function(ss, email = NULL,
     comm <- NULL
   }
 
-  req <- httr::POST(the_url, get_google_token(), encode = "json",
+  req <- httr::POST(the_url, google_token(), encode = "json",
                     query = query,
                     body = list("value" = email,
                                 "type" = type,
@@ -189,11 +189,11 @@ gs_perm_edit <- function(ss, email = NULL, perm_id = NULL,
   }
 
   # updates a permission
-  req <- httr::PUT(perm$selfLink, get_google_token(),
+  req <- httr::PUT(perm$selfLink, google_token(),
                    body = list("role" = role,
                                "additionalRoles" = comm),
-                   encode = "json")
-  httr::stop_for_status(req)
+                   encode = "json") %>%
+    httr::stop_for_status()
 
   if(verbose) {
     if(is.na(perm$email) && perm$type == "anyone") {
@@ -242,8 +242,8 @@ gs_perm_delete <- function(ss, email = NULL, perm_id = NULL, verbose = TRUE) {
     perm <- gs_perm_ls(ss, email)
   }
 
-  req <- httr::DELETE(perm$selfLink, get_google_token())
-  httr::stop_for_status(req)
+  req <- httr::DELETE(perm$selfLink, google_token()) %>%
+    httr::stop_for_status()
 
   status <- !(perm$perm_id %in% gs_perm_ls(ss)$perm_id)
 

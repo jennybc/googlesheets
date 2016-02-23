@@ -64,11 +64,11 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   req <- httr::POST(
     ss$ws_feed,
-    config = c(get_google_token(),
-               httr::add_headers("Content-Type" = "application/atom+xml")),
+    google_token(),
+    httr::add_headers("Content-Type" = "application/atom+xml"),
     body = the_body
-  )
-  httr::stop_for_status(req)
+  ) %>%
+    httr::stop_for_status()
 
   ss <- req$url %>%
     extract_key_from_url() %>%
@@ -138,8 +138,8 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
   this_ws <- ss %>% gs_ws(ws)
 
-  req <- httr::DELETE(this_ws$ws_id, get_google_token())
-  httr::stop_for_status(req)
+  req <- httr::DELETE(this_ws$ws_id, google_token()) %>%
+    httr::stop_for_status()
 
   ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
@@ -314,8 +314,8 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
-  req <- httr::GET(this_ws$ws_id, get_google_token())
-  httr::stop_for_status(req)
+  req <- httr::GET(this_ws$ws_id, google_token()) %>%
+    httr::stop_for_status()
   stop_for_content_type(req, expected = "application/atom+xml; charset=UTF-8")
   ## yes, that's right
   ## the content MUST be xml but I'm about to parse it as text
@@ -355,10 +355,10 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   req <-
     httr::PUT(this_ws$edit,
-              get_google_token(),
+              google_token(),
               httr::add_headers("Content-Type" = "application/atom+xml"),
-              body = the_body)
-  httr::stop_for_status(req)
+              body = the_body) %>%
+    httr::stop_for_status()
 
   req$url %>%
     extract_key_from_url() %>%

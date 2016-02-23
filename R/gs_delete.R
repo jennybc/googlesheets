@@ -39,8 +39,8 @@ gs_delete <- function(ss, verbose = TRUE) {
   key <- gs_get_alt_key(ss)
   the_url <- file.path(.state$gd_base_url_files_v2, key)
 
-  req <- httr::DELETE(the_url, get_google_token())
-  httr::stop_for_status(req)
+  req <- httr::DELETE(the_url, google_token()) %>%
+    httr::stop_for_status()
   status <- httr::status_code(req)
 
   if (verbose) {

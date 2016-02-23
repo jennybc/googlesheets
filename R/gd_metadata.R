@@ -19,19 +19,17 @@ gd_metadata <- function(id, auth = TRUE) {
               "writersCanShare")
   fields <- paste(fields, collapse = ",")
   the_url <- file.path(.state$gd_base_url_files_v3, id)
-  if (auth) {
-    req <- httr::GET(the_url, get_google_token(), query = list(fields = fields))
-  } else {
-    req <- httr::GET(the_url, query = list(fields = fields))
-  }
+  the_url <- httr::modify_url(the_url, query = list(fields = fields))
+  req <- httr::GET(the_url, include_token_if(auth)) %>%
+    httr::stop_for_status()
   httr::content(req)
 }
 
 gd_rename <- function(id, to) {
   stopifnot(is.character(to), length(to) == 1L)
   req <- httr::PATCH(file.path(.state$gd_base_url_files_v3, id),
-                     get_google_token(), encode = "json",
-                     body = list(name = to))
-  httr::stop_for_status(req)
+                     google_token(), encode = "json",
+                     body = list(name = to)) %>%
+    httr::stop_for_status()
   content_as_json_UTF8(req)
 }

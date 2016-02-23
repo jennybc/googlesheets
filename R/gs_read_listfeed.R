@@ -131,12 +131,8 @@ gs_read_listfeed <- function(ss, ws = 1,
   if (!is.null(reverse)) reverse <- tolower(as.character(reverse))
   the_query <- list(reverse = reverse, orderby = orderby, sq = sq)
   the_url <- httr::modify_url(this_ws$listfeed, query = the_query)
-  if (grepl("public", the_url)) {
-    req <- httr::GET(the_url)
-  } else {
-    req <- httr::GET(the_url, get_google_token())
-  }
-  httr::stop_for_status(req)
+  req <- httr::GET(the_url, omit_token_if(grepl("public", the_url))) %>%
+    httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")

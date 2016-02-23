@@ -66,8 +66,8 @@ gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
 
   # only calling spreadsheets feed from here, so hardwiring url
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
-  req <- httr::GET(the_url, get_google_token())
-  httr::stop_for_status(req)
+  req <- httr::GET(the_url, google_token()) %>%
+    httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")

@@ -141,8 +141,7 @@ test_that("We can add a row", {
 test_that("Row input is given the proper length", {
 
   ws <- "shipwrecks"
-  expect_message(ss <- ss %>% gs_add_row(ws = ws, input = "Vasa"),
-                 "too short")
+  expect_message(ss <- ss %>% gs_add_row(ws = ws, input = "Vasa"), "too short")
   expect_is(ss, "googlesheet")
   ## integer vs double date problem
   ## https://github.com/hadley/readr/issues/357

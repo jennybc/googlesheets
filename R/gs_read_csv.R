@@ -51,12 +51,8 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
          call. = FALSE)
   }
 
-  if (ss$is_public) {
-    req <- httr::GET(this_ws$exportcsv)
-  } else {
-    req <- httr::GET(this_ws$exportcsv, get_google_token())
-  }
-  httr::stop_for_status(req)
+  req <- httr::GET(this_ws$exportcsv, omit_token_if(ss$is_public)) %>%
+    httr::stop_for_status()
   stop_for_content_type(req, "text/csv")
 
   if (is.null(req$content) || length(req$content) == 0L) {

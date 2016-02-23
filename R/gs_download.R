@@ -53,8 +53,8 @@ gs_download <-
     key <- gs_get_alt_key(from)
 
     url <- file.path(.state$gd_base_url_files_v2, key)
-    req <- httr::GET(url, get_google_token())
-    httr::stop_for_status(req)
+    req <- httr::GET(url, google_token()) %>%
+      httr::stop_for_status()
     req <- content_as_json_UTF8(req)
 
     export_links <- c(
@@ -82,13 +82,9 @@ gs_download <-
     stop(mess)
   }
 
-  if (interactive()) {
-    httr::GET(link, get_google_token(), httr::progress(),
-              httr::write_disk(to, overwrite = overwrite))
-  } else {
-    httr::GET(link, get_google_token(),
-              httr::write_disk(to, overwrite = overwrite))
-  }
+  httr::GET(link, google_token(),
+            if (interactive()) httr::progress() else NULL,
+            httr::write_disk(to, overwrite = overwrite))
 
   if (file.exists(to)) {
 

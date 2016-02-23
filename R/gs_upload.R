@@ -42,9 +42,9 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
   ## upload metadata --> get a fileId (Drive-speak) or key (Sheets-speak)
   the_body <- list(title = sheet_title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
-  req <- httr::POST(.state$gd_base_url_files_v2, get_google_token(),
-                    body = the_body, encode = "json")
-  httr::stop_for_status(req)
+  req <- httr::POST(.state$gd_base_url_files_v2, google_token(),
+                    body = the_body, encode = "json") %>%
+    httr::stop_for_status()
   rc <- content_as_json_UTF8(req)
   new_key <- rc$id
 
@@ -53,8 +53,8 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
   the_url <-
     httr::modify_url(the_url,
                      query = list(uploadType = "media", convert = TRUE))
-  req <- httr::PUT(the_url, get_google_token(), body = httr::upload_file(file))
-  httr::stop_for_status(req)
+  req <- httr::PUT(the_url, google_token(), body = httr::upload_file(file)) %>%
+    httr::stop_for_status()
   rc <- content_as_json_UTF8(req)
 
   ss_df <- gs_ls()

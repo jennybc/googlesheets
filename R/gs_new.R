@@ -66,9 +66,9 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
 
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
-  req <- httr::POST(.state$gd_base_url_files_v2, get_google_token(),
-                    encode = "json", body = the_body)
-  httr::stop_for_status(req)
+  req <- httr::POST(.state$gd_base_url_files_v2, google_token(),
+                    encode = "json", body = the_body) %>%
+    httr::stop_for_status()
   rc <- content_as_json_UTF8(req)
 
   ss <- rc$id %>%

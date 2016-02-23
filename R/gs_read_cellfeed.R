@@ -74,12 +74,10 @@ gs_read_cellfeed <- function(
   }
 
   the_url <- this_ws$cellsfeed
-  if (grepl("public", the_url)) {
-    req <- httr::GET(the_url, query = query)
-  } else {
-    req <- httr::GET(the_url, get_google_token(), query = query)
-  }
-  httr::stop_for_status(req)
+  req <- httr::GET(the_url,
+                   omit_token_if(grepl("public", the_url)),
+                   query = query) %>%
+    httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
