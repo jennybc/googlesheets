@@ -71,16 +71,13 @@ gd_user <- function(verbose = TRUE) {
                                         start = -5), sep = "..."))
 
     if(verbose) {
-      sprintf("          displayName: %s",  ret$displayName) %>% message()
-      sprintf("         emailAddress: %s", ret$emailAddress) %>% message()
-      sprintf("                 date: %s",
-              format(ret$date, usetz = TRUE)) %>% message()
-      sprintf("         access token: %s",
-              if(token_valid) "valid" else "expired, will auto-refresh") %>%
-        message()
-      sprintf(" peek at access token: %s", ret$peek_acc) %>% message()
-      sprintf("peek at refresh token: %s", ret$peek_ref) %>% message()
-
+      mpf("          displayName: %s",  ret$displayName)
+      mpf("         emailAddress: %s", ret$emailAddress)
+      mpf("                 date: %s", format(ret$date, usetz = TRUE))
+      mpf("         access token: %s",
+          if(token_valid) "valid" else "expired, will auto-refresh")
+      mpf(" peek at access token: %s", ret$peek_acc)
+      mpf("peek at refresh token: %s", ret$peek_ref)
     }
 
   } else {

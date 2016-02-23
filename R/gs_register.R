@@ -238,8 +238,7 @@ gs_lookup <- function(x, lvar = "sheet_title", verbose = TRUE) {
   }
 
   if(verbose) {
-    sprintf("Sheet successfully identified: \"%s\"", ssf$sheet_title[i]) %>%
-      message()
+    mpf("Sheet successfully identified: \"%s\"", ssf$sheet_title[i])
   }
 
   ssf[i, ]

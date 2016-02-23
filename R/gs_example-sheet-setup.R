@@ -82,10 +82,8 @@ gs_example_resolve <- function(ex) {
     assign(ex_key, extract_key_from_url(req$url), envir = .gs_exsheets)
     return(invisible(TRUE))
   } else {
-    paste("googlesheets: can't resolve persistent URL for example sheet",
-          "\"%s\" online; falling back to static default.") %>%
-      sprintf(ex) %>%
-      message()
+    mpf(paste("googlesheets: can't resolve persistent URL for example sheet",
+              "\"%s\" online; falling back to static default.", ex))
     assign(ex_key, ex_fallback_key, envir = .gs_exsheets)
     return(invisible(FALSE))
   }

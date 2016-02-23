@@ -87,12 +87,10 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
       gs_ws_rename(from = 1, to = ws_title, verbose = FALSE)
     if(verbose && !is.null(ws_title)) {
       if(ws_title %in% ss$ws$ws_title) {
-        sprintf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title) %>%
-          message()
+        mpf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title)
       } else {
-        sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                      "renamed to \"%s\"."), "Sheet1", ws_title) %>%
-          message()
+        mpf(paste("Cannot verify whether worksheet \"%s\" was",
+                  "renamed to \"%s\"."), "Sheet1", ws_title)
       }
     }
   }
