@@ -188,11 +188,6 @@ set_lookup <- function(lookup = NULL, visibility = NULL, verbose = TRUE) {
     }
   }
 
-  if(verbose) {
-    sprintf("Authorization will %sbe used.", if(lookup) "" else "not ") %>%
-      message()
-  }
-
   lookup
 
 }
