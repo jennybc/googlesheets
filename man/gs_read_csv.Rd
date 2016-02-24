@@ -13,8 +13,35 @@ object}
 \item{ws}{positive integer or character string specifying index or title,
 respectively, of the worksheet}
 
-\item{...}{Further arguments to be passed to the csv parser. This is
-\code{\link[readr:read_delim]{readr::read_csv}}.}
+\item{...}{\strong{Optional} arguments to control data download, parsing,
+and reshaping; for most purposes, the defaults should be fine.
+\describe{
+  \item{\code{progress}}{Logical. Whether to display download progress if in
+  an interactive session.}
+  \item{\code{col_types}}{Seize control of type conversion for variables.
+  Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}. Follow those links
+  or read the \code{vignette("column-types")} for details.}
+  \item{\code{locale, trim_ws, na}}{Specify locale, the fate of leading or
+  trailing whitespace, or a character vector of strings that should become
+  missing values. Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}.}
+  \item{\code{comment, skip, n_max}}{Used only for
+  \code{\link{gs_read_csv}} or \code{gs_read(..., range = NULL)}.
+  Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}}.}
+  \item{\code{col_names}}{Either \code{TRUE}, \code{FALSE} or a character
+  vector of column names. \emph{TO DO: revise when I can articulate how
+  this plays out with the different read methods}.}
+  \item{\code{check.names}}{Logical. Whether to run column names through
+  \code{\link{make.names}} with \code{unique = TRUE}, just like
+  \code{\link{read.table}} does. By default, \code{googlesheets} implements
+  the \code{readr} data ingest philosophy, which leaves column names "as is",
+  with one exception: data frames returned by \code{googlesheets} will have
+  a name for each variable, even if we have to create one.}
+}}
 
 \item{verbose}{logical; do you want informative messages?}
 }
@@ -26,19 +53,10 @@ This function reads all data from a worksheet and returns it as a
 \code{tbl_df} or \code{data.frame}. Don't be spooked by the "csv" thing --
 the data is NOT actually written to file during this process. Data is read
 from the "maximal data rectangle", i.e. the rectangle spanned by the maximal
-row and column extent of the data. Empty cells within this rectangle will be
-assigned \code{NA}. This is the fastest method of data consumption, so use it
-as long as you can tolerate the lack of control re: which cells are being
-read.
-}
-\details{
-How does this compare to consumption via the list feed, implemented by
-\code{\link{gs_read_listfeed}}? First, \code{gs_read_csv} is much, much
-faster. Second, the first row, potentially containing column or variable
-names, is NOT transformed/mangled, as it is via the list feed. Finally,
-consumption via the \code{exportcsv} link is more tolerant of data that does
-not form a perfect, neat rectangle, e.g. the read does NOT stop upon
-encountering an empty row.
+row and column extent of the data. By default, empty cells within this
+rectangle will be assigned \code{NA}. This is the fastest method of data
+consumption, so use it as long as you can tolerate the lack of control re:
+which cells are being read.
 }
 \examples{
 \dontrun{
@@ -46,6 +64,11 @@ gap_ss <- gs_gap() # register the Gapminder example sheet
 oceania_csv <- gs_read_csv(gap_ss, ws = "Oceania")
 str(oceania_csv)
 oceania_csv
+
+## crazy demo of passing args through to readr::read_csv()
+oceania_crazy <- gs_read_csv(gap_ss, ws = "Oceania",
+  col_names = paste0("Z", 1:6), na = "1962", col_types = "cccccc", skip = 1)
+oceania_crazy
 }
 }
 \seealso{

@@ -54,15 +54,17 @@ construct_url_from_key <- function(key) {
   sprintf(tmp, key)
 }
 
+isFALSE <- function(x) identical(FALSE, x)
+
 is_toggle <- function(x) {
-  is.null(x) || isTRUE(x) || identical(x, FALSE)
+  is.null(x) || isTRUE(x) || isFALSE(x)
 }
 
 force_na_type <-
   function(x, type = c("logical", "integer", "double", "real",
                        "complex", "character")) {
+    type <- match.arg(type)
     if(all(is.na(x))) {
-      type <- match.arg(type)
       na <- switch(type,
                    logical = NA,
                    integer = NA_integer_,
@@ -91,4 +93,73 @@ spf <- function(...) stop(sprintf(...), call. = FALSE)
   } else {
     x
   }
+}
+
+## spotted in various hadley packages
+compact <- function(x) Filter(Negate(is.null), x)
+
+## do intake on `...` for all the read functions
+parse_read_ddd <- function(..., feed = c("csv", "list", "cell"),
+                           verbose = FALSE) {
+  feed <- match.arg(feed)
+  ddd <- list(...)
+  ddd <- list(
+    ## pass straight through to readr::read_csv, readr::type_convert
+    col_types = ddd$col_types,
+    locale = ddd$locale,
+    trim_ws = ddd$trim_ws,
+    na = ddd$na,
+    ## use to conditionally include httr::progress() in httr::GET() calls
+    progress = ddd$progress %||% TRUE,
+    ## only sensible for readr::read_csv and, therefore, gs_read_csv()
+    comment = ddd$comment,
+    skip = ddd$skip,
+    n_max = ddd$n_max,
+    ## my very own fiddly problem to deal with
+    col_names = ddd$col_names,
+    check.names = ddd$check.names %||% FALSE
+  )
+  if (feed != "csv") {
+    nope <- c("comment", "skip", "n_max")
+    oops <- intersect(names(compact(ddd)), nope)
+    if (length(oops) > 0 && verbose) {
+      mpf(paste0("Ignoring these arguments that don't work with this ",
+                 "read function:\n%s"), paste(oops, collapse = ", "))
+    }
+    ddd <- ddd[setdiff(names(ddd), nope)]
+  }
+  if (is.null(ddd$col_names)) {
+    ddd$col_names <- TRUE
+  } else {
+    stopifnot(is_toggle(ddd$col_names) || is.character(ddd$col_names))
+  }
+  stopifnot(is_toggle(ddd$check.names))
+  ddd
+}
+
+fix_names <- function(vnames, check.names = FALSE) {
+  na_vnames <- is.na(vnames) | vnames == ""
+  n_na_vnames <- sum(na_vnames)
+  if (n_na_vnames > 0) {
+    vnames[na_vnames] <- paste0("X", seq_len(n_na_vnames))
+  }
+  if (check.names) {
+    vnames <- make.names(vnames, unique = TRUE)
+  }
+  vnames
+}
+
+vet_names <- function(col_names, vnames,
+                      check.names = FALSE, n_cols = length(vnames),
+                      verbose = FALSE) {
+  if (is.character(col_names)) {
+    vnames <- fix_names(col_names, check.names)
+    if (length(vnames) >= n_cols) {
+      vnames <- head(vnames, n_cols)
+    } else {
+      if (verbose) mpf("'col_names' too short ... taking them from Sheet.")
+      vnames <- TRUE
+    }
+  }
+  vnames
 }

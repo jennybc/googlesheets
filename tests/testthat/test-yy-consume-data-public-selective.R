@@ -129,7 +129,7 @@ test_that("readr parsing params are handled on the list feed", {
                                     col_names = paste0("VAR", 1:6),
                                     col_types = "cccnnn",
                                     n_max = 5),
-                 "ignored")
+                 "Ignoring")
   expect_identical(names(oceania_tweaked), paste0("VAR", 1:6))
   expect_equivalent(vapply(oceania_tweaked, class, character(1)),
                     rep(c("character", "numeric"), each = 3))

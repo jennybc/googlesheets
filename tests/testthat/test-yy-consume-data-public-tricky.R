@@ -43,21 +43,13 @@ test_that("We can handle embedded empty cells via list feed", {
 
 test_that("We can handle embedded empty cells via cell feed", {
 
-  ## for comparison
   dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
-  names(dat_csv)[4] <- "X4"
-  dat_csv$X4 <- rep(NA, nrow(dat_csv))
 
   raw_cf <- ss %>% gs_read_cellfeed("embedded_empty_cells")
   expect_equal(dim(raw_cf), c(38L, 5L))
 
   dat_cf <- raw_cf %>% gs_reshape_cellfeed()
   expect_equal(dim(dat_cf), c(7L, 7L))
-  ## converting to data.frames for test because of this
-  ## https://github.com/hadley/dplyr/issues/1095
-  ## bug (now fixed) where NA_character_ mishandled by all.equal
-  class(dat_cf) <- "data.frame"
-  class(dat_csv) <- "data.frame"
 
   expect_equal(dat_cf, dat_csv)
 
@@ -65,7 +57,6 @@ test_that("We can handle embedded empty cells via cell feed", {
     gs_read_cellfeed("embedded_empty_cells", return_empty = TRUE)
   expect_equal(dim(raw_cf), c(56L, 5L))
   dat_cf <- raw_cf %>% gs_reshape_cellfeed()
-  class(dat_cf) <- "data.frame"
   expect_identical(dat_cf, dat_csv)
 
 })
@@ -85,18 +76,8 @@ test_that("We can cope with tricky column names", {
   diabolical <- gs_read_csv(ss, "diabolical_column_names")
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical),
-                   c("id", "content", "4.3", NA_character_, "lifeExp",
-                     NA_character_, "Fahrvergnügen", "Hey space"))
-
-  ## wait to deal with the list feed after I merge this and then merge the
-  ## 'switch-to-xml2' branch ... the overlap with boilerplate names will be
-  ## resolved with superior XML parsing and namespace handling
-#   diabolical <- get_via_lf(ss, "diabolical_column_names")
-#   Source: local data frame [3 x 6]
-#     _cpzh4 _cre1l lifeexp _ciyn3 fahrvergnügen heyspace
-#   1    jan  alpha     uno spring           ein      mon
-#   2    feb   beta     dos summer          zwei     tues
-#   3    mar  gamma    tres   fall          drei      wed
+                   c("id", "content", "4.3", "X1", "lifeExp",
+                     "X2", "Fahrvergnügen", "Hey space"))
 
   ## empty cells will not be here ...
   diabolical <- gs_read_cellfeed(ss, "diabolical_column_names")
@@ -110,8 +91,8 @@ test_that("We can cope with tricky column names", {
     gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical),
-                   c("id", "content", "X4.3", "X4", "lifeExp", "X6",
-                     "Fahrvergnügen", "Hey.space"))
+                   c("id", "content", "4.3", "X1", "lifeExp", "X2",
+                     "Fahrvergnügen", "Hey space"))
 
   ## empty cells WILL be here ...
   diabolical <-
@@ -124,7 +105,7 @@ test_that("We can cope with tricky column names", {
     gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical),
-                   c("id", "content", "X4.3", "X4", "lifeExp", "X6",
-                     "Fahrvergnügen", "Hey.space"))
+                   c("id", "content", "4.3", "X1", "lifeExp", "X2",
+                     "Fahrvergnügen", "Hey space"))
 
 })

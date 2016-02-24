@@ -27,6 +27,7 @@
 #' @template ss
 #' @template ws
 #' @template range
+#' @template read-ddd
 #' @param return_empty logical; indicates whether to return empty cells
 #' @param return_links logical; indicates whether to return the edit and self
 #'   links (used internally in cell editing workflow)
@@ -52,11 +53,14 @@
 #' @export
 gs_read_cellfeed <- function(
   ss, ws = 1, range = NULL,
+  ...,
   return_empty = FALSE, return_links = FALSE,
   verbose = TRUE) {
 
   stopifnot(inherits(ss, "googlesheet"))
   this_ws <- gs_ws(ss, ws, verbose)
+  ## yes, we do need this here: remember 'progress'!
+  ddd <- parse_read_ddd(..., feed = "cell", verbose = FALSE)
 
   limits <- range %>%
     cellranger::as.cell_limits() %>%
@@ -65,7 +69,7 @@ gs_read_cellfeed <- function(
     validate_limits(this_ws$row_extent, this_ws$col_extent)
 
   query <- limits
-  if(return_empty) {
+  if (return_empty) {
     ## the return-empty parameter is not documented in current sheets API, but
     ## is discussed in older internet threads re: the older gdata API; so if
     ## this stops working, consider that they finally stopped supporting this
@@ -74,9 +78,11 @@ gs_read_cellfeed <- function(
   }
 
   the_url <- this_ws$cellsfeed
-  req <- httr::GET(the_url,
-                   omit_token_if(grepl("public", the_url)),
-                   query = query) %>%
+  req <-
+    httr::GET(the_url,
+              omit_token_if(grepl("public", the_url)),
+              query = query,
+              if (interactive() && ddd$progress) httr::progress() else NULL) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
@@ -85,7 +91,7 @@ gs_read_cellfeed <- function(
   x <- rc %>%
     xml2::xml_find_all("feed:entry", ns)
 
-  if(length(x) == 0L) {
+  if (length(x) == 0L) {
     # the pros outweighed the cons re: setting up a zero row data.frame that,
     # at least, has the correct variables
     x <- dplyr::data_frame(cell = character(),
@@ -101,7 +107,7 @@ gs_read_cellfeed <- function(
       xml2::xml_attr("href")
 
     ## this will be true if user does not have permission to edit
-    if(length(edit_links) == 0) {
+    if (length(edit_links) == 0) {
       edit_links <- NA_character_
     }
 
@@ -131,8 +137,7 @@ gs_read_cellfeed <- function(
 
   x <- x %>%
     dplyr::select_(~ cell, ~ cell_alt, ~ row, ~ col, ~ cell_text,
-                   ~ edit_link, ~ cell_id) %>%
-    dplyr::as_data_frame()
+                   ~ edit_link, ~ cell_id)
 
   attr(x, "ws_title") <- this_ws$ws_title
 

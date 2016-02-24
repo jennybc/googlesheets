@@ -6,22 +6,18 @@
 #' call them directly for finer control.
 #'
 #' If the \code{range} argument is not specified, all data will be read via
-#' \code{\link{gs_read_csv}}. In this case, you can pass additional arguments to
-#' the csv parser via \code{...}; see \code{\link{gs_read_cellfeed}} for more
-#' details. Don't worry -- no intermediate \code{*.csv} files were written in
-#' the reading of your data! We just request the data from the Sheets API via
-#' the \code{exportcsv} link.
+#' \code{\link{gs_read_csv}}. Don't worry -- no intermediate \code{*.csv} files
+#' are written in the reading of your data! We just request the data from the
+#' Sheets API via the \code{exportcsv} link.
 #'
 #' If the \code{range} argument is specified, data will be read for the
 #' targetted cells via \code{\link{gs_read_cellfeed}}, then reshaped with
-#' \code{\link{gs_reshape_cellfeed}}. In this case, you can pass additional
-#' arguments to \code{\link{gs_reshape_cellfeed}} via \code{...}.
+#' \code{\link{gs_reshape_cellfeed}}.
 #'
 #' @template ss
 #' @template ws
 #' @template range
-#' @param ... optional arguments passed on to functions that control reading and
-#'   transforming the data
+#' @template read-ddd
 #' @template verbose
 #'
 #' @return a tbl_df
@@ -59,7 +55,7 @@ gs_read <- function(
   if(is.null(range)) {
     gs_read_csv(ss, ws = ws, ..., verbose = verbose)
   } else {
-    gs_read_cellfeed(ss, ws = ws, range = range, verbose = verbose) %>%
+    gs_read_cellfeed(ss, ws = ws, range = range, ..., verbose = verbose) %>%
       gs_reshape_cellfeed(..., verbose = verbose)
   }
 

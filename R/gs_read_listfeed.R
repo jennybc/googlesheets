@@ -5,8 +5,8 @@
 #' to hold variable or column names. The related function,
 #' \code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
 #' it is generally faster and more resilient to, e.g. empty header cells or
-#' rows, so use it if you can. However, you may need to use this function if you
-#' are dealing with an "old" Google Sheet, which is beyond the reach of
+#' empty rows, so use it if you can. However, you may need to use this function
+#' if you are dealing with an "old" Google Sheet, which is beyond the reach of
 #' \code{\link{gs_read_csv}}. The list feed also has some ability to sort and
 #' filter rows via the API (more below). Consult the Google Sheets API
 #' documentation for more details about
@@ -21,24 +21,8 @@
 #'   actual API call.
 #' @param sq character, optional. Provides a structured query for row filtering
 #'   in the actual API call.
-#' @param ... Further arguments to control parsing, most of which are passed to
-#'   \code{\link[readr:type_convert]{readr::type_convert}}.
+#' @template read-ddd
 #' @template verbose
-#'
-#' @section Data ingest philosophy:
-#'
-#'   \code{\link{gs_read_csv}} is the "reference implementation" for ingesting
-#'   data from a Google Sheet. This, in turn, implies that
-#'   \code{\link[readr:read_delim]{readr::read_csv}} is the true reference. Use
-#'   the \code{...} argument to control parsing behavior.
-#'   \code{gs_read_listfeed} cannot actually pass the data through
-#'   \code{\link[readr:read_delim]{readr::read_csv}}, but instead uses
-#'   \code{\link[readr:type_convert]{readr::type_convert}}. Therefore, arguments
-#'   passed via \code{...} are used in different ways. Some are used directly in
-#'   \code{gs_read_listfeed} (example: \code{col_names}). Some are passed
-#'   through to \code{\link[readr:type_convert]{readr::type_convert}} (example:
-#'   \code{col_types}). Some are ignored because they are incompatible with the
-#'   list feed (example: \code{comment}).
 #'
 #' @section Column names:
 #'
@@ -89,13 +73,14 @@
 #'                    sq = "lifeexp > 79 or year < 1960")
 #' oceania_fancy
 #'
-#' ## modify data ingest in style of readr::read_csv, readr::type_convert
-#' oceania_tweaked <-
+#' ## crazy demo of passing args through to readr::type_convert()
+#' oceania_crazy <-
 #'   gs_read_listfeed(gap_ss,
 #'                    ws = "Oceania",
-#'                    col_names = paste0("VAR", 1:6),
-#'                    col_types = "cccnnn")
-#' oceania_tweaked
+#'                    col_names = paste0("z", 1:6),
+#'                    col_types = "ccncnn",
+#'                    na = "1962")
+#' oceania_crazy
 #' }
 #'
 #' @export
@@ -114,57 +99,49 @@ gs_read_listfeed <- function(ss, ws = 1,
     stopifnot(is.character(sq), length(sq) == 1L)
   }
 
-  ddd <- list(...)
+  ddd <- parse_read_ddd(..., feed = "list", verbose = verbose)
   col_names <- ddd$col_names
-  if (!is.null(col_names)) stopifnot(is.character(col_names))
-  col_types <- ddd$col_types
-  locale <- ddd$locale %||% readr::default_locale()
-  na <- ddd$na %||% c("", "NA")
-  trim_ws <- ddd$trim_ws %||% TRUE
-  oops <- intersect(names(ddd), c("comment", "skip", "n_max", "progress"))
-  if (length(oops) > 0 && verbose) {
-    mpf(paste("These arguments are incompatible with the list feed and\n",
-              "will be ignored:\n%s"), paste(oops, collapse = ", "))
-  }
 
   this_ws <- gs_ws(ss, ws, verbose)
   if (!is.null(reverse)) reverse <- tolower(as.character(reverse))
   the_query <- list(reverse = reverse, orderby = orderby, sq = sq)
   the_url <- httr::modify_url(this_ws$listfeed, query = the_query)
-  req <- httr::GET(the_url, omit_token_if(grepl("public", the_url))) %>%
+  req <-
+    httr::GET(the_url,
+              omit_token_if(grepl("public", the_url)),
+              if (interactive() && ddd$progress) httr::progress() else NULL) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  var_names <- rc %>%
+  vnames <- rc %>%
     xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
     xml2::xml_find_all(".//gsx:*", ns) %>%
     xml2::xml_name()
-  n_cols <- length(var_names)
-  if (!is.null(col_names)) {
-    if (length(col_names) >= n_cols) {
-      var_names <- col_names[seq_len(n_cols)]
-    } else {
-      if (verbose) mpf("'col_names' too short ... ignoring.")
-    }
-  }
-  ## FIXME: get the var_names from the cellfeed so API doesn't mangle them
+  n_cols <- length(vnames)
+  vnames <- vet_names(col_names, vnames, ddd$check.names, n_cols, verbose)
 
   values <- rc %>%
     xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
     xml2::xml_text()
-  values[values == ""] <- NA_character_
+
+  if (isFALSE(col_names)) {
+    values <- c(vnames, values)
+    vnames <- paste0("X", seq_len(n_cols))
+  }
 
   dat <- matrix(values, ncol = n_cols, byrow = TRUE,
-                dimnames = list(NULL, var_names))
-  dat %>%
+                dimnames = list(NULL, vnames))
+  dat <- dat %>%
     ## https://github.com/hadley/dplyr/issues/876
     ## https://github.com/hadley/dplyr/commit/9a23e869a027861ec6276abe60fe7bb29a536369
     ## I can drop as.data.frame() once dplyr version >= 0.4.4
     as.data.frame(stringsAsFactors = FALSE) %>%
-    dplyr::as_data_frame() %>%
-    readr::type_convert(col_types = col_types, na = na, trim_ws = trim_ws,
-                        locale = locale)
+    dplyr::as_data_frame()
+
+  allowed_args <- c("col_types", "locale", "trim_ws", "na")
+  type_convert_args <- c(list(df = dat), compact(ddd[allowed_args]))
+  do.call(readr::type_convert, type_convert_args)
 
 }
