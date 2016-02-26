@@ -96,7 +96,7 @@ spf <- function(...) stop(sprintf(...), call. = FALSE)
 }
 
 ## spotted in various hadley packages
-compact <- function(x) Filter(Negate(is.null), x)
+dropnulls <- function(x) Filter(Negate(is.null), x)
 
 ## do intake on `...` for all the read functions
 parse_read_ddd <- function(..., feed = c("csv", "list", "cell"),
@@ -121,7 +121,7 @@ parse_read_ddd <- function(..., feed = c("csv", "list", "cell"),
   )
   if (feed != "csv") {
     nope <- c("comment", "skip", "n_max")
-    oops <- intersect(names(compact(ddd)), nope)
+    oops <- intersect(names(dropnulls(ddd)), nope)
     if (length(oops) > 0 && verbose) {
       mpf(paste0("Ignoring these arguments that don't work with this ",
                  "read function:\n%s"), paste(oops, collapse = ", "))

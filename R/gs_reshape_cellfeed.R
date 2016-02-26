@@ -79,7 +79,7 @@ gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
     dplyr::as_data_frame()
 
   allowed_args <- c("col_types", "locale", "trim_ws", "na")
-  type_convert_args <- c(list(df = dat, compact(ddd[allowed_args])))
+  type_convert_args <- c(list(df = dat, dropnulls(ddd[allowed_args])))
   do.call(readr::type_convert, type_convert_args)
   #dplyr::mutate_each_(dplyr::funs(force_na_type), var_names)
 

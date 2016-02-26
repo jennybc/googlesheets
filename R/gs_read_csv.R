@@ -63,7 +63,7 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
                     ## specific to csv
                     "comment", "skip", "n_max")
   read_csv_args <- c(list(file = httr::content(req, as = "text")),
-                     compact(ddd[allowed_args]))
+                     dropnulls(ddd[allowed_args]))
   df <- do.call(readr::read_csv, read_csv_args)
   nms <- names(df)
   setNames(df, vet_names(nms, nms, ddd$check.names, verbose = verbose))

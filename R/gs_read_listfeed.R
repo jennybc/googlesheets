@@ -141,7 +141,7 @@ gs_read_listfeed <- function(ss, ws = 1,
     dplyr::as_data_frame()
 
   allowed_args <- c("col_types", "locale", "trim_ws", "na")
-  type_convert_args <- c(list(df = dat), compact(ddd[allowed_args]))
+  type_convert_args <- c(list(df = dat), dropnulls(ddd[allowed_args]))
   do.call(readr::type_convert, type_convert_args)
 
 }
