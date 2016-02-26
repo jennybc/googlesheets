@@ -115,11 +115,19 @@ gs_read_listfeed <- function(ss, ws = 1,
 
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  vnames <- rc %>%
+  vnames_mangled <- rc %>%
     xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
     xml2::xml_find_all(".//gsx:*", ns) %>%
     xml2::xml_name()
-  n_cols <- length(vnames)
+  n_cols <- length(vnames_mangled)
+
+  vnames <- ss %>%
+    gs_read_cellfeed(
+      ws = ws,
+      range = cellranger::as.range(cellranger::anchored(dim = c(1, n_cols)))
+    ) %>%
+    gs_simplify_cellfeed(notation = "none")
+
   vnames <- vet_names(col_names, vnames, ddd$check.names, n_cols, verbose)
 
   values <- rc %>%
