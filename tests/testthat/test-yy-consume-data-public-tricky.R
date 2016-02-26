@@ -14,10 +14,9 @@ test_that("We can handle embedded empty cells via csv", {
   expect_equal(which(is.na(dat_csv$lifeExp)), 5L)
   expect_equal(which(is.na(dat_csv$gdpPercap)), 4:5)
 
-  ## unnamed column is character now instead of logical
   expect_equivalent(vapply(dat_csv, class, character(1)),
                     c(country = "character", year = "integer", pop = "integer",
-                      "character", continent = "character",
+                      X1 = "logical", continent = "character",
                       lifeExp = "numeric", gdpPercap = "numeric"))
 
 })

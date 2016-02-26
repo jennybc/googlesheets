@@ -80,7 +80,12 @@ gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
 
   allowed_args <- c("col_types", "locale", "trim_ws", "na")
   type_convert_args <- c(list(df = dat, dropnulls(ddd[allowed_args])))
-  do.call(readr::type_convert, type_convert_args)
-  #dplyr::mutate_each_(dplyr::funs(force_na_type), var_names)
+  df <- do.call(readr::type_convert, type_convert_args)
+
+  ## our departures from readr data ingest:
+  ## ~~no NA variable names~~ handled elsewhere in this function
+  ## NA vars should be logical, not character
+  df %>%
+    purrr::dmap(force_na_type)
 
 }

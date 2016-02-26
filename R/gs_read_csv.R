@@ -16,7 +16,7 @@
 #'
 #' @family data consumption functions
 #'
-#' @return a tbl_df
+#' @return a \code{tbl_df}
 #'
 #' @examples
 #' \dontrun{
@@ -65,7 +65,13 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
   read_csv_args <- c(list(file = httr::content(req, as = "text")),
                      dropnulls(ddd[allowed_args]))
   df <- do.call(readr::read_csv, read_csv_args)
+
+  ## our departures from readr data ingest:
+  ## no NA variable names
+  ## NA vars should be logical, not character
   nms <- names(df)
-  setNames(df, vet_names(nms, nms, ddd$check.names, verbose = verbose))
+  names(df) <- vet_names(nms, nms, ddd$check.names, verbose = verbose)
+  df %>%
+    purrr::dmap(force_na_type)
 
 }

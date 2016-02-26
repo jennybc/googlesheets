@@ -142,6 +142,11 @@ gs_read_listfeed <- function(ss, ws = 1,
 
   allowed_args <- c("col_types", "locale", "trim_ws", "na")
   type_convert_args <- c(list(df = dat), dropnulls(ddd[allowed_args]))
-  do.call(readr::type_convert, type_convert_args)
+  df <- do.call(readr::type_convert, type_convert_args)
 
+  ## our departures from readr data ingest:
+  ## ~~no NA variable names~~ handled elsewhere in this function
+  ## NA vars should be logical, not character
+  df %>%
+    purrr::dmap(force_na_type)
 }
