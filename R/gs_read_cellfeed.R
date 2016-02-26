@@ -33,6 +33,8 @@
 #'   links (used internally in cell editing workflow)
 #' @template verbose
 #'
+#' @template return-tbl-df
+#'
 #' @seealso \code{\link{gs_reshape_cellfeed}} or
 #'   \code{\link{gs_simplify_cellfeed}} to perform reshaping or simplification,
 #'   respectively; \code{\link{gs_read}} is a pre-made wrapper that combines

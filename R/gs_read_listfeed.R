@@ -57,7 +57,7 @@
 #'
 #' @family data consumption functions
 #'
-#' @return a tbl_df
+#' @template return-tbl-df
 #'
 #' @examples
 #' \dontrun{

@@ -16,7 +16,7 @@
 #'
 #' @family data consumption functions
 #'
-#' @return a \code{tbl_df}
+#' @template return-tbl-df
 #'
 #' @examples
 #' \dontrun{

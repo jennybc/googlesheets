@@ -6,6 +6,8 @@
 #' @template read-ddd
 #' @template verbose
 #'
+#' @template return-tbl-df
+#'
 #' @family data consumption functions
 #'
 #' @examples

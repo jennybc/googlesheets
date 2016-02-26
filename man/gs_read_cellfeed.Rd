@@ -53,6 +53,10 @@ links (used internally in cell editing workflow)}
 
 \item{verbose}{logical; do you want informative messages?}
 }
+\value{
+a \code{data.frame} or, if \code{dplyr} is loaded, a
+  \code{\link[dplyr]{tbl_df}}
+}
 \description{
 This function consumes data via the "cell feed", which, as the name suggests,
 retrieves data cell by cell. Note that the output is a \code{tbl_df} or

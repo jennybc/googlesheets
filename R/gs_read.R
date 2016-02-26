@@ -20,7 +20,7 @@
 #' @template read-ddd
 #' @template verbose
 #'
-#' @return a tbl_df
+#' @template return-tbl-df
 #'
 #' @family data consumption functions
 #'

@@ -56,7 +56,8 @@ and reshaping; for most purposes, the defaults should be fine.
 \item{verbose}{logical; do you want informative messages?}
 }
 \value{
-a tbl_df
+a \code{data.frame} or, if \code{dplyr} is loaded, a
+  \code{\link[dplyr]{tbl_df}}
 }
 \description{
 Gets data via the "list feed", which assumes populated cells form a neat
