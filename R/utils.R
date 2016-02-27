@@ -90,7 +90,7 @@ spf <- function(...) stop(sprintf(...), call. = FALSE)
 dropnulls <- function(x) Filter(Negate(is.null), x)
 
 ## do intake on `...` for all the read functions
-parse_read_ddd <- function(..., feed = c("csv", "list", "cell"),
+parse_read_ddd <- function(..., feed = c("csv", "list_or_cell"),
                            verbose = FALSE) {
   feed <- match.arg(feed)
   ddd <- list(...)
@@ -159,7 +159,7 @@ vet_names <- function(col_names, vnames,
 dropnulls <- function(x) Filter(Negate(is.null), x)
 
 ## do intake on `...` for all the read functions
-parse_read_ddd <- function(..., feed = c("csv", "list", "cell"),
+parse_read_ddd <- function(..., feed = c("csv", "list_or_cell"),
                            verbose = FALSE) {
   feed <- match.arg(feed)
   ddd <- list(...)

@@ -4,9 +4,9 @@
 #' rectangle. The list feed consumes data row by row. The first row is assumed
 #' to hold variable or column names. The related function,
 #' \code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
-#' it is generally faster and more resilient to, e.g. empty header cells or
-#' empty rows, so use it if you can. However, you may need to use this function
-#' if you are dealing with an "old" Google Sheet, which is beyond the reach of
+#' it is generally faster and more resilient to, e.g. empty rows, so use it if
+#' you can. However, you may need to use this function if you are dealing with
+#' an "old" Google Sheet, which is beyond the reach of
 #' \code{\link{gs_read_csv}}. The list feed also has some ability to sort and
 #' filter rows via the API (more below). Consult the Google Sheets API
 #' documentation for more details about
@@ -26,15 +26,15 @@
 #'
 #' @section Column names:
 #'
-#'   When you use the list feed, the Sheets API transforms the variable or
-#'   column names like so: 'The column names are the header values of the
-#'   worksheet lowercased and with all non-alpha-numeric characters removed. For
-#'   example, if the cell A1 contains the value "Time 2 Eat!" the column name
-#'   would be "time2eat".' If this is intolerable to you, use a different
-#'   function to read the data. Or, at least, consume the first row via the cell
-#'   feed and manually restore the variable names \emph{post hoc}. If you direct
+#'   For the list feed, and only for the list feed, the Sheets API wants to
+#'   transform the variable or column names like so: 'The column names are the
+#'   header values of the worksheet lowercased and with all non-alpha-numeric
+#'   characters removed. For example, if the cell A1 contains the value "Time 2
+#'   Eat!" the column name would be "time2eat".' In \code{googlesheets}, we do
+#'   not let this happen and, instead, use the column names "as is", for
+#'   consistent output across all \code{gs_read*} functions. If you direct
 #'   \code{gs_read_listfeed} to pass query parameters to the actual API call,
-#'   you must refer to variables using the column names \emph{after this
+#'   you must refer to variables using the column names \emph{under this
 #'   API-enforced transformation}. For example, to order the data by the column
 #'   with "Time 2 Eat!" in the header row, you must specify \code{orderby =
 #'   "time2eat"} in the \code{gs_read_listfeed} call.
@@ -99,8 +99,7 @@ gs_read_listfeed <- function(ss, ws = 1,
     stopifnot(is.character(sq), length(sq) == 1L)
   }
 
-  ddd <- parse_read_ddd(..., feed = "list", verbose = verbose)
-  col_names <- ddd$col_names
+  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = verbose)
 
   this_ws <- gs_ws(ss, ws, verbose)
   if (!is.null(reverse)) reverse <- tolower(as.character(reverse))
@@ -112,52 +111,70 @@ gs_read_listfeed <- function(ss, ws = 1,
               if (interactive() && ddd$progress) httr::progress() else NULL) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
-
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  vnames_mangled <- rc %>%
-    xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
-    xml2::xml_find_all(".//gsx:*", ns) %>%
-    xml2::xml_name()
-  n_cols <- length(vnames_mangled)
+  rows <- rc %>%
+    ## list of nodesets: one component per spreadsheet row
+    xml2::xml_find_all(xpath = "//feed:entry", ns = ns) %>%
+    ## keep only nodes that give cell contents
+    purrr::map(~ xml2::xml_find_all(.x, xpath = "./gsx:*", ns = ns))
 
-  values <- rc %>%
-    xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
-    xml2::xml_text()
+  ## make a data frame with row-specific nodesets in a list-column
+  rows_df <- dplyr::data_frame_(list(row = ~ seq_along(rows),
+                                     nodeset = ~ rows))
 
-  if (isTRUE(col_names)) {
+  cells_df <- rows_df %>%
+    ## extract (alleged) col name, cell text; i = within-row cell counter
+    dplyr::mutate_(col_name_raw = ~ nodeset %>% purrr::map(~ xml2::xml_name(.)),
+                   cell_text = ~ nodeset %>% purrr::map(~ xml2::xml_text(.)),
+                   i = ~ nodeset %>% purrr::map(~ seq_along(.))) %>%
+    dplyr::select_(~ row, ~ i, ~ col_name_raw, ~ cell_text) %>%
+    ## TO DO: figure out how/if to make this unnest_()
+    tidyr::unnest()
+
+  hrow <- cells_df %>%
+    ## figure out which column things came from
+    dplyr::group_by_(~ col_name_raw) %>%
+    dplyr::summarise_(col = ~ max(i)) %>%
+    dplyr::arrange_(~ col) %>%
+    ## no docs re: dummy column name given by the API when it's missing
+    ## this regex derived from limited personal experience so :shrug:
+    dplyr::mutate_(col_name = ~ stringr::str_replace(col_name_raw,
+                                                     "_[a-z0-9]{5}", ""))
+
+  suppressMessages(
+    cells_df <- cells_df %>%
+      ## add column info to the data
+      dplyr::left_join(hrow) %>%
+      dplyr::select_(~ row, ~ col, ~ cell_text) %>%
+      ## increment row to anticipate adding row of column names
+      dplyr::mutate_(row = ~ row + 1L)
+  )
+
+  if (isTRUE(ddd$col_names)) {
+
+    ## we are going to use API-reported column names, so get them from cell feed
     vnames <- ss %>%
-      gs_read_cellfeed(
-        ws = ws,
-        range = cellranger::as.range(cellranger::anchored(dim = c(1, n_cols)))
+      gs_read_cellfeed(ws = ws, range = cellranger::cell_rows(1),
+        return_empty = TRUE
       ) %>%
       gs_simplify_cellfeed(notation = "none")
-  } else if (isFALSE(col_names)) {
-    values <- c(vnames, values)
-    vnames <- paste0("X", seq_len(n_cols))
-  } else if (is.character(col_names)) {
-    vnames <- size_names(col_names, n_cols)
-  } else {
-    stop("`col_names` must be TRUE, FALSE or a character vector", call. = FALSE)
+    ## TO DO: figure out how/if to replace with data_frame_()
+    vndat <- dplyr::data_frame(
+      vnames,
+      vnames_mangled = vnames %>% tolower() %>%
+        stringr::str_replace_all("[^a-z0-9\\.]", "")
+    )
+    hrow$col_name <- vndat$vnames[match(hrow$col_name, vndat$vnames_mangled)]
+
+    ## prepend column name cells to the data, just like the cell feed
+    cells_df <- hrow %>%
+      dplyr::mutate_(row = 1L) %>%
+      dplyr::select_(~ row, ~ col, cell_text = ~ col_name) %>%
+      dplyr::bind_rows(cells_df)
+
   }
-  vnames <- fix_names(vnames, ddd$check.names)
 
-  dat <- matrix(values, ncol = n_cols, byrow = TRUE,
-                dimnames = list(NULL, vnames))
-  dat <- dat %>%
-    ## https://github.com/hadley/dplyr/issues/876
-    ## https://github.com/hadley/dplyr/commit/9a23e869a027861ec6276abe60fe7bb29a536369
-    ## I can drop as.data.frame() once dplyr version >= 0.4.4
-    as.data.frame(stringsAsFactors = FALSE) %>%
-    dplyr::as_data_frame()
+  gs_reshape_feed(cells_df, ddd, verbose)
 
-  allowed_args <- c("col_types", "locale", "trim_ws", "na")
-  type_convert_args <- c(list(df = dat), dropnulls(ddd[allowed_args]))
-  df <- do.call(readr::type_convert, type_convert_args)
-
-  ## our departures from readr data ingest:
-  ## ~~no NA variable names~~ handled elsewhere (above) in this function
-  ## NA vars should be logical, not character
-  df %>%
-    purrr::dmap(force_na_type)
 }

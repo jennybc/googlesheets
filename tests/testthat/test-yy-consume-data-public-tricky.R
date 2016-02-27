@@ -10,33 +10,33 @@ test_that("We can handle embedded empty cells via csv", {
   expect_equal(which(is.na(dat_csv$year)), c(5L, 6L))
   expect_equal(which(is.na(dat_csv$pop)), 5L)
   expect_true(all(is.na(dat_csv[[4]])))
-  expect_equal(which(is.na(dat_csv$continent)), c(2L, 5L))
+  expect_equal(which(is.na(dat_csv$X5)), c(2L, 5L))
   expect_equal(which(is.na(dat_csv$lifeExp)), 5L)
   expect_equal(which(is.na(dat_csv$gdpPercap)), 4:5)
 
-  expect_equivalent(vapply(dat_csv, class, character(1)),
-                    c(country = "character", year = "integer", pop = "integer",
-                      X1 = "logical", continent = "character",
-                      lifeExp = "numeric", gdpPercap = "numeric"))
+  expect_identical(vapply(dat_csv, class, character(1)),
+                   c(country = "character", year = "integer", pop = "integer",
+                     X4 = "logical", X5 = "character",
+                     lifeExp = "numeric", gdpPercap = "numeric"))
 
 })
 
 test_that("We can handle embedded empty cells via list feed", {
 
-  dat <- ss %>% gs_read_listfeed("embedded_empty_cells")
+  dat_lf <- ss %>% gs_read_listfeed("embedded_empty_cells")
   ## compare with csv!
   ## the blank column is dropped
   ## data reading stops at the empty row
-  expect_equal(dim(dat), c(4L, 6L))
+  expect_equal(dim(dat_lf), c(4L, 6L))
 
-  expect_equal(which(is.na(dat$country)), 3L)
-  expect_equal(which(is.na(dat$continent)), 2L)
-  expect_equal(which(is.na(dat$gdppercap)), 4L) # gdppercap has been lowercased
+  expect_equal(which(is.na(dat_lf$country)), 3L)
+  expect_equal(which(is.na(dat_lf$X4)), 2L)
+  expect_equal(which(is.na(dat_lf$gdpPercap)), 4L)
 
-  expect_equal(vapply(dat, class, character(1)),
-               c(country = "character", year = "integer", pop = "integer",
-                 continent = "character", lifeexp = "numeric",
-                 gdppercap = "numeric"))
+  expect_identical(vapply(dat_lf, class, character(1)),
+                   c(country = "character", year = "integer", pop = "integer",
+                     X4 = "character",
+                     lifeExp = "numeric", gdpPercap = "numeric"))
 
 })
 
@@ -45,7 +45,7 @@ test_that("We can handle embedded empty cells via cell feed", {
   dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
 
   raw_cf <- ss %>% gs_read_cellfeed("embedded_empty_cells")
-  expect_equal(dim(raw_cf), c(38L, 5L))
+  expect_equal(dim(raw_cf), c(37L, 5L))
 
   dat_cf <- raw_cf %>% gs_reshape_cellfeed()
   expect_equal(dim(dat_cf), c(7L, 7L))

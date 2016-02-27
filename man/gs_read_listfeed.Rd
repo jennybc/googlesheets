@@ -65,9 +65,9 @@ Gets data via the "list feed", which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. The first row is assumed
 to hold variable or column names. The related function,
 \code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
-it is generally faster and more resilient to, e.g. empty header cells or
-empty rows, so use it if you can. However, you may need to use this function
-if you are dealing with an "old" Google Sheet, which is beyond the reach of
+it is generally faster and more resilient to, e.g. empty rows, so use it if
+you can. However, you may need to use this function if you are dealing with
+an "old" Google Sheet, which is beyond the reach of
 \code{\link{gs_read_csv}}. The list feed also has some ability to sort and
 filter rows via the API (more below). Consult the Google Sheets API
 documentation for more details about
@@ -77,15 +77,15 @@ list feed}.
 \section{Column names}{
 
 
-  When you use the list feed, the Sheets API transforms the variable or
-  column names like so: 'The column names are the header values of the
-  worksheet lowercased and with all non-alpha-numeric characters removed. For
-  example, if the cell A1 contains the value "Time 2 Eat!" the column name
-  would be "time2eat".' If this is intolerable to you, use a different
-  function to read the data. Or, at least, consume the first row via the cell
-  feed and manually restore the variable names \emph{post hoc}. If you direct
+  For the list feed, and only for the list feed, the Sheets API wants to
+  transform the variable or column names like so: 'The column names are the
+  header values of the worksheet lowercased and with all non-alpha-numeric
+  characters removed. For example, if the cell A1 contains the value "Time 2
+  Eat!" the column name would be "time2eat".' In \code{googlesheets}, we do
+  not let this happen and, instead, use the column names "as is", for
+  consistent output across all \code{gs_read*} functions. If you direct
   \code{gs_read_listfeed} to pass query parameters to the actual API call,
-  you must refer to variables using the column names \emph{after this
+  you must refer to variables using the column names \emph{under this
   API-enforced transformation}. For example, to order the data by the column
   with "Time 2 Eat!" in the header row, you must specify \code{orderby =
   "time2eat"} in the \code{gs_read_listfeed} call.

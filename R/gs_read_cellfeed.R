@@ -62,7 +62,7 @@ gs_read_cellfeed <- function(
   stopifnot(inherits(ss, "googlesheet"))
   this_ws <- gs_ws(ss, ws, verbose)
   ## yes, we do need this here: remember 'progress'!
-  ddd <- parse_read_ddd(..., feed = "cell", verbose = FALSE)
+  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = FALSE)
 
   limits <- range %>%
     cellranger::as.cell_limits() %>%

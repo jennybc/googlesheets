@@ -25,7 +25,12 @@
 #' @export
 gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
 
-  ddd <- parse_read_ddd(..., feed = "cell", verbose = verbose)
+  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = verbose)
+  gs_reshape_feed(x, ddd, verbose)
+
+}
+
+gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
   col_names <- ddd$col_names
 
   limits <- x %>%
@@ -50,7 +55,7 @@ gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
   } else if (isFALSE(col_names)) {
     vnames <- paste0("X", seq_len(n_cols))
   } else if (is.character(col_names)) {
-    vnames <- size_names(col_names)
+    vnames <- size_names(col_names, n_cols)
   } else {
     stop("`col_names` must be TRUE, FALSE or a character vector", call. = FALSE)
   }
@@ -69,11 +74,14 @@ gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
   dat <- matrix(x_augmented$cell_text, ncol = n_cols, byrow = TRUE,
                 dimnames = list(NULL, vnames))
   dat <- dat %>%
+    ## https://github.com/hadley/dplyr/issues/876
+    ## https://github.com/hadley/dplyr/commit/9a23e869a027861ec6276abe60fe7bb29a536369
+    ## I can drop as.data.frame() once dplyr version >= 0.4.4
     as.data.frame(stringsAsFactors = FALSE) %>%
     dplyr::as_data_frame()
 
   allowed_args <- c("col_types", "locale", "trim_ws", "na")
-  type_convert_args <- c(list(df = dat, dropnulls(ddd[allowed_args])))
+  type_convert_args <- c(list(df = dat), dropnulls(ddd[allowed_args]))
   df <- do.call(readr::type_convert, type_convert_args)
 
   ## our departures from readr data ingest:
