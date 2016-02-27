@@ -69,42 +69,37 @@ test_that("Special Characters can be imported correctly", {
 
 test_that("We can cope with tricky column names", {
 
+  row_one <- c("id", "content", "4.3", "", "lifeExp",
+               "", "Fahrvergnügen", "Hey space")
+  row_one_no_empty <- row_one[row_one != ""]
+  vnames<- c("id", "content", "4.3", "X4", "lifeExp",
+               "X6", "Fahrvergnügen", "Hey space")
+
   ## FYI this is as much about documenting what happens with weird names, as it
   ## is about testing
 
   diabolical <- gs_read_csv(ss, "diabolical_column_names")
   expect_identical(dim(diabolical), c(3L, 8L))
-  expect_identical(names(diabolical),
-                   c("id", "content", "4.3", "X1", "lifeExp",
-                     "X2", "Fahrvergnügen", "Hey space"))
+  expect_identical(names(diabolical), vnames)
 
   ## empty cells will not be here ...
   diabolical <- gs_read_cellfeed(ss, "diabolical_column_names")
   expect_identical(dim(diabolical), c(30L, 5L))
-  expect_identical(diabolical$cell_text[diabolical$row == 1L],
-                   c("id", "content", "4.3", "lifeExp",
-                     "Fahrvergnügen", "Hey space"))
+  expect_identical(diabolical$cell_text[diabolical$row == 1L], row_one_no_empty)
+
   ## but reshaping will create variables when data exists, even in absence of
   ## column name
-  diabolical <- diabolical %>%
-    gs_reshape_cellfeed()
+  diabolical <- diabolical %>% gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
-  expect_identical(names(diabolical),
-                   c("id", "content", "4.3", "X1", "lifeExp", "X2",
-                     "Fahrvergnügen", "Hey space"))
+  expect_identical(names(diabolical), vnames)
 
   ## empty cells WILL be here ...
   diabolical <-
     gs_read_cellfeed(ss, "diabolical_column_names", return_empty = TRUE)
   expect_identical(dim(diabolical), c(32L, 5L))
-  expect_identical(diabolical$cell_text[diabolical$row == 1L],
-                   c("id", "content", "4.3", "", "lifeExp", "",
-                     "Fahrvergnügen", "Hey space"))
-  diabolical <- diabolical %>%
-    gs_reshape_cellfeed()
+  expect_identical(diabolical$cell_text[diabolical$row == 1L], row_one)
+  diabolical <- diabolical %>% gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
-  expect_identical(names(diabolical),
-                   c("id", "content", "4.3", "X1", "lifeExp", "X2",
-                     "Fahrvergnügen", "Hey space"))
+  expect_identical(names(diabolical), vnames)
 
 })

@@ -25,11 +25,6 @@
 #' @export
 gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
 
-  ## TEMPORARY PARKING of old docs re: col_names
-  # @param col_names if \code{TRUE}, the first row of the input will be used as
-  #   the column names; if \code{FALSE}, column names will be X1, X2, etc.; if a
-  #  character vector, vector will be used as the column names
-
   ddd <- parse_read_ddd(..., feed = "cell", verbose = verbose)
   col_names <- ddd$col_names
 
@@ -49,29 +44,26 @@ gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
   if (isTRUE(col_names)) {
     row_one <- x_augmented %>%
       dplyr::filter_(~ (row == limits$row_min))
-    vnames <- row_one$cell_text
     x_augmented <- x_augmented %>%
       dplyr::filter_(~ row > limits$row_min)
+    vnames <- size_names(row_one$cell_text, n_cols)
+  } else if (isFALSE(col_names)) {
+    vnames <- paste0("X", seq_len(n_cols))
+  } else if (is.character(col_names)) {
+    vnames <- size_names(col_names)
+  } else {
+    stop("`col_names` must be TRUE, FALSE or a character vector", call. = FALSE)
   }
+  vnames <- fix_names(vnames, ddd$check.names)
 
-  if (isFALSE(col_names)) {
-    vnames <- paste0("X", seq.int(limits$col_min, limits$col_max))
-  }
-
-  if (is.character(col_names)) {
-    vnames <- col_names
-  }
-
-  vnames <- vet_names(vnames, vnames, ddd$check.names, n_cols, verbose)
-
-  if (x_augmented$row %>% dplyr::n_distinct() < 1) {
+  if (dplyr::n_distinct(x_augmented$row) < 1) {
     if (verbose) {
       message("No data to reshape!")
       if (isTRUE(col_names)) {
         message("Perhaps retry with `col_names = FALSE`?")
       }
     }
-    return(dplyr::data_frame() %>% dplyr::as.tbl())
+    return(dplyr::data_frame())
   }
 
   dat <- matrix(x_augmented$cell_text, ncol = n_cols, byrow = TRUE,
@@ -85,7 +77,7 @@ gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
   df <- do.call(readr::type_convert, type_convert_args)
 
   ## our departures from readr data ingest:
-  ## ~~no NA variable names~~ handled elsewhere in this function
+  ## ~~no NA variable names~~ handled elsewhere (above) in this function
   ## NA vars should be logical, not character
   df %>%
     purrr::dmap(force_na_type)

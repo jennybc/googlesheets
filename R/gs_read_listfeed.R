@@ -121,23 +121,26 @@ gs_read_listfeed <- function(ss, ws = 1,
     xml2::xml_name()
   n_cols <- length(vnames_mangled)
 
-  vnames <- ss %>%
-    gs_read_cellfeed(
-      ws = ws,
-      range = cellranger::as.range(cellranger::anchored(dim = c(1, n_cols)))
-    ) %>%
-    gs_simplify_cellfeed(notation = "none")
-
-  vnames <- vet_names(col_names, vnames, ddd$check.names, n_cols, verbose)
-
   values <- rc %>%
     xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
     xml2::xml_text()
 
-  if (isFALSE(col_names)) {
+  if (isTRUE(col_names)) {
+    vnames <- ss %>%
+      gs_read_cellfeed(
+        ws = ws,
+        range = cellranger::as.range(cellranger::anchored(dim = c(1, n_cols)))
+      ) %>%
+      gs_simplify_cellfeed(notation = "none")
+  } else if (isFALSE(col_names)) {
     values <- c(vnames, values)
     vnames <- paste0("X", seq_len(n_cols))
+  } else if (is.character(col_names)) {
+    vnames <- size_names(col_names, n_cols)
+  } else {
+    stop("`col_names` must be TRUE, FALSE or a character vector", call. = FALSE)
   }
+  vnames <- fix_names(vnames, ddd$check.names)
 
   dat <- matrix(values, ncol = n_cols, byrow = TRUE,
                 dimnames = list(NULL, vnames))
@@ -153,7 +156,7 @@ gs_read_listfeed <- function(ss, ws = 1,
   df <- do.call(readr::type_convert, type_convert_args)
 
   ## our departures from readr data ingest:
-  ## ~~no NA variable names~~ handled elsewhere in this function
+  ## ~~no NA variable names~~ handled elsewhere (above) in this function
   ## NA vars should be logical, not character
   df %>%
     purrr::dmap(force_na_type)

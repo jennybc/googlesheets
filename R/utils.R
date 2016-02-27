@@ -199,9 +199,8 @@ parse_read_ddd <- function(..., feed = c("csv", "list", "cell"),
 
 fix_names <- function(vnames, check.names = FALSE) {
   na_vnames <- is.na(vnames) | vnames == ""
-  n_na_vnames <- sum(na_vnames)
-  if (n_na_vnames > 0) {
-    vnames[na_vnames] <- paste0("X", seq_len(n_na_vnames))
+  if (any(na_vnames)) {
+    vnames[na_vnames] <- paste0("X", seq_along(vnames)[na_vnames])
   }
   if (check.names) {
     vnames <- make.names(vnames, unique = TRUE)
@@ -209,17 +208,9 @@ fix_names <- function(vnames, check.names = FALSE) {
   vnames
 }
 
-vet_names <- function(col_names, vnames,
-                      check.names = FALSE, n_cols = length(vnames),
-                      verbose = FALSE) {
-  if (is.character(col_names)) {
-    vnames <- fix_names(col_names, check.names)
-    if (length(vnames) >= n_cols) {
-      vnames <- head(vnames, n_cols)
-    } else {
-      if (verbose) mpf("'col_names' too short ... taking them from Sheet.")
-      vnames <- TRUE
-    }
-  }
-  vnames
+size_names <- function(vnames, n) {
+  if (length(vnames) >= n) return(head(vnames, n))
+  nms <- paste0("X", seq_len(n))
+  nms[seq_along(vnames)] <- vnames
+  nms
 }

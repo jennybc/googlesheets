@@ -70,7 +70,7 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
   ## no NA variable names
   ## NA vars should be logical, not character
   nms <- names(df)
-  names(df) <- vet_names(nms, nms, ddd$check.names, verbose = verbose)
+  names(df) <- fix_names(nms, ddd$check.names)
   df %>%
     purrr::dmap(force_na_type)
 
