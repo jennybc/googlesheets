@@ -3,31 +3,28 @@ context("consume data with public visibility, whole sheets")
 ## consuming data owned by someone else, namely rpackagetest
 ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE, verbose = FALSE)
 
-test_that("We can get all data from the list feed (pub)", {
-
-  expect_equal_to_reference(gs_read_listfeed(ss, ws = 5),
-                            "for_reference/gap_sheet5_gs_read_listfeed.rds")
-
+test_that("Default result is not changing (pub)", {
+  expect_equal_to_reference(gs_read(ss, ws = 5, verbose = FALSE),
+                            "for_reference/gap_sheet5.rds")
 })
 
-test_that("We can get all data from the cell feed (pub)", {
-
-  expect_equal_to_reference(gs_read_cellfeed(ss, ws = 5),
-                            "for_reference/gap_sheet5_gs_read_cellfeed.rds")
-
+test_that("Read via csv matches default result link (pub)", {
+  expect_equal_to_reference(gs_read_csv(ss, ws = 5, verbose = FALSE),
+                            "for_reference/gap_sheet5.rds")
 })
 
-test_that("We can get all data from the exportcsv link (pub)", {
+test_that("Read via list feed matches default results (pub)", {
+  expect_equal_to_reference(gs_read_listfeed(ss, ws = 5, verbose = FALSE),
+                            "for_reference/gap_sheet5.rds")
+})
 
-  dat1 <- gs_read_csv(ss, ws = 5)
-  expect_equal_to_reference(dat1,
-                            "for_reference/gap_sheet5_gs_read_listfeed.rds")
-
+test_that("Read via cellfeed is not changing (pub)", {
+  expect_equal_to_reference(gs_read_cellfeed(ss, ws = 5, verbose = FALSE),
+                            "for_reference/gap_sheet5_cellfeed.rds")
 })
 
 test_that("We can reshape data from the cell feed", {
-
-  oceania <- ss %>% gs_read_cellfeed(ws = "Oceania")
+  oceania <- ss %>% gs_read_cellfeed(ws = "Oceania", verbose = FALSE)
   expect_true(all(names(oceania) %in%
                     c("cell", "cell_alt", "row", "col", "cell_text")))
 
@@ -47,16 +44,30 @@ test_that("We can reshape data from the cell feed", {
 
 })
 
-test_that("We get no error from gs_read_csv on an empty sheet (pub)", {
+test_that("We get no error from gs_read on an empty sheet (pub)", {
+  pts_ss <- pts_key %>% gs_key(lookup = FALSE)
+  expect_is(tmp <- pts_ss %>% gs_read(ws = "empty"), "data.frame")
+  expect_identical(dim(tmp), c(0L, 0L))
+})
 
+test_that("We get no error from gs_read_csv on an empty sheet (pub)", {
   pts_ss <- pts_key %>% gs_key(lookup = FALSE)
   expect_is(tmp <- pts_ss %>% gs_read_csv(ws = "empty"), "data.frame")
-  expect_identical(dim(tmp), rep(0L, 2))
+  expect_identical(dim(tmp), c(0L, 0L))
+})
 
+test_that("We get no error from gs_read_listfeed on an empty sheet (pub)", {
+  pts_ss <- pts_key %>% gs_key(lookup = FALSE)
+  expect_is(tmp <- pts_ss %>% gs_read_listfeed(ws = "empty"), "data.frame")
+  expect_identical(dim(tmp), c(0L, 0L))
+})
+
+test_that("We get no error from gs_read_cellfeed on an empty sheet (pub)", {
+  pts_ss <- pts_key %>% gs_key(lookup = FALSE)
+  expect_is(tmp <- pts_ss %>% gs_read_cellfeed(ws = "empty"), "data.frame")
+  expect_identical(dim(tmp), c(0L, 5L))
 })
 
 test_that("We can't access sheet that is 'public on the web' (pub)", {
-
   expect_error(gotcha_key %>% gs_key(lookup = FALSE), "content-type")
-
 })

@@ -108,7 +108,7 @@ gs_read_listfeed <- function(ss, ws = 1,
   req <-
     httr::GET(the_url,
               omit_token_if(grepl("public", the_url)),
-              if (interactive() && ddd$progress) httr::progress() else NULL) %>%
+              if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
@@ -119,21 +119,28 @@ gs_read_listfeed <- function(ss, ws = 1,
     ## keep only nodes that give cell contents
     purrr::map(~ xml2::xml_find_all(.x, xpath = "./gsx:*", ns = ns))
 
+  if (length(rows) == 0L) {
+    if (verbose) mpf("Worksheet '%s' is empty.", this_ws$ws_title)
+    return(dplyr::data_frame())
+  }
+
   ## make a data frame with row-specific nodesets in a list-column
   rows_df <- dplyr::data_frame_(list(row = ~ seq_along(rows),
                                      nodeset = ~ rows))
 
+  ## rows_df has one row spreadsheet row
+  ## cells_df has one row per nonempty spreadsheet cell
   cells_df <- rows_df %>%
     ## extract (alleged) col name, cell text; i = within-row cell counter
     dplyr::mutate_(col_name_raw = ~ nodeset %>% purrr::map(~ xml2::xml_name(.)),
                    cell_text = ~ nodeset %>% purrr::map(~ xml2::xml_text(.)),
                    i = ~ nodeset %>% purrr::map(~ seq_along(.))) %>%
     dplyr::select_(~ row, ~ i, ~ col_name_raw, ~ cell_text) %>%
-    ## TO DO: figure out how/if to make this unnest_()
-    tidyr::unnest()
+    tidyr::unnest_(c("i", "col_name_raw", "cell_text"))
 
   hrow <- cells_df %>%
     ## figure out which column things came from
+    ## it is not necessarily column i because of empty cells or columns
     dplyr::group_by_(~ col_name_raw) %>%
     dplyr::summarise_(col = ~ max(i)) %>%
     dplyr::arrange_(~ col) %>%
@@ -147,25 +154,24 @@ gs_read_listfeed <- function(ss, ws = 1,
       ## add column info to the data
       dplyr::left_join(hrow) %>%
       dplyr::select_(~ row, ~ col, ~ cell_text) %>%
-      ## increment row to anticipate adding row of column names
+      ## increment row to anticipate prepending data for the header row
       dplyr::mutate_(row = ~ row + 1L)
   )
 
   if (isTRUE(ddd$col_names)) {
 
-    ## we are going to use API-reported column names, so get them from cell feed
+    ## we are going to use column names from the Sheet, so get them from cell
+    ## feed (vs. the transformed ones provided by the list feed)
     vnames <- ss %>%
       gs_read_cellfeed(ws = ws, range = cellranger::cell_rows(1),
-        return_empty = TRUE
+        return_empty = TRUE, verbose = FALSE
       ) %>%
       gs_simplify_cellfeed(notation = "none")
-    ## TO DO: figure out how/if to replace with data_frame_()
-    vndat <- dplyr::data_frame(
-      vnames,
-      vnames_mangled = vnames %>% tolower() %>%
-        stringr::str_replace_all("[^a-z0-9\\.]", "")
-    )
-    hrow$col_name <- vndat$vnames[match(hrow$col_name, vndat$vnames_mangled)]
+    ## still guessing at exactly how Google transforms header cells on the list
+    ## feed
+    vnames_mangled <- vnames %>% tolower() %>%
+      stringr::str_replace_all("[^a-z0-9\\.]", "")
+    hrow$col_name <- vnames[match(hrow$col_name, vnames_mangled)]
 
     ## prepend column name cells to the data, just like the cell feed
     cells_df <- hrow %>%

@@ -84,7 +84,7 @@ gs_read_cellfeed <- function(
     httr::GET(the_url,
               omit_token_if(grepl("public", the_url)),
               query = query,
-              if (interactive() && ddd$progress) httr::progress() else NULL) %>%
+              if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
