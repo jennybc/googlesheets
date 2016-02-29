@@ -4,37 +4,37 @@
 \alias{gs_simplify_cellfeed}
 \title{Simplify data from the cell feed}
 \usage{
-gs_simplify_cellfeed(x, convert = TRUE, as.is = TRUE, na.strings = "NA",
-  notation = c("A1", "R1C1", "none"), col_names = NULL)
+gs_simplify_cellfeed(x, convert = TRUE, locale = NULL, trim_ws = NULL,
+  na = NULL, notation = c("A1", "R1C1", "none"), col_names = NULL)
 }
 \arguments{
-\item{x}{a data.frame returned by \code{\link{gs_read_cellfeed}}}
+\item{x}{a data frame returned by \code{\link{gs_read_cellfeed}}}
 
-\item{convert}{logical, indicating whether to attempt to convert the result
+\item{convert}{logical. Indicates whether to attempt to convert the result
 vector from character to something more appropriate, such as logical,
-integer, or numeric; if TRUE, result is passed through \code{type.convert};
-if FALSE, result will be character}
+integer, or numeric. If \code{TRUE}, result is passed through
+\code{\link[readr:type_convert]{readr::type_convert}}; if \code{FALSE},
+result will be character.}
 
-\item{as.is}{logical, passed through to the \code{as.is} argument of
-\code{type.convert}}
+\item{locale, trim_ws, na}{Optionally, specify locale, the fate of leading or
+trailing whitespace, or a character vector of strings that should become
+missing values. Passed straight through to
+\code{\link[readr:type_convert]{readr::type_convert}}.}
 
-\item{na.strings}{a character vector of strings which are to be interpreted
-as \code{NA} values}
-
-\item{notation}{character; the result vector can have names that reflect
+\item{notation}{character. The result vector can have names that reflect
 which cell the data came from; this argument selects between the "A1" and
-"R1C1" positioning notations; specify "none" to suppress names}
+"R1C1" positioning notations. Specify "none" to suppress names.}
 
 \item{col_names}{if \code{TRUE}, the first row of the input will be
 interpreted as a column name and NOT included in the result; useful when
-reading a single column or variable}
+reading a single column or variable.}
 }
 \value{
 a vector
 }
 \description{
 In some cases, you do not want to convert the data retrieved from the cell
-feed into a data.frame via \code{\link{gs_reshape_cellfeed}}. Instead, you
+feed into a data frame via \code{\link{gs_reshape_cellfeed}}. Instead, you
 want the data as an atomic vector. That's what this function does. Note that,
 unlike \code{\link{gs_reshape_cellfeed}}, embedded empty cells will NOT
 necessarily appear in this result. By default, the API does not transmit data
@@ -48,15 +48,13 @@ argument \code{return_empty} set to \code{TRUE}.
 \examples{
 \dontrun{
 gap_ss <- gs_gap() # register the Gapminder example sheet
-gs_read_cellfeed(gap_ss, range = cell_rows(1))
-gs_simplify_cellfeed(gs_read_cellfeed(gap_ss, range = cell_rows(1)))
-gs_simplify_cellfeed(
-  gs_read_cellfeed(gap_ss, range = cell_rows(1)), notation = "R1C1")
+gap_cf <- gs_read_cellfeed(gap_ss, range = cell_rows(1))
+gs_simplify_cellfeed(gap_cf)
+gs_simplify_cellfeed(gap_cf, notation = "R1C1")
 
-gs_read_cellfeed(gap_ss, range = "A1:A10")
-gs_simplify_cellfeed(gs_read_cellfeed(gap_ss, range = "A1:A10"))
-gs_simplify_cellfeed(gs_read_cellfeed(gap_ss, range = "A1:A10"),
-                     col_names = FALSE)
+gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10")
+gs_simplify_cellfeed(gap_cf)
+gs_simplify_cellfeed(gap_cf, col_names = FALSE)
 }
 
 }
