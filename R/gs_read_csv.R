@@ -34,7 +34,7 @@
 gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   stopifnot(inherits(ss, "googlesheet"))
-  ddd <- parse_read_ddd(...)
+  ddd <- parse_read_ddd(..., verbose = verbose)
   this_ws <- gs_ws(ss, ws, verbose)
 
   if (is.null(this_ws$exportcsv)) {
