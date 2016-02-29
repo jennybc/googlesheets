@@ -51,8 +51,8 @@ gs_inspect <- function(x) {
   nr <- nrow(x)
   nc <- ncol(x)
   var_flavors <-
-    plyr::ldply(x, function(z) dplyr::data_frame(flavor = class(z)),
-                .id = "var_name")
+    dplyr::data_frame(var_name = factor(names(x), names(x)),
+                      flavor = purrr::map_chr(x, class))
 
   y <-
     suppressMessages(

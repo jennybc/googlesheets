@@ -104,22 +104,25 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
       return_links = TRUE, verbose = FALSE) %>%
     dplyr::mutate_(update_value = ~ input)
 
-  update_entries <-
-    plyr::alply(
-      cells_df, 1, function(x) {
-        XML::xmlNode("entry",
-                     XML::xmlNode("batch:id", x$cell),
-                     XML::xmlNode("batch:operation",
-                                  attrs = c("type" = "update")),
-                     XML::xmlNode("id", x$cell_id),
-                     XML::xmlNode("link",
-                                  attrs = c("rel" = "edit",
-                                            "type" = "application/atom+xml",
-                                            "href" = x$edit_link)),
-                     XML::xmlNode("gs:cell",
-                                  attrs = c("row" = x$row,
-                                            "col" = x$col,
-                                            "inputValue" = x$update_value)))})
+  f <- function(cell, cell_id, edit_link, row, col, update_value) {
+    XML::xmlNode("entry",
+                 XML::xmlNode("batch:id", cell),
+                 XML::xmlNode("batch:operation",
+                              attrs = c("type" = "update")),
+                 XML::xmlNode("id", cell_id),
+                 XML::xmlNode("link",
+                              attrs = c("rel" = "edit",
+                                        "type" = "application/atom+xml",
+                                        "href" = edit_link)),
+                 XML::xmlNode("gs:cell",
+                              attrs = c("row" = row,
+                                        "col" = col,
+                                        "inputValue" = update_value)))
+  }
+  update_entries <- cells_df %>%
+    dplyr::select_(quote(-cell_alt), quote(-cell_text)) %>%
+    purrr::pmap(f)
+
   update_feed <-
     XML::xmlNode("feed",
                  namespaceDefinitions =
