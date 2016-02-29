@@ -7,6 +7,7 @@
 #' @docType package
 #' @name googlesheets
 #' @importFrom dplyr %>%
+#' @importFrom purrr %||%
 NULL
 
 ## quiets concerns of R CMD check re: the .'s that appear in pipelines

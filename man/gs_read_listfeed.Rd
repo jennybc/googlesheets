@@ -23,57 +23,69 @@ actual API call.}
 \item{sq}{character, optional. Provides a structured query for row filtering
 in the actual API call.}
 
-\item{...}{Further arguments to control parsing, most of which are passed to
-\code{\link[readr:type_convert]{readr::type_convert}}.}
+\item{...}{\strong{Optional} arguments to control data download, parsing,
+and reshaping; for most purposes, the defaults should be fine.
+\describe{
+  \item{\code{progress}}{Logical. Whether to display download progress if in
+  an interactive session.}
+  \item{\code{col_types}}{Seize control of type conversion for variables.
+  Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}. Follow those links
+  or read the \code{vignette("column-types")} for details.}
+  \item{\code{locale, trim_ws, na}}{Specify locale, the fate of leading or
+  trailing whitespace, or a character vector of strings that should become
+  missing values. Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}.}
+  \item{\code{comment, skip, n_max}}{Used only for
+  \code{\link{gs_read_csv}} or \code{gs_read(..., range = NULL)}.
+  Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}}.}
+  \item{\code{col_names}}{Either \code{TRUE}, \code{FALSE} or a character
+  vector of column names. If \code{TRUE}, the first row of the data rectangle
+  will be used for names. If \code{FALSE}, column names will be X1, X2, etc.
+  If a character vector, it will be used as column names.}
+  \item{\code{check.names}}{Logical. Whether to run column names through
+  \code{\link{make.names}} with \code{unique = TRUE}, just like
+  \code{\link{read.table}} does. By default, \code{googlesheets} implements
+  the \code{readr} data ingest philosophy, which leaves column names "as is",
+  with one exception: data frames returned by \code{googlesheets} will have
+  a name for each variable, even if we have to create one.}
+}}
 
 \item{verbose}{logical; do you want informative messages?}
 }
 \value{
-a tbl_df
+a \code{data.frame} or, if \code{dplyr} is loaded, a
+  \code{\link[dplyr]{tbl_df}}
 }
 \description{
 Gets data via the "list feed", which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. The first row is assumed
 to hold variable or column names. The related function,
 \code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
-it is generally faster and more resilient to, e.g. empty header cells or
-rows, so use it if you can. However, you may need to use this function if you
-are dealing with an "old" Google Sheet, which is beyond the reach of
+it is generally faster and more resilient to, e.g. empty rows, so use it if
+you can. However, you may need to use this function if you are dealing with
+an "old" Google Sheet, which is beyond the reach of
 \code{\link{gs_read_csv}}. The list feed also has some ability to sort and
 filter rows via the API (more below). Consult the Google Sheets API
 documentation for more details about
 \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_list-based_feeds}{the
 list feed}.
 }
-\section{Data ingest philosophy}{
-
-
-  \code{\link{gs_read_csv}} is the "reference implementation" for ingesting
-  data from a Google Sheet. This, in turn, implies that
-  \code{\link[readr:read_delim]{readr::read_csv}} is the true reference. Use
-  the \code{...} argument to control parsing behavior.
-  \code{gs_read_listfeed} cannot actually pass the data through
-  \code{\link[readr:read_delim]{readr::read_csv}}, but instead uses
-  \code{\link[readr:type_convert]{readr::type_convert}}. Therefore, arguments
-  passed via \code{...} are used in different ways. Some are used directly in
-  \code{gs_read_listfeed} (example: \code{col_names}). Some are passed
-  through to \code{\link[readr:type_convert]{readr::type_convert}} (example:
-  \code{col_types}). Some are ignored because they are incompatible with the
-  list feed (example: \code{comment}).
-}
-
 \section{Column names}{
 
 
-  When you use the list feed, the Sheets API transforms the variable or
-  column names like so: 'The column names are the header values of the
-  worksheet lowercased and with all non-alpha-numeric characters removed. For
-  example, if the cell A1 contains the value "Time 2 Eat!" the column name
-  would be "time2eat".' If this is intolerable to you, use a different
-  function to read the data. Or, at least, consume the first row via the cell
-  feed and manually restore the variable names \emph{post hoc}. If you direct
+  For the list feed, and only for the list feed, the Sheets API wants to
+  transform the variable or column names like so: 'The column names are the
+  header values of the worksheet lowercased and with all non-alpha-numeric
+  characters removed. For example, if the cell A1 contains the value "Time 2
+  Eat!" the column name would be "time2eat".' In \code{googlesheets}, we do
+  not let this happen and, instead, use the column names "as is", for
+  consistent output across all \code{gs_read*} functions. If you direct
   \code{gs_read_listfeed} to pass query parameters to the actual API call,
-  you must refer to variables using the column names \emph{after this
+  you must refer to variables using the column names \emph{under this
   API-enforced transformation}. For example, to order the data by the column
   with "Time 2 Eat!" in the header row, you must specify \code{orderby =
   "time2eat"} in the \code{gs_read_listfeed} call.
@@ -110,13 +122,14 @@ oceania_fancy <-
                    sq = "lifeexp > 79 or year < 1960")
 oceania_fancy
 
-## modify data ingest in style of readr::read_csv, readr::type_convert
-oceania_tweaked <-
+## crazy demo of passing args through to readr::type_convert()
+oceania_crazy <-
   gs_read_listfeed(gap_ss,
                    ws = "Oceania",
-                   col_names = paste0("VAR", 1:6),
-                   col_types = "cccnnn")
-oceania_tweaked
+                   col_names = paste0("z", 1:6),
+                   col_types = "ccncnn",
+                   na = "1962")
+oceania_crazy
 }
 
 }

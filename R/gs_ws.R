@@ -395,7 +395,7 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
     spf("Spreadsheet only contains %d worksheets.", ss$n_ws)
   }
   if(verbose) {
-    mpf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws])
+    mpf("Accessing worksheet titled '%s'.", ss$ws$ws_title[ws])
   }
   ss$ws[ws, ]
 }

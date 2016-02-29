@@ -1,18 +1,21 @@
 # googlesheets 0.1.0.9001
 
-* Added a `NEWS.md` file to track changes to the package.
-* `httr v1.1.0`: to become compatible with this version, we now require it.
-* We explicitly try to match the behavior and interface of `readr::read_csv()` for data ingest.
-  - Within the `googlesheets` package, the explicit data ingest reference is `gs_read_csv()`, which now parses sheet contents via `readr::read_csv()` instead of `read.csv()`. Note this is also what is called whenever `range = NULL` in `gs_read()`.
-  - `gs_read_listfeed()` now parses sheet content via `readr::type_convert()` instead of `type.convert()` and tries to match behavior and interface of `gs_read_csv()` wherever possible.
-  - __Main message:__ Take control of `readr`-style data ingest via the `...` arguments of `gs_read` functions. Read the [`readr` vignette on column types](https://cran.r-project.org/web/packages/readr/vignettes/column-types.html) to better understand its automatic variable conversion behaviour and how to use the `col_types` argument.
-  - To explicitly indicate presence/absence of column names, use the `col_names` argument instead of `header`. Example: `col_names = FALSE` instead of `header = FALSE`.
-  - Columns that look like dates or date-times will, by default, be read in as such (vs. as character). 
-  - Columns that consist entirely of empty cells will be *character* instead of *logical*, i.e. the `NA`s will be `NA_character_` vs `NA`.
-  - "Column names are left as is, not munged into valid R identifiers (i.e. there is no check.names = TRUE)." This means you can get column names that are `NA`. I am considering adding an argument to `gs_read*()` functions to request that variable names be processed through `make.names()` or similar.
-* `gs_add_row()` now works for two-dimensional `input`, by calling itself once per row of `input` (#188, @jimhester).
-* Updated the scope for the Drive API. It is possible that new/updated Drive functions will require a token obtained with the new scope. This could mean that tokens stored and loaded from file in a non-interactive environment will need to be remade.
-* Newly exported function `gs_deauth()` allows you to suspend the current token and, optionally, disable the `.httr-oauth` token cache file by renaming it to `.httr-oauth-SUSPENDED`.
-* `gs_rename()` is a new function to rename an existing Sheet (#145).
-* `gs_read_listfeed()` now supports parameters to manipulate data in the API call itself: `reverse` inverts row order, `orderby` selects a column to sort on, `sq` accepts a structured query to filter rows. (#17)
-* `gs_browse()` is a new function to visit a Google Sheet in the browser.
+  * Added a `NEWS.md` file to track changes to the package.
+  * `httr v1.1.0`: to become compatible with this version, we now require it.
+  * Dependency changes:
+    - `plyr` is no longer required (#204)
+    - `purrr` is a new dependency
+  * We explicitly try to match the behavior and interface of `readr::read_csv()` for all data ingest. The read functions `gs_read()`, `gs_read_csv()`, and `gs_read_listfeed()` and the reshaper `gs_reshape_cellfeed()` should all return the same data frame when operating on the same worksheet. This should also match what `readr::read_csv()` would return on a `.csv` file exported from that worksheet.
+    - If you're not happy with the defaults, take control of `readr`-style data ingest via the `...` arguments of `gs_read*` or reshape functions. You can now specify `column_types`, `col_names`, `locale`, `na`, `trim_ws`, etc. here. The type conversion arguments for `gs_simplify_cellfeed()` have also changed accordingly.
+    - Column types: read the [`readr` vignette on column types](https://cran.r-project.org/web/packages/readr/vignettes/column-types.html) to better understand the automatic variable conversion behaviour and how to use the `col_types` argument to override it.
+    - Column names: Use the `col_names` argument instead of `header`. If character, it should provide actual names. If logical, `TRUE` implies that column names should be taken from the first row and `FALSE` requests column names like `X1`, `X2`, etc.
+    - `gs_read_listfeed()` doesn't use API-transformed column names anymore. They should now be the same as those from the other read functions.
+    - `readr` exception #1: variables that consist entirely of missing values will be `NA` of the logical type, not `NA_character_`.
+    - `readr` exception #2: `googlesheets` will never return a data frame with `NA` as a variable name. Instead, it will create a dummy variable name, like `X5`.
+    - `readr` exception #3: All read/reshape functions accept `check.names`, in the spirit of `utils::read.table()`, which defaults to `FALSE`. If `TRUE`, variable names will be run through `make.names(..., unique = TRUE)`. (#208)
+  * `gs_add_row()` now works for two-dimensional `input`, by calling itself once per row of `input` (#188, @jimhester).
+  * Updated the scope for the Drive API. It is possible that new/updated Drive functions will require a token obtained with the new scope. This could mean that tokens stored and loaded from file in a non-interactive environment will need to be remade.
+  * Newly exported function `gs_deauth()` allows you to suspend the current token and, optionally, disable the `.httr-oauth` token cache file by renaming it to `.httr-oauth-SUSPENDED`.
+  * `gs_rename()` is a new function to rename an existing Sheet (#145).
+  * `gs_read_listfeed()` now supports parameters to manipulate data in the API call itself: `reverse` inverts row order, `orderby` selects a column to sort on, `sq` accepts a structured query to filter rows. (#17)
+  * `gs_browse()` is a new function to visit a Google Sheet in the browser.

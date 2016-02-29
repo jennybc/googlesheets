@@ -4,9 +4,9 @@
 #' rectangle. The list feed consumes data row by row. The first row is assumed
 #' to hold variable or column names. The related function,
 #' \code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
-#' it is generally faster and more resilient to, e.g. empty header cells or
-#' rows, so use it if you can. However, you may need to use this function if you
-#' are dealing with an "old" Google Sheet, which is beyond the reach of
+#' it is generally faster and more resilient to, e.g. empty rows, so use it if
+#' you can. However, you may need to use this function if you are dealing with
+#' an "old" Google Sheet, which is beyond the reach of
 #' \code{\link{gs_read_csv}}. The list feed also has some ability to sort and
 #' filter rows via the API (more below). Consult the Google Sheets API
 #' documentation for more details about
@@ -21,36 +21,20 @@
 #'   actual API call.
 #' @param sq character, optional. Provides a structured query for row filtering
 #'   in the actual API call.
-#' @param ... Further arguments to control parsing, most of which are passed to
-#'   \code{\link[readr:type_convert]{readr::type_convert}}.
+#' @template read-ddd
 #' @template verbose
-#'
-#' @section Data ingest philosophy:
-#'
-#'   \code{\link{gs_read_csv}} is the "reference implementation" for ingesting
-#'   data from a Google Sheet. This, in turn, implies that
-#'   \code{\link[readr:read_delim]{readr::read_csv}} is the true reference. Use
-#'   the \code{...} argument to control parsing behavior.
-#'   \code{gs_read_listfeed} cannot actually pass the data through
-#'   \code{\link[readr:read_delim]{readr::read_csv}}, but instead uses
-#'   \code{\link[readr:type_convert]{readr::type_convert}}. Therefore, arguments
-#'   passed via \code{...} are used in different ways. Some are used directly in
-#'   \code{gs_read_listfeed} (example: \code{col_names}). Some are passed
-#'   through to \code{\link[readr:type_convert]{readr::type_convert}} (example:
-#'   \code{col_types}). Some are ignored because they are incompatible with the
-#'   list feed (example: \code{comment}).
 #'
 #' @section Column names:
 #'
-#'   When you use the list feed, the Sheets API transforms the variable or
-#'   column names like so: 'The column names are the header values of the
-#'   worksheet lowercased and with all non-alpha-numeric characters removed. For
-#'   example, if the cell A1 contains the value "Time 2 Eat!" the column name
-#'   would be "time2eat".' If this is intolerable to you, use a different
-#'   function to read the data. Or, at least, consume the first row via the cell
-#'   feed and manually restore the variable names \emph{post hoc}. If you direct
+#'   For the list feed, and only for the list feed, the Sheets API wants to
+#'   transform the variable or column names like so: 'The column names are the
+#'   header values of the worksheet lowercased and with all non-alpha-numeric
+#'   characters removed. For example, if the cell A1 contains the value "Time 2
+#'   Eat!" the column name would be "time2eat".' In \code{googlesheets}, we do
+#'   not let this happen and, instead, use the column names "as is", for
+#'   consistent output across all \code{gs_read*} functions. If you direct
 #'   \code{gs_read_listfeed} to pass query parameters to the actual API call,
-#'   you must refer to variables using the column names \emph{after this
+#'   you must refer to variables using the column names \emph{under this
 #'   API-enforced transformation}. For example, to order the data by the column
 #'   with "Time 2 Eat!" in the header row, you must specify \code{orderby =
 #'   "time2eat"} in the \code{gs_read_listfeed} call.
@@ -73,7 +57,7 @@
 #'
 #' @family data consumption functions
 #'
-#' @return a tbl_df
+#' @template return-tbl-df
 #'
 #' @examples
 #' \dontrun{
@@ -89,13 +73,14 @@
 #'                    sq = "lifeexp > 79 or year < 1960")
 #' oceania_fancy
 #'
-#' ## modify data ingest in style of readr::read_csv, readr::type_convert
-#' oceania_tweaked <-
+#' ## crazy demo of passing args through to readr::type_convert()
+#' oceania_crazy <-
 #'   gs_read_listfeed(gap_ss,
 #'                    ws = "Oceania",
-#'                    col_names = paste0("VAR", 1:6),
-#'                    col_types = "cccnnn")
-#' oceania_tweaked
+#'                    col_names = paste0("z", 1:6),
+#'                    col_types = "ccncnn",
+#'                    na = "1962")
+#' oceania_crazy
 #' }
 #'
 #' @export
@@ -114,57 +99,88 @@ gs_read_listfeed <- function(ss, ws = 1,
     stopifnot(is.character(sq), length(sq) == 1L)
   }
 
-  ddd <- list(...)
-  col_names <- ddd$col_names
-  if (!is.null(col_names)) stopifnot(is.character(col_names))
-  col_types <- ddd$col_types
-  locale <- ddd$locale %||% readr::default_locale()
-  na <- ddd$na %||% c("", "NA")
-  trim_ws <- ddd$trim_ws %||% TRUE
-  oops <- intersect(names(ddd), c("comment", "skip", "n_max", "progress"))
-  if (length(oops) > 0 && verbose) {
-    mpf(paste("These arguments are incompatible with the list feed and\n",
-              "will be ignored:\n%s"), paste(oops, collapse = ", "))
-  }
+  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = verbose)
 
   this_ws <- gs_ws(ss, ws, verbose)
   if (!is.null(reverse)) reverse <- tolower(as.character(reverse))
   the_query <- list(reverse = reverse, orderby = orderby, sq = sq)
   the_url <- httr::modify_url(this_ws$listfeed, query = the_query)
-  req <- httr::GET(the_url, omit_token_if(grepl("public", the_url))) %>%
+  req <-
+    httr::GET(the_url,
+              omit_token_if(grepl("public", the_url)),
+              if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
-
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  var_names <- rc %>%
-    xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
-    xml2::xml_find_all(".//gsx:*", ns) %>%
-    xml2::xml_name()
-  n_cols <- length(var_names)
-  if (!is.null(col_names)) {
-    if (length(col_names) >= n_cols) {
-      var_names <- col_names[seq_len(n_cols)]
-    } else {
-      if (verbose) mpf("'col_names' too short ... ignoring.")
-    }
+  rows <- rc %>%
+    ## list of nodesets: one component per spreadsheet row
+    xml2::xml_find_all(xpath = "//feed:entry", ns = ns) %>%
+    ## keep only nodes that give cell contents
+    purrr::map(~ xml2::xml_find_all(.x, xpath = "./gsx:*", ns = ns))
+
+  if (length(rows) == 0L) {
+    if (verbose) mpf("Worksheet '%s' is empty.", this_ws$ws_title)
+    return(dplyr::data_frame())
   }
-  ## FIXME: get the var_names from the cellfeed so API doesn't mangle them
 
-  values <- rc %>%
-    xml2::xml_find_all("//feed:entry//gsx:*", ns) %>%
-    xml2::xml_text()
-  values[values == ""] <- NA_character_
+  ## make a data frame with row-specific nodesets in a list-column
+  rows_df <- dplyr::data_frame_(list(row = ~ seq_along(rows),
+                                     nodeset = ~ rows))
 
-  dat <- matrix(values, ncol = n_cols, byrow = TRUE,
-                dimnames = list(NULL, var_names))
-  dat %>%
-    ## https://github.com/hadley/dplyr/issues/876
-    ## https://github.com/hadley/dplyr/commit/9a23e869a027861ec6276abe60fe7bb29a536369
-    ## I can drop as.data.frame() once dplyr version >= 0.4.4
-    as.data.frame(stringsAsFactors = FALSE) %>%
-    dplyr::as_data_frame() %>%
-    readr::type_convert(col_types = col_types, na = na, trim_ws = trim_ws,
-                        locale = locale)
+  ## rows_df has one row spreadsheet row
+  ## cells_df has one row per nonempty spreadsheet cell
+  cells_df <- rows_df %>%
+    ## extract (alleged) col name, cell text; i = within-row cell counter
+    dplyr::mutate_(col_name_raw = ~ nodeset %>% purrr::map(~ xml2::xml_name(.)),
+                   cell_text = ~ nodeset %>% purrr::map(~ xml2::xml_text(.)),
+                   i = ~ nodeset %>% purrr::map(~ seq_along(.))) %>%
+    dplyr::select_(~ row, ~ i, ~ col_name_raw, ~ cell_text) %>%
+    tidyr::unnest_(c("i", "col_name_raw", "cell_text"))
+
+  hrow <- cells_df %>%
+    ## figure out which column things came from
+    ## it is not necessarily column i because of empty cells or columns
+    dplyr::group_by_(~ col_name_raw) %>%
+    dplyr::summarise_(col = ~ max(i)) %>%
+    dplyr::arrange_(~ col) %>%
+    ## no docs re: dummy column name given by the API when it's missing
+    ## this regex derived from limited personal experience so :shrug:
+    dplyr::mutate_(col_name = ~ stringr::str_replace(col_name_raw,
+                                                     "_[a-z0-9]{5}", ""))
+
+  suppressMessages(
+    cells_df <- cells_df %>%
+      ## add column info to the data
+      dplyr::left_join(hrow) %>%
+      dplyr::select_(~ row, ~ col, ~ cell_text) %>%
+      ## increment row to anticipate prepending data for the header row
+      dplyr::mutate_(row = ~ row + 1L)
+  )
+
+  if (isTRUE(ddd$col_names)) {
+
+    ## we are going to use column names from the Sheet, so get them from cell
+    ## feed (vs. the transformed ones provided by the list feed)
+    vnames <- ss %>%
+      gs_read_cellfeed(ws = ws, range = cellranger::cell_rows(1),
+        return_empty = TRUE, verbose = FALSE
+      ) %>%
+      gs_simplify_cellfeed(notation = "none")
+    ## still guessing at exactly how Google transforms header cells on the list
+    ## feed
+    vnames_mangled <- vnames %>% tolower() %>%
+      stringr::str_replace_all("[^a-z0-9\\.]", "")
+    hrow$col_name <- vnames[match(hrow$col_name, vnames_mangled)]
+
+    ## prepend column name cells to the data, just like the cell feed
+    cells_df <- hrow %>%
+      dplyr::mutate_(row = 1L) %>%
+      dplyr::select_(~ row, ~ col, cell_text = ~ col_name) %>%
+      dplyr::bind_rows(cells_df)
+
+  }
+
+  gs_reshape_feed(cells_df, ddd, verbose)
 
 }

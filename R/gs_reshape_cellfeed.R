@@ -1,12 +1,12 @@
 #' Reshape data from the "cell feed"
 #'
-#' Reshape data from the "cell feed" and convert to a \code{tbl_df}
+#' Reshape data from the "cell feed" and convert to a \code{tbl_df}.
 #'
 #' @param x a data.frame returned by \code{\link{gs_read_cellfeed}}
-#' @param col_names if \code{TRUE}, the first row of the input will be used as
-#'   the column names; if \code{FALSE}, column names will be X1, X2, etc.; if a
-#'  character vector, vector will be used as the column names
+#' @template read-ddd
 #' @template verbose
+#'
+#' @template return-tbl-df
 #'
 #' @family data consumption functions
 #'
@@ -23,59 +23,71 @@
 #'                     col_names = paste0("yo", 1:6))
 #' }
 #' @export
-gs_reshape_cellfeed <- function(x, col_names = TRUE, verbose = TRUE) {
+gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
+
+  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = verbose)
+  gs_reshape_feed(x, ddd, verbose)
+
+}
+
+gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
+  col_names <- ddd$col_names
 
   limits <- x %>%
     dplyr::summarise_each_(dplyr::funs(min, max), list(~ row, ~ col))
   all_possible_cells <-
-    with(limits,
-         expand.grid(row = row_min:row_max, col = col_min:col_max)) %>%
+    expand.grid(row = seq.int(limits$row_min, limits$row_max),
+                col = seq.int(limits$col_min, limits$col_max)) %>%
     dplyr::as.tbl()
   suppressMessages(
-    x_augmented <- all_possible_cells %>% dplyr::left_join(x)
+    x_augmented <- all_possible_cells %>%
+      dplyr::left_join(x) %>%
+      dplyr::arrange_(~ row, ~ col)
   )
-  ## tidyr::spread(), used below, could do something similar as this join, but
-  ## it would handle completely missing rows and columns differently; still
-  ## thinking about this
+  n_cols <- dplyr::n_distinct(x_augmented$col)
 
-  if(is.character(col_names)) {
-    n_cols <- dplyr::n_distinct(x_augmented$col)
-    stopifnot(length(col_names) == n_cols)
-    var_names <- col_names
+  if (isTRUE(col_names)) {
+    row_one <- x_augmented %>%
+      dplyr::filter_(~ (row == limits$row_min))
+    x_augmented <- x_augmented %>%
+      dplyr::filter_(~ row > limits$row_min)
+    vnames <- size_names(row_one$cell_text, n_cols)
+  } else if (isFALSE(col_names)) {
+    vnames <- paste0("X", seq_len(n_cols))
+  } else if (is.character(col_names)) {
+    vnames <- size_names(col_names, n_cols)
   } else {
-    stopifnot(identical(col_names, TRUE) || identical(col_names, FALSE))
-    if(col_names) {
-      row_one <- x_augmented %>%
-        dplyr::filter_(~ (row == min(row))) %>%
-        dplyr::mutate_(cell_text = ~ ifelse(cell_text == "", NA, cell_text))
-      var_names <- ifelse(is.na(row_one$cell_text),
-                          stringr::str_c("X", row_one$col),
-                          row_one$cell_text) %>% make.names()
-      x_augmented <- x_augmented %>%
-        dplyr::filter_(~ row > min(row))
-    } else {
-      var_names <- limits$col_min:limits$col_max %>% make.names()
-    }
+    stop("`col_names` must be TRUE, FALSE or a character vector", call. = FALSE)
   }
+  vnames <- fix_names(vnames, ddd$check.names)
 
-  if(x_augmented$row %>% dplyr::n_distinct() < 1) {
-    if(verbose) {
+  if (dplyr::n_distinct(x_augmented$row) < 1) {
+    if (verbose) {
       message("No data to reshape!")
-      if(isTRUE(col_names)) {
+      if (isTRUE(col_names)) {
         message("Perhaps retry with `col_names = FALSE`?")
       }
     }
-    return(dplyr::data_frame() %>% dplyr::as.tbl())
+    return(dplyr::data_frame())
   }
 
-  x_augmented %>%
-    dplyr::select_(~ row, ~ col, ~ cell_text) %>%
-    ## do not set 'convert = TRUE' here!
-    ## leave as character so readr::type_convert below handles it all
-    tidyr::spread_("col", "cell_text") %>%
-    dplyr::select_(~ -row) %>%
-    stats::setNames(var_names) %>%
-    readr::type_convert() %>%
-    dplyr::mutate_each_(dplyr::funs(force_na_type), var_names)
+  dat <- matrix(x_augmented$cell_text, ncol = n_cols, byrow = TRUE,
+                dimnames = list(NULL, vnames))
+  dat <- dat %>%
+    ## https://github.com/hadley/dplyr/issues/876
+    ## https://github.com/hadley/dplyr/commit/9a23e869a027861ec6276abe60fe7bb29a536369
+    ## I can drop as.data.frame() once dplyr version >= 0.4.4
+    as.data.frame(stringsAsFactors = FALSE) %>%
+    dplyr::as_data_frame()
+
+  allowed_args <- c("col_types", "locale", "trim_ws", "na")
+  type_convert_args <- c(list(df = dat), dropnulls(ddd[allowed_args]))
+  df <- do.call(readr::type_convert, type_convert_args)
+
+  ## our departures from readr data ingest:
+  ## ~~no NA variable names~~ handled elsewhere (above) in this function
+  ## NA vars should be logical, not character
+  df %>%
+    purrr::dmap(force_na_type)
 
 }

@@ -4,28 +4,19 @@
 #' \code{tbl_df} or \code{data.frame}. Don't be spooked by the "csv" thing --
 #' the data is NOT actually written to file during this process. Data is read
 #' from the "maximal data rectangle", i.e. the rectangle spanned by the maximal
-#' row and column extent of the data. Empty cells within this rectangle will be
-#' assigned \code{NA}. This is the fastest method of data consumption, so use it
-#' as long as you can tolerate the lack of control re: which cells are being
-#' read.
-#'
-#' How does this compare to consumption via the list feed, implemented by
-#' \code{\link{gs_read_listfeed}}? First, \code{gs_read_csv} is much, much
-#' faster. Second, the first row, potentially containing column or variable
-#' names, is NOT transformed/mangled, as it is via the list feed. Finally,
-#' consumption via the \code{exportcsv} link is more tolerant of data that does
-#' not form a perfect, neat rectangle, e.g. the read does NOT stop upon
-#' encountering an empty row.
+#' row and column extent of the data. By default, empty cells within this
+#' rectangle will be assigned \code{NA}. This is the fastest method of data
+#' consumption, so use it as long as you can tolerate the lack of control re:
+#' which cells are being read.
 #'
 #' @template ss
 #' @template ws
-#' @param ... Further arguments to be passed to the csv parser. This is
-#'   \code{\link[readr:read_delim]{readr::read_csv}}.
+#' @template read-ddd
 #' @template verbose
 #'
 #' @family data consumption functions
 #'
-#' @return a tbl_df
+#' @template return-tbl-df
 #'
 #' @examples
 #' \dontrun{
@@ -33,12 +24,17 @@
 #' oceania_csv <- gs_read_csv(gap_ss, ws = "Oceania")
 #' str(oceania_csv)
 #' oceania_csv
+#'
+#' ## crazy demo of passing args through to readr::read_csv()
+#' oceania_crazy <- gs_read_csv(gap_ss, ws = "Oceania",
+#'   col_names = paste0("Z", 1:6), na = "1962", col_types = "cccccc", skip = 1)
+#' oceania_crazy
 #' }
 #' @export
 gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   stopifnot(inherits(ss, "googlesheet"))
-
+  ddd <- parse_read_ddd(..., verbose = verbose)
   this_ws <- gs_ws(ss, ws, verbose)
 
   if (is.null(this_ws$exportcsv)) {
@@ -51,19 +47,31 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
          call. = FALSE)
   }
 
-  req <- httr::GET(this_ws$exportcsv, omit_token_if(ss$is_public)) %>%
+  req <-
+    httr::GET(this_ws$exportcsv,
+              omit_token_if(ss$is_public),
+              if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
     httr::stop_for_status()
   stop_for_content_type(req, "text/csv")
 
   if (is.null(req$content) || length(req$content) == 0L) {
-    mpf("Worksheet \"%s\" is empty.", this_ws$ws_title)
+    if (verbose) mpf("Worksheet '%s' is empty.", this_ws$ws_title)
     return(dplyr::data_frame())
   }
 
-  req %>%
-    httr::content(as = "text") %>%
-    readr::read_csv(...)
-  ## empty cells in   numeric columns come as NA
-  ## empty cells in character columns come as ""
-  ## --> we like the `na = c("", NA)` default in readr::read_csv()
-  }
+  allowed_args <- c("col_types", "col_names", "locale", "trim_ws", "na",
+                    ## specific to csv
+                    "comment", "skip", "n_max")
+  read_csv_args <- c(list(file = httr::content(req, as = "text")),
+                     dropnulls(ddd[allowed_args]))
+  df <- do.call(readr::read_csv, read_csv_args)
+
+  ## our departures from readr data ingest:
+  ## no NA variable names
+  ## NA vars should be logical, not character
+  nms <- names(df)
+  names(df) <- fix_names(nms, ddd$check.names)
+  df %>%
+    purrr::dmap(force_na_type)
+
+}
