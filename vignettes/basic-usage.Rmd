@@ -21,6 +21,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+First we load the `googlesheets` package and `dplyr`, from which we use the `%>%` pipe operator, among other things. `googlesheets` usage *does not require* you to use `%>%` though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.
+
+```{r load-package}
+library(googlesheets)
+suppressMessages(library(dplyr))
+```
+
 ```{r auth, include = FALSE, eval = NOT_CRAN}
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
@@ -33,13 +40,6 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ## working directory and Google Drive first
 googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
-```
-
-First we load the `googlesheets` package and `dplyr`, from which we use the `%>%` pipe operator, among other things. `googlesheets` usage *does not require* you to use `%>%` though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.
-
-```{r load-package}
-library(googlesheets)
-suppressMessages(library(dplyr))
 ```
 
 ### See some spreadsheets you can access

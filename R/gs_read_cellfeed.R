@@ -100,7 +100,9 @@ gs_read_cellfeed <- function(
                            cell_alt = character(),
                            row = integer(),
                            col = integer(),
-                           cell_text = character(),
+                           literal_value = character(),
+                           input_value = character(),
+                           numeric_value = character(),
                            edit_link = character(),
                            cell_id = character())
   } else {
@@ -126,19 +128,18 @@ gs_read_cellfeed <- function(
            col = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("col") %>%
              as.integer(),
-           cell_text = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
-             xml2::xml_text()
+           literal_value = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_text(),
+           input_value =   ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_attr("inputValue"),
+           numeric_value = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_attr("numericValue")
       ))
-    # see issue #19 about all the places cell data is (mostly redundantly)
-    # stored in the XML, such as: content_text = x$content$text,
-    # cell_inputValue = x$cell$.attrs["inputValue"], cell_numericValue =
-    # x$cell$.attrs["numericValue"], when/if we think about formulas
-    # explicitly, we will want to come back and distinguish between inputValue
-    # and numericValue
   }
 
   x <- x %>%
-    dplyr::select_(~ cell, ~ cell_alt, ~ row, ~ col, ~ cell_text,
+    dplyr::select_(~ cell, ~ cell_alt, ~ row, ~ col,
+                   ~ literal_value, ~ input_value, ~numeric_value,
                    ~ edit_link, ~ cell_id)
 
   attr(x, "ws_title") <- this_ws$ws_title

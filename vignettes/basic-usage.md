@@ -4,10 +4,6 @@ Jenny Bryan, Joanna Zhao
 
 
 
-
-
-
-
 First we load the `googlesheets` package and `dplyr`, from which we use the `%>%` pipe operator, among other things. `googlesheets` usage *does not require* you to use `%>%` though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.
 
 
@@ -15,6 +11,10 @@ First we load the `googlesheets` package and `dplyr`, from which we use the `%>%
 library(googlesheets)
 suppressMessages(library(dplyr))
 ```
+
+
+
+
 
 ### See some spreadsheets you can access
 
@@ -83,7 +83,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-13 08:41:16 GMT
+#>   Date of googlesheets registration: 2016-03-13 09:38:32 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -328,29 +328,31 @@ oceania_list_feed
 oceania_cell_feed <- gap %>% gs_read_cellfeed(ws = "Oceania") 
 #> Accessing worksheet titled 'Oceania'.
 str(oceania_cell_feed)
-#> Classes 'tbl_df', 'tbl' and 'data.frame':	150 obs. of  5 variables:
-#>  $ cell     : chr  "A1" "B1" "C1" "D1" ...
-#>  $ cell_alt : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
-#>  $ row      : int  1 1 1 1 1 1 2 2 2 2 ...
-#>  $ col      : int  1 2 3 4 5 6 1 2 3 4 ...
-#>  $ cell_text: chr  "country" "continent" "year" "lifeExp" ...
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	150 obs. of  7 variables:
+#>  $ cell         : chr  "A1" "B1" "C1" "D1" ...
+#>  $ cell_alt     : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
+#>  $ row          : int  1 1 1 1 1 1 2 2 2 2 ...
+#>  $ col          : int  1 2 3 4 5 6 1 2 3 4 ...
+#>  $ literal_value: chr  "country" "continent" "year" "lifeExp" ...
+#>  $ input_value  : chr  "country" "continent" "year" "lifeExp" ...
+#>  $ numeric_value: chr  NA NA NA NA ...
 #>  - attr(*, "ws_title")= chr "Oceania"
 oceania_cell_feed
-#> Source: local data frame [150 x 5]
+#> Source: local data frame [150 x 7]
 #> 
-#>     cell cell_alt   row   col cell_text
-#>    (chr)    (chr) (int) (int)     (chr)
-#> 1     A1     R1C1     1     1   country
-#> 2     B1     R1C2     1     2 continent
-#> 3     C1     R1C3     1     3      year
-#> 4     D1     R1C4     1     4   lifeExp
-#> 5     E1     R1C5     1     5       pop
-#> 6     F1     R1C6     1     6 gdpPercap
-#> 7     A2     R2C1     2     1 Australia
-#> 8     B2     R2C2     2     2   Oceania
-#> 9     C2     R2C3     2     3      1952
-#> 10    D2     R2C4     2     4     69.12
-#> ..   ...      ...   ...   ...       ...
+#>     cell cell_alt   row   col literal_value input_value numeric_value
+#>    (chr)    (chr) (int) (int)         (chr)       (chr)         (chr)
+#> 1     A1     R1C1     1     1       country     country            NA
+#> 2     B1     R1C2     1     2     continent   continent            NA
+#> 3     C1     R1C3     1     3          year        year            NA
+#> 4     D1     R1C4     1     4       lifeExp     lifeExp            NA
+#> 5     E1     R1C5     1     5           pop         pop            NA
+#> 6     F1     R1C6     1     6     gdpPercap   gdpPercap            NA
+#> 7     A2     R2C1     2     1     Australia   Australia            NA
+#> 8     B2     R2C2     2     2       Oceania     Oceania            NA
+#> 9     C2     R2C3     2     3          1952        1952        1952.0
+#> 10    D2     R2C4     2     4         69.12       69.12         69.12
+#> ..   ...      ...   ...   ...           ...         ...           ...
 ```
 
 #### Quick speed comparison
@@ -366,9 +368,9 @@ readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #> No encoding supplied: defaulting to UTF-8.
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.047            0.296            1.269
-#> sys.self         0.005            0.023            0.044
-#> elapsed          0.588            1.608            2.840
+#> user.self        0.052            0.285            1.670
+#> sys.self         0.005            0.022            0.047
+#> elapsed          0.613            1.445            3.148
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -386,29 +388,31 @@ australia_cell_feed <- gap %>%
   gs_read_cellfeed(ws = "Oceania", range = "A1:F13") 
 #> Accessing worksheet titled 'Oceania'.
 str(australia_cell_feed)
-#> Classes 'tbl_df', 'tbl' and 'data.frame':	78 obs. of  5 variables:
-#>  $ cell     : chr  "A1" "B1" "C1" "D1" ...
-#>  $ cell_alt : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
-#>  $ row      : int  1 1 1 1 1 1 2 2 2 2 ...
-#>  $ col      : int  1 2 3 4 5 6 1 2 3 4 ...
-#>  $ cell_text: chr  "country" "continent" "year" "lifeExp" ...
+#> Classes 'tbl_df', 'tbl' and 'data.frame':	78 obs. of  7 variables:
+#>  $ cell         : chr  "A1" "B1" "C1" "D1" ...
+#>  $ cell_alt     : chr  "R1C1" "R1C2" "R1C3" "R1C4" ...
+#>  $ row          : int  1 1 1 1 1 1 2 2 2 2 ...
+#>  $ col          : int  1 2 3 4 5 6 1 2 3 4 ...
+#>  $ literal_value: chr  "country" "continent" "year" "lifeExp" ...
+#>  $ input_value  : chr  "country" "continent" "year" "lifeExp" ...
+#>  $ numeric_value: chr  NA NA NA NA ...
 #>  - attr(*, "ws_title")= chr "Oceania"
 oceania_cell_feed
-#> Source: local data frame [150 x 5]
+#> Source: local data frame [150 x 7]
 #> 
-#>     cell cell_alt   row   col cell_text
-#>    (chr)    (chr) (int) (int)     (chr)
-#> 1     A1     R1C1     1     1   country
-#> 2     B1     R1C2     1     2 continent
-#> 3     C1     R1C3     1     3      year
-#> 4     D1     R1C4     1     4   lifeExp
-#> 5     E1     R1C5     1     5       pop
-#> 6     F1     R1C6     1     6 gdpPercap
-#> 7     A2     R2C1     2     1 Australia
-#> 8     B2     R2C2     2     2   Oceania
-#> 9     C2     R2C3     2     3      1952
-#> 10    D2     R2C4     2     4     69.12
-#> ..   ...      ...   ...   ...       ...
+#>     cell cell_alt   row   col literal_value input_value numeric_value
+#>    (chr)    (chr) (int) (int)         (chr)       (chr)         (chr)
+#> 1     A1     R1C1     1     1       country     country            NA
+#> 2     B1     R1C2     1     2     continent   continent            NA
+#> 3     C1     R1C3     1     3          year        year            NA
+#> 4     D1     R1C4     1     4       lifeExp     lifeExp            NA
+#> 5     E1     R1C5     1     5           pop         pop            NA
+#> 6     F1     R1C6     1     6     gdpPercap   gdpPercap            NA
+#> 7     A2     R2C1     2     1     Australia   Australia            NA
+#> 8     B2     R2C2     2     2       Oceania     Oceania            NA
+#> 9     C2     R2C3     2     3          1952        1952        1952.0
+#> 10    D2     R2C4     2     4         69.12       69.12         69.12
+#> ..   ...      ...   ...   ...           ...         ...           ...
 australia_reshaped <- australia_cell_feed %>% gs_reshape_cellfeed()
 str(australia_reshaped)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':	12 obs. of  6 variables:
@@ -440,16 +444,16 @@ australia_reshaped
 gap_3rows <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1:3))
 #> Accessing worksheet titled 'Europe'.
 gap_3rows %>% head()
-#> Source: local data frame [6 x 5]
+#> Source: local data frame [6 x 7]
 #> 
-#>    cell cell_alt   row   col cell_text
-#>   (chr)    (chr) (int) (int)     (chr)
-#> 1    A1     R1C1     1     1   country
-#> 2    B1     R1C2     1     2 continent
-#> 3    C1     R1C3     1     3      year
-#> 4    D1     R1C4     1     4   lifeExp
-#> 5    E1     R1C5     1     5       pop
-#> 6    F1     R1C6     1     6 gdpPercap
+#>    cell cell_alt   row   col literal_value input_value numeric_value
+#>   (chr)    (chr) (int) (int)         (chr)       (chr)         (chr)
+#> 1    A1     R1C1     1     1       country     country            NA
+#> 2    B1     R1C2     1     2     continent   continent            NA
+#> 3    C1     R1C3     1     3          year        year            NA
+#> 4    D1     R1C4     1     4       lifeExp     lifeExp            NA
+#> 5    E1     R1C5     1     5           pop         pop            NA
+#> 6    F1     R1C6     1     6     gdpPercap   gdpPercap            NA
 
 # convert to a data.frame (by default, column names found in first row)
 gap_3rows %>% gs_reshape_cellfeed()
@@ -498,16 +502,16 @@ To extract the cell data into an atomic vector, possibly named, use `gs_simplify
 gap_1row <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1))
 #> Accessing worksheet titled 'Europe'.
 gap_1row
-#> Source: local data frame [6 x 5]
+#> Source: local data frame [6 x 7]
 #> 
-#>    cell cell_alt   row   col cell_text
-#>   (chr)    (chr) (int) (int)     (chr)
-#> 1    A1     R1C1     1     1   country
-#> 2    B1     R1C2     1     2 continent
-#> 3    C1     R1C3     1     3      year
-#> 4    D1     R1C4     1     4   lifeExp
-#> 5    E1     R1C5     1     5       pop
-#> 6    F1     R1C6     1     6 gdpPercap
+#>    cell cell_alt   row   col literal_value input_value numeric_value
+#>   (chr)    (chr) (int) (int)         (chr)       (chr)         (chr)
+#> 1    A1     R1C1     1     1       country     country            NA
+#> 2    B1     R1C2     1     2     continent   continent            NA
+#> 3    C1     R1C3     1     3          year        year            NA
+#> 4    D1     R1C4     1     4       lifeExp     lifeExp            NA
+#> 5    E1     R1C5     1     5           pop         pop            NA
+#> 6    F1     R1C6     1     6     gdpPercap   gdpPercap            NA
 
 # convert to a named (character) vector
 gap_1row %>% gs_simplify_cellfeed()
@@ -518,21 +522,21 @@ gap_1row %>% gs_simplify_cellfeed()
 gap_1col <- gap %>% gs_read_cellfeed("Europe", range = cell_cols(3))
 #> Accessing worksheet titled 'Europe'.
 gap_1col
-#> Source: local data frame [361 x 5]
+#> Source: local data frame [361 x 7]
 #> 
-#>     cell cell_alt   row   col cell_text
-#>    (chr)    (chr) (int) (int)     (chr)
-#> 1     C1     R1C3     1     3      year
-#> 2     C2     R2C3     2     3      1952
-#> 3     C3     R3C3     3     3      1957
-#> 4     C4     R4C3     4     3      1962
-#> 5     C5     R5C3     5     3      1967
-#> 6     C6     R6C3     6     3      1972
-#> 7     C7     R7C3     7     3      1977
-#> 8     C8     R8C3     8     3      1982
-#> 9     C9     R9C3     9     3      1987
-#> 10   C10    R10C3    10     3      1992
-#> ..   ...      ...   ...   ...       ...
+#>     cell cell_alt   row   col literal_value input_value numeric_value
+#>    (chr)    (chr) (int) (int)         (chr)       (chr)         (chr)
+#> 1     C1     R1C3     1     3          year        year            NA
+#> 2     C2     R2C3     2     3          1952        1952        1952.0
+#> 3     C3     R3C3     3     3          1957        1957        1957.0
+#> 4     C4     R4C3     4     3          1962        1962        1962.0
+#> 5     C5     R5C3     5     3          1967        1967        1967.0
+#> 6     C6     R6C3     6     3          1972        1972        1972.0
+#> 7     C7     R7C3     7     3          1977        1977        1977.0
+#> 8     C8     R8C3     8     3          1982        1982        1982.0
+#> 9     C9     R9C3     9     3          1987        1987        1987.0
+#> 10   C10    R10C3    10     3          1992        1992        1992.0
+#> ..   ...      ...   ...   ...           ...         ...           ...
 
 # drop the variable name and convert to an un-named (integer) vector
 gap_1col %>% gs_simplify_cellfeed(notation = "none")
@@ -576,8 +580,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-13 08:41:36 GMT
-#>     Date of last spreadsheet update: 2016-03-13 08:41:35 GMT
+#>   Date of googlesheets registration: 2016-03-13 09:38:57 GMT
+#>     Date of last spreadsheet update: 2016-03-13 09:38:55 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -586,8 +590,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1dklbJF3ou3QmuGXZ7x0OjZH6JMwX757oaPgsk-Tnu-Q
-#> Browser URL: https://docs.google.com/spreadsheets/d/1dklbJF3ou3QmuGXZ7x0OjZH6JMwX757oaPgsk-Tnu-Q/
+#> Key: 1bftmYuIGdvn-kRuntFuKxmmKsMB1ElrlYYbFRw0pAJ8
+#> Browser URL: https://docs.google.com/spreadsheets/d/1bftmYuIGdvn-kRuntFuKxmmKsMB1ElrlYYbFRw0pAJ8/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()` and rename one with `gs_rename()`.
@@ -709,8 +713,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-13 08:42:09 GMT
-#>     Date of last spreadsheet update: 2016-03-13 08:42:07 GMT
+#>   Date of googlesheets registration: 2016-03-13 09:39:31 GMT
+#>     Date of last spreadsheet update: 2016-03-13 09:39:29 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -719,8 +723,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 1im831zXJk7fQ4nEQnhUqUvrh4P0vmYihuNT0wflnUus
-#> Browser URL: https://docs.google.com/spreadsheets/d/1im831zXJk7fQ4nEQnhUqUvrh4P0vmYihuNT0wflnUus/
+#> Key: 1bOeyawow-OI6ml4CXc8xobXgJtaOIn6sr0ZVX83iBkY
+#> Browser URL: https://docs.google.com/spreadsheets/d/1bOeyawow-OI6ml4CXc8xobXgJtaOIn6sr0ZVX83iBkY/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled 'iris'.
 #> No encoding supplied: defaulting to UTF-8.
@@ -749,8 +753,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-13 08:42:13 GMT
-#>     Date of last spreadsheet update: 2016-03-13 08:42:11 GMT
+#>   Date of googlesheets registration: 2016-03-13 09:39:35 GMT
+#>     Date of last spreadsheet update: 2016-03-13 09:39:32 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -763,8 +767,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 12kgyz81gRMlKEpdOxfy587Ki2db03haS14GigIMyzGA
-#> Browser URL: https://docs.google.com/spreadsheets/d/12kgyz81gRMlKEpdOxfy587Ki2db03haS14GigIMyzGA/
+#> Key: 1dnBdjH6E0pN0e4DDgswEWfsN6DlIva8F2IAGMt02tss
+#> Browser URL: https://docs.google.com/spreadsheets/d/1dnBdjH6E0pN0e4DDgswEWfsN6DlIva8F2IAGMt02tss/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled 'Asia'.
 #> No encoding supplied: defaulting to UTF-8.
@@ -857,9 +861,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-03-13 08:41:12 GMT
+#>                  date: 2016-03-13 09:38:29 GMT
 #>          access token: valid
-#>  peek at access token: ya29....DQQH8
+#>  peek at access token: ya29....CI-sc
 #> peek at refresh token: 1/LxW...4wRNU
 user_session_info
 #> $displayName
@@ -869,13 +873,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2016-03-13 08:41:12 GMT"
+#> [1] "2016-03-13 09:38:29 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....DQQH8"
+#> [1] "ya29....CI-sc"
 #> 
 #> $peek_ref
 #> [1] "1/LxW...4wRNU"

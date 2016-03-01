@@ -52,7 +52,7 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
       dplyr::filter_(~(row == row_min))
     x <- x %>%
       dplyr::filter_(~row > row_min)
-    vnames <- size_names(row_one$cell_text, n_cols)
+    vnames <- size_names(row_one$literal_value, n_cols)
   } else if (isFALSE(ddd$col_names)) {
     vnames <- paste0("X", seq_len(n_cols))
   } else if (is.character(ddd$col_names)) {
@@ -72,7 +72,7 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
     return(dplyr::data_frame())
   }
 
-  dat <- matrix(x$cell_text, ncol = n_cols, byrow = TRUE,
+  dat <- matrix(x$literal_value, ncol = n_cols, byrow = TRUE,
                 dimnames = list(NULL, vnames))
   dat <- dat %>%
     ## https://github.com/hadley/dplyr/issues/876

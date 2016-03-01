@@ -71,17 +71,15 @@ gs_simplify_cellfeed <- function(
 
   if (convert) {
     ddd <- list(locale = locale, trim_ws = trim_ws, na = na)
-    type_convert_args <- c(list(df = x["cell_text"]), dropnulls(ddd))
+    type_convert_args <- c(list(df = x["literal_value"]), dropnulls(ddd))
     df <- do.call(readr::type_convert, type_convert_args)
-    ## WARNING: this might not be text or character anymore ...
-    ## but it makes no sense to rename it now
-    x$cell_text <- df$cell_text
+    x$literal_value <- df$literal_value
   }
 
   nms <- switch(notation,
                 A1 = x$cell,
                 R1C1 = x$cell_alt,
                 NULL)
-  x[["cell_text"]] %>%
+  x[["literal_value"]] %>%
     setNames(nms)
 }

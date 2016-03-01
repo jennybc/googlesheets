@@ -6,6 +6,10 @@ knitr::opts_chunk$set(
   purl = NOT_CRAN
 )
 
+## ----load-package--------------------------------------------------------
+library(googlesheets)
+suppressMessages(library(dplyr))
+
 ## ----auth, include = FALSE, eval = NOT_CRAN------------------------------
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
@@ -17,10 +21,6 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ## working directory and Google Drive first
 googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
-
-## ----load-package--------------------------------------------------------
-library(googlesheets)
-suppressMessages(library(dplyr))
 
 ## ----list-sheets, eval = NOT_CRAN----------------------------------------
 (my_sheets <- gs_ls())

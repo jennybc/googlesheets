@@ -45,7 +45,7 @@ test_that("We can handle embedded empty cells via cell feed", {
   dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
 
   raw_cf <- ss %>% gs_read_cellfeed("embedded_empty_cells")
-  expect_equal(dim(raw_cf), c(37L, 5L))
+  expect_equal(dim(raw_cf), c(37L, 7L))
 
   dat_cf <- raw_cf %>% gs_reshape_cellfeed()
   expect_equal(dim(dat_cf), c(7L, 7L))
@@ -54,7 +54,7 @@ test_that("We can handle embedded empty cells via cell feed", {
 
   raw_cf <- ss %>%
     gs_read_cellfeed("embedded_empty_cells", return_empty = TRUE)
-  expect_equal(dim(raw_cf), c(56L, 5L))
+  expect_equal(dim(raw_cf), c(56L, 7L))
   dat_cf <- raw_cf %>% gs_reshape_cellfeed()
   expect_identical(dat_cf, dat_csv)
 
@@ -84,8 +84,9 @@ test_that("We can cope with tricky column names", {
 
   ## empty cells will not be here ...
   diabolical <- gs_read_cellfeed(ss, "diabolical_column_names")
-  expect_identical(dim(diabolical), c(30L, 5L))
-  expect_identical(diabolical$cell_text[diabolical$row == 1L], row_one_no_empty)
+  expect_identical(dim(diabolical), c(30L, 7L))
+  expect_identical(diabolical$literal_value[diabolical$row == 1L],
+                   row_one_no_empty)
 
   ## but reshaping will create variables when data exists, even in absence of
   ## column name
@@ -96,8 +97,8 @@ test_that("We can cope with tricky column names", {
   ## empty cells WILL be here ...
   diabolical <-
     gs_read_cellfeed(ss, "diabolical_column_names", return_empty = TRUE)
-  expect_identical(dim(diabolical), c(32L, 5L))
-  expect_identical(diabolical$cell_text[diabolical$row == 1L], row_one)
+  expect_identical(dim(diabolical), c(32L, 7L))
+  expect_identical(diabolical$literal_value[diabolical$row == 1L], row_one)
   diabolical <- diabolical %>% gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical), vnames)

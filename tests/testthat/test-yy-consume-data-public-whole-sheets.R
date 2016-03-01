@@ -26,14 +26,15 @@ test_that("Read via cellfeed is not changing (pub)", {
 test_that("We can reshape data from the cell feed", {
   oceania <- ss %>% gs_read_cellfeed(ws = "Oceania", verbose = FALSE)
   expect_true(all(names(oceania) %in%
-                    c("cell", "cell_alt", "row", "col", "cell_text")))
+                    c("cell", "cell_alt", "row", "col",
+                      "literal_value", "input_value", "numeric_value")))
 
   y <- gs_reshape_cellfeed(oceania)
   expect_equal(dim(y), c(24L, 6L))
   expect_is(oceania$cell, "character")
   expect_is(oceania$row, "integer")
   expect_is(oceania$col, "integer")
-  expect_is(oceania$cell_text, "character")
+  expect_is(oceania$literal_value, "character")
   expect_equal(names(y),
                c("country", "continent", "year", "lifeExp", "pop", "gdpPercap"))
 
@@ -65,7 +66,7 @@ test_that("We get no error from gs_read_listfeed on an empty sheet (pub)", {
 test_that("We get no error from gs_read_cellfeed on an empty sheet (pub)", {
   pts_ss <- pts_key %>% gs_key(lookup = FALSE)
   expect_is(tmp <- pts_ss %>% gs_read_cellfeed(ws = "empty"), "data.frame")
-  expect_identical(dim(tmp), c(0L, 5L))
+  expect_identical(dim(tmp), c(0L, 7L))
 })
 
 test_that("We can't access sheet that is 'public on the web' (pub)", {

@@ -81,7 +81,7 @@ test_that("2-dimensional things can be uploaded", {
     Sys.sleep(1)
     tmp <- ss %>% gs_read_cellfeed(ws, verbose = FALSE)
   }
-  expect_equal(dim(tmp), c(0, 5))
+  expect_equal(dim(tmp), c(0, 7))
 
   # update w/ a data.frame, col_names = FALSE
   ss <- ss %>% gs_edit_cells(ws, iris_ish, col_names = FALSE)
