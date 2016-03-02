@@ -4,10 +4,13 @@
 \alias{gs_reshape_cellfeed}
 \title{Reshape data from the "cell feed"}
 \usage{
-gs_reshape_cellfeed(x, ..., verbose = TRUE)
+gs_reshape_cellfeed(x, literal = TRUE, ..., verbose = TRUE)
 }
 \arguments{
-\item{x}{a data.frame returned by \code{\link{gs_read_cellfeed}}}
+\item{x}{a data frame returned by \code{\link{gs_read_cellfeed}}}
+
+\item{literal}{logical, indicating whether to work only with literal values
+returned by the API or to consult alternate cell contents}
 
 \item{...}{\strong{Optional} arguments to control data download, parsing,
 and reshaping; for most purposes, the defaults should be fine.
@@ -46,7 +49,16 @@ a \code{data.frame} or, if \code{dplyr} is loaded, a
   \code{\link[dplyr]{tbl_df}}
 }
 \description{
-Reshape data from the "cell feed" and convert to a \code{tbl_df}.
+Reshape data from the "cell feed", put it in a \code{tbl_df}, and do type
+conversion. By default, assuming we're working with the same cells,
+\code{gs_reshape_cellfeed} should return the same result as other read
+functions. But when \code{literal = FALSE}, something different happens: we
+attempt to deliver cell contents free of any numeric formatting. Try this if
+numeric formatting of literal values is causing numeric data to come in as
+character, to be undesirably rounded, or to be otherwise mangled. Remember
+you can also control type conversion by using \code{...} to provide arguments
+to \code{\link[readr:type_convert]{readr::type_convert}}. See the
+\code{vignette("formulas-and-formatting")} for more details.
 }
 \examples{
 \dontrun{

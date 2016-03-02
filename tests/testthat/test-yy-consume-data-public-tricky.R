@@ -121,8 +121,7 @@ test_that("we don't error on a sheet with only colnames", {
                                  cell_alt = c("R1C1", "R1C2"),
                                  row = 1L,
                                  col = 1:2,
-                                 cell_text = c("V1", "V2")))
-#                                 literal_value = c("V1", "V2"),
-#                                 input_value = c("V1", "V2"),
-#                                 numeric_value = NA_character_))
+                                 literal_value = c("V1", "V2"),
+                                 input_value = c("V1", "V2"),
+                                 numeric_value = NA_character_))
 })

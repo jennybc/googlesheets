@@ -90,9 +90,7 @@ spf <- function(...) stop(sprintf(...), call. = FALSE)
 dropnulls <- function(x) Filter(Negate(is.null), x)
 
 ## do intake on `...` for all the read functions
-parse_read_ddd <- function(..., feed = c("csv", "list_or_cell"),
-                           verbose = FALSE) {
-  feed <- match.arg(feed)
+parse_read_ddd <- function(..., verbose = FALSE) {
   ddd <- list(...)
   ddd <- list(
     ## pass straight through to readr::read_csv, readr::type_convert
@@ -102,7 +100,8 @@ parse_read_ddd <- function(..., feed = c("csv", "list_or_cell"),
     na = ddd$na,
     ## use to conditionally include httr::progress() in httr::GET() calls
     progress = ddd$progress %||% TRUE,
-    ## only sensible for readr::read_csv and, therefore, gs_read_csv()
+    ## work natively for gs_read_csv(), i.e. passed to readr::read_csv
+    ## implemented internally in gs_reshape_feed() for list and cell feeds
     comment = ddd$comment,
     skip = ddd$skip,
     n_max = ddd$n_max,
@@ -110,21 +109,20 @@ parse_read_ddd <- function(..., feed = c("csv", "list_or_cell"),
     col_names = ddd$col_names,
     check.names = ddd$check.names %||% FALSE
   )
-  if (feed != "csv") {
-    nope <- c("comment", "skip", "n_max")
-    oops <- intersect(names(dropnulls(ddd)), nope)
-    if (length(oops) > 0 && verbose) {
-      mpf(paste0("Ignoring these arguments that don't work with this ",
-                 "read function:\n%s"), paste(oops, collapse = ", "))
-    }
-    ddd <- ddd[setdiff(names(ddd), nope)]
-  }
-  if (is.null(ddd$col_names)) {
-    ddd$col_names <- TRUE
-  } else {
-    stopifnot(is_toggle(ddd$col_names) || is.character(ddd$col_names))
-  }
+  ddd$col_names <- ddd$col_names %||% TRUE
+  stopifnot(is_toggle(ddd$col_names) || is.character(ddd$col_names))
   stopifnot(is_toggle(ddd$check.names))
+  if (!is.null(ddd$comment)) {
+    stopifnot(inherits(ddd$comment, "character"), length(ddd$comment) == 1L)
+  }
+  if (!is.null(ddd$skip)) {
+    ddd$skip <- as.integer(ddd$skip)
+    stopifnot(ddd$skip >= 0)
+  }
+  if (!is.null(ddd$n_max)) {
+    ddd$n_max <- as.integer(ddd$n_max)
+    stopifnot(ddd$n_max >= 1)
+  }
   ddd
 }
 
@@ -144,4 +142,21 @@ size_names <- function(vnames, n) {
   nms <- paste0("X", seq_len(n))
   nms[seq_along(vnames)] <- vnames
   nms
+}
+
+reconcile_cell_contents <- function(x) {
+  x <- x %>%
+    dplyr::mutate_(literal_only = ~is.na(numeric_value),
+                   putative_integer = ~ifelse(is.na(numeric_value), FALSE,
+                                              gsub("\\.0$", "", numeric_value)
+                                              == input_value),
+                   ## a formula that evaluates to integer will almost certainly
+                   ## look like a double, i.e. have trailing `.0`, but I see no
+                   ## practical way to address that :(
+                   literal_value = ~ifelse(literal_only,
+                                           literal_value,
+                                           ifelse(putative_integer, input_value,
+                                                  numeric_value)))
+  x %>%
+    dplyr::select_(quote(-literal_only), quote(-putative_integer))
 }

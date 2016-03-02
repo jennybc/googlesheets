@@ -1,8 +1,18 @@
 #' Reshape data from the "cell feed"
 #'
-#' Reshape data from the "cell feed" and convert to a \code{tbl_df}.
+#' Reshape data from the "cell feed", put it in a \code{tbl_df}, and do type
+#' conversion. By default, assuming we're working with the same cells,
+#' \code{gs_reshape_cellfeed} should return the same result as other read
+#' functions. But when \code{literal = FALSE}, something different happens: we
+#' attempt to deliver cell contents free of any numeric formatting. Try this if
+#' numeric formatting of literal values is causing numeric data to come in as
+#' character, to be undesirably rounded, or to be otherwise mangled. Remember
+#' you can also control type conversion by using \code{...} to provide arguments
+#' to \code{\link[readr:type_convert]{readr::type_convert}}. See the
+#' \code{vignette("formulas-and-formatting")} for more details.
 #'
-#' @param x a data.frame returned by \code{\link{gs_read_cellfeed}}
+#' @param x a data frame returned by \code{\link{gs_read_cellfeed}}
+#' @template literal
 #' @template read-ddd
 #' @template verbose
 #'
@@ -23,9 +33,13 @@
 #'                     col_names = paste0("yo", 1:6))
 #' }
 #' @export
-gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
+gs_reshape_cellfeed <- function(x, literal = TRUE, ..., verbose = TRUE) {
 
   ddd <- parse_read_ddd(..., verbose = verbose)
+  stopifnot(is_toggle(literal))
+  if (isFALSE(literal)) {
+    x <- reconcile_cell_contents(x)
+  }
   gs_reshape_feed(x, ddd, verbose)
 
 }

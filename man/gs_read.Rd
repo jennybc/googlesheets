@@ -4,7 +4,7 @@
 \alias{gs_read}
 \title{Read data}
 \usage{
-gs_read(ss, ws = 1, range = NULL, ..., verbose = TRUE)
+gs_read(ss, ws = 1, range = NULL, literal = TRUE, ..., verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
@@ -14,6 +14,9 @@ object}
 respectively, of the worksheet}
 
 \item{range}{a cell range, as described in \code{\link{cell-specification}}}
+
+\item{literal}{logical, indicating whether to work only with literal values
+returned by the API or to consult alternate cell contents}
 
 \item{...}{\strong{Optional} arguments to control data download, parsing,
 and reshaping; for most purposes, the defaults should be fine.
@@ -63,9 +66,10 @@ If the \code{range} argument is not specified, all data will be read via
 are written! We just request the data from the Sheets API via the
 \code{exportcsv} link.
 
-If the \code{range} argument is specified, data will be read for the
-targetted cells via \code{\link{gs_read_cellfeed}}, then reshaped with
-\code{\link{gs_reshape_cellfeed}}.
+If the \code{range} argument is specified or if \code{literal = FALSE}, data
+will be read for the targetted cells via \code{\link{gs_read_cellfeed}}, then
+reshaped and type converted with \code{\link{gs_reshape_cellfeed}}. See
+\code{\link{gs_reshape_cellfeed}} for details.
 }
 \examples{
 \dontrun{
@@ -79,7 +83,8 @@ gs_read(gap_ss, ws = "Oceania", range = "R1C1:R4C3")
 gs_read(gap_ss, ws = "Oceania", range = "R2C1:R4C3", col_names = FALSE)
 gs_read(gap_ss, ws = "Oceania", range = "R2C5:R4C6",
         col_names = c("thing_one", "thing_two"))
-gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 4), c(1, 3)))
+gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 3), c(1, 4)),
+        col_names = FALSE)
 gs_read(gap_ss, ws = "Oceania", range = cell_rows(1:5))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols(4:6))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols("A:D"))

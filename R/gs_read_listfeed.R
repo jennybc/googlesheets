@@ -132,8 +132,8 @@ gs_read_listfeed <- function(ss, ws = 1,
   ## cells_df has one row per nonempty spreadsheet cell
   cells_df <- rows_df %>%
     ## extract (alleged) col name, cell text; i = within-row cell counter
-    dplyr::mutate_(col_name_raw = ~nodeset %>% purrr::map(~ xml2::xml_name(.)),
-                   literal_value = ~nodeset %>% purrr::map(~ xml2::xml_text(.)),
+    dplyr::mutate_(col_name_raw = ~nodeset %>% purrr::map(~xml2::xml_name(.)),
+                   literal_value = ~nodeset %>% purrr::map(~xml2::xml_text(.)),
                    i = ~nodeset %>% purrr::map(~ seq_along(.))) %>%
     dplyr::select_(~row, ~i, ~col_name_raw, ~literal_value) %>%
     tidyr::unnest_(c("i", "col_name_raw", "literal_value"))

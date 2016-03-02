@@ -5,6 +5,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   purl = NOT_CRAN
 )
+options(knitr.table.format = 'markdown')
 
 ## ----pre-clean, include = FALSE, eval = NOT_CRAN-------------------------
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
@@ -20,6 +21,7 @@ suppressMessages(library(dplyr))
 ## ----auth, include = FALSE, eval = NOT_CRAN------------------------------
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
+## once gs_download gets fixed, this vignette should not require auth
 token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
 suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 
@@ -30,11 +32,13 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ffs <- gs_key("19lRTCJDf9BYz9JepHx7y6u8vcxGbFpVSfIuxXnWpsL0", lookup = FALSE)
 (ffs_read_csv <- gs_read_csv(ffs))
 (ffs_read_list <- gs_read_listfeed(ffs))
-## interesting! reading the csv might require auth ... why?
-(ffs_download_csv <- gs_download(ffs, to = "formatted-numbers-and-formulas.csv",
+## SORRY FOLKS, until I close https://github.com/jennybc/googlesheets/issues/213
+## other people can't download this sheet ... oops!
+(ffs_download_csv <- gs_download(ffs,
+                                 to = "formatted-numbers-and-formulas.csv",
                                  overwrite = TRUE) %>% 
   readr::read_csv())
-## a great opportunity to check the new readr ingest
+## This is a great opportunity to check uniformity of the new readr ingest.
 identical(ffs_read_csv, ffs_read_list)
 identical(ffs_read_csv, ffs_download_csv)
 ## YEESSSSSSS
@@ -45,43 +49,35 @@ cf_printme <- cf %>%
   arrange(col, row) %>%
   select(cell, literal_value, input_value, numeric_value)
 
-## ----echo = FALSE--------------------------------------------------------
+## ----echo = FALSE, results = "asis"--------------------------------------
 knitr::kable(cf_printme)
 
 ## ------------------------------------------------------------------------
 cf %>%
   filter(col == 2) %>%
-  select(literal_value, numeric_value)
+  select(literal_value, input_value, numeric_value)
 
 ## ------------------------------------------------------------------------
 cf %>%
   filter(col == 4) %>%
-  select(input_value)
+  select(literal_value, input_value, numeric_value) %>% 
+  mutate(input_value = substr(input_value, 1, 54))
 
 ## ------------------------------------------------------------------------
 cf %>%
   filter(col == 5) %>%
-  select(literal_value, numeric_value, input_value)
+  select(literal_value, input_value, numeric_value)
 
 ## ------------------------------------------------------------------------
-cf_aug <- cf %>%
-  mutate(literal_only = is.na(numeric_value),
-         putative_integer = ifelse(is.na(numeric_value), FALSE,
-                                   gsub("\\.0$", "", numeric_value)
-                                   == input_value),
-         putative_content = ifelse(literal_only,
-                                   literal_value,
-                                   ifelse(putative_integer, input_value,
-                                          numeric_value)))
-cf_aug$literal_value <- cf_aug$putative_content
-cf_aug <- cf_aug %>%
-  select(-literal_only, -putative_integer, -putative_content)
-
-## ------------------------------------------------------------------------
-how_about_this <- cf_aug %>%
-  gs_reshape_cellfeed()
+how_about_this <- cf %>%
+  gs_reshape_cellfeed(literal = FALSE)
 how_about_this
 ffs_read_csv
+
+## ------------------------------------------------------------------------
+cf_E <- gs_read_cellfeed(ffs, range = cell_cols("E"))
+cf_E %>% gs_simplify_cellfeed()
+cf_E %>% gs_simplify_cellfeed(literal = FALSE)
 
 ## ----include = FALSE-----------------------------------------------------
 ## super goofy computation of one formula

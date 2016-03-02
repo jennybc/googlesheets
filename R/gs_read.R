@@ -10,13 +10,15 @@
 #' are written! We just request the data from the Sheets API via the
 #' \code{exportcsv} link.
 #'
-#' If the \code{range} argument is specified, data will be read for the
-#' targetted cells via \code{\link{gs_read_cellfeed}}, then reshaped with
-#' \code{\link{gs_reshape_cellfeed}}.
+#' If the \code{range} argument is specified or if \code{literal = FALSE}, data
+#' will be read for the targetted cells via \code{\link{gs_read_cellfeed}}, then
+#' reshaped and type converted with \code{\link{gs_reshape_cellfeed}}. See
+#' \code{\link{gs_reshape_cellfeed}} for details.
 #'
 #' @template ss
 #' @template ws
 #' @template range
+#' @template literal
 #' @template read-ddd
 #' @template verbose
 #'
@@ -39,7 +41,8 @@
 #' gs_read(gap_ss, ws = "Oceania", range = "R2C1:R4C3", col_names = FALSE)
 #' gs_read(gap_ss, ws = "Oceania", range = "R2C5:R4C6",
 #'         col_names = c("thing_one", "thing_two"))
-#' gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 4), c(1, 3)))
+#' gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 3), c(1, 4)),
+#'         col_names = FALSE)
 #' gs_read(gap_ss, ws = "Oceania", range = cell_rows(1:5))
 #' gs_read(gap_ss, ws = "Oceania", range = cell_cols(4:6))
 #' gs_read(gap_ss, ws = "Oceania", range = cell_cols("A:D"))
@@ -49,14 +52,14 @@
 #' @export
 gs_read <- function(
   ss, ws = 1,
-  range = NULL,
+  range = NULL, literal = TRUE,
   ..., verbose = TRUE) {
 
-  if(is.null(range)) {
+  if (is.null(range) && literal) {
     gs_read_csv(ss, ws = ws, ..., verbose = verbose)
   } else {
     gs_read_cellfeed(ss, ws = ws, range = range, ..., verbose = verbose) %>%
-      gs_reshape_cellfeed(..., verbose = verbose)
+      gs_reshape_cellfeed(literal = literal, ..., verbose = verbose)
   }
 
 }
