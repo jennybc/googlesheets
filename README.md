@@ -62,7 +62,7 @@ devtools::install_github("hadley/xml2")
 
 ### Take a look at the vignette
 
-Read [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) on GitHub.
+Read [the vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) on GitHub.
 
 ### Slides from UseR2015
 
@@ -105,7 +105,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-21 21:03:10 GMT
+#>   Date of googlesheets registration: 2016-03-05 15:34:15 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -133,7 +133,7 @@ Read all the data in a worksheet:
 
 ``` r
 africa <- gs_read(gap)
-#> Accessing worksheet titled "Africa"
+#> Accessing worksheet titled 'Africa'.
 #> No encoding supplied: defaulting to UTF-8.
 str(africa)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    624 obs. of  6 variables:
@@ -173,10 +173,9 @@ iris_ss <- gs_new("iris", input = head(iris, 3), trim = TRUE)
 #> Sheet "iris" created in Google Drive.
 #> Range affected by the update: "A1:E4"
 #> Worksheet "Sheet1" successfully updated with 20 new value(s).
-#> Accessing worksheet titled "Sheet1"
-#> Authorization will be used.
+#> Accessing worksheet titled 'Sheet1'.
 #> Sheet successfully identified: "iris"
-#> Accessing worksheet titled "Sheet1"
+#> Accessing worksheet titled 'Sheet1'.
 #> Worksheet "Sheet1" dimensions changed to 4 x 5.
 #> Worksheet dimensions: 4 x 5.
 ```
@@ -199,7 +198,7 @@ Look at what we have wrought:
 ``` r
 iris_ss %>% 
   gs_read()
-#> Accessing worksheet titled "Sheet1"
+#> Accessing worksheet titled 'Sheet1'.
 #> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [4 x 5]
 #> 
