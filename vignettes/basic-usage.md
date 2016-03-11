@@ -23,35 +23,35 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 
 ```r
 (my_sheets <- gs_ls())
-#> Source: local data frame [68 x 10]
+#> Source: local data frame [66 x 10]
 #> 
 #>                 sheet_title        author  perm version
 #>                       (chr)         (chr) (chr)   (chr)
-#> 1            test-gs-ingest  rpackagetest     r     new
-#> 2    cute-dog-photo-in-cell      gspreadr    rw     new
-#> 3   EasyTweetSheet - Shared     m.hawksey     r     new
-#> 4                        12      gspreadr    rw     new
-#> 5  test-gs-jenny-fc982e3f6…      gspreadr    rw     new
-#> 6  test-gs-jenny-f9ee968a5…      gspreadr    rw     new
-#> 7                    taylor      gspreadr    rw     new
-#> 8  test-gs-travis-213b2588…      gspreadr    rw     new
-#> 9  test-gs-travis-213b2588…      gspreadr    rw     new
-#> 10 test-gs-travis-21384551…      gspreadr    rw     new
+#> 1  test-gs-public-testing-…  rpackagetest     r     new
+#> 2  Individual-level admixt…       the.dfx     r     new
+#> 3              #rhizo15 #tw     m.hawksey     r     new
+#> 4   EasyTweetSheet - Shared     m.hawksey     r     new
+#> 5                 snaildata      gspreadr    rw     new
+#> 6                 snaildata      gspreadr    rw     new
+#> 7  cute-dog-photo-in-cell-2      gspreadr    rw     new
+#> 8  formula-formatting-samp…      gspreadr    rw     new
+#> 9                 Good Data     mr.ej.fox     r     new
+#> 10                       yo      gspreadr    rw     new
 #> ..                      ...           ...   ...     ...
 #> Variables not shown: updated (time), sheet_key (chr), ws_feed (chr),
 #>   alternate (chr), self (chr), alt_key (chr).
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
-#> Observations: 68
+#> Observations: 66
 #> Variables: 10
-#> $ sheet_title (chr) "test-gs-ingest", "cute-dog-photo-in-cell", "EasyT...
-#> $ author      (chr) "rpackagetest", "gspreadr", "m.hawksey", "gspreadr...
-#> $ perm        (chr) "r", "rw", "r", "rw", "rw", "rw", "rw", "rw", "rw"...
+#> $ sheet_title (chr) "test-gs-public-testing-sheet", "Individual-level ...
+#> $ author      (chr) "rpackagetest", "the.dfx", "m.hawksey", "m.hawksey...
+#> $ perm        (chr) "r", "r", "r", "r", "rw", "rw", "rw", "rw", "r", "...
 #> $ version     (chr) "new", "new", "new", "new", "new", "new", "new", "...
-#> $ updated     (time) 2016-02-26 00:29:16, 2016-02-25 17:21:51, 2016-02...
-#> $ sheet_key   (chr) "137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4", "1...
+#> $ updated     (time) 2016-03-11 05:37:48, 2016-03-10 15:52:04, 2016-03...
+#> $ sheet_key   (chr) "1amnxLg9VVDoE6KSIZvutYkEGNgQyJSnLJgHthehruy8", "1...
 #> $ ws_feed     (chr) "https://spreadsheets.google.com/feeds/worksheets/...
-#> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/137pijO8ml...
+#> $ alternate   (chr) "https://docs.google.com/spreadsheets/d/1amnxLg9VV...
 #> $ self        (chr) "https://spreadsheets.google.com/feeds/spreadsheet...
 #> $ alt_key     (chr) NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...
 ```
@@ -83,7 +83,7 @@ gap <- gs_title("Gapminder")
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-26 01:17:48 GMT
+#>   Date of googlesheets registration: 2016-03-11 06:05:57 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -304,13 +304,13 @@ str(oceania_list_feed)
 #>  $ country  : chr  "Australia" "Australia" "Australia" "Australia" ...
 #>  $ continent: chr  "Oceania" "Oceania" "Oceania" "Oceania" ...
 #>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
-#>  $ lifeexp  : num  69.1 70.3 70.9 71.1 71.9 ...
+#>  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...
 #>  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...
-#>  $ gdppercap: num  10040 10950 12217 14526 16789 ...
+#>  $ gdpPercap: num  10040 10950 12217 14526 16789 ...
 oceania_list_feed
 #> Source: local data frame [24 x 6]
 #> 
-#>      country continent  year lifeexp      pop gdppercap
+#>      country continent  year lifeExp      pop gdpPercap
 #>        (chr)     (chr) (int)   (dbl)    (int)     (dbl)
 #> 1  Australia   Oceania  1952   69.12  8691212  10039.60
 #> 2  Australia   Oceania  1957   70.33  9712569  10949.65
@@ -366,9 +366,9 @@ readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
 sapply(readfuns, jfun)
 #> No encoding supplied: defaulting to UTF-8.
 #>            gs_read_csv gs_read_listfeed gs_read_cellfeed
-#> user.self        0.036            0.139            1.270
-#> sys.self         0.004            0.019            0.056
-#> elapsed          0.474            1.014            2.626
+#> user.self        0.048            0.291            1.147
+#> sys.self         0.005            0.026            0.049
+#> elapsed          0.794            1.583            2.670
 #> user.child       0.000            0.000            0.000
 #> sys.child        0.000            0.000            0.000
 ```
@@ -467,7 +467,7 @@ gap %>%
 #> Accessing worksheet titled 'Oceania'.
 #> Source: local data frame [4 x 3]
 #> 
-#>       X4       X5       X6
+#>       X1       X2       X3
 #>    (dbl)    (int)    (dbl)
 #> 1 80.370 19546792 30687.75
 #> 2 81.235 20434176 34435.37
@@ -576,8 +576,8 @@ foo <- gs_new("foo")
 foo
 #>                   Spreadsheet title: foo
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-26 01:18:10 GMT
-#>     Date of last spreadsheet update: 2016-02-26 01:18:09 GMT
+#>   Date of googlesheets registration: 2016-03-11 06:06:21 GMT
+#>     Date of last spreadsheet update: 2016-03-11 06:06:19 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -586,8 +586,8 @@ foo
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> Sheet1: 1000 x 26
 #> 
-#> Key: 1j4m38MDAkWDJzKzKSSeOUq8u0LHgyKYWqm3B8tWtnFk
-#> Browser URL: https://docs.google.com/spreadsheets/d/1j4m38MDAkWDJzKzKSSeOUq8u0LHgyKYWqm3B8tWtnFk/
+#> Key: 112RUPiOWuI7siz6N87qQqwn36iy4h8VfEGRHfuqdx8A
+#> Browser URL: https://docs.google.com/spreadsheets/d/112RUPiOWuI7siz6N87qQqwn36iy4h8VfEGRHfuqdx8A/
 ```
 
 By default, there will be an empty worksheet called "Sheet1", but you can control it's title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()` and rename one with `gs_rename()`.
@@ -709,8 +709,8 @@ iris_ss <- gs_upload("iris.csv")
 iris_ss
 #>                   Spreadsheet title: iris
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-26 01:18:43 GMT
-#>     Date of last spreadsheet update: 2016-02-26 01:18:41 GMT
+#>   Date of googlesheets registration: 2016-03-11 06:07:17 GMT
+#>     Date of last spreadsheet update: 2016-03-11 06:07:06 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -719,8 +719,8 @@ iris_ss
 #> (Title): (Nominal worksheet extent as rows x columns)
 #> iris: 1000 x 26
 #> 
-#> Key: 1DtFisQJqzTpV7oVQ9j71cFNjm-FNfTl0lX109-ZHGOc
-#> Browser URL: https://docs.google.com/spreadsheets/d/1DtFisQJqzTpV7oVQ9j71cFNjm-FNfTl0lX109-ZHGOc/
+#> Key: 18snU5YFVuA2yyaIA7EKwzDD6pBXSO4DGpCGdJvrG8gw
+#> Browser URL: https://docs.google.com/spreadsheets/d/18snU5YFVuA2yyaIA7EKwzDD6pBXSO4DGpCGdJvrG8gw/
 iris_ss %>% gs_read()
 #> Accessing worksheet titled 'iris'.
 #> No encoding supplied: defaulting to UTF-8.
@@ -749,8 +749,8 @@ gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
 gap_xlsx
 #>                   Spreadsheet title: mini-gap
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-02-26 01:18:46 GMT
-#>     Date of last spreadsheet update: 2016-02-26 01:18:45 GMT
+#>   Date of googlesheets registration: 2016-03-11 06:07:23 GMT
+#>     Date of last spreadsheet update: 2016-03-11 06:07:21 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -763,8 +763,8 @@ gap_xlsx
 #> Europe: 1000 x 26
 #> Oceania: 1000 x 26
 #> 
-#> Key: 1nSzQjv3hYa-WT_06-vYW04ywFd-WX0PDUQhpK3dxgZs
-#> Browser URL: https://docs.google.com/spreadsheets/d/1nSzQjv3hYa-WT_06-vYW04ywFd-WX0PDUQhpK3dxgZs/
+#> Key: 1A1LxoqN0Z-2Iwe7QoVPMS7D5-dQa8ZasAJ6_lYwYcyc
+#> Browser URL: https://docs.google.com/spreadsheets/d/1A1LxoqN0Z-2Iwe7QoVPMS7D5-dQa8ZasAJ6_lYwYcyc/
 gap_xlsx %>% gs_read(ws = "Asia")
 #> Accessing worksheet titled 'Asia'.
 #> No encoding supplied: defaulting to UTF-8.
@@ -784,12 +784,12 @@ And we clean up after ourselves on Google Drive.
 
 ```r
 gs_vecdel(c("iris", "mini-gap"))
-#> Sheet successfully identified: "mini-gap"
-#> Success. "mini-gap" moved to trash in Google Drive.
 #> Warning: closing unused connection 6 (/Users/jenny/rrr/googlesheets/inst/
 #> mini-gap.xlsx)
 #> Warning: closing unused connection 5 (/Users/jenny/rrr/googlesheets/
 #> vignettes/iris.csv)
+#> Sheet successfully identified: "mini-gap"
+#> Success. "mini-gap" moved to trash in Google Drive.
 #> Sheet successfully identified: "iris"
 #> Success. "iris" moved to trash in Google Drive.
 #> [1] TRUE TRUE
@@ -861,9 +861,9 @@ The function `gs_user()` will print and return some information about the curren
 user_session_info <- gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-02-26 01:17:45 GMT
+#>                  date: 2016-03-11 06:05:54 GMT
 #>          access token: valid
-#>  peek at access token: ya29....m2Riw
+#>  peek at access token: ya29....e6efM
 #> peek at refresh token: 1/LxW...4wRNU
 user_session_info
 #> $displayName
@@ -873,13 +873,13 @@ user_session_info
 #> [1] "gspreadr@gmail.com"
 #> 
 #> $date
-#> [1] "2016-02-26 01:17:45 GMT"
+#> [1] "2016-03-11 06:05:54 GMT"
 #> 
 #> $token_valid
 #> [1] TRUE
 #> 
 #> $peek_acc
-#> [1] "ya29....m2Riw"
+#> [1] "ya29....e6efM"
 #> 
 #> $peek_ref
 #> [1] "1/LxW...4wRNU"

@@ -59,11 +59,15 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
     return(dplyr::data_frame())
   }
 
+  content <- httr::content(req, as = "text")
+  if (!stringr::str_detect(content, "\n")) {
+    content <- stringr::str_c(content, "\n")
+  }
+
   allowed_args <- c("col_types", "col_names", "locale", "trim_ws", "na",
                     ## specific to csv
                     "comment", "skip", "n_max")
-  read_csv_args <- c(list(file = httr::content(req, as = "text")),
-                     dropnulls(ddd[allowed_args]))
+  read_csv_args <- c(list(file = content), dropnulls(ddd[allowed_args]))
   df <- do.call(readr::read_csv, read_csv_args)
 
   ## our departures from readr data ingest:

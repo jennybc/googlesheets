@@ -103,3 +103,22 @@ test_that("We can cope with tricky column names", {
   expect_identical(names(diabolical), vnames)
 
 })
+
+test_that("we don't error on a sheet with only colnames", {
+  expect_identical(ss %>% gs_read("colnames_only"),
+                   dplyr::data_frame(V1 = logical(), V2 = logical()))
+  expect_identical(ss %>% gs_read_csv("colnames_only"),
+                   dplyr::data_frame(V1 = logical(), V2 = logical()))
+  ## retval is truly empty because variable names can only discovered from
+  ## actual row data, of which there is none
+  expect_identical(ss %>% gs_read_listfeed("colnames_only"),
+                   dplyr::data_frame())
+  ## checking only for equality because cellfeed retval has ws_title as
+  ## attribute
+  expect_equal(ss %>% gs_read_cellfeed("colnames_only"),
+               dplyr::data_frame(cell = c("A1", "B1"),
+                                 cell_alt = c("R1C1", "R1C2"),
+                                 row = 1L,
+                                 col = 1:2,
+                                 cell_text = c("V1", "V2")))
+})
