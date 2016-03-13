@@ -84,9 +84,8 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
   if (!is.null(ddd$comment)) {
     keep_row <- !grepl(paste0("^", ddd$comment), dat[[1]])
     dat <- dat[keep_row, , drop = FALSE]
-    jfun <- function(x) stringr::str_replace(x, paste0(ddd$comment, ".*"), "")
     dat <- dat %>%
-      mutate_each_(funs(jfun), names(.))
+      purrr::dmap(~stringr::str_replace(.x, paste0(ddd$comment, ".*"), ""))
   }
 
   if (!is.null(ddd$n_max)) {
