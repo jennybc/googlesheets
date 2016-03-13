@@ -5,10 +5,10 @@
 #' and transformation, but you can call always call them directly for finer
 #' control.
 #'
-#' If the \code{range} argument is not specified, all data will be read via
-#' \code{\link{gs_read_csv}}. Don't worry -- no intermediate \code{*.csv} files
-#' are written! We just request the data from the Sheets API via the
-#' \code{exportcsv} link.
+#' If the \code{range} argument is not specified and \code{literal = TRUE}, all
+#' data will be read via \code{\link{gs_read_csv}}. Don't worry -- no
+#' intermediate \code{*.csv} files are written! We just request the data from
+#' the Sheets API via the \code{exportcsv} link.
 #'
 #' If the \code{range} argument is specified or if \code{literal = FALSE}, data
 #' will be read for the targetted cells via \code{\link{gs_read_cellfeed}}, then

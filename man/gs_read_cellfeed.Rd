@@ -59,8 +59,8 @@ a \code{data.frame} or, if \code{dplyr} is loaded, a
 }
 \description{
 This function consumes data via the "cell feed", which, as the name suggests,
-retrieves data cell by cell. Note that the output is a \code{tbl_df} or
-\code{data.frame} with \strong{one row per cell}. Consult the Google Sheets API documentation for
+retrieves data cell by cell. Note that the output is a data frame with
+\strong{one row per cell}. Consult the Google Sheets API documentation for
 more details about
 \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_cell-based_feeds}{the
 cell feed}.
@@ -79,9 +79,7 @@ from a rectangular worksheet.
 Empty cells, even if "embedded" in a rectangular region of populated cells,
 are not normally returned by the cell feed. This function won't return them
 either when \code{return_empty = FALSE} (default), but will if you set
-\code{return_empty = TRUE}. If you don't specify any limits AND you set
-\code{return_empty = TRUE}, you could be in for a bit of a wait, as the feed
-will return all cells, which defaults to 1000 rows and 26 columns.
+\code{return_empty = TRUE}.
 }
 \examples{
 \dontrun{

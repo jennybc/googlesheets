@@ -62,14 +62,16 @@ a \code{data.frame} or, if \code{dplyr} is loaded, a
 \description{
 Gets data via the "list feed", which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. The first row is assumed
-to hold variable or column names. The related function,
-\code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
-it is generally faster and more resilient to, e.g. empty rows, so use it if
-you can. However, you may need to use this function if you are dealing with
-an "old" Google Sheet, which is beyond the reach of
-\code{\link{gs_read_csv}}. The list feed also has some ability to sort and
-filter rows via the API (more below). Consult the Google Sheets API
-documentation for more details about
+to hold variable or column names; it can be empty. The second row is assumed
+to hold the first data row and, if it is empty, no data will be read and you
+will get an empty data frame.
+}
+\details{
+The other read functions are generally superior, so use them if you can.
+However, you may need to use this function if you are dealing with an "old"
+Google Sheet, which is beyond the reach of \code{\link{gs_read_csv}}. The
+list feed also has some ability to sort and filter rows via the API (more
+below). Consult the Google Sheets API documentation for more details about
 \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_list-based_feeds}{the
 list feed}.
 }
@@ -121,11 +123,11 @@ oceania_fancy <-
                    sq = "lifeexp > 79 or year < 1960")
 oceania_fancy
 
-## crazy demo of passing args through to readr::type_convert()
+## passing args through to readr::type_convert()
 oceania_crazy <-
   gs_read_listfeed(gap_ss,
                    ws = "Oceania",
-                   col_names = paste0("z", 1:6),
+                   col_names = paste0("z", 1:6), skip = 1,
                    col_types = "ccncnn",
                    na = "1962")
 oceania_crazy
