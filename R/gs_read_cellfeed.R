@@ -62,7 +62,7 @@ gs_read_cellfeed <- function(
   stopifnot(inherits(ss, "googlesheet"))
   this_ws <- gs_ws(ss, ws, verbose)
   ## yes, we do need this here: remember 'progress'!
-  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = FALSE)
+  ddd <- parse_read_ddd(..., verbose = FALSE)
 
   limits <- range %>%
     cellranger::as.cell_limits() %>%
@@ -114,19 +114,19 @@ gs_read_cellfeed <- function(
     }
 
     x <- dplyr::data_frame_(
-      list(cell = ~ xml2::xml_find_all(x, ".//feed:title", ns) %>%
+      list(cell = ~xml2::xml_find_all(x, ".//feed:title", ns) %>%
              xml2::xml_text(),
-           edit_link = ~ edit_links,
-           cell_id = ~ xml2::xml_find_all(x, ".//feed:id", ns) %>%
+           edit_link = ~edit_links,
+           cell_id = ~xml2::xml_find_all(x, ".//feed:id", ns) %>%
              xml2::xml_text(),
-           cell_alt = ~ cell_id %>% basename(),
-           row = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           cell_alt = ~cell_id %>% basename(),
+           row = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("row") %>%
              as.integer(),
-           col = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           col = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("col") %>%
              as.integer(),
-           cell_text = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           cell_text = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_text()
       ))
     # see issue #19 about all the places cell data is (mostly redundantly)
@@ -143,11 +143,11 @@ gs_read_cellfeed <- function(
 
   attr(x, "ws_title") <- this_ws$ws_title
 
-  if(return_links) {
+  if (return_links) {
     x
   } else {
     x %>%
-      dplyr::select_(~ -edit_link, ~ -cell_id)
+      dplyr::select_(~-edit_link, ~-cell_id)
   }
 
 }

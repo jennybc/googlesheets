@@ -24,10 +24,9 @@ and reshaping; for most purposes, the defaults should be fine.
   missing values. Passed straight through to
   \code{\link[readr:read_delim]{readr::read_csv}} or
   \code{\link[readr:type_convert]{readr::type_convert}}.}
-  \item{\code{comment, skip, n_max}}{Used only for
-  \code{\link{gs_read_csv}} or \code{gs_read(..., range = NULL)}.
-  Passed straight through to
-  \code{\link[readr:read_delim]{readr::read_csv}}.}
+  \item{\code{comment, skip, n_max}}{Specify a string used to identify
+  comments, request to skip lines before reading data, or specify the
+  maximum number of rows to read.}
   \item{\code{col_names}}{Either \code{TRUE}, \code{FALSE} or a character
   vector of column names. If \code{TRUE}, the first row of the data rectangle
   will be used for names. If \code{FALSE}, column names will be X1, X2, etc.

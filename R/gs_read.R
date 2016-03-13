@@ -1,14 +1,14 @@
 #' Read data
 #'
-#' This function reads data from a worksheet and returns it as a \code{tbl_df}
-#' or \code{data.frame}. It wraps up the most common usage of other, lower-level
-#' functions for data consumption and transformation, but you can call always
-#' call them directly for finer control.
+#' This function reads data from a worksheet and returns a data frame. It wraps
+#' up the most common usage of other, lower-level functions for data consumption
+#' and transformation, but you can call always call them directly for finer
+#' control.
 #'
 #' If the \code{range} argument is not specified, all data will be read via
 #' \code{\link{gs_read_csv}}. Don't worry -- no intermediate \code{*.csv} files
-#' are written in the reading of your data! We just request the data from the
-#' Sheets API via the \code{exportcsv} link.
+#' are written! We just request the data from the Sheets API via the
+#' \code{exportcsv} link.
 #'
 #' If the \code{range} argument is specified, data will be read for the
 #' targetted cells via \code{\link{gs_read_cellfeed}}, then reshaped with

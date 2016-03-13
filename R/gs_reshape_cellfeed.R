@@ -25,53 +25,54 @@
 #' @export
 gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
 
-  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = verbose)
+  ddd <- parse_read_ddd(..., verbose = verbose)
   gs_reshape_feed(x, ddd, verbose)
 
 }
 
 gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
-  col_names <- ddd$col_names
 
-  limits <- x %>%
-    dplyr::summarise_each_(dplyr::funs(min, max), list(~ row, ~ col))
-  all_possible_cells <-
-    expand.grid(row = seq.int(limits$row_min, limits$row_max),
-                col = seq.int(limits$col_min, limits$col_max)) %>%
-    dplyr::as.tbl()
-  suppressMessages(
-    x_augmented <- all_possible_cells %>%
-      dplyr::left_join(x) %>%
-      dplyr::arrange_(~ row, ~ col)
-  )
-  n_cols <- dplyr::n_distinct(x_augmented$col)
+  skip <- ddd$skip %||% 0L
+  if (skip > 0) {
+    row_min <- min(x$row)
+    x <- x %>%
+      dplyr::filter_(~row > row_min + skip - 1)
+  }
 
-  if (isTRUE(col_names)) {
-    row_one <- x_augmented %>%
-      dplyr::filter_(~ (row == limits$row_min))
-    x_augmented <- x_augmented %>%
-      dplyr::filter_(~ row > limits$row_min)
+  x <- x %>%
+#    tidyr::complete_(cols = c("row", "col")) %>%
+    tidyr::complete(row = tidyr::full_seq(row, 1),
+                    col = tidyr::full_seq(col, 1)) %>%
+    dplyr::arrange_(~row, ~col)
+  n_cols <- dplyr::n_distinct(x$col)
+
+  if (isTRUE(ddd$col_names)) {
+    row_min <- min(x$row)
+    row_one <- x %>%
+      dplyr::filter_(~(row == row_min))
+    x <- x %>%
+      dplyr::filter_(~row > row_min)
     vnames <- size_names(row_one$cell_text, n_cols)
-  } else if (isFALSE(col_names)) {
+  } else if (isFALSE(ddd$col_names)) {
     vnames <- paste0("X", seq_len(n_cols))
-  } else if (is.character(col_names)) {
-    vnames <- size_names(col_names, n_cols)
+  } else if (is.character(ddd$col_names)) {
+    vnames <- size_names(ddd$col_names, n_cols)
   } else {
     stop("`col_names` must be TRUE, FALSE or a character vector", call. = FALSE)
   }
   vnames <- fix_names(vnames, ddd$check.names)
 
-  if (dplyr::n_distinct(x_augmented$row) < 1) {
+  if (dplyr::n_distinct(x$row) < 1) {
     if (verbose) {
       message("No data to reshape!")
-      if (isTRUE(col_names)) {
+      if (isTRUE(ddd$col_names)) {
         message("Perhaps retry with `col_names = FALSE`?")
       }
     }
     return(dplyr::data_frame())
   }
 
-  dat <- matrix(x_augmented$cell_text, ncol = n_cols, byrow = TRUE,
+  dat <- matrix(x$cell_text, ncol = n_cols, byrow = TRUE,
                 dimnames = list(NULL, vnames))
   dat <- dat %>%
     ## https://github.com/hadley/dplyr/issues/876
@@ -79,6 +80,18 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
     ## I can drop as.data.frame() once dplyr version >= 0.4.4
     as.data.frame(stringsAsFactors = FALSE) %>%
     dplyr::as_data_frame()
+
+  if (!is.null(ddd$comment)) {
+    keep_row <- !grepl(paste0("^", ddd$comment), dat[[1]])
+    dat <- dat[keep_row, , drop = FALSE]
+    jfun <- function(x) stringr::str_replace(x, paste0(ddd$comment, ".*"), "")
+    dat <- dat %>%
+      mutate_each_(funs(jfun), names(.))
+  }
+
+  if (!is.null(ddd$n_max)) {
+    dat <- dat[seq_len(ddd$n_max), , drop = FALSE]
+  }
 
   allowed_args <- c("col_types", "locale", "trim_ws", "na")
   type_convert_args <- c(list(df = dat), dropnulls(ddd[allowed_args]))

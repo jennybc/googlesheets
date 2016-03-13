@@ -62,7 +62,7 @@ gs_simplify_cellfeed <- function(
       col_names <- FALSE
     }
   }
-  stopifnot(identical(col_names, TRUE) || identical(col_names, FALSE))
+  stopifnot(isTRUE(col_names) || isFALSE(col_names))
 
   if (col_names) {
     x <- x %>%

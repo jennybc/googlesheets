@@ -99,7 +99,7 @@ gs_read_listfeed <- function(ss, ws = 1,
     stopifnot(is.character(sq), length(sq) == 1L)
   }
 
-  ddd <- parse_read_ddd(..., feed = "list_or_cell", verbose = verbose)
+  ddd <- parse_read_ddd(..., verbose = verbose)
 
   this_ws <- gs_ws(ss, ws, verbose)
   if (!is.null(reverse)) reverse <- tolower(as.character(reverse))
@@ -117,7 +117,7 @@ gs_read_listfeed <- function(ss, ws = 1,
     ## list of nodesets: one component per spreadsheet row
     xml2::xml_find_all(xpath = "//feed:entry", ns = ns) %>%
     ## keep only nodes that give cell contents
-    purrr::map(~ xml2::xml_find_all(.x, xpath = "./gsx:*", ns = ns))
+    purrr::map(~xml2::xml_find_all(.x, xpath = "./gsx:*", ns = ns))
 
   if (length(rows) == 0L) {
     if (verbose) mpf("Worksheet '%s' is empty.", this_ws$ws_title)
@@ -125,8 +125,8 @@ gs_read_listfeed <- function(ss, ws = 1,
   }
 
   ## make a data frame with row-specific nodesets in a list-column
-  rows_df <- dplyr::data_frame_(list(row = ~ seq_along(rows),
-                                     nodeset = ~ rows))
+  rows_df <- dplyr::data_frame_(list(row = ~seq_along(rows),
+                                     nodeset = ~rows))
 
   ## rows_df has one row spreadsheet row
   ## cells_df has one row per nonempty spreadsheet cell
@@ -141,21 +141,21 @@ gs_read_listfeed <- function(ss, ws = 1,
   hrow <- cells_df %>%
     ## figure out which column things came from
     ## it is not necessarily column i because of empty cells or columns
-    dplyr::group_by_(~ col_name_raw) %>%
-    dplyr::summarise_(col = ~ max(i)) %>%
-    dplyr::arrange_(~ col) %>%
+    dplyr::group_by_(~col_name_raw) %>%
+    dplyr::summarise_(col = ~max(i)) %>%
+    dplyr::arrange_(~col) %>%
     ## no docs re: dummy column name given by the API when it's missing
     ## this regex derived from limited personal experience so :shrug:
-    dplyr::mutate_(col_name = ~ stringr::str_replace(col_name_raw,
-                                                     "_[a-z0-9]{5}", ""))
+    dplyr::mutate_(col_name = ~stringr::str_replace(col_name_raw,
+                                                    "_[a-z0-9]{5}", ""))
 
   suppressMessages(
     cells_df <- cells_df %>%
       ## add column info to the data
       dplyr::left_join(hrow) %>%
-      dplyr::select_(~ row, ~ col, ~ cell_text) %>%
+      dplyr::select_(~row, ~col, ~cell_text) %>%
       ## increment row to anticipate prepending data for the header row
-      dplyr::mutate_(row = ~ row + 1L)
+      dplyr::mutate_(row = ~row + 1L)
   )
 
   if (isTRUE(ddd$col_names)) {
@@ -164,22 +164,20 @@ gs_read_listfeed <- function(ss, ws = 1,
     ## feed (vs. the transformed ones provided by the list feed)
     vnames <- ss %>%
       gs_read_cellfeed(ws = ws, range = cellranger::cell_rows(1),
-        return_empty = TRUE, verbose = FALSE
-      ) %>%
+        return_empty = TRUE, verbose = FALSE) %>%
       gs_simplify_cellfeed(notation = "none")
     ## still guessing at exactly how Google transforms header cells on the list
     ## feed
     vnames_mangled <- vnames %>% tolower() %>%
       stringr::str_replace_all("[^a-z0-9\\.]", "")
     hrow$col_name <- vnames[match(hrow$col_name, vnames_mangled)]
-
-    ## prepend column name cells to the data, just like the cell feed
-    cells_df <- hrow %>%
-      dplyr::mutate_(row = 1L) %>%
-      dplyr::select_(~ row, ~ col, cell_text = ~ col_name) %>%
-      dplyr::bind_rows(cells_df)
-
   }
+
+  ## prepend column name cells to the data, just like the cell feed
+  cells_df <- hrow %>%
+    dplyr::mutate_(row = 1L) %>%
+    dplyr::select_(~row, ~col, cell_text = ~col_name) %>%
+    dplyr::bind_rows(cells_df)
 
   gs_reshape_feed(cells_df, ddd, verbose)
 
