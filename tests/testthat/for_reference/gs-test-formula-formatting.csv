@@ -1,4 +1,4 @@
-number,number_formatted,number_rounded,character,formula,formula_formatted
+integer,number_formatted,number_rounded,character,formula,formula_formatted
 123456,"654,321",1.23,one,Google,3.18E+05
 345678,12.34%,2.35,,"1,271,591.00",52.63%
 234567,1.23E+09,3.46,three,,0.22
