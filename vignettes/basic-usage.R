@@ -20,7 +20,8 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ## ----pre-clean, include = FALSE, eval = NOT_CRAN-------------------------
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
-googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
+googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice"),
+                        verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 
 ## ----list-sheets, eval = NOT_CRAN----------------------------------------
@@ -186,6 +187,9 @@ ss %>% gs_read(ws = "two-blank-rows", range = cell_cols("A:C"))
 ## list feed can't cope because the 1st data row is empty
 ss %>% gs_read_listfeed(ws = "two-blank-rows")
 ss %>% gs_read_listfeed(ws = "two-blank-rows", skip = 2)
+
+## ----delete-ingest-sheet, eval = NOT_CRAN--------------------------------
+gs_delete(ss)
 
 ## ----new-sheet, eval = NOT_CRAN------------------------------------------
 foo <- gs_new("foo")

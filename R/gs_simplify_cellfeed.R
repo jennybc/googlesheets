@@ -35,11 +35,11 @@
 #' @examples
 #' \dontrun{
 #' gap_ss <- gs_gap() # register the Gapminder example sheet
-#' gap_cf <- gs_read_cellfeed(gap_ss, range = cell_rows(1))
+#' (gap_cf <- gs_read_cellfeed(gap_ss, range = cell_rows(1)))
 #' gs_simplify_cellfeed(gap_cf)
 #' gs_simplify_cellfeed(gap_cf, notation = "R1C1")
 #'
-#' gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10")
+#' (gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10"))
 #' gs_simplify_cellfeed(gap_cf)
 #' gs_simplify_cellfeed(gap_cf, col_names = FALSE)
 #' }

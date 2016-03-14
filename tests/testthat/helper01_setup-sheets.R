@@ -7,10 +7,10 @@ GAP_WS_FEED <- gs_gap_ws_feed()
 GAP_TITLE <- "test-gs-gapminder"
 
 ## Mini gapminder (owned by rpackagetest)
-mini_gap_url <- "https://docs.google.com/spreadsheets/d/1BMtx1V2pk2KG2HGANvvBOaZM4Jx1DUdRrFdEx-OJIGY/edit#gid=2141688971"
-mini_gap_title <- "test-gs-mini-gapminder"
-mini_gap_key <- "1BMtx1V2pk2KG2HGANvvBOaZM4Jx1DUdRrFdEx-OJIGY"
-mini_gap_ws_feed <- construct_ws_feed_from_key(mini_gap_key, "public")
+MINI_GAP_KEY <- gs_mini_gap_key()
+MINI_GAP_URL <- gs_mini_gap_url()
+MINI_GAP_WS_FEED <- gs_mini_gap_ws_feed()
+MINI_GAP_TITLE <- "test-gs-mini-gapminder"
 
 ## Public testing sheet (owned by rpackagetest)
 pts_url <- "https://docs.google.com/spreadsheets/d/1amnxLg9VVDoE6KSIZvutYkEGNgQyJSnLJgHthehruy8/"

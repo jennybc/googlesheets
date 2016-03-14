@@ -84,12 +84,12 @@ either when \code{return_empty = FALSE} (default), but will if you set
 \examples{
 \dontrun{
 gap_ss <- gs_gap() # register the Gapminder example sheet
-first_4_rows <-
+col_4_and_above <-
   gs_read_cellfeed(gap_ss, ws = "Asia", range = cell_limits(c(NA, 4)))
-first_4_rows
-gs_reshape_cellfeed(first_4_rows)
-gs_reshape_cellfeed(gs_read_cellfeed(gap_ss, "Asia",
-                      range = cell_limits(c(NA, 4), c(3, NA))))
+col_4_and_above
+gs_reshape_cellfeed(col_4_and_above)
+
+gs_read_cellfeed(gap_ss, range = "A2:F3")
 }
 }
 \seealso{

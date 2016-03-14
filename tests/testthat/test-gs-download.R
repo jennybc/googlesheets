@@ -4,7 +4,7 @@ activate_test_token()
 
 test_that("Spreadsheet can be exported", {
 
-  ss <- gs_ws_feed(mini_gap_ws_feed, lookup = FALSE)
+  ss <- gs_ws_feed(MINI_GAP_WS_FEED, lookup = FALSE)
 
   temp_dir <- tempdir()
 
@@ -28,7 +28,7 @@ test_that("Spreadsheet can be exported", {
 
 test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 
-  ss <- gs_ws_feed(mini_gap_ws_feed, lookup = FALSE)
+  ss <- gs_ws_feed(MINI_GAP_WS_FEED, lookup = FALSE)
 
   temp_dir <- tempdir()
 
@@ -45,7 +45,7 @@ test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 
 test_that("Spreadsheet can be exported w/o specifying 'to'", {
 
-  ss <- gs_ws_feed(mini_gap_ws_feed, lookup = FALSE)
+  ss <- gs_ws_feed(MINI_GAP_WS_FEED, lookup = FALSE)
   #ss_copy <- gs_copy(ss, to = p_("tri'cky sheétnamE"))
   ss_copy <- gs_copy(ss, to = p_("foo-sheet"))
 

@@ -78,6 +78,8 @@ oceania_csv <- gs_read(gap_ss, ws = "Oceania")
 str(oceania_csv)
 oceania_csv
 
+gs_read(gap_ss, ws = "Europe", n_max = 4, col_types = c("cccccc"))
+
 gs_read(gap_ss, ws = "Oceania", range = "A1:C4")
 gs_read(gap_ss, ws = "Oceania", range = "R1C1:R4C3")
 gs_read(gap_ss, ws = "Oceania", range = "R2C1:R4C3", col_names = FALSE)
@@ -88,7 +90,6 @@ gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 3), c(1, 4)),
 gs_read(gap_ss, ws = "Oceania", range = cell_rows(1:5))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols(4:6))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols("A:D"))
-gs_read(gap_ss, ws = "Oceania", range = cell_rows(1), col_names = FALSE)
 }
 
 }
