@@ -6,10 +6,6 @@ Jenny Bryan
 
 
 
-### DRAFT DRAFT DRAFT
-
-*This is me thinking out loud. It will eventually become a proper vignette.*
-
 ### Preliminaries
 
 Load `googlesheets` and `dplyr`, from which we use the `%>%` pipe operator and which gives us nicer printing of data frames (`tbl_df`s)
@@ -27,12 +23,12 @@ suppressMessages(library(dplyr))
 
 When working with Google Sheets via [the cell feed](https://developers.google.com/google-apps/spreadsheets/data#work_with_cell-based_feeds), there are three ways to define cell contents:
 
-  * **Literal value.** This is what hits your eyeballs when you view a Sheet in the browser. It's also what `googlesheets` returns now.
+  * **Literal value.** This is what hits your eyeballs when you view a Sheet in the browser. It's what `googlesheets` returns by default, because it's what the API returns by default.
     - API docs: "The literal value of the cell element is the calculated value of the cell, without formatting applied. If the cell contains a formula, the calculated value is given here. The Sheets API has no concept of formatting, and thus cannot manipulate formatting of cells."
     - Google describes this as "the calculated value of the cell, without formatting applied" but that is misleading. The only formatting they mean to exclude here is decorative stuff, e.g., font size or cell background color. **Numeric formatting is very much in force**.
     - If cell contains a formula, this is the calculated result. Examples: an average of some other cells, a live hyperlink specified via `=HYPERLINK()`, an image specified via `=IMAGE()`.
     - If cell contains formatted numeric data, this is the formatted result. Examples: 2.35E+05, 12.34%, $112.03.
-    - If cell contains a formatted numeric formula, this is the formatted, calculated result.
+    - If cell contains a formatted numeric formula, this is the calculated, formatted result.
   * **Input value.** This is what was entered in the cell, with one gotcha.
     - API docs: "The `inputValue` attribute of a cell entry always contains the value that a user would otherwise type into the Google Sheets user interface to manipulate the cell (i.e. either a literal value or a formula)."
     - If cell contains a formula, this is the formula. If cell contains a string, this is the string. Easy.
@@ -57,63 +53,74 @@ Decorative formatting is completely invisible to the Sheets API. It is also a te
 
 ### A worthy challenge
 
-We've created a formula and formatting ~~nightmare~~ sampler Sheet. [Go visit it in the browser!](https://docs.google.com/spreadsheets/d/19lRTCJDf9BYz9JepHx7y6u8vcxGbFpVSfIuxXnWpsL0). Or check out this screenshot.
+We've created a formula and formatting ~~nightmare~~ sampler Sheet. [Go visit it in the browser!](https://w3id.org/people/jennybc/googlesheets_ff_url). Or check out this screenshot.
 
-![formula-formatting-sampler-screenshot](img/formula-formatting-sampler-screenshot-smaller.png)
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot.png)
 
-Let's read it in various existing ways.
+It's one of the built-in example sheets. Access it with various functions that start with `gs_ff`.
+
+Let's read it in the usual ways, confirming we get "literal values", that we get them uniformly across all read methods that return data frame, and that it matches `readr::read_csv()`.
 
 
 ```r
-## I can do this because I own the Sheet
-## ffs <- gs_title("formula-formatting-sampler")
-## but this should work for anyone
-ffs <- gs_key("19lRTCJDf9BYz9JepHx7y6u8vcxGbFpVSfIuxXnWpsL0", lookup = FALSE)
-#> Worksheets feed constructed with public visibility
-(ffs_read_csv <- gs_read_csv(ffs))
+ff <- gs_ff()
+(ff_read_csv <- gs_read_csv(ff))
 #> Accessing worksheet titled 'Sheet1'.
 #> No encoding supplied: defaulting to UTF-8.
-#> Source: local data frame [5 x 5]
+#> Source: local data frame [5 x 6]
 #> 
-#>   Number Number_wFormat Character     Formulas Formula_wFormat
-#>    (int)          (chr)     (chr)        (chr)           (chr)
-#> 1 123456        654,321       one       Google        3.18E+05
-#> 2 345678         12.34%        NA 1,271,591.00          52.63%
-#> 3 234567       1.23E+09     three           NA            0.22
-#> 4     NA          3 1/7      four         $A$1      123,456.00
-#> 5 567890          $0.36      five           NA         317,898
-(ffs_read_list <- gs_read_listfeed(ffs))
+#>   number number_formatted number_rounded character      formula
+#>    (int)            (chr)          (dbl)     (chr)        (chr)
+#> 1 123456          654,321           1.23       one       Google
+#> 2 345678           12.34%           2.35        NA 1,271,591.00
+#> 3 234567         1.23E+09           3.46     three           NA
+#> 4     NA            3 1/7           4.57      four         $A$1
+#> 5 567890            $0.36           5.68      five           NA
+#> Variables not shown: formula_formatted (chr).
+(ff_read_list <- gs_read_listfeed(ff))
 #> Accessing worksheet titled 'Sheet1'.
-#> Source: local data frame [5 x 5]
+#> Source: local data frame [5 x 6]
 #> 
-#>   Number Number_wFormat Character     Formulas Formula_wFormat
-#>    (int)          (chr)     (chr)        (chr)           (chr)
-#> 1 123456        654,321       one       Google        3.18E+05
-#> 2 345678         12.34%        NA 1,271,591.00          52.63%
-#> 3 234567       1.23E+09     three           NA            0.22
-#> 4     NA          3 1/7      four         $A$1      123,456.00
-#> 5 567890          $0.36      five           NA         317,898
-## SORRY FOLKS, until I close https://github.com/jennybc/googlesheets/issues/213
-## other people can't download this sheet ... oops!
-(ffs_download_csv <- gs_download(ffs,
-                                 to = "formatted-numbers-and-formulas.csv",
-                                 overwrite = TRUE) %>% 
+#>   number number_formatted number_rounded character      formula
+#>    (int)            (chr)          (dbl)     (chr)        (chr)
+#> 1 123456          654,321           1.23       one       Google
+#> 2 345678           12.34%           2.35        NA 1,271,591.00
+#> 3 234567         1.23E+09           3.46     three           NA
+#> 4     NA            3 1/7           4.57      four         $A$1
+#> 5 567890            $0.36           5.68      five           NA
+#> Variables not shown: formula_formatted (chr).
+(ff_read_cell <- gs_read(ff, range = "A1:F6"))
+#> Accessing worksheet titled 'Sheet1'.
+#> Source: local data frame [5 x 6]
+#> 
+#>   number number_formatted number_rounded character      formula
+#>    (int)            (chr)          (dbl)     (chr)        (chr)
+#> 1 123456          654,321           1.23       one       Google
+#> 2 345678           12.34%           2.35        NA 1,271,591.00
+#> 3 234567         1.23E+09           3.46     three           NA
+#> 4     NA            3 1/7           4.57      four         $A$1
+#> 5 567890            $0.36           5.68      five           NA
+#> Variables not shown: formula_formatted (chr).
+(ff_download_csv <-
+  gs_download(ff, to = "gs-test-formula-formatting.csv", overwrite = TRUE) %>% 
   readr::read_csv())
 #> Sheet successfully downloaded:
-#> /Users/jenny/rrr/googlesheets/vignettes/formatted-numbers-and-formulas.csv
-#> Source: local data frame [5 x 5]
+#> /Users/jenny/rrr/googlesheets/vignettes/gs-test-formula-formatting.csv
+#> Source: local data frame [5 x 6]
 #> 
-#>   Number Number_wFormat Character     Formulas Formula_wFormat
-#>    (int)          (chr)     (chr)        (chr)           (chr)
-#> 1 123456        654,321       one       Google        3.18E+05
-#> 2 345678         12.34%        NA 1,271,591.00          52.63%
-#> 3 234567       1.23E+09     three           NA            0.22
-#> 4     NA          3 1/7      four         $A$1      123,456.00
-#> 5 567890          $0.36      five           NA         317,898
-## This is a great opportunity to check uniformity of the new readr ingest.
-identical(ffs_read_csv, ffs_read_list)
+#>   number number_formatted number_rounded character      formula
+#>    (int)            (chr)          (dbl)     (chr)        (chr)
+#> 1 123456          654,321           1.23       one       Google
+#> 2 345678           12.34%           2.35        NA 1,271,591.00
+#> 3 234567         1.23E+09           3.46     three           NA
+#> 4     NA            3 1/7           4.57      four         $A$1
+#> 5 567890            $0.36           5.68      five           NA
+#> Variables not shown: formula_formatted (chr).
+identical(ff_read_csv, ff_read_list)
 #> [1] TRUE
-identical(ffs_read_csv, ffs_download_csv)
+identical(ff_read_csv, ff_read_cell)
+#> [1] TRUE
+identical(ff_read_csv, ff_download_csv)
 #> [1] TRUE
 ## YEESSSSSSS
 ```
@@ -136,7 +143,7 @@ Let's play with a modified version of `gs_read_cellfeed()`. As before, we return
 
 
 ```r
-cf <- gs_read_cellfeed(ffs)
+cf <- gs_read_cellfeed(ff)
 #> Accessing worksheet titled 'Sheet1'.
 cf_printme <- cf %>%
   arrange(col, row) %>%
@@ -145,41 +152,47 @@ cf_printme <- cf %>%
 
 Putting the screenshot in before and after the table of the cell contents, for my own convenience.
 
-![formula-formatting-sampler-screenshot](img/formula-formatting-sampler-screenshot-smaller.png)
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot.png)
 
 
-|cell |literal_value   |input_value                                             |numeric_value       |
-|:----|:---------------|:-------------------------------------------------------|:-------------------|
-|A1   |Number          |Number                                                  |NA                  |
-|A2   |123456          |123456                                                  |123456.0            |
-|A3   |345678          |345678                                                  |345678.0            |
-|A4   |234567          |234567                                                  |234567.0            |
-|A6   |567890          |567890                                                  |567890.0            |
-|B1   |Number_wFormat  |Number_wFormat                                          |NA                  |
-|B2   |654,321         |654321                                                  |654321.0            |
-|B3   |12.34%          |12.34%                                                  |0.1234              |
-|B4   |1.23E+09        |1234567890                                              |1.23456789E9        |
-|B5   |3 1/7           |3.14159265359                                           |3.14159265359       |
-|B6   |$0.36           |0.36                                                    |0.36                |
-|C1   |Character       |Character                                               |NA                  |
-|C2   |one             |one                                                     |NA                  |
-|C4   |three           |three                                                   |NA                  |
-|C5   |four            |four                                                    |NA                  |
-|C6   |five            |five                                                    |NA                  |
-|D1   |Formulas        |Formulas                                                |NA                  |
-|D2   |Google          |=HYPERLINK("http://www.google.com/","Google")           |NA                  |
-|D3   |1,271,591.00    |=sum(R[-1]C[-3]:R[3]C[-3])                              |1271591.0           |
-|D4   |                |=IMAGE("https://www.google.com/images/srpr/logo3w.png") |NA                  |
-|D5   |$A$1            |=ADDRESS(1,1)                                           |NA                  |
-|D6   |                |=SPARKLINE(R[-4]C[-3]:R[0]C[-3])                        |NA                  |
-|E1   |Formula_wFormat |Formula_wFormat                                         |NA                  |
-|E2   |3.18E+05        |=average(R[0]C[-4]:R[4]C[-4])                           |317897.75           |
-|E3   |52.63%          |=R[-1]C[-4]/R[1]C[-4]                                   |0.5263144432081239  |
-|E4   |0.22            |=R[-2]C[-4]/R[2]C[-4]                                   |0.21739421366813996 |
-|E5   |123,456.00      |=min(R[-3]C[-4]:R[1]C[-4])                              |123456.0            |
-|E6   |317,898         |=average(R2C1:R6C1)                                     |317897.75           |
+|cell |literal_value     |input_value                                             |numeric_value       |
+|:----|:-----------------|:-------------------------------------------------------|:-------------------|
+|A1   |number            |number                                                  |NA                  |
+|A2   |123456            |123456                                                  |123456.0            |
+|A3   |345678            |345678                                                  |345678.0            |
+|A4   |234567            |234567                                                  |234567.0            |
+|A6   |567890            |567890                                                  |567890.0            |
+|B1   |number_formatted  |number_formatted                                        |NA                  |
+|B2   |654,321           |654321                                                  |654321.0            |
+|B3   |12.34%            |12.34%                                                  |0.1234              |
+|B4   |1.23E+09          |1234567890                                              |1.23456789E9        |
+|B5   |3 1/7             |3.14159265359                                           |3.14159265359       |
+|B6   |$0.36             |0.36                                                    |0.36                |
+|C1   |number_rounded    |number_rounded                                          |NA                  |
+|C2   |1.23              |1.2345                                                  |1.2345              |
+|C3   |2.35              |2.3456                                                  |2.3456              |
+|C4   |3.46              |3.4567                                                  |3.4567              |
+|C5   |4.57              |4.5678                                                  |4.5678              |
+|C6   |5.68              |5.6789                                                  |5.6789              |
+|D1   |character         |character                                               |NA                  |
+|D2   |one               |one                                                     |NA                  |
+|D4   |three             |three                                                   |NA                  |
+|D5   |four              |four                                                    |NA                  |
+|D6   |five              |five                                                    |NA                  |
+|E1   |formula           |formula                                                 |NA                  |
+|E2   |Google            |=HYPERLINK("http://www.google.com/","Google")           |NA                  |
+|E3   |1,271,591.00      |=sum(R[-1]C[-4]:R[3]C[-4])                              |1271591.0           |
+|E4   |                  |=IMAGE("https://www.google.com/images/srpr/logo3w.png") |NA                  |
+|E5   |$A$1              |=ADDRESS(1,1)                                           |NA                  |
+|E6   |                  |=SPARKLINE(R[-4]C[-4]:R[0]C[-4])                        |NA                  |
+|F1   |formula_formatted |formula_formatted                                       |NA                  |
+|F2   |3.18E+05          |=average(R[0]C[-5]:R[4]C[-5])                           |317897.75           |
+|F3   |52.63%            |=R[-1]C[-5]/R[1]C[-5]                                   |0.5263144432081239  |
+|F4   |0.22              |=R[-2]C[-5]/R[2]C[-5]                                   |0.21739421366813996 |
+|F5   |123,456.00        |=min(R[-3]C[-5]:R[1]C[-5])                              |123456.0            |
+|F6   |317,898           |=average(R2C1:R6C1)                                     |317897.75           |
 
-![formula-formatting-sampler-screenshot](img/formula-formatting-sampler-screenshot-smaller.png)
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot.png)
 
 ### Proposed uses of the new cell contents
 
@@ -202,14 +215,14 @@ cf %>%
   select(literal_value, input_value, numeric_value)
 #> Source: local data frame [6 x 3]
 #> 
-#>    literal_value    input_value numeric_value
-#>            (chr)          (chr)         (chr)
-#> 1 Number_wFormat Number_wFormat            NA
-#> 2        654,321         654321      654321.0
-#> 3         12.34%         12.34%        0.1234
-#> 4       1.23E+09     1234567890  1.23456789E9
-#> 5          3 1/7  3.14159265359 3.14159265359
-#> 6          $0.36           0.36          0.36
+#>      literal_value      input_value numeric_value
+#>              (chr)            (chr)         (chr)
+#> 1 number_formatted number_formatted            NA
+#> 2          654,321           654321      654321.0
+#> 3           12.34%           12.34%        0.1234
+#> 4         1.23E+09       1234567890  1.23456789E9
+#> 5            3 1/7    3.14159265359 3.14159265359
+#> 6            $0.36             0.36          0.36
 ```
 
 Here's column 4, `Formulas`, which has a bunch of formulas, which show up as such in `input_value`. *Note we had to truncate `input_value` a wee bit for printing purposes.*
@@ -220,17 +233,15 @@ cf %>%
   filter(col == 4) %>%
   select(literal_value, input_value, numeric_value) %>% 
   mutate(input_value = substr(input_value, 1, 54))
-#> Source: local data frame [6 x 3]
+#> Source: local data frame [5 x 3]
 #> 
-#>   literal_value                                            input_value
-#>           (chr)                                                  (chr)
-#> 1      Formulas                                               Formulas
-#> 2        Google          =HYPERLINK("http://www.google.com/","Google")
-#> 3  1,271,591.00                             =sum(R[-1]C[-3]:R[3]C[-3])
-#> 4               =IMAGE("https://www.google.com/images/srpr/logo3w.png"
-#> 5          $A$1                                          =ADDRESS(1,1)
-#> 6                                     =SPARKLINE(R[-4]C[-3]:R[0]C[-3])
-#> Variables not shown: numeric_value (chr).
+#>   literal_value input_value numeric_value
+#>           (chr)       (chr)         (chr)
+#> 1     character   character            NA
+#> 2           one         one            NA
+#> 3         three       three            NA
+#> 4          four        four            NA
+#> 5          five        five            NA
 ```
 
 Here's column 5, `Formula_wFormat`, which has a bunch of formatted numeric formulas. Compare `literal_value` (current default) and `numeric_value` (what people want) and `input_value` (the actual formulas).
@@ -242,14 +253,15 @@ cf %>%
   select(literal_value, input_value, numeric_value)
 #> Source: local data frame [6 x 3]
 #> 
-#>     literal_value                   input_value       numeric_value
-#>             (chr)                         (chr)               (chr)
-#> 1 Formula_wFormat               Formula_wFormat                  NA
-#> 2        3.18E+05 =average(R[0]C[-4]:R[4]C[-4])           317897.75
-#> 3          52.63%         =R[-1]C[-4]/R[1]C[-4]  0.5263144432081239
-#> 4            0.22         =R[-2]C[-4]/R[2]C[-4] 0.21739421366813996
-#> 5      123,456.00    =min(R[-3]C[-4]:R[1]C[-4])            123456.0
-#> 6         317,898           =average(R2C1:R6C1)           317897.75
+#>   literal_value                                             input_value
+#>           (chr)                                                   (chr)
+#> 1       formula                                                 formula
+#> 2        Google           =HYPERLINK("http://www.google.com/","Google")
+#> 3  1,271,591.00                              =sum(R[-1]C[-4]:R[3]C[-4])
+#> 4               =IMAGE("https://www.google.com/images/srpr/logo3w.png")
+#> 5          $A$1                                           =ADDRESS(1,1)
+#> 6                                      =SPARKLINE(R[-4]C[-4]:R[0]C[-4])
+#> Variables not shown: numeric_value (chr).
 ```
 
 Logic in the experimental new version of `gs_reshape_cellfeed()`:
@@ -269,25 +281,27 @@ Set the new argument `literal = FALSE` to try this out:
 how_about_this <- cf %>%
   gs_reshape_cellfeed(literal = FALSE)
 how_about_this
-#> Source: local data frame [5 x 5]
+#> Source: local data frame [5 x 6]
 #> 
-#>   Number Number_wFormat Character  Formulas Formula_wFormat
-#>    (int)          (dbl)     (chr)     (chr)           (dbl)
-#> 1 123456   6.543210e+05       one    Google    3.178978e+05
-#> 2 345678   1.234000e-01        NA 1271591.0    5.263144e-01
-#> 3 234567   1.234568e+09     three        NA    2.173942e-01
-#> 4     NA   3.141593e+00      four      $A$1    1.234560e+05
-#> 5 567890   3.600000e-01      five        NA    3.178978e+05
-ffs_read_csv
-#> Source: local data frame [5 x 5]
+#>   number number_formatted number_rounded character   formula
+#>    (int)            (dbl)          (dbl)     (chr)     (chr)
+#> 1 123456     6.543210e+05         1.2345       one    Google
+#> 2 345678     1.234000e-01         2.3456        NA 1271591.0
+#> 3 234567     1.234568e+09         3.4567     three        NA
+#> 4     NA     3.141593e+00         4.5678      four      $A$1
+#> 5 567890     3.600000e-01         5.6789      five        NA
+#> Variables not shown: formula_formatted (dbl).
+ff_read_csv
+#> Source: local data frame [5 x 6]
 #> 
-#>   Number Number_wFormat Character     Formulas Formula_wFormat
-#>    (int)          (chr)     (chr)        (chr)           (chr)
-#> 1 123456        654,321       one       Google        3.18E+05
-#> 2 345678         12.34%        NA 1,271,591.00          52.63%
-#> 3 234567       1.23E+09     three           NA            0.22
-#> 4     NA          3 1/7      four         $A$1      123,456.00
-#> 5 567890          $0.36      five           NA         317,898
+#>   number number_formatted number_rounded character      formula
+#>    (int)            (chr)          (dbl)     (chr)        (chr)
+#> 1 123456          654,321           1.23       one       Google
+#> 2 345678           12.34%           2.35        NA 1,271,591.00
+#> 3 234567         1.23E+09           3.46     three           NA
+#> 4     NA            3 1/7           4.57      four         $A$1
+#> 5 567890            $0.36           5.68      five           NA
+#> Variables not shown: formula_formatted (chr).
 ```
 
 What do we think? Top is what we get when we remove numeric formats before type conversion. Bottom is what current read methods return.
@@ -296,14 +310,14 @@ While I'm at it, let's see if I've got `gs_simplify_cellfeed()` working again.
 
 
 ```r
-cf_E <- gs_read_cellfeed(ffs, range = cell_cols("E"))
+cf_E <- gs_read_cellfeed(ff, range = cell_cols("E"))
 #> Accessing worksheet titled 'Sheet1'.
 cf_E %>% gs_simplify_cellfeed()
-#>           E2           E3           E4           E5           E6 
-#>   "3.18E+05"     "52.63%"       "0.22" "123,456.00"    "317,898"
+#>             E2             E3             E4             E5             E6 
+#>       "Google" "1,271,591.00"             NA         "$A$1"             NA
 cf_E %>% gs_simplify_cellfeed(literal = FALSE)
-#>           E2           E3           E4           E5           E6 
-#> 3.178978e+05 5.263144e-01 2.173942e-01 1.234560e+05 3.178978e+05
+#>          E2          E3          E4          E5          E6 
+#>    "Google" "1271591.0"          NA      "$A$1"          NA
 ```
 
 

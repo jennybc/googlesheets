@@ -1,30 +1,49 @@
 context("consume data with public visibility, whole sheets")
 
-## consuming data owned by someone else, namely rpackagetest
-ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE, verbose = FALSE)
-
-test_that("Default result is not changing (pub)", {
-  expect_equal_to_reference(gs_read(ss, ws = 5, verbose = FALSE),
-                            "for_reference/gap_sheet5.rds")
+test_that("gs_read() result not changing", {
+  expect_equal_to_reference(gs_read(gs_ff(), verbose = FALSE),
+                            "for_reference/ff.rds")
 })
 
-test_that("Read via csv matches default result link (pub)", {
-  expect_equal_to_reference(gs_read_csv(ss, ws = 5, verbose = FALSE),
-                            "for_reference/gap_sheet5.rds")
+test_that("gs_read(), forcing cell feed, result not changing, matches gs_read()", {
+  expect_equal_to_reference(gs_read(gs_ff(), range = "A1:F6", verbose = FALSE),
+                            "for_reference/ff.rds")
 })
 
-test_that("Read via list feed matches default results (pub)", {
-  expect_equal_to_reference(gs_read_listfeed(ss, ws = 5, verbose = FALSE),
-                            "for_reference/gap_sheet5.rds")
+test_that("gs_read_csv() result not changing, matches gs_read()", {
+  expect_equal_to_reference(gs_read_csv(gs_ff(), verbose = FALSE),
+                            "for_reference/ff.rds")
 })
 
-test_that("Read via cellfeed is not changing (pub)", {
-  expect_equal_to_reference(gs_read_cellfeed(ss, ws = 5, verbose = FALSE),
-                            "for_reference/gap_sheet5_cellfeed.rds")
+test_that("gs_read_listfeed() result not changing, matches gs_read()", {
+  expect_equal_to_reference(gs_read_listfeed(gs_ff(), verbose = FALSE),
+                            "for_reference/ff.rds")
+})
+
+test_that("gs_read_cellfeed() result not changing", {
+  expect_equal_to_reference(gs_read_cellfeed(gs_ff(), verbose = FALSE),
+                            "for_reference/ff_cellfeed.rds")
+})
+
+test_that("gs_read* matches readr::read_csv()", {
+  ## un-comment this once I close
+  ## https://github.com/jennybc/googlesheets/issues/213
+  ## tfile <- tempfile(pattern = "gs-test-formula-formatting", fileext = ".csv")
+  ## tfile2 <- gs_download(gs_ff(), to = tfile, overwrite = TRUE)
+
+  ## as a workaround, I did this manually in an interactive session
+  ## activate_test_token()
+  ## tfile <- gs_download(gs_ff(),
+  ##                     to = file.path("for_reference",
+  ##                                    "gs-test-formula-formatting.csv"),
+  ##                     overwrite = TRUE)
+  tfile <- file.path("for_reference", "gs-test-formula-formatting.csv")
+  expect_equal_to_reference(readr::read_csv(tfile), "for_reference/ff.rds")
 })
 
 test_that("We can reshape data from the cell feed", {
-  oceania <- ss %>% gs_read_cellfeed(ws = "Oceania", verbose = FALSE)
+  oceania <- gs_gap() %>%
+    gs_read_cellfeed(ws = "Oceania", verbose = FALSE)
   expect_true(all(names(oceania) %in%
                     c("cell", "cell_alt", "row", "col",
                       "literal_value", "input_value", "numeric_value")))

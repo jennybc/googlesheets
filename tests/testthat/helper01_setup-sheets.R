@@ -1,17 +1,5 @@
 `%>%` <- dplyr::`%>%`
 
-## Gapminder (owned by rpackagetest)
-GAP_KEY <- gs_gap_key()
-GAP_URL <- gs_gap_url()
-GAP_WS_FEED <- gs_gap_ws_feed()
-GAP_TITLE <- "test-gs-gapminder"
-
-## Mini gapminder (owned by rpackagetest)
-MINI_GAP_KEY <- gs_mini_gap_key()
-MINI_GAP_URL <- gs_mini_gap_url()
-MINI_GAP_WS_FEED <- gs_mini_gap_ws_feed()
-MINI_GAP_TITLE <- "test-gs-mini-gapminder"
-
 ## Public testing sheet (owned by rpackagetest)
 pts_url <- "https://docs.google.com/spreadsheets/d/1amnxLg9VVDoE6KSIZvutYkEGNgQyJSnLJgHthehruy8/"
 pts_title <- "test-gs-public-testing-sheet"

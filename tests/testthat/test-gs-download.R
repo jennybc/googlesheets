@@ -4,19 +4,17 @@ activate_test_token()
 
 test_that("Spreadsheet can be exported", {
 
-  ss <- gs_ws_feed(MINI_GAP_WS_FEED, lookup = FALSE)
-
   temp_dir <- tempdir()
 
   # bad format
-  expect_error(gs_download(ss, to = "pts.txt"),
+  expect_error(gs_download(gs_mini_gap(), to = "pts.txt"),
                "Cannot download Google spreadsheet as this format")
 
   # good formats
   fmts <- c("xlsx", "pdf", "csv")
   to_files <- file.path(temp_dir, paste0("oceania.", fmts))
   for(to in to_files) {
-    expect_message(ss %>%
+    expect_message(gs_mini_gap() %>%
                      gs_download(ws = "Oceania", to = to, overwrite = TRUE),
                    "successfully downloaded")
   }
@@ -28,13 +26,12 @@ test_that("Spreadsheet can be exported", {
 
 test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 
-  ss <- gs_ws_feed(MINI_GAP_WS_FEED, lookup = FALSE)
-
   temp_dir <- tempdir()
 
   to_nominal <- file.path(temp_dir, "sheet_one.csv")
   expect_message(to_actual <-
-                   ss %>% gs_download(to = to_nominal, overwrite = TRUE),
+                   gs_mini_gap() %>%
+                   gs_download(to = to_nominal, overwrite = TRUE),
                  "successfully downloaded")
 
   expect_true(file.exists(to_actual))
@@ -45,7 +42,7 @@ test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 
 test_that("Spreadsheet can be exported w/o specifying 'to'", {
 
-  ss <- gs_ws_feed(MINI_GAP_WS_FEED, lookup = FALSE)
+  ss <- gs_mini_gap()
   #ss_copy <- gs_copy(ss, to = p_("tri'cky sheétnamE"))
   ss_copy <- gs_copy(ss, to = p_("foo-sheet"))
 

@@ -90,7 +90,7 @@ test_that("gs_delete() throws error on non-googlesheet input", {
 test_that("Sheet can be renamed", {
   name1 <- p_("name1")
   name2 <- p_("name2")
-  ss <- gs_ws_feed(MINI_GAP_WS_FEED) %>% gs_copy(name1)
+  ss <- gs_mini_gap() %>% gs_copy(name1)
   ss <- ss %>% gs_rename(to = name2)
   ss_df <- gs_ls()
   expect_false(name1 %in% ss_df$sheet_title)

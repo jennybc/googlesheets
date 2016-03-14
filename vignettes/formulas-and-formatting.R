@@ -11,7 +11,7 @@ options(knitr.table.format = 'markdown')
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
 #googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
-#file.remove(c("formatted-numbers-and-formulas.csv"))
+file.remove("gs-test-formula-formatting.csv")
 
 ## ----load-package--------------------------------------------------------
 library(googlesheets)
@@ -26,25 +26,20 @@ token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
 suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 
 ## ------------------------------------------------------------------------
-## I can do this because I own the Sheet
-## ffs <- gs_title("formula-formatting-sampler")
-## but this should work for anyone
-ffs <- gs_key("19lRTCJDf9BYz9JepHx7y6u8vcxGbFpVSfIuxXnWpsL0", lookup = FALSE)
-(ffs_read_csv <- gs_read_csv(ffs))
-(ffs_read_list <- gs_read_listfeed(ffs))
-## SORRY FOLKS, until I close https://github.com/jennybc/googlesheets/issues/213
-## other people can't download this sheet ... oops!
-(ffs_download_csv <- gs_download(ffs,
-                                 to = "formatted-numbers-and-formulas.csv",
-                                 overwrite = TRUE) %>% 
+ff <- gs_ff()
+(ff_read_csv <- gs_read_csv(ff))
+(ff_read_list <- gs_read_listfeed(ff))
+(ff_read_cell <- gs_read(ff, range = "A1:F6"))
+(ff_download_csv <-
+  gs_download(ff, to = "gs-test-formula-formatting.csv", overwrite = TRUE) %>% 
   readr::read_csv())
-## This is a great opportunity to check uniformity of the new readr ingest.
-identical(ffs_read_csv, ffs_read_list)
-identical(ffs_read_csv, ffs_download_csv)
+identical(ff_read_csv, ff_read_list)
+identical(ff_read_csv, ff_read_cell)
+identical(ff_read_csv, ff_download_csv)
 ## YEESSSSSSS
 
 ## ------------------------------------------------------------------------
-cf <- gs_read_cellfeed(ffs)
+cf <- gs_read_cellfeed(ff)
 cf_printme <- cf %>%
   arrange(col, row) %>%
   select(cell, literal_value, input_value, numeric_value)
@@ -72,10 +67,10 @@ cf %>%
 how_about_this <- cf %>%
   gs_reshape_cellfeed(literal = FALSE)
 how_about_this
-ffs_read_csv
+ff_read_csv
 
 ## ------------------------------------------------------------------------
-cf_E <- gs_read_cellfeed(ffs, range = cell_cols("E"))
+cf_E <- gs_read_cellfeed(ff, range = cell_cols("E"))
 cf_E %>% gs_simplify_cellfeed()
 cf_E %>% gs_simplify_cellfeed(literal = FALSE)
 

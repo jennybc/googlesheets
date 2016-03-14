@@ -26,12 +26,8 @@ options(knitr.table.format = 'markdown')
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
 #googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
-#file.remove(c("formatted-numbers-and-formulas.csv"))
+file.remove("gs-test-formula-formatting.csv")
 ```
-
-### DRAFT DRAFT DRAFT
-
-*This is me thinking out loud. It will eventually become a proper vignette.*
 
 ### Preliminaries
 
@@ -55,12 +51,12 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 
 When working with Google Sheets via [the cell feed](https://developers.google.com/google-apps/spreadsheets/data#work_with_cell-based_feeds), there are three ways to define cell contents:
 
-  * **Literal value.** This is what hits your eyeballs when you view a Sheet in the browser. It's also what `googlesheets` returns now.
+  * **Literal value.** This is what hits your eyeballs when you view a Sheet in the browser. It's what `googlesheets` returns by default, because it's what the API returns by default.
     - API docs: "The literal value of the cell element is the calculated value of the cell, without formatting applied. If the cell contains a formula, the calculated value is given here. The Sheets API has no concept of formatting, and thus cannot manipulate formatting of cells."
     - Google describes this as "the calculated value of the cell, without formatting applied" but that is misleading. The only formatting they mean to exclude here is decorative stuff, e.g., font size or cell background color. **Numeric formatting is very much in force**.
     - If cell contains a formula, this is the calculated result. Examples: an average of some other cells, a live hyperlink specified via `=HYPERLINK()`, an image specified via `=IMAGE()`.
     - If cell contains formatted numeric data, this is the formatted result. Examples: 2.35E+05, 12.34%, $112.03.
-    - If cell contains a formatted numeric formula, this is the formatted, calculated result.
+    - If cell contains a formatted numeric formula, this is the calculated, formatted result.
   * **Input value.** This is what was entered in the cell, with one gotcha.
     - API docs: "The `inputValue` attribute of a cell entry always contains the value that a user would otherwise type into the Google Sheets user interface to manipulate the cell (i.e. either a literal value or a formula)."
     - If cell contains a formula, this is the formula. If cell contains a string, this is the string. Easy.
@@ -85,28 +81,25 @@ Decorative formatting is completely invisible to the Sheets API. It is also a te
 
 ### A worthy challenge
 
-We've created a formula and formatting ~~nightmare~~ sampler Sheet. [Go visit it in the browser!](https://docs.google.com/spreadsheets/d/19lRTCJDf9BYz9JepHx7y6u8vcxGbFpVSfIuxXnWpsL0). Or check out this screenshot.
+We've created a formula and formatting ~~nightmare~~ sampler Sheet. [Go visit it in the browser!](https://w3id.org/people/jennybc/googlesheets_ff_url). Or check out this screenshot.
 
-![formula-formatting-sampler-screenshot](img/formula-formatting-sampler-screenshot-smaller.png)
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot.png)
 
-Let's read it in various existing ways.
+It's one of the built-in example sheets. Access it with various functions that start with `gs_ff`.
+
+Let's read it in the usual ways, confirming we get "literal values", that we get them uniformly across all read methods that return data frame, and that it matches `readr::read_csv()`.
 
 ```{r}
-## I can do this because I own the Sheet
-## ffs <- gs_title("formula-formatting-sampler")
-## but this should work for anyone
-ffs <- gs_key("19lRTCJDf9BYz9JepHx7y6u8vcxGbFpVSfIuxXnWpsL0", lookup = FALSE)
-(ffs_read_csv <- gs_read_csv(ffs))
-(ffs_read_list <- gs_read_listfeed(ffs))
-## SORRY FOLKS, until I close https://github.com/jennybc/googlesheets/issues/213
-## other people can't download this sheet ... oops!
-(ffs_download_csv <- gs_download(ffs,
-                                 to = "formatted-numbers-and-formulas.csv",
-                                 overwrite = TRUE) %>% 
+ff <- gs_ff()
+(ff_read_csv <- gs_read_csv(ff))
+(ff_read_list <- gs_read_listfeed(ff))
+(ff_read_cell <- gs_read(ff, range = "A1:F6"))
+(ff_download_csv <-
+  gs_download(ff, to = "gs-test-formula-formatting.csv", overwrite = TRUE) %>% 
   readr::read_csv())
-## This is a great opportunity to check uniformity of the new readr ingest.
-identical(ffs_read_csv, ffs_read_list)
-identical(ffs_read_csv, ffs_download_csv)
+identical(ff_read_csv, ff_read_list)
+identical(ff_read_csv, ff_read_cell)
+identical(ff_read_csv, ff_download_csv)
 ## YEESSSSSSS
 ```
 
@@ -127,7 +120,7 @@ Let's play with a modified version of `gs_read_cellfeed()`. As before, we return
   * `numeric_value`: The actual number, if such exists.
 
 ```{r}
-cf <- gs_read_cellfeed(ffs)
+cf <- gs_read_cellfeed(ff)
 cf_printme <- cf %>%
   arrange(col, row) %>%
   select(cell, literal_value, input_value, numeric_value)
@@ -135,13 +128,13 @@ cf_printme <- cf %>%
 
 Putting the screenshot in before and after the table of the cell contents, for my own convenience.
 
-![formula-formatting-sampler-screenshot](img/formula-formatting-sampler-screenshot-smaller.png)
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot.png)
 
 ```{r echo = FALSE, results = "asis"}
 knitr::kable(cf_printme)
 ```
 
-![formula-formatting-sampler-screenshot](img/formula-formatting-sampler-screenshot-smaller.png)
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot.png)
 
 ### Proposed uses of the new cell contents
 
@@ -196,7 +189,7 @@ Set the new argument `literal = FALSE` to try this out:
 how_about_this <- cf %>%
   gs_reshape_cellfeed(literal = FALSE)
 how_about_this
-ffs_read_csv
+ff_read_csv
 ```
 
 What do we think? Top is what we get when we remove numeric formats before type conversion. Bottom is what current read methods return.
@@ -204,7 +197,7 @@ What do we think? Top is what we get when we remove numeric formats before type 
 While I'm at it, let's see if I've got `gs_simplify_cellfeed()` working again.
 
 ```{r}
-cf_E <- gs_read_cellfeed(ffs, range = cell_cols("E"))
+cf_E <- gs_read_cellfeed(ff, range = cell_cols("E"))
 cf_E %>% gs_simplify_cellfeed()
 cf_E %>% gs_simplify_cellfeed(literal = FALSE)
 ```
