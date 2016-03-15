@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/web/packages/googlesheets/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
+[![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/package=googlesheets) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
 
 ------------------------------------------------------------------------
 
@@ -60,17 +60,22 @@ If you use Windows, you may want to install the development version of `xml2`. T
 devtools::install_github("hadley/xml2")
 ```
 
-### Take a look at the vignette
+### Vignettes
 
-Read [the vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) on GitHub.
+GitHub versions:
 
-### Slides from UseR2015
+-   [Basic usage](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md)
+-   [Formulas and formatted numbers](https://github.com/jennybc/googlesheets/blob/master/vignettes/formulas-and-formatted-numbers.md)
+-   [Managing Oauth tokens](https://github.com/jennybc/googlesheets/blob/master/vignettes/managing-auth-tokens.md)
 
-[Slides](https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015) for a talk in July 2015 at the [UseR2015 conference](http://user2015.math.aau.dk)
+### Talks
+
+-   [Slides](https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015) for a talk in July 2015 at [useR! 2015](http://user2015.math.aau.dk)
+-   [Slides](https://speakerdeck.com/jennybc/googlesheets-1) for an [rOpenSci Community Call in March 2016](https://github.com/ropensci/commcalls/issues/9)
 
 ### Load googlesheets
 
-`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator available in your own work by loading [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html) or [`magrittr`](http://cran.r-project.org/web/packages/magrittr/index.html).
+`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](https://cran.r-project.org/package=dplyr). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator available in your own work by loading [`dplyr`](https://cran.r-project.org/package=dplyr) or [`magrittr`](https://cran.r-project.org/package=magrittr).
 
 ``` r
 library("googlesheets")
@@ -105,7 +110,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-05 15:34:15 GMT
+#>   Date of googlesheets registration: 2016-03-15 21:52:09 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw

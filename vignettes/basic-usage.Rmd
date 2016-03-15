@@ -15,6 +15,7 @@ vignette: >
 
 ```{r, echo = FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+CRAN <- !NOT_CRAN
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -96,8 +97,8 @@ third_party_gap <- GAP_URL %>%
 gap <- gap %>% gs_gs()
 ```
 
-```{r register-sheet-cran-only, include = FALSE, eval = !NOT_CRAN}
-gap <- gs_gap_key() %>% gs_key(lookup = FALSE, visibility = "public")
+```{r register-sheet-cran-only, include = FALSE, eval = CRAN}
+gap <- gs_gap()
 ```
 
 The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
@@ -260,7 +261,7 @@ How to get raw formulas or numbers without numeric formatting applied?
 
 Let's make a practice sheet to explore ways to control data ingest. On different worksheets, we put the same data frame into slightly more challenging positions.
 
-```{r}
+```{r eval = NOT_CRAN}
 df <- data_frame(thing1 = paste0("A", 2:5),
                  thing2 = paste0("B", 2:5),
                  thing3 = paste0("C", 2:5))
@@ -280,7 +281,7 @@ Go visit it in the browser via `gs_browse(ss)`. The first worksheet will look so
 
 Override the default variable names, but use `skip = 1` to keep them from ending up in the data frame. Try it with different read methods.
 
-```{r}
+```{r eval = NOT_CRAN}
 ## will use gs_read_csv
 ss %>% gs_read(col_names = FALSE, skip = 1)
 ss %>% gs_read(col_names = letters[1:3], skip = 1)
@@ -296,7 +297,7 @@ Read from the worksheet with a blank row at the top. Start to play with some oth
 
 ![top-filler](img/not-so-simple-ingest.png)
 
-```{r}
+```{r eval = NOT_CRAN}
 ## blank row causes variable names to show up in the data frame :(
 ss %>% gs_read(ws = "one-blank-row")
 
@@ -321,7 +322,7 @@ ss %>% gs_read_listfeed(ws = "one-blank-row", range = cell_cols("A:Z"), skip = 2
 
 Finally, we read from the worksheet with TWO blank rows at the top, which is more than the list feed can handle.
 
-```{r}
+```{r eval = NOT_CRAN}
 ## use skip to get correct result via gs_read() --> gs_read_csv()
 ss %>% gs_read(ws = "two-blank-rows", skip = 2)
 

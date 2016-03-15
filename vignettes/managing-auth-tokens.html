@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jenny Bryan" />
 
-<meta name="date" content="2016-02-15" />
+<meta name="date" content="2016-03-15" />
 
 <title>Managing OAuth Tokens</title>
 
@@ -69,7 +69,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title">Managing OAuth Tokens</h1>
 <h4 class="author"><em>Jenny Bryan</em></h4>
-<h4 class="date"><em>2016-02-15</em></h4>
+<h4 class="date"><em>2016-03-15</em></h4>
 
 </div>
 
@@ -98,7 +98,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Automated unit tests, e.g. <a href="http://r-pkgs.had.co.nz/tests.html"><code>testthat</code></a></li>
 <li>Hosted continuous integration, e.g. <a href="https://travis-ci.org">Travis CI</a></li>
 </ul>
-<p>Since <code>googlesheets</code> gets its authorization functionality from <a href="https://cran.r-project.org/web/packages/httr/index.html"><code>httr</code></a>, some of the content here may be relevant to other API-wrapping R packages that use <code>httr</code>.</p>
+<p>Since <code>googlesheets</code> gets its authorization functionality from <a href="http://cran.r-project.org/package=httr"><code>httr</code></a>, some of the content here may be relevant to other API-wrapping R packages that use <code>httr</code>.</p>
 </div>
 <div id="how-to-completely-avoid-reading-this-document" class="section level2">
 <h2>How to completely avoid reading this document</h2>
@@ -110,9 +110,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">gs_key</span>(<span class="dt">lookup =</span> <span class="ot">FALSE</span>) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_read</span>() %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">head</span>(<span class="dv">3</span>)
-<span class="co">#&gt; Authorization will not be used.</span>
 <span class="co">#&gt; Worksheets feed constructed with public visibility</span>
-<span class="co">#&gt; Accessing worksheet titled &quot;Africa&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'Africa'.</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
 <span class="co">#&gt; Source: local data frame [3 x 6]</span>
 <span class="co">#&gt; </span>
@@ -127,7 +126,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris_ss &lt;-<span class="st"> </span><span class="kw">gs_new</span>(<span class="st">&quot;iris_bit&quot;</span>, <span class="dt">input =</span> <span class="kw">head</span>(iris, <span class="dv">3</span>), <span class="dt">trim =</span> <span class="ot">TRUE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)
 iris_ss %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_read</span>()
-<span class="co">#&gt; Accessing worksheet titled &quot;Sheet1&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'Sheet1'.</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
 <span class="co">#&gt; Source: local data frame [3 x 5]</span>
 <span class="co">#&gt; </span>
@@ -150,9 +149,9 @@ iris_ss %&gt;%<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2016-02-16 06:43:32 GMT</span>
+<span class="co">#&gt;                  date: 2016-03-15 21:44:04 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....5SjPw</span>
+<span class="co">#&gt;  peek at access token: ya29....xXrh4</span>
 <span class="co">#&gt; peek at refresh token: 1/LxW...4wRNU</span></code></pre></div>
 </div>
 <div id="where-do-tokens-live-in-between-r-sessions" class="section level2">
@@ -228,7 +227,7 @@ token &lt;-<span class="st"> </span><span class="kw">gs_auth</span>()
 </div>
 <div id="tokens-for-testing" class="section level2">
 <h2>Tokens for testing</h2>
-<p>We use <a href="https://cran.r-project.org/web/packages/testthat/index.html"><code>testthat</code></a> to run automated unit tests on the <code>googlesheets</code> package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:</p>
+<p>We use <a href="http://cran.r-project.org/package=testthat"><code>testthat</code></a> to run automated unit tests on the <code>googlesheets</code> package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
 token &lt;-<span class="st"> </span><span class="kw">gs_auth</span>()
 <span class="kw">saveRDS</span>(token, <span class="dt">file =</span> <span class="st">&quot;tests/testthat/googlesheets_token.rds&quot;</span>)</code></pre></div>

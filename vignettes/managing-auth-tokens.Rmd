@@ -45,7 +45,7 @@ This vignette explains Google auth token management for anyone who wants to use 
   * Automated unit tests, e.g. [`testthat`](http://r-pkgs.had.co.nz/tests.html)
   * Hosted continuous integration, e.g. [Travis CI](https://travis-ci.org)
   
-Since `googlesheets` gets its authorization functionality from [`httr`](https://cran.r-project.org/web/packages/httr/index.html), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
+Since `googlesheets` gets its authorization functionality from [`httr`](http://cran.r-project.org/package=httr), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
 
 ## How to completely avoid reading this document
 
@@ -194,7 +194,7 @@ The latter point is the most relevant to an active project. If you're developing
 
 ## Tokens for testing
 
-We use [`testthat`](https://cran.r-project.org/web/packages/testthat/index.html) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
+We use [`testthat`](http://cran.r-project.org/package=testthat) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
 
 ```{r eval = FALSE}
 library(googlesheets)

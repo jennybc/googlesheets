@@ -20,7 +20,7 @@ This vignette explains Google auth token management for anyone who wants to use 
   * Automated unit tests, e.g. [`testthat`](http://r-pkgs.had.co.nz/tests.html)
   * Hosted continuous integration, e.g. [Travis CI](https://travis-ci.org)
   
-Since `googlesheets` gets its authorization functionality from [`httr`](https://cran.r-project.org/web/packages/httr/index.html), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
+Since `googlesheets` gets its authorization functionality from [`httr`](http://cran.r-project.org/package=httr), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
 
 ## How to completely avoid reading this document
 
@@ -36,9 +36,8 @@ gs_gap_key() %>%
   gs_key(lookup = FALSE) %>% 
   gs_read() %>% 
   head(3)
-#> Authorization will not be used.
 #> Worksheets feed constructed with public visibility
-#> Accessing worksheet titled "Africa"
+#> Accessing worksheet titled 'Africa'.
 #> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [3 x 6]
 #> 
@@ -60,7 +59,7 @@ Of course, many other activities do require authorization. For example, creating
 iris_ss <- gs_new("iris_bit", input = head(iris, 3), trim = TRUE, verbose = FALSE)
 iris_ss %>% 
   gs_read()
-#> Accessing worksheet titled "Sheet1"
+#> Accessing worksheet titled 'Sheet1'.
 #> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [3 x 5]
 #> 
@@ -96,9 +95,9 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-02-16 06:43:32 GMT
+#>                  date: 2016-03-15 21:44:04 GMT
 #>          access token: valid
-#>  peek at access token: ya29....5SjPw
+#>  peek at access token: ya29....xXrh4
 #> peek at refresh token: 1/LxW...4wRNU
 ```
 
@@ -198,7 +197,7 @@ The latter point is the most relevant to an active project. If you're developing
 
 ## Tokens for testing
 
-We use [`testthat`](https://cran.r-project.org/web/packages/testthat/index.html) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
+We use [`testthat`](http://cran.r-project.org/package=testthat) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
 
 
 ```r

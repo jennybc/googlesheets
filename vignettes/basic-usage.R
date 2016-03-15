@@ -1,5 +1,6 @@
 ## ---- echo = FALSE-------------------------------------------------------
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+CRAN <- !NOT_CRAN
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -54,8 +55,8 @@ third_party_gap <- GAP_URL %>%
 # Re-register it!
 gap <- gap %>% gs_gs()
 
-## ----register-sheet-cran-only, include = FALSE, eval = !NOT_CRAN---------
-#  gap <- gs_gap_key() %>% gs_key(lookup = FALSE, visibility = "public")
+## ----register-sheet-cran-only, include = FALSE, eval = CRAN--------------
+#  gap <- gs_gap()
 
 ## ----eval = FALSE--------------------------------------------------------
 #  gap %>% gs_browse()
@@ -130,7 +131,7 @@ gap_1col
 yr <- gap_1col %>% gs_simplify_cellfeed(notation = "none")
 str(yr)
 
-## ------------------------------------------------------------------------
+## ----eval = NOT_CRAN-----------------------------------------------------
 df <- data_frame(thing1 = paste0("A", 2:5),
                  thing2 = paste0("B", 2:5),
                  thing3 = paste0("C", 2:5))
@@ -143,7 +144,7 @@ ss <- gs_new("data-ingest-practice", ws_title = "simple",
   gs_ws_new("one-blank-row", input = df, trim = TRUE, anchor = "A2") %>% 
   gs_ws_new("two-blank-rows", input = df, trim = TRUE, anchor = "A3")
 
-## ------------------------------------------------------------------------
+## ----eval = NOT_CRAN-----------------------------------------------------
 ## will use gs_read_csv
 ss %>% gs_read(col_names = FALSE, skip = 1)
 ss %>% gs_read(col_names = letters[1:3], skip = 1)
@@ -154,7 +155,7 @@ ss %>% gs_read_listfeed(col_names = FALSE, skip = 1)
 ## use range to force use of gs_read_cellfeed
 ss %>% gs_read_listfeed(col_names = FALSE, skip = 1, range = cell_cols("A:Z"))
 
-## ------------------------------------------------------------------------
+## ----eval = NOT_CRAN-----------------------------------------------------
 ## blank row causes variable names to show up in the data frame :(
 ss %>% gs_read(ws = "one-blank-row")
 
@@ -176,7 +177,7 @@ ss %>% gs_read_listfeed(ws = "one-blank-row", range = cell_cols("A:Z"), skip = 2
                         col_names = paste0("yo ?!*", 1:3), check.names = TRUE,
                         na = "*", comment = "#", n_max = 2)
 
-## ------------------------------------------------------------------------
+## ----eval = NOT_CRAN-----------------------------------------------------
 ## use skip to get correct result via gs_read() --> gs_read_csv()
 ss %>% gs_read(ws = "two-blank-rows", skip = 2)
 
