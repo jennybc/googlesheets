@@ -1,7 +1,5 @@
 context("download sheets")
 
-activate_test_token()
-
 test_that("Spreadsheet can be exported", {
 
   temp_dir <- tempdir()
@@ -42,24 +40,26 @@ test_that("Spreadsheet can be exported w/o specifying the worksheet", {
 
 test_that("Spreadsheet can be exported w/o specifying 'to'", {
 
-  ss <- gs_mini_gap()
-  #ss_copy <- gs_copy(ss, to = p_("tri'cky sheétnamE"))
-  ss_copy <- gs_copy(ss, to = p_("foo-sheet"))
-
+  mg <- gs_mini_gap()
   expect_message(to_actual <-
-                   ss_copy %>% gs_download(overwrite = TRUE),
+                   gs_mini_gap() %>%
+                   gs_download(overwrite = TRUE),
                  "successfully downloaded")
 
   expect_true(file.exists(to_actual))
-  #expect_match(basename(to_actual), "tri-cky-she-tname\\.xlsx")
-  expect_match(basename(to_actual), "foo-sheet\\.xlsx")
+  expect_match(basename(to_actual), paste(mg$sheet_title, "xlsx", sep = "."))
   expect_true(file.remove(to_actual))
-  gs_delete(ss_copy)
-
 })
 
 
 test_that("Old Sheets can be exported", {
+
+  ## 2016-03-15
+  ## decommissioning this
+  ## I haven't seen an old sheet in a long time
+  ## if this gets re-activated, note check_old_sheet() currently requires auth
+  ## move it out of here or re-write check_old_sheet()
+  skip("skipping a test re: \"old\" sheets")
 
   ## don't even bother if we can't see this sheet in the spreadsheets feed or if
   ## it's been "helpfully" converted to a new sheet by google AGAIN :(
@@ -91,5 +91,3 @@ test_that("Old Sheets can be exported", {
   expect_true(all(file.remove(file.path(temp_dir, c("old.xlsx", "old.pdf")))))
 
 })
-
-gs_deauth(verbose = FALSE)

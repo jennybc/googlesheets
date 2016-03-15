@@ -49,27 +49,25 @@ gs_download <-
   }
 
   if (is.null(ws)) {
-
     key <- gs_get_alt_key(from)
-
-    url <- file.path(.state$gd_base_url_files_v2, key)
-    req <- httr::GET(url, google_token()) %>%
-      httr::stop_for_status()
-    req <- content_as_json_UTF8(req)
-
-    export_links <- c(
-      csv = req$exportLinks$'text/csv', # first sheet only
-      pdf = req$exportLinks$'application/pdf',
-      xlsx = req$exportLinks$'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
+    ## I used to hit the Drive Files resource to retrieve metadata
+    ## GET /files/fileId (relative to Drive URI)
+    ## then dug out export links
+    ## but that required auth
+    ## now I make the links "by hand" so we don't need a token so often
+    ## if things break, consider that the link format has changed
+    base_url <- "https://docs.google.com/spreadsheets/export"
+    export_links <- c("csv", "pdf", "xlsx") %>%
+      purrr::set_names() %>%
+      purrr::map_chr(
+        ~httr::modify_url(base_url,
+                          query = list(id = key, exportFormat = .x)))
   } else {
-
     this_ws <- from %>% gs_ws(ws)
     export_links <- c(
       csv = this_ws$exportcsv,
       pdf = httr::modify_url(this_ws$exportcsv, query = list(format = "pdf")),
       xlsx = httr::modify_url(this_ws$exportcsv, query = list(format = "xlsx")))
-
   }
 
   ext_match <- grepl(ext, names(export_links))
@@ -82,7 +80,7 @@ gs_download <-
     stop(mess)
   }
 
-  httr::GET(link, google_token(),
+  httr::GET(link, omit_token_if(grepl("public", from$ws_feed)),
             if (interactive()) httr::progress() else NULL,
             httr::write_disk(to, overwrite = overwrite))
 

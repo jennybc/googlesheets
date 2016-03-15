@@ -26,18 +26,8 @@ test_that("gs_read_cellfeed() result not changing", {
 })
 
 test_that("gs_read* matches readr::read_csv()", {
-  ## un-comment this once I close
-  ## https://github.com/jennybc/googlesheets/issues/213
-  ## tfile <- tempfile(pattern = "gs-test-formula-formatting", fileext = ".csv")
-  ## tfile2 <- gs_download(gs_ff(), to = tfile, overwrite = TRUE)
-
-  ## as a workaround, I did this manually in an interactive session
-  ## activate_test_token()
-  ## tfile <- gs_download(gs_ff(),
-  ##                     to = file.path("for_reference",
-  ##                                    "gs-test-formula-formatting.csv"),
-  ##                     overwrite = TRUE)
-  tfile <- file.path("for_reference", "gs-test-formula-formatting.csv")
+  tfile <- tempfile(pattern = "gs-test-formula-formatting", fileext = ".csv")
+  tfile <- gs_download(gs_ff(), to = tfile, overwrite = TRUE)
   expect_equal_to_reference(readr::read_csv(tfile), "for_reference/ff.rds")
 })
 

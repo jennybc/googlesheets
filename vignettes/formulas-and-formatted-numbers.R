@@ -10,13 +10,6 @@ knitr::opts_chunk$set(
 library(googlesheets)
 suppressMessages(library(dplyr))
 
-## ----auth, include = FALSE, eval = NOT_CRAN------------------------------
-## I grab the token from the testing directory because that's where it is to be
-## found on Travis
-## once gs_download gets fixed, this vignette should not require auth
-token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
-suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
-
 ## ----eval = FALSE--------------------------------------------------------
 #  gs_read(..., literal = FALSE)
 
