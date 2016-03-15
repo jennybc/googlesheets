@@ -85,8 +85,7 @@ test_that("We can cope with tricky column names", {
   ## empty cells will not be here ...
   diabolical <- gs_read_cellfeed(ss, "diabolical_column_names")
   expect_identical(dim(diabolical), c(30L, 7L))
-  expect_identical(diabolical$literal_value[diabolical$row == 1L],
-                   row_one_no_empty)
+  expect_identical(diabolical$value[diabolical$row == 1L], row_one_no_empty)
 
   ## but reshaping will create variables when data exists, even in absence of
   ## column name
@@ -98,7 +97,7 @@ test_that("We can cope with tricky column names", {
   diabolical <-
     gs_read_cellfeed(ss, "diabolical_column_names", return_empty = TRUE)
   expect_identical(dim(diabolical), c(32L, 7L))
-  expect_identical(diabolical$literal_value[diabolical$row == 1L], row_one)
+  expect_identical(diabolical$value[diabolical$row == 1L], row_one)
   diabolical <- diabolical %>% gs_reshape_cellfeed()
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical), vnames)
@@ -121,7 +120,7 @@ test_that("we don't error on a sheet with only colnames", {
                                  cell_alt = c("R1C1", "R1C2"),
                                  row = 1L,
                                  col = 1:2,
-                                 literal_value = c("V1", "V2"),
+                                 value = c("V1", "V2"),
                                  input_value = c("V1", "V2"),
                                  numeric_value = NA_character_))
 })

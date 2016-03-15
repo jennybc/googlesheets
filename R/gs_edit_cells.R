@@ -120,7 +120,7 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                                         "inputValue" = update_value)))
   }
   update_entries <- cells_df %>%
-    dplyr::select_(quote(-cell_alt), quote(-literal_value),
+    dplyr::select_(quote(-cell_alt), quote(-value),
                    quote(-input_value), quote(-numeric_value)) %>%
     purrr::pmap(f)
 

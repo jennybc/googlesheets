@@ -46,14 +46,14 @@ test_that("We can reshape data from the cell feed", {
     gs_read_cellfeed(ws = "Oceania", verbose = FALSE)
   expect_true(all(names(oceania) %in%
                     c("cell", "cell_alt", "row", "col",
-                      "literal_value", "input_value", "numeric_value")))
+                      "value", "input_value", "numeric_value")))
 
   y <- gs_reshape_cellfeed(oceania)
   expect_equal(dim(y), c(24L, 6L))
   expect_is(oceania$cell, "character")
   expect_is(oceania$row, "integer")
   expect_is(oceania$col, "integer")
-  expect_is(oceania$literal_value, "character")
+  expect_is(oceania$value, "character")
   expect_equal(names(y),
                c("country", "continent", "year", "lifeExp", "pop", "gdpPercap"))
 

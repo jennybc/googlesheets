@@ -1,0 +1,218 @@
+---
+title: "Formulas and formatted numbers"
+author: "Jenny Bryan"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Formulas and formatted numbers}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, echo = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  purl = NOT_CRAN
+)
+```
+
+## Preliminaries
+
+Load `googlesheets` and `dplyr`, from which we use the `%>%` pipe operator and which gives us nicer printing of data frames (`tbl_df`s)
+
+```{r load-package}
+library(googlesheets)
+suppressMessages(library(dplyr))
+```
+
+```{r auth, include = FALSE, eval = NOT_CRAN}
+## I grab the token from the testing directory because that's where it is to be
+## found on Travis
+## once gs_download gets fixed, this vignette should not require auth
+token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
+suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
+```
+
+## TL;DR
+
+To see how your data comes in as a data frame *without numeric formatting*, try this:
+
+```{r eval = FALSE}
+gs_read(..., literal = FALSE)
+```
+
+Here's an example:
+
+  * First variable comes in properly as numeric when `literal = FALSE` vs as character when `literal = TRUE` (the default)
+  * Second variable does not lose precision due to rounding when `literal = FALSE`.
+
+```{r}
+gs_ff() %>% 
+  gs_read(range = cell_cols("B:C"))
+gs_ff() %>% 
+  gs_read(literal = FALSE, range = cell_cols("B:C"))
+```
+
+If you want full access to cell contents, use `gs_read_cellfeed(..., literal = FALSE)` to get a data frame with one per cell. Then take your pick from `value`, `input_value`, and `numeric_value`. Here's an example with lots of formulas:
+
+```{r results = "asis"}
+gs_ff() %>% 
+  gs_read_cellfeed(range = cell_cols("E")) %>% 
+  select(-cell_alt, -row, -col) %>% 
+  knitr::kable()
+```
+
+Read on if you want to know more.
+
+## Different notions of cell contents
+
+When working with Google Sheets via [the cell feed](https://developers.google.com/google-apps/spreadsheets/data#work_with_cell-based_feeds), there are three ways to define cell contents:
+
+  * **Literal value.** This is what hits your eyeballs when you view a Sheet in the browser. It's what `googlesheets` returns by default, because it's what the API returns by default.
+    - API docs: "The literal value of the cell element is the calculated value of the cell, without formatting applied. If the cell contains a formula, the calculated value is given here. The Sheets API has no concept of formatting, and thus cannot manipulate formatting of cells."
+    - Google describes this as "the calculated value of the cell, without formatting applied" but that is misleading. The only formatting they mean to exclude here is decorative stuff, e.g., font size or cell background color. **Numeric formatting is very much in force**.
+    - If cell contains a formula, this is the calculated result. Examples: an average of some other cells, a live hyperlink specified via `=HYPERLINK()`, an image specified via `=IMAGE()`.
+    - If cell contains formatted numeric data, this is the formatted result. Examples: 2.35E+05, 12.34%, $112.03.
+    - If cell contains a formatted numeric formula, this is the calculated, formatted result.
+  * **Input value.** This is what was entered in the cell, with one gotcha.
+    - API docs: "The `inputValue` attribute of a cell entry always contains the value that a user would otherwise type into the Google Sheets user interface to manipulate the cell (i.e. either a literal value or a formula)."
+    - If cell contains a formula, this is the formula. If cell contains a string, this is the string. Easy.
+    - If cell contains a number, this *generally* contains the number. Exception: a number formatted as a percentage. In this case Google assumes you know the spreadsheet data entry trick in which you type `0.12345%` to simultaneously enter the numeric value 0.12345 and format it as a percentage. Therefore, the numeric value 0.12345 will have input value `0.12345%` if formatted as a percentage and 0.12345 otherwise. Why, Google, why?
+    - Empirically, input value seems to be what is displayed in the formula bar to the right of the $f_{x}$ when you visit a cell in the browser.
+  * **Numeric value.**
+    - API docs: "The `numericValue` attribute of a cell entry, when present, indicates that the cell was determined to have a numeric value, and its numeric value is indicated with this attributed [sic]."
+    - If cell contains a number, this is that number.
+    - If cell contains a numeric formula, this is the calculated numeric result.
+    - Otherwise, the `numericValue` attribute doesn't even exist in the underlying XML and it will be an `NA` in any object `googlesheets` creates from reading the Sheet.
+
+### Vocabulary: there's formatting and then there's *formatting*
+
+Click on the Format menu in Google Sheets and you'll gain access to a "Number" sub-menu and ... lots of other stuff. Let's agree that "formatting" can mean two different things:
+
+  * Decoration. Font, font size, font color, bold, italic, cell background, text alignment, etc.
+  * Numeric formatting. Meaning this:
+    - UNformatted: 123456 or 32.61 or 0.53
+    - Formatted: 123,456 or $32.61 or 53%
+
+Decorative formatting is completely invisible to the Sheets API. It is also a terrible idea to encode data in decorative formatting, though it can be used to visually reinforce information that is properly stored in data (Google Sheets is capable of [conditional formatting](https://support.google.com/docs/answer/78413?hl=en)). Nothing in `googlesheets` or the rest of this vignette addresses decorative formatting. We shall not speak of it again. From now on, "formatting" means numeric formatting.
+
+## A worthy challenge
+
+We've created a formula and formatting ~~nightmare~~ sampler Sheet. [Go visit it in the browser!](https://w3id.org/people/jennybc/googlesheets_ff_url). Or check out this screenshot.
+
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
+
+It's one of the built-in example sheets. Access it with various functions that start with `gs_ff`.
+
+Here's how it comes in as a data frame by default: you get "literal values" (suppressing a boring column in order to show the interesting ones).
+
+```{r}
+gs_ff() %>% 
+  gs_read() %>% 
+  select(-integer)
+```
+
+What if you want unformatted numbers? What if you want the actual formulas? You can now get them the cell feed, which, in `googlesheets`, means you must use `gs_read_cellfeed()`. You can cause `gs_read()` to consult the cell feed by specifying `literal = FALSE`.
+
+## The cell feed
+
+Default methods of reading Sheet data assume that the data occupies a neat rectangle in the upper left corner, that you want all of it, and that you want the literal values.
+
+What if you need more control over which cells? What if you want input or numeric values? Use the cell feed via `gs_read_cellfeed()`. Under the hood, `gs_read()` will use the cell feed whenever a cell range is provided, i.e. when the call is like `gs_read(..., range = "B4:D9")` or `gs_read(..., range = cell_cols(4:6))`, or when the new argument `literal = FALSE`.
+
+`gs_read_cellfeed()` has been extended. As before, we return a data frame with one row per cell, but now we return all 3 notions of cell contents:
+
+  * `value`: The variable previously known as `cell_text`. Described as "literal value", what you see in the browser, and what is returned by all other methods of reading.
+  * `input_value`: What you would have typed into the cell (if you are a total spreadsheet nerd, when it comes to percentages).
+  * `numeric_value`: The actual number, if such exists.
+
+```{r}
+cf <- gs_read_cellfeed(gs_ff())
+```
+
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
+
+```{r echo = FALSE, results = "asis"}
+cf_printme <- cf %>%
+  arrange(col, row) %>%
+  select(cell, value, input_value, numeric_value)
+knitr::kable(cf_printme %>%
+               purrr::dmap_if(purrr::is_character,
+                              ~gsub('$', '\\$', .x, fixed = TRUE)))
+```
+
+![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
+
+### Exploration of cell contents
+
+We explore the different cell contents for different variables. This motivates the logic behind what happens when `gs_read(..., literal = FALSE)` and `gs_simply_cellfeed(..., literal = FALSE)`.
+
+#### Formatted numbers
+
+Column 2, `number_formatted`, holds variously formatted numbers. It is quite pathological, because in real life numeric formatting is likely to be uniform within a column, which helps `readr` make good decisions about type conversion.
+
+  * `value` (what you get by default) will definitely import as character. Not good.
+  * `input_value` is attractive for the first number, because an integer looks like an integer, which is ultimately good for type conversion. But this variable would still import as character, because of the percent sign.
+  * `numeric_value` (what you usually want?) is a good default for numbers, although the true integer has gained `.0` as suffix.
+
+```{r}
+cf %>%
+  filter(col == 2) %>%
+  select(value, input_value, numeric_value)
+```
+
+#### Rounded numbers
+
+Column 3, `number_rounded`, holds numbers with four decimal places, rounded to show just two. Here we clearly want `numeric_value`.
+
+```{r}
+cf %>%
+  filter(col == 3) %>%
+  select(value, input_value, numeric_value)
+```
+
+#### Formulas
+
+Column 5, `formula`, holds various formulas, not necessarily numeric. *Note we had to truncate `input_value` for printing purposes.*
+
+  * `value` is what you want ... except for the formula which evaluates to numeric and is formatted.
+  * `input_value` holds the actual formulas.
+  * `numeric_value` is what you want for the single formula that is numeric.
+
+```{r}
+cf %>%
+  filter(col == 5) %>%
+  select(value, input_value, numeric_value) %>% 
+  mutate(input_value = substr(input_value, 1, 43))
+```
+
+#### Numeric formulas, formatted
+
+Column 6, `formula_formatted`, holds formatted numeric formulas:
+
+  * `value` (default) will come in as character.
+  * `input_value` holds the actual formulas.
+  * `numeric_value` (what you usualy want, when it exists) holds the calcuated numbers.
+
+```{r}
+cf %>%
+  filter(col == 6) %>%
+  select(value, input_value, numeric_value)
+```
+
+## Logic for cell contents when `literal = FALSE`
+
+Based on the above examples (and more), here's the current logic for which cell contents to use in `gs_read(..., literal = FALSE)` and `gs_reshape_cellfeed(..., literal = FALSE)`. The goal is to create an input that gives the desired result most often with default behavior of `readr::type_convert()`. If you think this is wrong, please discuss in [an issue](https://github.com/jennybc/googlesheets/issues).
+
+  * Create an indicator for: does `numeric_value` exist?
+  * Create an indicator for: does this look like an integer that is at risk of looking like a double if we take `numeric_value`?
+  * Create putative cell content like so:
+    - if `numeric_value` does not exist, use `value` (business as usual)
+    - else if it's an "at risk" integer, use `input_value`
+    - else use `numeric_value`
+  * Isolate, reshape and type convert THAT

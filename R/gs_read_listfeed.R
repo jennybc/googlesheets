@@ -134,10 +134,10 @@ gs_read_listfeed <- function(ss, ws = 1,
   cells_df <- rows_df %>%
     ## extract (alleged) col name, cell text; i = within-row cell counter
     dplyr::mutate_(col_name_raw = ~nodeset %>% purrr::map(~xml2::xml_name(.)),
-                   literal_value = ~nodeset %>% purrr::map(~xml2::xml_text(.)),
+                   value = ~nodeset %>% purrr::map(~xml2::xml_text(.)),
                    i = ~nodeset %>% purrr::map(~ seq_along(.))) %>%
-    dplyr::select_(~row, ~i, ~col_name_raw, ~literal_value) %>%
-    tidyr::unnest_(c("i", "col_name_raw", "literal_value"))
+    dplyr::select_(~row, ~i, ~col_name_raw, ~value) %>%
+    tidyr::unnest_(c("i", "col_name_raw", "value"))
 
   hrow <- cells_df %>%
     ## figure out which column things came from
@@ -154,7 +154,7 @@ gs_read_listfeed <- function(ss, ws = 1,
     cells_df <- cells_df %>%
       ## add column info to the data
       dplyr::left_join(hrow) %>%
-      dplyr::select_(~row, ~col, ~literal_value) %>%
+      dplyr::select_(~row, ~col, ~value) %>%
       ## increment row to anticipate prepending data for the header row
       dplyr::mutate_(row = ~row + 1L)
   )
@@ -177,7 +177,7 @@ gs_read_listfeed <- function(ss, ws = 1,
   ## prepend column name cells to the data, just like the cell feed
   cells_df <- hrow %>%
     dplyr::mutate_(row = 1L) %>%
-    dplyr::select_(~row, ~col, literal_value = ~col_name) %>%
+    dplyr::select_(~row, ~col, value = ~col_name) %>%
     dplyr::bind_rows(cells_df)
 
   gs_reshape_feed(cells_df, ddd, verbose)

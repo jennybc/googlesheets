@@ -151,12 +151,12 @@ reconcile_cell_contents <- function(x) {
                                               gsub("\\.0$", "", numeric_value)
                                               == input_value),
                    ## a formula that evaluates to integer will almost certainly
-                   ## look like a double, i.e. have trailing `.0`, but I see no
-                   ## practical way to address that :(
-                   literal_value = ~ifelse(literal_only,
-                                           literal_value,
-                                           ifelse(putative_integer, input_value,
-                                                  numeric_value)))
+                   ## look like a double, i.e. have trailing `.0`, but I'm not
+                   ## sure I should strip it off
+                   value = ~ifelse(literal_only,
+                                   value,
+                                   ifelse(putative_integer, input_value,
+                                          numeric_value)))
   x %>%
     dplyr::select_(quote(-literal_only), quote(-putative_integer))
 }

@@ -98,7 +98,7 @@ gs_read_cellfeed <- function(
                            cell_alt = character(),
                            row = integer(),
                            col = integer(),
-                           literal_value = character(),
+                           value = character(),
                            input_value = character(),
                            numeric_value = character(),
                            edit_link = character(),
@@ -126,7 +126,7 @@ gs_read_cellfeed <- function(
            col = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("col") %>%
              as.integer(),
-           literal_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_text(),
            input_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("inputValue"),
@@ -137,7 +137,7 @@ gs_read_cellfeed <- function(
 
   x <- x %>%
     dplyr::select_(~cell, ~cell_alt, ~row, ~col,
-                   ~literal_value, ~input_value, ~numeric_value,
+                   ~value, ~input_value, ~numeric_value,
                    ~edit_link, ~cell_id)
 
   attr(x, "ws_title") <- this_ws$ws_title

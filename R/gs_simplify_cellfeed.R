@@ -74,19 +74,19 @@ gs_simplify_cellfeed <- function(
   if (convert) {
     ddd <- list(locale = locale, trim_ws = trim_ws, na = na)
 
-    if(isFALSE(literal)) {
+    if (isFALSE(literal)) {
       x <- reconcile_cell_contents(x)
     }
 
-    type_convert_args <- c(list(df = x["literal_value"]), dropnulls(ddd))
+    type_convert_args <- c(list(df = x["value"]), dropnulls(ddd))
     df <- do.call(readr::type_convert, type_convert_args)
-    x$literal_value <- df$literal_value
+    x$value <- df$value
   }
 
   nms <- switch(notation,
                 A1 = x$cell,
                 R1C1 = x$cell_alt,
                 NULL)
-  x[["literal_value"]] %>%
+  x[["value"]] %>%
     setNames(nms)
 }
