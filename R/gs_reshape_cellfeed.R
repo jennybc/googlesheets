@@ -31,6 +31,11 @@
 #' gs_reshape_cellfeed(gs_read_cellfeed(gap_ss, "Asia",
 #'                                      range = cell_rows(2:4)),
 #'                     col_names = paste0("yo", 1:6))
+#'
+#' ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
+#' ff_cf <- gs_read_cellfeed(ff_ss)
+#' gs_reshape_cellfeed(ff_cf) # almost all vars are character
+#' gs_reshape_cellfeed(ff_cf, literal = FALSE) # more vars are numeric
 #' }
 #' @export
 gs_reshape_cellfeed <- function(x, literal = TRUE, ..., verbose = TRUE) {

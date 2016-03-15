@@ -42,6 +42,11 @@
 #' (gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10"))
 #' gs_simplify_cellfeed(gap_cf)
 #' gs_simplify_cellfeed(gap_cf, col_names = FALSE)
+#'
+#' ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
+#' ff_cf <- gs_read_cellfeed(ff_ss, range = cell_cols(3))
+#' gs_simplify_cellfeed(ff_cf)                  # rounded to 2 digits
+#' gs_simplify_cellfeed(ff_cf, literal = FALSE) # hello, more digits!
 #' }
 #'
 #' @family data consumption functions

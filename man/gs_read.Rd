@@ -93,6 +93,10 @@ gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 3), c(1, 4)),
 gs_read(gap_ss, ws = "Oceania", range = cell_rows(1:5))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols(4:6))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols("A:D"))
+
+ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
+gs_read(ff_ss)                  # almost all vars are character
+gs_read(ff_ss, literal = FALSE) # more vars are properly numeric
 }
 
 }
