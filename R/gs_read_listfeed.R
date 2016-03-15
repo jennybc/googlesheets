@@ -2,14 +2,15 @@
 #'
 #' Gets data via the "list feed", which assumes populated cells form a neat
 #' rectangle. The list feed consumes data row by row. The first row is assumed
-#' to hold variable or column names. The related function,
-#' \code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
-#' it is generally faster and more resilient to, e.g. empty rows, so use it if
-#' you can. However, you may need to use this function if you are dealing with
-#' an "old" Google Sheet, which is beyond the reach of
-#' \code{\link{gs_read_csv}}. The list feed also has some ability to sort and
-#' filter rows via the API (more below). Consult the Google Sheets API
-#' documentation for more details about
+#' to hold variable or column names; it can be empty. The second row is assumed
+#' to hold the first data row and, if it is empty, no data will be read and you
+#' will get an empty data frame.
+#'
+#' The other read functions are generally superior, so use them if you can.
+#' However, you may need to use this function if you are dealing with an "old"
+#' Google Sheet, which is beyond the reach of \code{\link{gs_read_csv}}. The
+#' list feed also has some ability to sort and filter rows via the API (more
+#' below). Consult the Google Sheets API documentation for more details about
 #' \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_list-based_feeds}{the
 #' list feed}.
 #'
@@ -73,11 +74,11 @@
 #'                    sq = "lifeexp > 79 or year < 1960")
 #' oceania_fancy
 #'
-#' ## crazy demo of passing args through to readr::type_convert()
+#' ## passing args through to readr::type_convert()
 #' oceania_crazy <-
 #'   gs_read_listfeed(gap_ss,
 #'                    ws = "Oceania",
-#'                    col_names = paste0("z", 1:6),
+#'                    col_names = paste0("z", 1:6), skip = 1,
 #'                    col_types = "ccncnn",
 #'                    na = "1962")
 #' oceania_crazy
@@ -132,11 +133,11 @@ gs_read_listfeed <- function(ss, ws = 1,
   ## cells_df has one row per nonempty spreadsheet cell
   cells_df <- rows_df %>%
     ## extract (alleged) col name, cell text; i = within-row cell counter
-    dplyr::mutate_(col_name_raw = ~ nodeset %>% purrr::map(~ xml2::xml_name(.)),
-                   cell_text = ~ nodeset %>% purrr::map(~ xml2::xml_text(.)),
-                   i = ~ nodeset %>% purrr::map(~ seq_along(.))) %>%
-    dplyr::select_(~ row, ~ i, ~ col_name_raw, ~ cell_text) %>%
-    tidyr::unnest_(c("i", "col_name_raw", "cell_text"))
+    dplyr::mutate_(col_name_raw = ~nodeset %>% purrr::map(~xml2::xml_name(.)),
+                   value = ~nodeset %>% purrr::map(~xml2::xml_text(.)),
+                   i = ~nodeset %>% purrr::map(~ seq_along(.))) %>%
+    dplyr::select_(~row, ~i, ~col_name_raw, ~value) %>%
+    tidyr::unnest_(c("i", "col_name_raw", "value"))
 
   hrow <- cells_df %>%
     ## figure out which column things came from
@@ -153,7 +154,7 @@ gs_read_listfeed <- function(ss, ws = 1,
     cells_df <- cells_df %>%
       ## add column info to the data
       dplyr::left_join(hrow) %>%
-      dplyr::select_(~row, ~col, ~cell_text) %>%
+      dplyr::select_(~row, ~col, ~value) %>%
       ## increment row to anticipate prepending data for the header row
       dplyr::mutate_(row = ~row + 1L)
   )
@@ -176,7 +177,7 @@ gs_read_listfeed <- function(ss, ws = 1,
   ## prepend column name cells to the data, just like the cell feed
   cells_df <- hrow %>%
     dplyr::mutate_(row = 1L) %>%
-    dplyr::select_(~row, ~col, cell_text = ~col_name) %>%
+    dplyr::select_(~row, ~col, value = ~col_name) %>%
     dplyr::bind_rows(cells_df)
 
   gs_reshape_feed(cells_df, ddd, verbose)

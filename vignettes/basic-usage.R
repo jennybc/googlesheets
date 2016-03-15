@@ -5,6 +5,11 @@ knitr::opts_chunk$set(
   comment = "#>",
   purl = NOT_CRAN
 )
+options(knitr.table.format = 'markdown')
+
+## ----load-package--------------------------------------------------------
+library(googlesheets)
+suppressMessages(library(dplyr))
 
 ## ----auth, include = FALSE, eval = NOT_CRAN------------------------------
 ## I grab the token from the testing directory because that's where it is to be
@@ -15,12 +20,9 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ## ----pre-clean, include = FALSE, eval = NOT_CRAN-------------------------
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
-googlesheets::gs_vecdel(c("foo", "iris"), verbose = FALSE)
+googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice"),
+                        verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
-
-## ----load-package--------------------------------------------------------
-library(googlesheets)
-suppressMessages(library(dplyr))
 
 ## ----list-sheets, eval = NOT_CRAN----------------------------------------
 (my_sheets <- gs_ls())
@@ -89,42 +91,30 @@ oceania_cell_feed <- gap %>% gs_read_cellfeed(ws = "Oceania")
 str(oceania_cell_feed)
 oceania_cell_feed
 
-## ------------------------------------------------------------------------
-jfun <- function(readfun)
-  system.time(do.call(readfun, list(gs_gap(), ws = "Africa", verbose = FALSE)))
+## ----include = FALSE-----------------------------------------------------
 readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
 readfuns <- sapply(readfuns, get, USE.NAMES = TRUE)
-sapply(readfuns, jfun)
+jfun <- function(readfun)
+  system.time(do.call(readfun, list(gs_gap(), ws = "Africa", verbose = FALSE)))
+tmat <- sapply(readfuns, jfun)
+tmat <- tmat[c("user.self", "sys.self", "elapsed"), ]
+tmat_show <- sweep(tmat, 1, tmat[ , "gs_read_csv", drop = FALSE], "/")
+tmat_show <- sapply(seq_len(ncol(tmat_show)), function(i) {
+  paste0(format(round(tmat[ , i, drop = FALSE], 2), nsmall = 3), " (",
+         format(round(tmat_show[ , i, drop = FALSE], 2), nsmall = 2), ")")
+})
+tmat_show <- as.data.frame(tmat_show, row.names = row.names(tmat))
+colnames(tmat_show) <- colnames(tmat)
+
+## ----echo = FALSE, results = "asis"--------------------------------------
+knitr::kable(tmat_show, row.names = TRUE)
 
 ## ----post-processing-----------------------------------------------------
-# Reshape: instead of one row per cell, make a nice rectangular data.frame
-australia_cell_feed <- gap %>%
-  gs_read_cellfeed(ws = "Oceania", range = "A1:F13") 
-str(australia_cell_feed)
-oceania_cell_feed
-australia_reshaped <- australia_cell_feed %>% gs_reshape_cellfeed()
-str(australia_reshaped)
-australia_reshaped
-
-# Example: first 3 rows
+## reshape into 2D data frame
 gap_3rows <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1:3))
 gap_3rows %>% head()
-
-# convert to a data.frame (by default, column names found in first row)
 gap_3rows %>% gs_reshape_cellfeed()
 
-# arbitrary cell range, column names no longer available in first row
-gap %>%
-  gs_read_cellfeed("Oceania", range = "D12:F15") %>%
-  gs_reshape_cellfeed(col_names = FALSE)
-
-# arbitrary cell range, direct specification of column names
-gap %>%
-  gs_read_cellfeed("Oceania", range = cell_limits(c(2, 1), c(5, 3))) %>%
-  gs_reshape_cellfeed(col_names = paste("thing", c("one", "two", "three"),
-                                        sep = "_"))
-
-## ------------------------------------------------------------------------
 # Example: first row only
 gap_1row <- gap %>% gs_read_cellfeed("Europe", range = cell_rows(1))
 gap_1row
@@ -136,8 +126,70 @@ gap_1row %>% gs_simplify_cellfeed()
 gap_1col <- gap %>% gs_read_cellfeed("Europe", range = cell_cols(3))
 gap_1col
 
-# drop the variable name and convert to an un-named (integer) vector
-gap_1col %>% gs_simplify_cellfeed(notation = "none")
+# drop the `year` variable name, convert to integer, return un-named vector
+yr <- gap_1col %>% gs_simplify_cellfeed(notation = "none")
+str(yr)
+
+## ------------------------------------------------------------------------
+df <- data_frame(thing1 = paste0("A", 2:5),
+                 thing2 = paste0("B", 2:5),
+                 thing3 = paste0("C", 2:5))
+df$thing1[2] <- paste0("#", df$thing1[2])
+df$thing2[1] <- "*"
+df
+
+ss <- gs_new("data-ingest-practice", ws_title = "simple",
+             input = df, trim = TRUE) %>% 
+  gs_ws_new("one-blank-row", input = df, trim = TRUE, anchor = "A2") %>% 
+  gs_ws_new("two-blank-rows", input = df, trim = TRUE, anchor = "A3")
+
+## ------------------------------------------------------------------------
+## will use gs_read_csv
+ss %>% gs_read(col_names = FALSE, skip = 1)
+ss %>% gs_read(col_names = letters[1:3], skip = 1)
+
+## explicitly use gs_read_listfeed
+ss %>% gs_read_listfeed(col_names = FALSE, skip = 1)
+
+## use range to force use of gs_read_cellfeed
+ss %>% gs_read_listfeed(col_names = FALSE, skip = 1, range = cell_cols("A:Z"))
+
+## ------------------------------------------------------------------------
+## blank row causes variable names to show up in the data frame :(
+ss %>% gs_read(ws = "one-blank-row")
+
+## skip = 1 fixes it :)
+ss %>% gs_read(ws = "one-blank-row", skip = 1)
+
+## more arguments, more better
+ss %>% gs_read(ws = "one-blank-row", skip = 2,
+               col_names = paste0("yo ?!*", 1:3), check.names = TRUE,
+               na = "*", comment = "#", n_max = 2)
+
+## also works on list feed
+ss %>% gs_read_listfeed(ws = "one-blank-row", skip = 2,
+                        col_names = paste0("yo ?!*", 1:3), check.names = TRUE,
+                        na = "*", comment = "#", n_max = 2)
+
+## also works on the cell feed
+ss %>% gs_read_listfeed(ws = "one-blank-row", range = cell_cols("A:Z"), skip = 2,
+                        col_names = paste0("yo ?!*", 1:3), check.names = TRUE,
+                        na = "*", comment = "#", n_max = 2)
+
+## ------------------------------------------------------------------------
+## use skip to get correct result via gs_read() --> gs_read_csv()
+ss %>% gs_read(ws = "two-blank-rows", skip = 2)
+
+## or use range in gs_read() --> gs_read_cellfeed() + gs_reshape_cellfeed()
+ss %>% gs_read(ws = "two-blank-rows", range = cell_limits(c(3, NA), c(NA, NA)))
+ss %>% gs_read(ws = "two-blank-rows", range = cell_cols("A:C"))
+
+## list feed can't cope because the 1st data row is empty
+ss %>% gs_read_listfeed(ws = "two-blank-rows")
+ss %>% gs_read_listfeed(ws = "two-blank-rows", skip = 2)
+
+## ----delete-ingest-sheet, eval = NOT_CRAN--------------------------------
+gs_delete(ss)
 
 ## ----new-sheet, eval = NOT_CRAN------------------------------------------
 foo <- gs_new("foo")
@@ -158,7 +210,7 @@ foo <- foo %>%
 foo <- foo %>% 
   gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
 ## add the next 5 rows of data ... careful not to go too fast
-for(i in 2:6) {
+for (i in 2:6) {
   foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
   Sys.sleep(0.3)
 }
@@ -166,6 +218,10 @@ for(i in 2:6) {
 ## let's inspect out work
 foo %>% gs_read(ws = "edit_cells")
 foo %>% gs_read(ws = "add_row")
+
+## ----eval = FALSE--------------------------------------------------------
+#  gs_browse(foo, ws = "edit_cells")
+#  gs_browse(foo, ws = "add_row")
 
 ## ----delete-sheet, eval = NOT_CRAN---------------------------------------
 gs_delete(foo)

@@ -2,14 +2,14 @@ context("register sheets")
 
 activate_test_token()
 
-if(!file.exists("for_reference/iris_pvt_googlesheet.rds")) {
+if (!file.exists("for_reference/iris_pvt_googlesheet.rds")) {
   iris_pvt_url %>%
     gs_url(verbose = FALSE) %>%
     saveRDS("for_reference/iris_pvt_googlesheet.rds")
 }
 
-if(!file.exists("for_reference/gap_googlesheet.rds")) {
-  GAP_KEY %>%
+if (!file.exists("for_reference/gap_googlesheet.rds")) {
+  gs_gap_key() %>%
     gs_key(verbose = FALSE) %>%
     saveRDS("for_reference/gap_googlesheet.rds")
 }
@@ -37,16 +37,17 @@ test_that("Spreadsheet can be registered via key", {
     iris_pvt_key %>% gs_key(lookup = FALSE, visibility = "private"), "iris_pvt")
 
   ## sheet owned by rpackagetest and "published to web"
-  pseudo_expect_equal_to_reference(GAP_KEY %>% gs_key(), "gap")
-  pseudo_expect_equal_to_reference(GAP_KEY %>% gs_key(lookup = FALSE), "gap")
-  pseudo_expect_equal_to_reference(GAP_KEY %>% gs_key(visibility = "public"),
-                                   "gap")
-  pseudo_expect_equal_to_reference(GAP_KEY %>% gs_key(visibility = "private"),
-                                   "gap")
+  pseudo_expect_equal_to_reference(gs_gap_key() %>% gs_key(), "gap")
+  pseudo_expect_equal_to_reference(gs_gap_key() %>%
+                                     gs_key(lookup = FALSE), "gap")
+  pseudo_expect_equal_to_reference(gs_gap_key() %>%
+                                     gs_key(visibility = "public"), "gap")
+  pseudo_expect_equal_to_reference(gs_gap_key() %>%
+                                     gs_key(visibility = "private"), "gap")
   pseudo_expect_equal_to_reference(
-    GAP_KEY %>% gs_key(lookup = FALSE, visibility = "private"), "gap")
+    gs_gap_key() %>% gs_key(lookup = FALSE, visibility = "private"), "gap")
   pseudo_expect_equal_to_reference(
-    GAP_KEY %>% gs_key(lookup = FALSE, visibility = "public"), "gap")
+    gs_gap_key() %>% gs_key(lookup = FALSE, visibility = "public"), "gap")
 
 })
 
@@ -60,10 +61,11 @@ test_that("Spreadsheet can be registered via URL", {
     iris_pvt_url %>% gs_url(lookup = FALSE, visibility = "private"), "iris_pvt")
 
   ## sheet owned by rpackagetest and "published to web"
-  pseudo_expect_equal_to_reference(GAP_URL %>% gs_url(), "gap")
-  pseudo_expect_equal_to_reference(GAP_URL %>% gs_url(lookup = FALSE), "gap")
+  pseudo_expect_equal_to_reference(gs_gap_url() %>% gs_url(), "gap")
+  pseudo_expect_equal_to_reference(gs_gap_url() %>%
+                                     gs_url(lookup = FALSE), "gap")
   pseudo_expect_equal_to_reference(
-    GAP_URL %>% gs_url(lookup = FALSE, visibility = "private"), "gap")
+    gs_gap_url() %>% gs_url(lookup = FALSE, visibility = "private"), "gap")
 
 })
 
@@ -76,9 +78,9 @@ test_that("Spreadsheet can be registered via ws_feed", {
     iris_pvt_ws_feed %>% gs_ws_feed(lookup = FALSE), "iris_pvt")
 
   ## sheet owned by rpackagetest and "published to web"
-  pseudo_expect_equal_to_reference(GAP_WS_FEED %>% gs_ws_feed(), "gap")
+  pseudo_expect_equal_to_reference(gs_gap_ws_feed() %>% gs_ws_feed(), "gap")
   pseudo_expect_equal_to_reference(
-    GAP_WS_FEED %>% gs_ws_feed(lookup = FALSE), "gap")
+    gs_gap_ws_feed() %>% gs_ws_feed(lookup = FALSE), "gap")
 
 })
 
@@ -110,11 +112,11 @@ test_that("Bad spreadsheet ID throws error", {
   nonexistent_ws_feed <- sub(iris_pvt_key, "flyingpig", iris_pvt_ws_feed)
   expect_error(gs_ws_feed(nonexistent_ws_feed), "doesn't match")
 
-  })
+})
 
 test_that("We get correct number and titles of worksheets", {
 
-  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
+  ss <- gs_ws_feed(gs_gap_ws_feed(), lookup = FALSE)
   expect_equal(ss$n_ws, 5L)
   expect_true(all(c("Asia", "Africa", "Americas", "Europe", "Oceania") %in%
                     ss$ws$ws_title))
@@ -123,9 +125,9 @@ test_that("We get correct number and titles of worksheets", {
 
 test_that("Print method for googlesheet works", {
 
-  ss <- gs_ws_feed(GAP_WS_FEED, lookup = FALSE)
-  expect_output(print(ss), paste("Spreadsheet title:", GAP_TITLE))
-  expect_output(print(ss), paste("Key:", GAP_KEY))
+  ss <- gs_ws_feed(gs_gap_ws_feed(), lookup = FALSE)
+  expect_output(print(ss), paste("Spreadsheet title:", ss$sheet_title))
+  expect_output(print(ss), paste("Key:", gs_gap_key()))
 
 })
 

@@ -1,4 +1,4 @@
-#' Simplify data from the cell feed
+#' Simplify data from the "cell feed"
 #'
 #' In some cases, you do not want to convert the data retrieved from the cell
 #' feed into a data frame via \code{\link{gs_reshape_cellfeed}}. Instead, you
@@ -18,6 +18,7 @@
 #'   integer, or numeric. If \code{TRUE}, result is passed through
 #'   \code{\link[readr:type_convert]{readr::type_convert}}; if \code{FALSE},
 #'   result will be character.
+#' @template literal
 #' @param locale,trim_ws,na Optionally, specify locale, the fate of leading or
 #'   trailing whitespace, or a character vector of strings that should become
 #'   missing values. Passed straight through to
@@ -34,24 +35,30 @@
 #' @examples
 #' \dontrun{
 #' gap_ss <- gs_gap() # register the Gapminder example sheet
-#' gap_cf <- gs_read_cellfeed(gap_ss, range = cell_rows(1))
+#' (gap_cf <- gs_read_cellfeed(gap_ss, range = cell_rows(1)))
 #' gs_simplify_cellfeed(gap_cf)
 #' gs_simplify_cellfeed(gap_cf, notation = "R1C1")
 #'
-#' gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10")
+#' (gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10"))
 #' gs_simplify_cellfeed(gap_cf)
 #' gs_simplify_cellfeed(gap_cf, col_names = FALSE)
+#'
+#' ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
+#' ff_cf <- gs_read_cellfeed(ff_ss, range = cell_cols(3))
+#' gs_simplify_cellfeed(ff_cf)                  # rounded to 2 digits
+#' gs_simplify_cellfeed(ff_cf, literal = FALSE) # hello, more digits!
 #' }
 #'
 #' @family data consumption functions
 #'
 #' @export
 gs_simplify_cellfeed <- function(
-  x, convert = TRUE,
+  x, convert = TRUE, literal = TRUE,
   locale = NULL, trim_ws = NULL, na = NULL,
   notation = c("A1", "R1C1", "none"), col_names = NULL) {
 
   notation <- match.arg(notation)
+  stopifnot(is_toggle(literal))
 
   if (is.null(col_names)) {
     if (min(x$row) == 1 &&
@@ -71,17 +78,20 @@ gs_simplify_cellfeed <- function(
 
   if (convert) {
     ddd <- list(locale = locale, trim_ws = trim_ws, na = na)
-    type_convert_args <- c(list(df = x["cell_text"]), dropnulls(ddd))
+
+    if (isFALSE(literal)) {
+      x <- reconcile_cell_contents(x)
+    }
+
+    type_convert_args <- c(list(df = x["value"]), dropnulls(ddd))
     df <- do.call(readr::type_convert, type_convert_args)
-    ## WARNING: this might not be text or character anymore ...
-    ## but it makes no sense to rename it now
-    x$cell_text <- df$cell_text
+    x$value <- df$value
   }
 
   nms <- switch(notation,
                 A1 = x$cell,
                 R1C1 = x$cell_alt,
                 NULL)
-  x[["cell_text"]] %>%
+  x[["value"]] %>%
     setNames(nms)
 }

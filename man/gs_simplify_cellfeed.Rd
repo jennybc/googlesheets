@@ -2,10 +2,11 @@
 % Please edit documentation in R/gs_simplify_cellfeed.R
 \name{gs_simplify_cellfeed}
 \alias{gs_simplify_cellfeed}
-\title{Simplify data from the cell feed}
+\title{Simplify data from the "cell feed"}
 \usage{
-gs_simplify_cellfeed(x, convert = TRUE, locale = NULL, trim_ws = NULL,
-  na = NULL, notation = c("A1", "R1C1", "none"), col_names = NULL)
+gs_simplify_cellfeed(x, convert = TRUE, literal = TRUE, locale = NULL,
+  trim_ws = NULL, na = NULL, notation = c("A1", "R1C1", "none"),
+  col_names = NULL)
 }
 \arguments{
 \item{x}{a data frame returned by \code{\link{gs_read_cellfeed}}}
@@ -15,6 +16,9 @@ vector from character to something more appropriate, such as logical,
 integer, or numeric. If \code{TRUE}, result is passed through
 \code{\link[readr:type_convert]{readr::type_convert}}; if \code{FALSE},
 result will be character.}
+
+\item{literal}{logical, indicating whether to work only with literal values
+returned by the API or to consult alternate cell contents}
 
 \item{locale, trim_ws, na}{Optionally, specify locale, the fate of leading or
 trailing whitespace, or a character vector of strings that should become
@@ -48,13 +52,18 @@ argument \code{return_empty} set to \code{TRUE}.
 \examples{
 \dontrun{
 gap_ss <- gs_gap() # register the Gapminder example sheet
-gap_cf <- gs_read_cellfeed(gap_ss, range = cell_rows(1))
+(gap_cf <- gs_read_cellfeed(gap_ss, range = cell_rows(1)))
 gs_simplify_cellfeed(gap_cf)
 gs_simplify_cellfeed(gap_cf, notation = "R1C1")
 
-gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10")
+(gap_cf <- gs_read_cellfeed(gap_ss, range = "A1:A10"))
 gs_simplify_cellfeed(gap_cf)
 gs_simplify_cellfeed(gap_cf, col_names = FALSE)
+
+ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
+ff_cf <- gs_read_cellfeed(ff_ss, range = cell_cols(3))
+gs_simplify_cellfeed(ff_cf)                  # rounded to 2 digits
+gs_simplify_cellfeed(ff_cf, literal = FALSE) # hello, more digits!
 }
 
 }

@@ -2,23 +2,43 @@
 % Please edit documentation in R/gs_example-sheet-setup.R
 \name{example-sheets}
 \alias{example-sheets}
+\alias{gs_ff}
+\alias{gs_ff_key}
+\alias{gs_ff_url}
+\alias{gs_ff_ws_feed}
 \alias{gs_gap}
 \alias{gs_gap_key}
 \alias{gs_gap_url}
 \alias{gs_gap_ws_feed}
+\alias{gs_mini_gap}
+\alias{gs_mini_gap_key}
+\alias{gs_mini_gap_url}
+\alias{gs_mini_gap_ws_feed}
 \title{Examples of Google Sheets}
 \usage{
 gs_gap_key()
 
 gs_gap_url()
 
-gs_gap_ws_feed(visibility = "public")
+gs_gap_ws_feed()
 
 gs_gap()
-}
-\arguments{
-\item{visibility}{either "public" (the default) or "private"; used when
-producing a worksheets feed}
+
+gs_mini_gap_key()
+
+gs_mini_gap_url()
+
+gs_mini_gap_ws_feed()
+
+gs_mini_gap()
+
+gs_ff_key()
+
+gs_ff_url()
+
+gs_ff_ws_feed()
+
+gs_ff()
 }
 \value{
 the key, browser URL, worksheets feed or \code{\link{googlesheet}}
@@ -35,9 +55,43 @@ which you can visit it in the browser:
 
 \item \href{https://w3id.org/people/jennybc/googlesheets_gap_url}{Gapminder
 sheet}
+\item \href{https://w3id.org/people/jennybc/googlesheets_mini_gap_url}{mini
+Gapminder sheet}
+\item \href{https://w3id.org/people/jennybc/googlesheets_ff_url}{Sheet with
+numeric formatting and formulas}
 
 }
 }
+\section{Functions}{
+\itemize{
+\item \code{gs_gap_key}: Gapminder sheet key
+
+\item \code{gs_gap_url}: Gapminder sheet URL
+
+\item \code{gs_gap_ws_feed}: Gapminder sheet worksheets feed
+
+\item \code{gs_gap}: Gapminder sheet as registered googlesheet
+
+\item \code{gs_mini_gap_key}: mini Gapminder sheet key
+
+\item \code{gs_mini_gap_url}: mini Gapminder sheet URL
+
+\item \code{gs_mini_gap_ws_feed}: mini Gapminder sheet worksheets feed
+
+\item \code{gs_mini_gap}: mini Gapminder sheet as registered googlesheet
+
+\item \code{gs_ff_key}: Key to a sheet with numeric formatting and
+formulas
+
+\item \code{gs_ff_url}: URL for a sheet with numeric formatting and
+formulas
+
+\item \code{gs_ff_ws_feed}: Worksheets feed for a sheet with numeric
+formatting and formulas
+
+\item \code{gs_ff}: Registered googlesheet for a sheet with numeric
+formatting and formulas
+}}
 \examples{
 \dontrun{
 gs_gap_key()
@@ -45,6 +99,11 @@ gs_gap_url()
 browseURL(gs_gap_url())
 gs_gap_ws_feed() # not so interesting to a user!
 gs_gap()
+
+gs_ff_key()
+gs_ff_url()
+gs_ff()
+gs_browse(gs_ff())
 }
 
 }

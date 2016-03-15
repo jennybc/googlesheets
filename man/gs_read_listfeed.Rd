@@ -23,8 +23,9 @@ actual API call.}
 \item{sq}{character, optional. Provides a structured query for row filtering
 in the actual API call.}
 
-\item{...}{\strong{Optional} arguments to control data download, parsing,
-and reshaping; for most purposes, the defaults should be fine.
+\item{...}{\strong{Optional} arguments to control data download, parsing, and
+  reshaping; for most purposes, the defaults should be fine. Anything that is
+  not listed here will be silently ignored.
 \describe{
   \item{\code{progress}}{Logical. Whether to display download progress if in
   an interactive session.}
@@ -40,11 +41,13 @@ and reshaping; for most purposes, the defaults should be fine.
   \code{\link[readr:type_convert]{readr::type_convert}}.}
   \item{\code{comment, skip, n_max}}{Specify a string used to identify
   comments, request to skip lines before reading data, or specify the
-  maximum number of rows to read.}
+  maximum number of data rows to read.}
   \item{\code{col_names}}{Either \code{TRUE}, \code{FALSE} or a character
   vector of column names. If \code{TRUE}, the first row of the data rectangle
   will be used for names. If \code{FALSE}, column names will be X1, X2, etc.
-  If a character vector, it will be used as column names.}
+  If a character vector, it will be used as column names. If the sheet
+  contains column names and you just don't like them, specify \code{skip = 1}
+  so they don't show up in your data.}
   \item{\code{check.names}}{Logical. Whether to run column names through
   \code{\link{make.names}} with \code{unique = TRUE}, just like
   \code{\link{read.table}} does. By default, \code{googlesheets} implements
@@ -62,14 +65,16 @@ a \code{data.frame} or, if \code{dplyr} is loaded, a
 \description{
 Gets data via the "list feed", which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. The first row is assumed
-to hold variable or column names. The related function,
-\code{\link{gs_read_csv}}, also returns data from a rectangle of cells, but
-it is generally faster and more resilient to, e.g. empty rows, so use it if
-you can. However, you may need to use this function if you are dealing with
-an "old" Google Sheet, which is beyond the reach of
-\code{\link{gs_read_csv}}. The list feed also has some ability to sort and
-filter rows via the API (more below). Consult the Google Sheets API
-documentation for more details about
+to hold variable or column names; it can be empty. The second row is assumed
+to hold the first data row and, if it is empty, no data will be read and you
+will get an empty data frame.
+}
+\details{
+The other read functions are generally superior, so use them if you can.
+However, you may need to use this function if you are dealing with an "old"
+Google Sheet, which is beyond the reach of \code{\link{gs_read_csv}}. The
+list feed also has some ability to sort and filter rows via the API (more
+below). Consult the Google Sheets API documentation for more details about
 \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_list-based_feeds}{the
 list feed}.
 }
@@ -121,11 +126,11 @@ oceania_fancy <-
                    sq = "lifeexp > 79 or year < 1960")
 oceania_fancy
 
-## crazy demo of passing args through to readr::type_convert()
+## passing args through to readr::type_convert()
 oceania_crazy <-
   gs_read_listfeed(gap_ss,
                    ws = "Oceania",
-                   col_names = paste0("z", 1:6),
+                   col_names = paste0("z", 1:6), skip = 1,
                    col_types = "ccncnn",
                    na = "1962")
 oceania_crazy

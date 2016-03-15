@@ -1,8 +1,8 @@
 #' Read data from cells
 #'
 #' This function consumes data via the "cell feed", which, as the name suggests,
-#' retrieves data cell by cell. Note that the output is a \code{tbl_df} or
-#' \code{data.frame} with \strong{one row per cell}. Consult the Google Sheets API documentation for
+#' retrieves data cell by cell. Note that the output is a data frame with
+#' \strong{one row per cell}. Consult the Google Sheets API documentation for
 #' more details about
 #' \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_cell-based_feeds}{the
 #' cell feed}.
@@ -20,9 +20,7 @@
 #' Empty cells, even if "embedded" in a rectangular region of populated cells,
 #' are not normally returned by the cell feed. This function won't return them
 #' either when \code{return_empty = FALSE} (default), but will if you set
-#' \code{return_empty = TRUE}. If you don't specify any limits AND you set
-#' \code{return_empty = TRUE}, you could be in for a bit of a wait, as the feed
-#' will return all cells, which defaults to 1000 rows and 26 columns.
+#' \code{return_empty = TRUE}.
 #'
 #' @template ss
 #' @template ws
@@ -43,12 +41,12 @@
 #' @examples
 #' \dontrun{
 #' gap_ss <- gs_gap() # register the Gapminder example sheet
-#' first_4_rows <-
+#' col_4_and_above <-
 #'   gs_read_cellfeed(gap_ss, ws = "Asia", range = cell_limits(c(NA, 4)))
-#' first_4_rows
-#' gs_reshape_cellfeed(first_4_rows)
-#' gs_reshape_cellfeed(gs_read_cellfeed(gap_ss, "Asia",
-#'                       range = cell_limits(c(NA, 4), c(3, NA))))
+#' col_4_and_above
+#' gs_reshape_cellfeed(col_4_and_above)
+#'
+#' gs_read_cellfeed(gap_ss, range = "A2:F3")
 #' }
 #' @family data consumption functions
 #'
@@ -100,7 +98,9 @@ gs_read_cellfeed <- function(
                            cell_alt = character(),
                            row = integer(),
                            col = integer(),
-                           cell_text = character(),
+                           value = character(),
+                           input_value = character(),
+                           numeric_value = character(),
                            edit_link = character(),
                            cell_id = character())
   } else {
@@ -126,20 +126,19 @@ gs_read_cellfeed <- function(
            col = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("col") %>%
              as.integer(),
-           cell_text = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
-             xml2::xml_text()
+           value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_text(),
+           input_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_attr("inputValue"),
+           numeric_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_attr("numericValue")
       ))
-    # see issue #19 about all the places cell data is (mostly redundantly)
-    # stored in the XML, such as: content_text = x$content$text,
-    # cell_inputValue = x$cell$.attrs["inputValue"], cell_numericValue =
-    # x$cell$.attrs["numericValue"], when/if we think about formulas
-    # explicitly, we will want to come back and distinguish between inputValue
-    # and numericValue
   }
 
   x <- x %>%
-    dplyr::select_(~ cell, ~ cell_alt, ~ row, ~ col, ~ cell_text,
-                   ~ edit_link, ~ cell_id)
+    dplyr::select_(~cell, ~cell_alt, ~row, ~col,
+                   ~value, ~input_value, ~numeric_value,
+                   ~edit_link, ~cell_id)
 
   attr(x, "ws_title") <- this_ws$ws_title
 

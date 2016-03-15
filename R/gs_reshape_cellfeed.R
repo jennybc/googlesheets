@@ -1,8 +1,18 @@
 #' Reshape data from the "cell feed"
 #'
-#' Reshape data from the "cell feed" and convert to a \code{tbl_df}.
+#' Reshape data from the "cell feed", put it in a \code{tbl_df}, and do type
+#' conversion. By default, assuming we're working with the same cells,
+#' \code{gs_reshape_cellfeed} should return the same result as other read
+#' functions. But when \code{literal = FALSE}, something different happens: we
+#' attempt to deliver cell contents free of any numeric formatting. Try this if
+#' numeric formatting of literal values is causing numeric data to come in as
+#' character, to be undesirably rounded, or to be otherwise mangled. Remember
+#' you can also control type conversion by using \code{...} to provide arguments
+#' to \code{\link[readr:type_convert]{readr::type_convert}}. See the
+#' \code{vignette("formulas-and-formatting")} for more details.
 #'
-#' @param x a data.frame returned by \code{\link{gs_read_cellfeed}}
+#' @param x a data frame returned by \code{\link{gs_read_cellfeed}}
+#' @template literal
 #' @template read-ddd
 #' @template verbose
 #'
@@ -21,11 +31,20 @@
 #' gs_reshape_cellfeed(gs_read_cellfeed(gap_ss, "Asia",
 #'                                      range = cell_rows(2:4)),
 #'                     col_names = paste0("yo", 1:6))
+#'
+#' ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
+#' ff_cf <- gs_read_cellfeed(ff_ss)
+#' gs_reshape_cellfeed(ff_cf) # almost all vars are character
+#' gs_reshape_cellfeed(ff_cf, literal = FALSE) # more vars are numeric
 #' }
 #' @export
-gs_reshape_cellfeed <- function(x, ..., verbose = TRUE) {
+gs_reshape_cellfeed <- function(x, literal = TRUE, ..., verbose = TRUE) {
 
   ddd <- parse_read_ddd(..., verbose = verbose)
+  stopifnot(is_toggle(literal))
+  if (isFALSE(literal)) {
+    x <- reconcile_cell_contents(x)
+  }
   gs_reshape_feed(x, ddd, verbose)
 
 }
@@ -52,7 +71,7 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
       dplyr::filter_(~(row == row_min))
     x <- x %>%
       dplyr::filter_(~row > row_min)
-    vnames <- size_names(row_one$cell_text, n_cols)
+    vnames <- size_names(row_one$value, n_cols)
   } else if (isFALSE(ddd$col_names)) {
     vnames <- paste0("X", seq_len(n_cols))
   } else if (is.character(ddd$col_names)) {
@@ -72,7 +91,7 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
     return(dplyr::data_frame())
   }
 
-  dat <- matrix(x$cell_text, ncol = n_cols, byrow = TRUE,
+  dat <- matrix(x$value, ncol = n_cols, byrow = TRUE,
                 dimnames = list(NULL, vnames))
   dat <- dat %>%
     ## https://github.com/hadley/dplyr/issues/876
