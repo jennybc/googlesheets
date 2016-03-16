@@ -95,9 +95,9 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-03-15 21:44:04 GMT
+#>                  date: 2016-03-16 21:47:45 GMT
 #>          access token: valid
-#>  peek at access token: ya29....xXrh4
+#>  peek at access token: ya29....wuiMs
 #> peek at refresh token: 1/LxW...4wRNU
 ```
 

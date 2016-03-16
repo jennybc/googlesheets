@@ -1,31 +1,33 @@
 ## ---- echo = FALSE-------------------------------------------------------
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
-CRAN <- !NOT_CRAN
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  purl = NOT_CRAN
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
 )
-options(knitr.table.format = 'markdown')
+## this is nice during development = on github
+## this is not so nice for preparing vignettes for CRAN
+#options(knitr.table.format = 'markdown')
 
 ## ----load-package--------------------------------------------------------
 library(googlesheets)
 suppressMessages(library(dplyr))
 
-## ----auth, include = FALSE, eval = NOT_CRAN------------------------------
+## ----auth, include = FALSE-----------------------------------------------
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
 token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
 suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 
-## ----pre-clean, include = FALSE, eval = NOT_CRAN-------------------------
+## ----pre-clean, include = FALSE------------------------------------------
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
 googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice"),
                         verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 
-## ----list-sheets, eval = NOT_CRAN----------------------------------------
+## ----list-sheets---------------------------------------------------------
 (my_sheets <- gs_ls())
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
@@ -34,7 +36,7 @@ my_sheets %>% glimpse()
 #  gs_gap() %>%
 #    gs_copy(to = "Gapminder")
 
-## ----register-sheet, eval = NOT_CRAN-------------------------------------
+## ----register-sheet------------------------------------------------------
 gap <- gs_title("Gapminder")
 gap
 
@@ -55,13 +57,16 @@ third_party_gap <- GAP_URL %>%
 # Re-register it!
 gap <- gap %>% gs_gs()
 
-## ----register-sheet-cran-only, include = FALSE, eval = CRAN--------------
-#  gap <- gs_gap()
+## ----register-sheet-cran-only, include = FALSE---------------------------
+gap <- gs_gap()
 
 ## ----eval = FALSE--------------------------------------------------------
 #  gap %>% gs_browse()
 #  gap %>% gs_browse(ws = 2)
 #  gap %>% gs_browse(ws = "Europe")
+
+## ----include = FALSE-----------------------------------------------------
+Sys.sleep(20)
 
 ## ------------------------------------------------------------------------
 oceania <- gap %>% gs_read(ws = "Oceania")
@@ -131,7 +136,10 @@ gap_1col
 yr <- gap_1col %>% gs_simplify_cellfeed(notation = "none")
 str(yr)
 
-## ----eval = NOT_CRAN-----------------------------------------------------
+## ----include = FALSE-----------------------------------------------------
+Sys.sleep(20)
+
+## ------------------------------------------------------------------------
 df <- data_frame(thing1 = paste0("A", 2:5),
                  thing2 = paste0("B", 2:5),
                  thing3 = paste0("C", 2:5))
@@ -144,7 +152,7 @@ ss <- gs_new("data-ingest-practice", ws_title = "simple",
   gs_ws_new("one-blank-row", input = df, trim = TRUE, anchor = "A2") %>% 
   gs_ws_new("two-blank-rows", input = df, trim = TRUE, anchor = "A3")
 
-## ----eval = NOT_CRAN-----------------------------------------------------
+## ------------------------------------------------------------------------
 ## will use gs_read_csv
 ss %>% gs_read(col_names = FALSE, skip = 1)
 ss %>% gs_read(col_names = letters[1:3], skip = 1)
@@ -155,7 +163,10 @@ ss %>% gs_read_listfeed(col_names = FALSE, skip = 1)
 ## use range to force use of gs_read_cellfeed
 ss %>% gs_read_listfeed(col_names = FALSE, skip = 1, range = cell_cols("A:Z"))
 
-## ----eval = NOT_CRAN-----------------------------------------------------
+## ----include = FALSE-----------------------------------------------------
+Sys.sleep(20)
+
+## ------------------------------------------------------------------------
 ## blank row causes variable names to show up in the data frame :(
 ss %>% gs_read(ws = "one-blank-row")
 
@@ -177,7 +188,7 @@ ss %>% gs_read_listfeed(ws = "one-blank-row", range = cell_cols("A:Z"), skip = 2
                         col_names = paste0("yo ?!*", 1:3), check.names = TRUE,
                         na = "*", comment = "#", n_max = 2)
 
-## ----eval = NOT_CRAN-----------------------------------------------------
+## ------------------------------------------------------------------------
 ## use skip to get correct result via gs_read() --> gs_read_csv()
 ss %>% gs_read(ws = "two-blank-rows", skip = 2)
 
@@ -189,14 +200,17 @@ ss %>% gs_read(ws = "two-blank-rows", range = cell_cols("A:C"))
 ss %>% gs_read_listfeed(ws = "two-blank-rows")
 ss %>% gs_read_listfeed(ws = "two-blank-rows", skip = 2)
 
-## ----delete-ingest-sheet, eval = NOT_CRAN--------------------------------
+## ----delete-ingest-sheet-------------------------------------------------
 gs_delete(ss)
 
-## ----new-sheet, eval = NOT_CRAN------------------------------------------
+## ----include = FALSE-----------------------------------------------------
+Sys.sleep(20)
+
+## ----new-sheet-----------------------------------------------------------
 foo <- gs_new("foo")
 foo
 
-## ----edit-cells, eval = NOT_CRAN-----------------------------------------
+## ----edit-cells----------------------------------------------------------
 ## foo <- gs_new("foo")
 ## initialize the worksheets
 foo <- foo %>% gs_ws_new("edit_cells")
@@ -224,10 +238,10 @@ foo %>% gs_read(ws = "add_row")
 #  gs_browse(foo, ws = "edit_cells")
 #  gs_browse(foo, ws = "add_row")
 
-## ----delete-sheet, eval = NOT_CRAN---------------------------------------
+## ----delete-sheet--------------------------------------------------------
 gs_delete(foo)
 
-## ----new-sheet-from-file, eval = NOT_CRAN--------------------------------
+## ----new-sheet-from-file-------------------------------------------------
 iris %>%
   head(5) %>%
   write.csv("iris.csv", row.names = FALSE)
@@ -236,28 +250,29 @@ iris_ss
 iris_ss %>% gs_read()
 file.remove("iris.csv")
 
-## ----new-sheet-from-xlsx, eval = NOT_CRAN--------------------------------
-gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
+## ----new-sheet-from-xlsx-------------------------------------------------
+gap_xlsx <- gs_upload(system.file("mini-gap", "mini-gap.xlsx",
+                                  package = "googlesheets"))
 gap_xlsx
 gap_xlsx %>% gs_read(ws = "Asia")
 
-## ----delete-moar-sheets, eval = NOT_CRAN---------------------------------
+## ----delete-moar-sheets--------------------------------------------------
 gs_vecdel(c("iris", "mini-gap"))
 ## achieves same as:
 ## gs_delete(iris_ss)
 ## gs_delete(gap_xlsx)
 
-## ----export-sheet-as-csv, eval = NOT_CRAN--------------------------------
+## ----export-sheet-as-csv-------------------------------------------------
 gs_title("Gapminder") %>%
   gs_download(ws = "Africa", to = "gapminder-africa.csv")
 ## is it there? yes!
 read.csv("gapminder-africa.csv") %>% head()
 
-## ----export-sheet-as-xlsx, eval = NOT_CRAN-------------------------------
+## ----export-sheet-as-xlsx------------------------------------------------
 gs_title("Gapminder") %>% 
   gs_download(to = "gapminder.xlsx")
 
-## ----clean-exported-files, eval = NOT_CRAN-------------------------------
+## ----clean-exported-files------------------------------------------------
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 
 ## ----gs_auth, eval = FALSE-----------------------------------------------

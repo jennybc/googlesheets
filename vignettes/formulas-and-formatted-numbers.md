@@ -69,14 +69,14 @@ gs_ff() %>%
 
 
 
-|cell |value        |input_value                                             |numeric_value |
-|:----|:------------|:-------------------------------------------------------|:-------------|
-|E1   |formula      |formula                                                 |NA            |
-|E2   |Google       |=HYPERLINK("http://www.google.com/","Google")           |NA            |
-|E3   |1,271,591.00 |=sum(R[-1]C[-4]:R[3]C[-4])                              |1271591.0     |
-|E4   |             |=IMAGE("https://www.google.com/images/srpr/logo3w.png") |NA            |
-|E5   |$A$1         |=ADDRESS(1,1)                                           |NA            |
-|E6   |             |=SPARKLINE(R[-4]C[-4]:R[0]C[-4])                        |NA            |
+cell   value          input_value                                               numeric_value 
+-----  -------------  --------------------------------------------------------  --------------
+E1     formula        formula                                                   NA            
+E2     Google         =HYPERLINK("http://www.google.com/","Google")             NA            
+E3     1,271,591.00   =sum(R[-1]C[-4]:R[3]C[-4])                                1271591.0     
+E4                    =IMAGE("https://www.google.com/images/srpr/logo3w.png")   NA            
+E5     $A$1           =ADDRESS(1,1)                                             NA            
+E6                    =SPARKLINE(R[-4]C[-4]:R[0]C[-4])                          NA            
 
 Read on if you want to know more.
 
@@ -163,42 +163,42 @@ cf <- gs_read_cellfeed(gs_ff())
 ![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
 
 
-|cell |value             |input_value                                             |numeric_value       |
-|:----|:-----------------|:-------------------------------------------------------|:-------------------|
-|A1   |integer           |integer                                                 |NA                  |
-|A2   |123456            |123456                                                  |123456.0            |
-|A3   |345678            |345678                                                  |345678.0            |
-|A4   |234567            |234567                                                  |234567.0            |
-|A6   |567890            |567890                                                  |567890.0            |
-|B1   |number_formatted  |number_formatted                                        |NA                  |
-|B2   |654,321           |654321                                                  |654321.0            |
-|B3   |12.34%            |12.34%                                                  |0.1234              |
-|B4   |1.23E+09          |1234567890                                              |1.23456789E9        |
-|B5   |3 1/7             |3.14159265359                                           |3.14159265359       |
-|B6   |\$0.36            |0.36                                                    |0.36                |
-|C1   |number_rounded    |number_rounded                                          |NA                  |
-|C2   |1.23              |1.2345                                                  |1.2345              |
-|C3   |2.35              |2.3456                                                  |2.3456              |
-|C4   |3.46              |3.4567                                                  |3.4567              |
-|C5   |4.57              |4.5678                                                  |4.5678              |
-|C6   |5.68              |5.6789                                                  |5.6789              |
-|D1   |character         |character                                               |NA                  |
-|D2   |one               |one                                                     |NA                  |
-|D4   |three             |three                                                   |NA                  |
-|D5   |four              |four                                                    |NA                  |
-|D6   |five              |five                                                    |NA                  |
-|E1   |formula           |formula                                                 |NA                  |
-|E2   |Google            |=HYPERLINK("http://www.google.com/","Google")           |NA                  |
-|E3   |1,271,591.00      |=sum(R[-1]C[-4]:R[3]C[-4])                              |1271591.0           |
-|E4   |                  |=IMAGE("https://www.google.com/images/srpr/logo3w.png") |NA                  |
-|E5   |\$A\$1            |=ADDRESS(1,1)                                           |NA                  |
-|E6   |                  |=SPARKLINE(R[-4]C[-4]:R[0]C[-4])                        |NA                  |
-|F1   |formula_formatted |formula_formatted                                       |NA                  |
-|F2   |3.18E+05          |=average(R[0]C[-5]:R[4]C[-5])                           |317897.75           |
-|F3   |52.63%            |=R[-1]C[-5]/R[1]C[-5]                                   |0.5263144432081239  |
-|F4   |0.22              |=R[-2]C[-5]/R[2]C[-5]                                   |0.21739421366813996 |
-|F5   |123,456.00        |=min(R[-3]C[-5]:R[1]C[-5])                              |123456.0            |
-|F6   |317,898           |=average(R2C1:R6C1)                                     |317897.75           |
+cell   value               input_value                                               numeric_value       
+-----  ------------------  --------------------------------------------------------  --------------------
+A1     integer             integer                                                   NA                  
+A2     123456              123456                                                    123456.0            
+A3     345678              345678                                                    345678.0            
+A4     234567              234567                                                    234567.0            
+A6     567890              567890                                                    567890.0            
+B1     number_formatted    number_formatted                                          NA                  
+B2     654,321             654321                                                    654321.0            
+B3     12.34%              12.34%                                                    0.1234              
+B4     1.23E+09            1234567890                                                1.23456789E9        
+B5     3 1/7               3.14159265359                                             3.14159265359       
+B6     \$0.36              0.36                                                      0.36                
+C1     number_rounded      number_rounded                                            NA                  
+C2     1.23                1.2345                                                    1.2345              
+C3     2.35                2.3456                                                    2.3456              
+C4     3.46                3.4567                                                    3.4567              
+C5     4.57                4.5678                                                    4.5678              
+C6     5.68                5.6789                                                    5.6789              
+D1     character           character                                                 NA                  
+D2     one                 one                                                       NA                  
+D4     three               three                                                     NA                  
+D5     four                four                                                      NA                  
+D6     five                five                                                      NA                  
+E1     formula             formula                                                   NA                  
+E2     Google              =HYPERLINK("http://www.google.com/","Google")             NA                  
+E3     1,271,591.00        =sum(R[-1]C[-4]:R[3]C[-4])                                1271591.0           
+E4                         =IMAGE("https://www.google.com/images/srpr/logo3w.png")   NA                  
+E5     \$A\$1              =ADDRESS(1,1)                                             NA                  
+E6                         =SPARKLINE(R[-4]C[-4]:R[0]C[-4])                          NA                  
+F1     formula_formatted   formula_formatted                                         NA                  
+F2     3.18E+05            =average(R[0]C[-5]:R[4]C[-5])                             317897.75           
+F3     52.63%              =R[-1]C[-5]/R[1]C[-5]                                     0.5263144432081239  
+F4     0.22                =R[-2]C[-5]/R[2]C[-5]                                     0.21739421366813996 
+F5     123,456.00          =min(R[-3]C[-5]:R[1]C[-5])                                123456.0            
+F6     317,898             =average(R2C1:R6C1)                                       317897.75           
 
 ![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
 

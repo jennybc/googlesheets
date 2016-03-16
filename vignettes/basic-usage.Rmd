@@ -15,13 +15,15 @@ vignette: >
 
 ```{r, echo = FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
-CRAN <- !NOT_CRAN
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  purl = NOT_CRAN
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
 )
-options(knitr.table.format = 'markdown')
+## this is nice during development = on github
+## this is not so nice for preparing vignettes for CRAN
+#options(knitr.table.format = 'markdown')
 ```
 
 First we load the `googlesheets` package and `dplyr`, from which we use the `%>%` pipe operator, among other things. `googlesheets` usage *does not require* you to use `%>%` though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.
@@ -31,14 +33,14 @@ library(googlesheets)
 suppressMessages(library(dplyr))
 ```
 
-```{r auth, include = FALSE, eval = NOT_CRAN}
+```{r auth, include = FALSE}
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
 token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
 suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ```
 
-```{r pre-clean, include = FALSE, eval = NOT_CRAN}
+```{r pre-clean, include = FALSE}
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
 googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice"),
@@ -50,7 +52,7 @@ file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 
 The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).
 
-```{r list-sheets, eval = NOT_CRAN}
+```{r list-sheets}
 (my_sheets <- gs_ls())
 # (expect a prompt to authenticate with Google interactively HERE)
 my_sheets %>% glimpse()
@@ -75,7 +77,7 @@ If you plan to consume data from a sheet or edit it, you must first __register__
 
 *We're using the built-in functions `gs_gap_key()` and `gs_gap_url()` to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.*
 
-```{r register-sheet, eval = NOT_CRAN}
+```{r register-sheet}
 gap <- gs_title("Gapminder")
 gap
 
@@ -97,7 +99,7 @@ third_party_gap <- GAP_URL %>%
 gap <- gap %>% gs_gs()
 ```
 
-```{r register-sheet-cran-only, include = FALSE, eval = CRAN}
+```{r register-sheet-cran-only, include = FALSE}
 gap <- gs_gap()
 ```
 
@@ -112,6 +114,10 @@ in your browser. Optionally, you can specify the worksheet of interest.
 gap %>% gs_browse()
 gap %>% gs_browse(ws = 2)
 gap %>% gs_browse(ws = "Europe")
+```
+
+```{r include = FALSE}
+Sys.sleep(20)
 ```
 
 ### Consume data
@@ -257,11 +263,15 @@ How to get raw formulas or numbers without numeric formatting applied?
   * If you want full access to formulas and alternative definitions of cell contents, use `gs_read_cellfeed()` directly.
   * See the "Formulas and Formatting" vignette for more.
 
+```{r include = FALSE}
+Sys.sleep(20)
+```
+
 #### Controlling data ingest, practice
 
 Let's make a practice sheet to explore ways to control data ingest. On different worksheets, we put the same data frame into slightly more challenging positions.
 
-```{r eval = NOT_CRAN}
+```{r}
 df <- data_frame(thing1 = paste0("A", 2:5),
                  thing2 = paste0("B", 2:5),
                  thing3 = paste0("C", 2:5))
@@ -281,7 +291,7 @@ Go visit it in the browser via `gs_browse(ss)`. The first worksheet will look so
 
 Override the default variable names, but use `skip = 1` to keep them from ending up in the data frame. Try it with different read methods.
 
-```{r eval = NOT_CRAN}
+```{r}
 ## will use gs_read_csv
 ss %>% gs_read(col_names = FALSE, skip = 1)
 ss %>% gs_read(col_names = letters[1:3], skip = 1)
@@ -293,11 +303,15 @@ ss %>% gs_read_listfeed(col_names = FALSE, skip = 1)
 ss %>% gs_read_listfeed(col_names = FALSE, skip = 1, range = cell_cols("A:Z"))
 ```
 
+```{r include = FALSE}
+Sys.sleep(20)
+```
+
 Read from the worksheet with a blank row at the top. Start to play with some other ingest arguments.
 
 ![top-filler](img/not-so-simple-ingest.png)
 
-```{r eval = NOT_CRAN}
+```{r}
 ## blank row causes variable names to show up in the data frame :(
 ss %>% gs_read(ws = "one-blank-row")
 
@@ -322,7 +336,7 @@ ss %>% gs_read_listfeed(ws = "one-blank-row", range = cell_cols("A:Z"), skip = 2
 
 Finally, we read from the worksheet with TWO blank rows at the top, which is more than the list feed can handle.
 
-```{r eval = NOT_CRAN}
+```{r}
 ## use skip to get correct result via gs_read() --> gs_read_csv()
 ss %>% gs_read(ws = "two-blank-rows", skip = 2)
 
@@ -337,16 +351,19 @@ ss %>% gs_read_listfeed(ws = "two-blank-rows", skip = 2)
 
 Let's clean up after ourselves.
 
-```{r delete-ingest-sheet, eval = NOT_CRAN}
+```{r delete-ingest-sheet}
 gs_delete(ss)
 ```
 
+```{r include = FALSE}
+Sys.sleep(20)
+```
 
 ### Create sheets
 
 You can use `googlesheets` to create new spreadsheets.
 
-```{r new-sheet, eval = NOT_CRAN}
+```{r new-sheet}
 foo <- gs_new("foo")
 foo
 ```
@@ -368,7 +385,7 @@ If you have the choice, `gs_add_row()` is faster, but it can only be used when y
 
 We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.
 
-```{r edit-cells, eval = NOT_CRAN}
+```{r edit-cells}
 ## foo <- gs_new("foo")
 ## initialize the worksheets
 foo <- foo %>% gs_ws_new("edit_cells")
@@ -406,7 +423,7 @@ Read the function documentation for `gs_edit_cells()` for how to specify where t
 
 Let's clean up by deleting the `foo` spreadsheet we've been playing with.
 
-```{r delete-sheet, eval = NOT_CRAN}
+```{r delete-sheet}
 gs_delete(foo)
 ```
 
@@ -416,7 +433,7 @@ If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and
 
 Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
 
-```{r new-sheet-from-file, eval = NOT_CRAN}
+```{r new-sheet-from-file}
 iris %>%
   head(5) %>%
   write.csv("iris.csv", row.names = FALSE)
@@ -437,7 +454,7 @@ gap_xlsx %>% gs_read(ws = "Asia")
 
 And we clean up after ourselves on Google Drive.
 
-```{r delete-moar-sheets, eval = NOT_CRAN}
+```{r delete-moar-sheets}
 gs_vecdel(c("iris", "mini-gap"))
 ## achieves same as:
 ## gs_delete(iris_ss)
@@ -448,7 +465,7 @@ gs_vecdel(c("iris", "mini-gap"))
 
 You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
 
-```{r export-sheet-as-csv, eval = NOT_CRAN}
+```{r export-sheet-as-csv}
 gs_title("Gapminder") %>%
   gs_download(ws = "Africa", to = "gapminder-africa.csv")
 ## is it there? yes!
@@ -457,7 +474,7 @@ read.csv("gapminder-africa.csv") %>% head()
 
 Download the entire spreadsheet as an Excel workbook.
 
-```{r export-sheet-as-xlsx, eval = NOT_CRAN}
+```{r export-sheet-as-xlsx}
 gs_title("Gapminder") %>% 
   gs_download(to = "gapminder.xlsx")
 ```
@@ -466,7 +483,7 @@ Go check it out in Excel, if you wish!
 
 And now we clean up the downloaded files.
 
-```{r clean-exported-files, eval = NOT_CRAN}
+```{r clean-exported-files}
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 ```
 
