@@ -428,8 +428,9 @@ file.remove("iris.csv")
 
 Now we'll upload a multi-sheet Excel workbook. Slowly.
 
-```{r new-sheet-from-xlsx, eval = NOT_CRAN}
-gap_xlsx <- gs_upload(system.file("mini-gap.xlsx", package = "googlesheets"))
+```{r new-sheet-from-xlsx}
+gap_xlsx <- gs_upload(system.file("mini-gap", "mini-gap.xlsx",
+                                  package = "googlesheets"))
 gap_xlsx
 gap_xlsx %>% gs_read(ws = "Asia")
 ```

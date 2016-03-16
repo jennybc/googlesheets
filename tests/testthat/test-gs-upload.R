@@ -18,7 +18,8 @@ test_that("Different file formats can be uploaded", {
   upload_titles <- p_(files_to_upload)
 
   tmp <- mapply(gs_upload,
-                file = system.file(files_to_upload, package = "googlesheets"),
+                file = system.file("mini-gap",
+                                   files_to_upload, package = "googlesheets"),
                 sheet_title = upload_titles, SIMPLIFY = FALSE)
 
   Sys.sleep(1)
