@@ -26,4 +26,4 @@ Found the following (possibly) invalid URLs:
     Status: 404
     Message: Not Found
 
-This URL does, in fact, go to the Google Developers Console if and only if user is currently signed in with Google. Otherwise it redirects to a login screen. I assume something about that process is causing CRAN to think the URL is invalid.
+This URL goes to the Google Developers Console if and only if user is currently signed in with Google. Otherwise it redirects to a login screen. I assume something about that process is causing CRAN to think the URL is invalid.
