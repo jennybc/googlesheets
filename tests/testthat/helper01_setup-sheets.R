@@ -47,18 +47,6 @@ wtf2_url <- "https://docs.google.com/spreadsheets/d/1upHM4Kg9Zr3dmzW2LW_rMG44NFJ
 ## the actual link to make a copy of an old style sheet is this:
 ## https://drive.google.com/open?id=0AixWk2YYzNjidGxZS1ItdkN1bzJyeFFTSGxjc0lXamc&authuser=0&newcopy
 
-## Gapminder alternative (owned by gspreadr)
-gap_alt_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-gap_alt_title <- "Gapminder"
-gap_alt_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_alt_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/private/full"
-
-## Public testing sheet (owned by gspreadr)
-pts_alt_url <- "https://docs.google.com/spreadsheets/d/1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk/"
-pts_alt_title <- "Public Testing Sheet"
-pts_alt_key <- "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk"
-pts_alt_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk/private/full"
-
 ## Private iris sheet (owned by gspreadr)
 iris_pvt_url <- "https://docs.google.com/spreadsheets/d/1UXr4-haIQsmJfyjkEhlkNt2PXduBkB97e15jez9ogRo/"
 iris_pvt_title <- "test-gs-iris-private"
