@@ -138,7 +138,7 @@ fix_names <- function(vnames, check.names = FALSE) {
 }
 
 size_names <- function(vnames, n) {
-  if (length(vnames) >= n) return(head(vnames, n))
+  if (length(vnames) >= n) return(utils::head(vnames, n))
   nms <- paste0("X", seq_len(n))
   nms[seq_along(vnames)] <- vnames
   nms

@@ -93,5 +93,5 @@ gs_simplify_cellfeed <- function(
                 R1C1 = x$cell_alt,
                 NULL)
   x[["value"]] %>%
-    setNames(nms)
+    stats::setNames(nms)
 }
