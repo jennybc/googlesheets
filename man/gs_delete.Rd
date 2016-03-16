@@ -30,9 +30,6 @@ Drive}, find the sheet, and restore it.
 \dontrun{
 foo <- gs_new("new_sheet")
 gs_delete(foo)
-
-foo <- gs_new("new_sheet")
-gs_delete(gs_title("new_sheet"))
 }
 
 }

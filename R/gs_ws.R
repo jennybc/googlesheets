@@ -121,8 +121,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #' gap_ss <- gs_copy(gs_gap(), to = "gap_copy")
 #' gs_ws_ls(gap_ss)
 #' gap_ss <- gs_ws_new(gap_ss, "new_stuff")
-#' gap_ss <- gs_edit_cells(gap_ss, "new_stuff", input = head(iris),
-#'                         header = TRUE, trim = TRUE)
+#' gap_ss <- gs_edit_cells(gap_ss, "new_stuff", input = head(iris), trim = TRUE)
 #' gap_ss
 #' gap_ss <- gs_ws_delete(gap_ss, "new_stuff")
 #' gs_ws_ls(gap_ss)
@@ -241,7 +240,7 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' yo <- gs_new("yo")
-#' yo <- gs_edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+#' yo <- gs_edit_cells(yo, input = head(iris), trim = TRUE)
 #' gs_read_csv(yo)
 #' yo <- gs_ws_resize(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
 #' gs_read_csv(yo)
