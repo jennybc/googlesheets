@@ -12,3 +12,4 @@ jenny_token.rds
 rsconnect
 shiny_app_token.rds
 old_snails
+internal-projects/*not-cran-this*
