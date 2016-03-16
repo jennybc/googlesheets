@@ -48,7 +48,7 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub (which you will need if you are using [`httr v1.1.0`](https://github.com/hadley/httr)):
+Or you can get the development version from GitHub:
 
 ``` r
 devtools::install_github("jennybc/googlesheets")
@@ -84,7 +84,10 @@ suppressPackageStartupMessages(library("dplyr"))
 
 ### Function naming convention
 
-All functions start with `gs_`, which plays nicely with tab completion. If the function has something to do with worksheets or tabs within a spreadsheet, then it will start with `gs_ws_`.
+To play nicely with tab completion, we use consistent prefixes:
+
+-   `gs_` = all functions in the package.
+-   `gs_ws_` = all functions that operate on worksheets or tabs within a spreadsheet.
 
 ### Quick demo
 
@@ -110,7 +113,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-15 21:52:09 GMT
+#>   Date of googlesheets registration: 2016-03-16 20:53:53 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -132,6 +135,7 @@ Visit a registered `googlesheet` in the browser:
 
 ``` r
 gap %>% gs_browse()
+gap %>% gs_browse(ws = "Europe")
 ```
 
 Read all the data in a worksheet:
@@ -167,6 +171,27 @@ Some of the many ways to target specific cells:
 gap %>% gs_read(ws = 2, range = "A1:D8")
 gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
 gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
+```
+
+Full `readr`-style control of data ingest -- highly artificial example!
+
+``` r
+gap %>%
+  gs_read(ws = "Oceania", col_names = paste0("Z", 1:6),
+          na = c("1962", "1977"), col_types = "cccccc", skip = 1, n_max = 7)
+#> Accessing worksheet titled 'Oceania'.
+#> No encoding supplied: defaulting to UTF-8.
+#> Source: local data frame [7 x 6]
+#> 
+#>          Z1      Z2    Z3    Z4       Z5       Z6
+#>       (chr)   (chr) (chr) (chr)    (chr)    (chr)
+#> 1 Australia Oceania  1952 69.12  8691212  10039.6
+#> 2 Australia Oceania  1957 70.33  9712569 10949.65
+#> 3 Australia Oceania    NA 70.93 10794968 12217.23
+#> 4 Australia Oceania  1967  71.1 11872264 14526.12
+#> 5 Australia Oceania  1972 71.93 13177000 16788.63
+#> 6 Australia Oceania    NA 73.49 14074100  18334.2
+#> 7 Australia Oceania  1982 74.74 15184200 19477.01
 ```
 
 Create a new Sheet:
@@ -227,11 +252,11 @@ iris_ss %>%
 Clean up our mess:
 
 ``` r
-gs_vecdel("iris", "Gapminder")
+gs_vecdel(c("iris", "Gapminder"))
 file.remove("iris-ish-stuff.csv")
 ```
 
-Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) shows a lot more usage.
+Remember, [the vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) shows a lot more usage.
 
 ### Overview of functions
 

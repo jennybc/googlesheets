@@ -66,7 +66,7 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub (which you will need if you are using [`httr v1.1.0`](https://github.com/hadley/httr)):
+Or you can get the development version from GitHub:
 
 ```{r eval = FALSE}
 devtools::install_github("jennybc/googlesheets")
@@ -102,7 +102,10 @@ suppressPackageStartupMessages(library("dplyr"))
 
 ### Function naming convention
 
-All functions start with `gs_`, which plays nicely with tab completion. If the function has something to do with worksheets or tabs within a spreadsheet, then it will start with `gs_ws_`.
+To play nicely with tab completion, we use consistent prefixes:
+
+  * `gs_` = all functions in the package.
+  * `gs_ws_` = all functions that operate on worksheets or tabs within a spreadsheet.
 
 ### Quick demo
 
@@ -119,7 +122,6 @@ Register a Sheet (in this case, by title):
 
 ```{r}
 gap <- gs_title("Gapminder")
-
 ```
 
 Here's a registered `googlesheet` object:
@@ -132,6 +134,7 @@ Visit a registered `googlesheet` in the browser:
 
 ```{r eval = FALSE}
 gap %>% gs_browse()
+gap %>% gs_browse(ws = "Europe")
 ```
 
 Read all the data in a worksheet:
@@ -148,6 +151,14 @@ Some of the many ways to target specific cells:
 gap %>% gs_read(ws = 2, range = "A1:D8")
 gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
 gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
+```
+
+Full `readr`-style control of data ingest -- highly artificial example!
+
+```{r}
+gap %>%
+  gs_read(ws = "Oceania", col_names = paste0("Z", 1:6),
+          na = c("1962", "1977"), col_types = "cccccc", skip = 1, n_max = 7)
 ```
 
 Create a new Sheet:
@@ -183,16 +194,16 @@ iris_ss %>%
 Clean up our mess:
 
 ```{r eval = FALSE}
-gs_vecdel("iris", "Gapminder")
+gs_vecdel(c("iris", "Gapminder"))
 file.remove("iris-ish-stuff.csv")
 ```
 
 ```{r include = FALSE}
-gs_vecdel("iris")
+gs_delete(iris_ss)
 file.remove("iris-ish-stuff.csv")
 ```
 
-Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) shows a lot more usage.
+Remember, [the vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) shows a lot more usage.
 
 ### Overview of functions
 
