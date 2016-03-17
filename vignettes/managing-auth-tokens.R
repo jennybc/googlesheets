@@ -25,12 +25,12 @@ gs_gap_key() %>%
   gs_read() %>% 
   head(3)
 
-## ----eval = NOT_CRAN-----------------------------------------------------
+## ------------------------------------------------------------------------
 iris_ss <- gs_new("iris_bit", input = head(iris, 3), trim = TRUE, verbose = FALSE)
 iris_ss %>% 
   gs_read()
 
-## ----include = FALSE, eval = NOT_CRAN------------------------------------
+## ----include = FALSE-----------------------------------------------------
 gs_grepdel("^iris_bit$")
 
 ## ------------------------------------------------------------------------
@@ -59,7 +59,18 @@ gs_user()
 ## ----eval = FALSE--------------------------------------------------------
 #  gs_auth_suspend(verbose = FALSE)
 
-## ----include = FALSE, eval = NOT_CRAN------------------------------------
-#git2r::branch_target(git2r::head(git2r::repository('..')))
-#devtools::session_info("googlesheets")
+## ----eval = FALSE--------------------------------------------------------
+#  Sys.getenv("NOT_CRAN") # this should be true!
+#  devtools::build_vignettes()
+#  ## or in the shell
+#  ## Rscript -e "devtools::build_vignettes()"
+
+## ----eval = FALSE--------------------------------------------------------
+#  Sys.getenv("NOT_CRAN") # this should be false!
+#  devtools::build_vignettes()
+#  ## or in the shell
+#  ## Rscript -e "devtools::build_vignettes()"
+
+## ----eval = FALSE--------------------------------------------------------
+#  devtools::build(vignettes = FALSE)
 
