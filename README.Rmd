@@ -84,7 +84,7 @@ GitHub versions:
 
   * [Basic usage](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md)
   * [Formulas and formatted numbers](https://github.com/jennybc/googlesheets/blob/master/vignettes/formulas-and-formatted-numbers.md)
-  * [Managing Oauth tokens](https://github.com/jennybc/googlesheets/blob/master/vignettes/managing-auth-tokens.md)
+  * [Managing OAuth tokens](https://github.com/jennybc/googlesheets/blob/master/vignettes/managing-auth-tokens.md)
 
 ### Talks
 

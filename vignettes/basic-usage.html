@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Jenny Bryan, Joanna Zhao" />
+
+<meta name="date" content="2016-03-17" />
+
+<title>googlesheets Basic Usage</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="fluid-row" id="header">
+
+
+<h1 class="title">googlesheets Basic Usage</h1>
+<h4 class="author"><em>Jenny Bryan, Joanna Zhao</em></h4>
+<h4 class="date"><em>2016-03-17</em></h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#see-some-spreadsheets-you-can-access">See some spreadsheets you can access</a></li>
+<li><a href="#get-a-google-spreadsheet-to-practice-with">Get a Google spreadsheet to practice with</a></li>
+<li><a href="#register-a-spreadsheet">Register a spreadsheet</a></li>
+<li><a href="#consume-data">Consume data</a><ul>
+<li><a href="#ignorance-is-bliss">Ignorance is bliss</a></li>
+<li><a href="#specify-the-consumption-method">Specify the consumption method</a></li>
+<li><a href="#quick-speed-comparison">Quick speed comparison</a></li>
+<li><a href="#post-processing-data-from-the-cell-feed">Post-processing data from the cell feed</a></li>
+<li><a href="#controlling-data-ingest-theory">Controlling data ingest, theory</a></li>
+<li><a href="#controlling-data-ingest-practice">Controlling data ingest, practice</a></li>
+</ul></li>
+<li><a href="#create-sheets">Create sheets</a></li>
+<li><a href="#edit-cells">Edit cells</a></li>
+<li><a href="#delete-sheets">Delete sheets</a></li>
+<li><a href="#upload-delimited-files-or-excel-workbooks">Upload delimited files or Excel workbooks</a></li>
+<li><a href="#download-sheets-as-csv-pdf-or-xlsx-file">Download sheets as csv, pdf, or xlsx file</a></li>
+<li><a href="#authorization-using-oauth2">Authorization using OAuth2</a></li>
+<li><a href="#old-google-sheets">“Old” Google Sheets</a></li>
+</ul>
+</div>
+
+<p>First we load the <code>googlesheets</code> package and <code>dplyr</code>, from which we use the <code>%&gt;%</code> pipe operator, among other things. <code>googlesheets</code> usage <em>does not require</em> you to use <code>%&gt;%</code> though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
+<span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</code></pre></div>
+<div id="see-some-spreadsheets-you-can-access" class="section level3">
+<h3>See some spreadsheets you can access</h3>
+<p>The <code>gs_ls()</code> function returns the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">(my_sheets &lt;-<span class="st"> </span><span class="kw">gs_ls</span>())
+<span class="co">#&gt; Source: local data frame [72 x 10]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;                 sheet_title        author  perm version</span>
+<span class="co">#&gt;                       (chr)         (chr) (chr)   (chr)</span>
+<span class="co">#&gt; 1   EasyTweetSheet - Shared     m.hawksey     r     new</span>
+<span class="co">#&gt; 2  test-gs-jenny-61aa48022…      gspreadr    rw     new</span>
+<span class="co">#&gt; 3  test-gs-jenny-61aa48022…      gspreadr    rw     new</span>
+<span class="co">#&gt; 4  test-gs-jenny-61aa48022…      gspreadr    rw     new</span>
+<span class="co">#&gt; 5  test-gs-jenny-61aa48022…      gspreadr    rw     new</span>
+<span class="co">#&gt; 6  test-gs-jenny-57e632385…      gspreadr    rw     new</span>
+<span class="co">#&gt; 7  test-gs-travis-2139114b…      gspreadr    rw     new</span>
+<span class="co">#&gt; 8  test-gs-jenny-12dd43330…      gspreadr    rw     new</span>
+<span class="co">#&gt; 9  gs-test-formula-formatt…  rpackagetest     r     new</span>
+<span class="co">#&gt; 10 Individual-level admixt…       the.dfx     r     new</span>
+<span class="co">#&gt; ..                      ...           ...   ...     ...</span>
+<span class="co">#&gt; Variables not shown: updated (time), sheet_key (chr), ws_feed (chr),</span>
+<span class="co">#&gt;   alternate (chr), self (chr), alt_key (chr).</span>
+<span class="co"># (expect a prompt to authenticate with Google interactively HERE)</span>
+my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
+<span class="co">#&gt; Observations: 72</span>
+<span class="co">#&gt; Variables: 10</span>
+<span class="co">#&gt; $ sheet_title (chr) &quot;EasyTweetSheet - Shared&quot;, &quot;test-gs-jenny-61aa4802...</span>
+<span class="co">#&gt; $ author      (chr) &quot;m.hawksey&quot;, &quot;gspreadr&quot;, &quot;gspreadr&quot;, &quot;gspreadr&quot;, &quot;...</span>
+<span class="co">#&gt; $ perm        (chr) &quot;r&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;...</span>
+<span class="co">#&gt; $ version     (chr) &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;...</span>
+<span class="co">#&gt; $ updated     (time) 2016-03-17 03:50:11, 2016-03-16 21:49:22, 2016-03...</span>
+<span class="co">#&gt; $ sheet_key   (chr) &quot;14mAbIi1UyZtJTDuIa7iMb80xYtXbxCr-TGlvFbPgi3E&quot;, &quot;1...</span>
+<span class="co">#&gt; $ ws_feed     (chr) &quot;https://spreadsheets.google.com/feeds/worksheets/...</span>
+<span class="co">#&gt; $ alternate   (chr) &quot;https://docs.google.com/spreadsheets/d/14mAbIi1Uy...</span>
+<span class="co">#&gt; $ self        (chr) &quot;https://spreadsheets.google.com/feeds/spreadsheet...</span>
+<span class="co">#&gt; $ alt_key     (chr) NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span></code></pre></div>
+</div>
+<div id="get-a-google-spreadsheet-to-practice-with" class="section level3">
+<h3>Get a Google spreadsheet to practice with</h3>
+<p>Don’t worry if you don’t have any suitable Google Sheets lying around! We’ve published a sheet for you to practice with and have built functions into <code>googlesheets</code> to help you access it. The example sheet holds some of the <a href="https://github.com/jennybc/gapminder">Gapminder data</a>; feel free to <a href="https://w3id.org/people/jennybc/googlesheets_gap_url">visit the Sheet in the browser</a>. The code below will put a copy of this sheet into your Drive, titled “Gapminder”.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_gap</span>() %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">gs_copy</span>(<span class="dt">to =</span> <span class="st">&quot;Gapminder&quot;</span>)</code></pre></div>
+<p>If that seems to have worked, go check for a sheet named “Gapminder” in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. You could also run <code>gs_ls()</code> again and make sure the Gapminder sheet is listed.</p>
+</div>
+<div id="register-a-spreadsheet" class="section level3">
+<h3>Register a spreadsheet</h3>
+<p>If you plan to consume data from a sheet or edit it, you must first <strong>register</strong> it. This is how <code>googlesheets</code> records important info about the sheet that is required downstream by the Google Sheets or Google Drive APIs. Once registered, you can print the result to get some basic info about the sheet.</p>
+<p><code>googlesheets</code> provides several registration functions. Specifying the sheet by title? Use <code>gs_title()</code>. By key? Use <code>gs_key()</code>. You get the idea.</p>
+<p><em>We’re using the built-in functions <code>gs_gap_key()</code> and <code>gs_gap_url()</code> to produce the key and browser URL for the Gapminder example sheet, so you can see how this will play out with your own projects.</em></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap &lt;-<span class="st"> </span><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>)
+<span class="co">#&gt; Sheet successfully identified: &quot;Gapminder&quot;</span>
+gap
+<span class="co">#&gt;                   Spreadsheet title: Gapminder</span>
+<span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-03-17 08:03:24 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT</span>
+<span class="co">#&gt;                          visibility: private</span>
+<span class="co">#&gt;                         permissions: rw</span>
+<span class="co">#&gt;                             version: new</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Contains 5 worksheets:</span>
+<span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
+<span class="co">#&gt; Africa: 625 x 6</span>
+<span class="co">#&gt; Americas: 301 x 6</span>
+<span class="co">#&gt; Asia: 397 x 6</span>
+<span class="co">#&gt; Europe: 361 x 6</span>
+<span class="co">#&gt; Oceania: 25 x 6</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/</span>
+
+<span class="co"># Need to access a sheet you do not own?</span>
+<span class="co"># Access it by key if you know it!</span>
+(GAP_KEY &lt;-<span class="st"> </span><span class="kw">gs_gap_key</span>())
+<span class="co">#&gt; [1] &quot;1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ&quot;</span>
+third_party_gap &lt;-<span class="st"> </span>GAP_KEY %&gt;%
+<span class="st">  </span><span class="kw">gs_key</span>()
+<span class="co">#&gt; Sheet successfully identified: &quot;test-gs-gapminder&quot;</span>
+
+<span class="co"># Need to access a sheet you do not own but you have a sharing link?</span>
+<span class="co"># Access it by URL!</span>
+(GAP_URL &lt;-<span class="st"> </span><span class="kw">gs_gap_url</span>())
+<span class="co">#&gt; [1] &quot;https://docs.google.com/spreadsheets/d/1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ/&quot;</span>
+third_party_gap &lt;-<span class="st"> </span>GAP_URL %&gt;%
+<span class="st">  </span><span class="kw">gs_url</span>()
+<span class="co">#&gt; Sheet-identifying info appears to be a browser URL.</span>
+<span class="co">#&gt; googlesheets will attempt to extract sheet key from the URL.</span>
+<span class="co">#&gt; Putative key: 1BzfL0kZUz1TsI5zxJF1WNF01IxvC67FbOJUiiGMZ_mQ</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;test-gs-gapminder&quot;</span>
+<span class="co"># note: registration via URL may not work for &quot;old&quot; sheets</span>
+
+<span class="co"># Worried that a spreadsheet's registration is out-of-date?</span>
+<span class="co"># Re-register it!</span>
+gap &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_gs</span>()
+<span class="co">#&gt; Sheet successfully identified: &quot;Gapminder&quot;</span></code></pre></div>
+<p>The registration functions <code>gs_title()</code>, <code>gs_key()</code>, <code>gs_url()</code>, and <code>gs_gs()</code> return a registered sheet as a <code>googlesheet</code> object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered <code>googlesheet</code> object, ready to be stored or piped into the next command.</p>
+<p><em>We export a utility function, <code>extract_key_from_url()</code>, to help you get and store the key from a browser URL. Registering via browser URL is fine, but registering by key is probably a better idea in the long-run.</em></p>
+<p>Use <code>gs_browse()</code> to visit the Sheet corresponding to a registered <code>googlesheet</code> in your browser. Optionally, you can specify the worksheet of interest.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap %&gt;%<span class="st"> </span><span class="kw">gs_browse</span>()
+gap %&gt;%<span class="st"> </span><span class="kw">gs_browse</span>(<span class="dt">ws =</span> <span class="dv">2</span>)
+gap %&gt;%<span class="st"> </span><span class="kw">gs_browse</span>(<span class="dt">ws =</span> <span class="st">&quot;Europe&quot;</span>)</code></pre></div>
+</div>
+<div id="consume-data" class="section level3">
+<h3>Consume data</h3>
+<div id="ignorance-is-bliss" class="section level4">
+<h4>Ignorance is bliss</h4>
+<p>If you want to consume the data in a worksheet and get something rectangular back, use the all-purpose function <code>gs_read()</code>. By default, it reads all the data in a worksheet.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">oceania &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'Oceania'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+oceania
+<span class="co">#&gt; Source: local data frame [24 x 6]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;      country continent  year lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;        (chr)     (chr) (int)   (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  Australia   Oceania  1952   69.12  8691212  10039.60</span>
+<span class="co">#&gt; 2  Australia   Oceania  1957   70.33  9712569  10949.65</span>
+<span class="co">#&gt; 3  Australia   Oceania  1962   70.93 10794968  12217.23</span>
+<span class="co">#&gt; 4  Australia   Oceania  1967   71.10 11872264  14526.12</span>
+<span class="co">#&gt; 5  Australia   Oceania  1972   71.93 13177000  16788.63</span>
+<span class="co">#&gt; 6  Australia   Oceania  1977   73.49 14074100  18334.20</span>
+<span class="co">#&gt; 7  Australia   Oceania  1982   74.74 15184200  19477.01</span>
+<span class="co">#&gt; 8  Australia   Oceania  1987   76.32 16257249  21888.89</span>
+<span class="co">#&gt; 9  Australia   Oceania  1992   77.56 17481977  23424.77</span>
+<span class="co">#&gt; 10 Australia   Oceania  1997   78.83 18565243  26997.94</span>
+<span class="co">#&gt; ..       ...       ...   ...     ...      ...       ...</span>
+<span class="kw">str</span>(oceania)
+<span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:</span>
+<span class="co">#&gt;  $ country  : chr  &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; ...</span>
+<span class="co">#&gt;  $ continent: chr  &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; ...</span>
+<span class="co">#&gt;  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...</span>
+<span class="co">#&gt;  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...</span>
+<span class="co">#&gt;  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...</span>
+<span class="co">#&gt;  $ gdpPercap: num  10040 10950 12217 14526 16789 ...</span>
+<span class="kw">glimpse</span>(oceania)
+<span class="co">#&gt; Observations: 24</span>
+<span class="co">#&gt; Variables: 6</span>
+<span class="co">#&gt; $ country   (chr) &quot;Australia&quot;, &quot;Australia&quot;, &quot;Australia&quot;, &quot;Australia&quot;, ...</span>
+<span class="co">#&gt; $ continent (chr) &quot;Oceania&quot;, &quot;Oceania&quot;, &quot;Oceania&quot;, &quot;Oceania&quot;, &quot;Oceania...</span>
+<span class="co">#&gt; $ year      (int) 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...</span>
+<span class="co">#&gt; $ lifeExp   (dbl) 69.120, 70.330, 70.930, 71.100, 71.930, 73.490, 74.7...</span>
+<span class="co">#&gt; $ pop       (int) 8691212, 9712569, 10794968, 11872264, 13177000, 1407...</span>
+<span class="co">#&gt; $ gdpPercap (dbl) 10039.60, 10949.65, 12217.23, 14526.12, 16788.63, 18...</span></code></pre></div>
+<p>You can target specific cells via the <code>range =</code> argument. The simplest usage is to specify an Excel-like cell range, such as range = “D12:F15” or range = “R1C12:R6C15”. The cell rectangle can be specified in various other ways, using helper functions. It can be degenerate, i.e. open-ended.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="dv">2</span>, <span class="dt">range =</span> <span class="st">&quot;A1:D8&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'Americas'.</span>
+<span class="co">#&gt; Source: local data frame [7 x 4]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     country continent  year lifeExp</span>
+<span class="co">#&gt;       (chr)     (chr) (int)   (dbl)</span>
+<span class="co">#&gt; 1 Argentina  Americas  1952  62.485</span>
+<span class="co">#&gt; 2 Argentina  Americas  1957  64.399</span>
+<span class="co">#&gt; 3 Argentina  Americas  1962  65.142</span>
+<span class="co">#&gt; 4 Argentina  Americas  1967  65.634</span>
+<span class="co">#&gt; 5 Argentina  Americas  1972  67.065</span>
+<span class="co">#&gt; 6 Argentina  Americas  1977  68.481</span>
+<span class="co">#&gt; 7 Argentina  Americas  1982  69.942</span>
+gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">1</span>:<span class="dv">4</span>))
+<span class="co">#&gt; Accessing worksheet titled 'Europe'.</span>
+<span class="co">#&gt; Source: local data frame [3 x 6]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   country continent  year lifeExp     pop gdpPercap</span>
+<span class="co">#&gt;     (chr)     (chr) (int)   (dbl)   (int)     (dbl)</span>
+<span class="co">#&gt; 1 Albania    Europe  1952   55.23 1282697  1601.056</span>
+<span class="co">#&gt; 2 Albania    Europe  1957   59.28 1476505  1942.284</span>
+<span class="co">#&gt; 3 Albania    Europe  1962   64.82 1728137  2312.889</span>
+gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">100</span>:<span class="dv">103</span>), <span class="dt">col_names =</span> <span class="ot">FALSE</span>)
+<span class="co">#&gt; Accessing worksheet titled 'Europe'.</span>
+<span class="co">#&gt; Source: local data frame [4 x 6]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;        X1     X2    X3    X4      X5        X6</span>
+<span class="co">#&gt;     (chr)  (chr) (int) (dbl)   (int)     (dbl)</span>
+<span class="co">#&gt; 1 Finland Europe  1962 68.75 4491443  9371.843</span>
+<span class="co">#&gt; 2 Finland Europe  1967 69.83 4605744 10921.636</span>
+<span class="co">#&gt; 3 Finland Europe  1972 70.87 4639657 14358.876</span>
+<span class="co">#&gt; 4 Finland Europe  1977 72.52 4738902 15605.423</span>
+gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Africa&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_cols</span>(<span class="dv">1</span>:<span class="dv">4</span>))
+<span class="co">#&gt; Accessing worksheet titled 'Africa'.</span>
+<span class="co">#&gt; Source: local data frame [624 x 4]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    country continent  year lifeExp</span>
+<span class="co">#&gt;      (chr)     (chr) (int)   (dbl)</span>
+<span class="co">#&gt; 1  Algeria    Africa  1952  43.077</span>
+<span class="co">#&gt; 2  Algeria    Africa  1957  45.685</span>
+<span class="co">#&gt; 3  Algeria    Africa  1962  48.303</span>
+<span class="co">#&gt; 4  Algeria    Africa  1967  51.407</span>
+<span class="co">#&gt; 5  Algeria    Africa  1972  54.518</span>
+<span class="co">#&gt; 6  Algeria    Africa  1977  58.014</span>
+<span class="co">#&gt; 7  Algeria    Africa  1982  61.368</span>
+<span class="co">#&gt; 8  Algeria    Africa  1987  65.799</span>
+<span class="co">#&gt; 9  Algeria    Africa  1992  67.744</span>
+<span class="co">#&gt; 10 Algeria    Africa  1997  69.152</span>
+<span class="co">#&gt; ..     ...       ...   ...     ...</span>
+gap %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_limits</span>(<span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">4</span>), <span class="kw">c</span>(<span class="dv">5</span>, <span class="ot">NA</span>)))
+<span class="co">#&gt; Accessing worksheet titled 'Asia'.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;     (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  28.801  8425333  779.4453</span>
+<span class="co">#&gt; 2  30.332  9240934  820.8530</span>
+<span class="co">#&gt; 3  31.997 10267083  853.1007</span>
+<span class="co">#&gt; 4  34.020 11537966  836.1971</span></code></pre></div>
+<p><code>gs_read()</code> is a wrapper that bundles together the most common methods to read data from the API and transform it for downstream use. You can refine it’s behavior further, by passing more arguments via <code>...</code>. See the section below on <code>readr</code>-style data ingest.</p>
+<p>If <code>gs_read()</code> doesn’t do what you need, then keep reading for the underlying functions to read and post-process data.</p>
+</div>
+<div id="specify-the-consumption-method" class="section level4">
+<h4>Specify the consumption method</h4>
+<p>There are three ways to consume data from a worksheet within a Google spreadsheet. The order goes from fastest-but-more-limited to slowest-but-most-flexible:</p>
+<ul>
+<li><code>gs_read_csv()</code>: Don’t let the name scare you! Nothing is written to file during this process. The name just reflects that, under the hood, we request the data via the “exportcsv” link. For cases where <code>gs_read_csv()</code> and <code>gs_read_listfeed()</code> both work, we see that <code>gs_read_csv()</code> is often <strong>5 times faster</strong>. Use this when your data occupies a nice rectangle in the sheet and you’re willing to consume all of it. You will get a <code>tbl_df</code> back, which is basically just a <code>data.frame</code>. In fact, you might want to use <code>gs_read_csv()</code> in other, less tidy scenarios and do further munging in R.</li>
+<li><code>gs_read_listfeed()</code>: Gets data via the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">“list feed”</a>, which consumes data row-by-row. Like <code>gs_read_csv()</code>, this is appropriate when your data occupies a nice rectangle. Why do we even have this function? The list feed supports some query parameters for sorting and filtering the data. And might also be necessary for reading an “old” Sheet.</li>
+<li><code>gs_read_cellfeed()</code>: Get data via the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">“cell feed”</a>, which consumes data cell-by-cell. This is appropriate when you want to consume arbitrary cells, rows, columns, and regions of the sheet or when you want to get formulas or cell contents without numeric formatting applied, e.g. rounding. It is invoked by <code>gs_read()</code> whenever the <code>range =</code> argument is non-<code>NULL</code> or <code>literal = FALSE</code>. It works great for modest amounts of data but can be rather slow otherwise. <code>gs_read_cellfeed()</code> returns a <code>tbl_df</code> with <strong>one row per cell</strong>. You can target specific cells via the <code>range</code> argument. See below for demos of <code>gs_reshape_cellfeed()</code> and <code>gs_simplify_cellfeed()</code> which help with post-processing.</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Get the data for worksheet &quot;Oceania&quot;: the super-fast csv way</span>
+oceania_csv &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_csv</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'Oceania'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="kw">str</span>(oceania_csv)
+<span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:</span>
+<span class="co">#&gt;  $ country  : chr  &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; ...</span>
+<span class="co">#&gt;  $ continent: chr  &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; ...</span>
+<span class="co">#&gt;  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...</span>
+<span class="co">#&gt;  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...</span>
+<span class="co">#&gt;  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...</span>
+<span class="co">#&gt;  $ gdpPercap: num  10040 10950 12217 14526 16789 ...</span>
+oceania_csv
+<span class="co">#&gt; Source: local data frame [24 x 6]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;      country continent  year lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;        (chr)     (chr) (int)   (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  Australia   Oceania  1952   69.12  8691212  10039.60</span>
+<span class="co">#&gt; 2  Australia   Oceania  1957   70.33  9712569  10949.65</span>
+<span class="co">#&gt; 3  Australia   Oceania  1962   70.93 10794968  12217.23</span>
+<span class="co">#&gt; 4  Australia   Oceania  1967   71.10 11872264  14526.12</span>
+<span class="co">#&gt; 5  Australia   Oceania  1972   71.93 13177000  16788.63</span>
+<span class="co">#&gt; 6  Australia   Oceania  1977   73.49 14074100  18334.20</span>
+<span class="co">#&gt; 7  Australia   Oceania  1982   74.74 15184200  19477.01</span>
+<span class="co">#&gt; 8  Australia   Oceania  1987   76.32 16257249  21888.89</span>
+<span class="co">#&gt; 9  Australia   Oceania  1992   77.56 17481977  23424.77</span>
+<span class="co">#&gt; 10 Australia   Oceania  1997   78.83 18565243  26997.94</span>
+<span class="co">#&gt; ..       ...       ...   ...     ...      ...       ...</span>
+
+<span class="co"># Get the data for worksheet &quot;Oceania&quot;: the less-fast tabular way (&quot;list feed&quot;)</span>
+oceania_list_feed &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>) 
+<span class="co">#&gt; Accessing worksheet titled 'Oceania'.</span>
+<span class="kw">str</span>(oceania_list_feed)
+<span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    24 obs. of  6 variables:</span>
+<span class="co">#&gt;  $ country  : chr  &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; &quot;Australia&quot; ...</span>
+<span class="co">#&gt;  $ continent: chr  &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; &quot;Oceania&quot; ...</span>
+<span class="co">#&gt;  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...</span>
+<span class="co">#&gt;  $ lifeExp  : num  69.1 70.3 70.9 71.1 71.9 ...</span>
+<span class="co">#&gt;  $ pop      : int  8691212 9712569 10794968 11872264 13177000 14074100 15184200 16257249 17481977 18565243 ...</span>
+<span class="co">#&gt;  $ gdpPercap: num  10040 10950 12217 14526 16789 ...</span>
+oceania_list_feed
+<span class="co">#&gt; Source: local data frame [24 x 6]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;      country continent  year lifeExp      pop gdpPercap</span>
+<span class="co">#&gt;        (chr)     (chr) (int)   (dbl)    (int)     (dbl)</span>
+<span class="co">#&gt; 1  Australia   Oceania  1952   69.12  8691212  10039.60</span>
+<span class="co">#&gt; 2  Australia   Oceania  1957   70.33  9712569  10949.65</span>
+<span class="co">#&gt; 3  Australia   Oceania  1962   70.93 10794968  12217.23</span>
+<span class="co">#&gt; 4  Australia   Oceania  1967   71.10 11872264  14526.12</span>
+<span class="co">#&gt; 5  Australia   Oceania  1972   71.93 13177000  16788.63</span>
+<span class="co">#&gt; 6  Australia   Oceania  1977   73.49 14074100  18334.20</span>
+<span class="co">#&gt; 7  Australia   Oceania  1982   74.74 15184200  19477.01</span>
+<span class="co">#&gt; 8  Australia   Oceania  1987   76.32 16257249  21888.89</span>
+<span class="co">#&gt; 9  Australia   Oceania  1992   77.56 17481977  23424.77</span>
+<span class="co">#&gt; 10 Australia   Oceania  1997   78.83 18565243  26997.94</span>
+<span class="co">#&gt; ..       ...       ...   ...     ...      ...       ...</span>
+
+<span class="co"># Get the data for worksheet &quot;Oceania&quot;: the slow cell-by-cell way (&quot;cell feed&quot;)</span>
+oceania_cell_feed &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_cellfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;Oceania&quot;</span>) 
+<span class="co">#&gt; Accessing worksheet titled 'Oceania'.</span>
+<span class="kw">str</span>(oceania_cell_feed)
+<span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    150 obs. of  7 variables:</span>
+<span class="co">#&gt;  $ cell         : chr  &quot;A1&quot; &quot;B1&quot; &quot;C1&quot; &quot;D1&quot; ...</span>
+<span class="co">#&gt;  $ cell_alt     : chr  &quot;R1C1&quot; &quot;R1C2&quot; &quot;R1C3&quot; &quot;R1C4&quot; ...</span>
+<span class="co">#&gt;  $ row          : int  1 1 1 1 1 1 2 2 2 2 ...</span>
+<span class="co">#&gt;  $ col          : int  1 2 3 4 5 6 1 2 3 4 ...</span>
+<span class="co">#&gt;  $ value        : chr  &quot;country&quot; &quot;continent&quot; &quot;year&quot; &quot;lifeExp&quot; ...</span>
+<span class="co">#&gt;  $ input_value  : chr  &quot;country&quot; &quot;continent&quot; &quot;year&quot; &quot;lifeExp&quot; ...</span>
+<span class="co">#&gt;  $ numeric_value: chr  NA NA NA NA ...</span>
+<span class="co">#&gt;  - attr(*, &quot;ws_title&quot;)= chr &quot;Oceania&quot;</span>
+oceania_cell_feed
+<span class="co">#&gt; Source: local data frame [150 x 7]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     cell cell_alt   row   col     value input_value numeric_value</span>
+<span class="co">#&gt;    (chr)    (chr) (int) (int)     (chr)       (chr)         (chr)</span>
+<span class="co">#&gt; 1     A1     R1C1     1     1   country     country            NA</span>
+<span class="co">#&gt; 2     B1     R1C2     1     2 continent   continent            NA</span>
+<span class="co">#&gt; 3     C1     R1C3     1     3      year        year            NA</span>
+<span class="co">#&gt; 4     D1     R1C4     1     4   lifeExp     lifeExp            NA</span>
+<span class="co">#&gt; 5     E1     R1C5     1     5       pop         pop            NA</span>
+<span class="co">#&gt; 6     F1     R1C6     1     6 gdpPercap   gdpPercap            NA</span>
+<span class="co">#&gt; 7     A2     R2C1     2     1 Australia   Australia            NA</span>
+<span class="co">#&gt; 8     B2     R2C2     2     2   Oceania     Oceania            NA</span>
+<span class="co">#&gt; 9     C2     R2C3     2     3      1952        1952        1952.0</span>
+<span class="co">#&gt; 10    D2     R2C4     2     4     69.12       69.12         69.12</span>
+<span class="co">#&gt; ..   ...      ...   ...   ...       ...         ...           ...</span></code></pre></div>
+</div>
+<div id="quick-speed-comparison" class="section level4">
+<h4>Quick speed comparison</h4>
+<p>Let’s consume all the data for Africa by all 3 methods and see how long it takes.</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">gs_read_csv</th>
+<th align="left">gs_read_listfeed</th>
+<th align="left">gs_read_cellfeed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">user.self</td>
+<td align="left">0.470 (1.00)</td>
+<td align="left">0.310 (0.66)</td>
+<td align="left">1.580 ( 3.37)</td>
+</tr>
+<tr class="even">
+<td align="left">sys.self</td>
+<td align="left">0.010 (1.00)</td>
+<td align="left">0.020 (3.50)</td>
+<td align="left">0.070 (11.33)</td>
+</tr>
+<tr class="odd">
+<td align="left">elapsed</td>
+<td align="left">1.540 (1.00)</td>
+<td align="left">1.730 (1.12)</td>
+<td align="left">3.800 ( 2.46)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="post-processing-data-from-the-cell-feed" class="section level4">
+<h4>Post-processing data from the cell feed</h4>
+<p>If you consume data from the cell feed with <code>gs_read_cellfeed(..., range = ...)</code>, you get a data.frame back with <strong>one row per cell</strong>. The package offers two functions to post-process this into something more useful:</p>
+<ul>
+<li><code>gs_reshape_cellfeed()</code>, makes a 2D thing, i.e. a data frame</li>
+<li><code>gs_simplify_cellfeed()</code> makes a 1D thing, i.e. a vector</li>
+</ul>
+<p>Reshaping into a 2D data frame is covered well elsewhere, so here we mostly demonstrate the use of <code>gs_simplify_cellfeed()</code>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## reshape into 2D data frame
+gap_3rows &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_cellfeed</span>(<span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">1</span>:<span class="dv">3</span>))
+<span class="co">#&gt; Accessing worksheet titled 'Europe'.</span>
+gap_3rows %&gt;%<span class="st"> </span><span class="kw">head</span>()
+<span class="co">#&gt; Source: local data frame [6 x 7]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    cell cell_alt   row   col     value input_value numeric_value</span>
+<span class="co">#&gt;   (chr)    (chr) (int) (int)     (chr)       (chr)         (chr)</span>
+<span class="co">#&gt; 1    A1     R1C1     1     1   country     country            NA</span>
+<span class="co">#&gt; 2    B1     R1C2     1     2 continent   continent            NA</span>
+<span class="co">#&gt; 3    C1     R1C3     1     3      year        year            NA</span>
+<span class="co">#&gt; 4    D1     R1C4     1     4   lifeExp     lifeExp            NA</span>
+<span class="co">#&gt; 5    E1     R1C5     1     5       pop         pop            NA</span>
+<span class="co">#&gt; 6    F1     R1C6     1     6 gdpPercap   gdpPercap            NA</span>
+gap_3rows %&gt;%<span class="st"> </span><span class="kw">gs_reshape_cellfeed</span>()
+<span class="co">#&gt; Source: local data frame [2 x 6]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   country continent  year lifeExp     pop gdpPercap</span>
+<span class="co">#&gt;     (chr)     (chr) (int)   (dbl)   (int)     (dbl)</span>
+<span class="co">#&gt; 1 Albania    Europe  1952   55.23 1282697  1601.056</span>
+<span class="co">#&gt; 2 Albania    Europe  1957   59.28 1476505  1942.284</span>
+
+<span class="co"># Example: first row only</span>
+gap_1row &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_cellfeed</span>(<span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_rows</span>(<span class="dv">1</span>))
+<span class="co">#&gt; Accessing worksheet titled 'Europe'.</span>
+gap_1row
+<span class="co">#&gt; Source: local data frame [6 x 7]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    cell cell_alt   row   col     value input_value numeric_value</span>
+<span class="co">#&gt;   (chr)    (chr) (int) (int)     (chr)       (chr)         (chr)</span>
+<span class="co">#&gt; 1    A1     R1C1     1     1   country     country            NA</span>
+<span class="co">#&gt; 2    B1     R1C2     1     2 continent   continent            NA</span>
+<span class="co">#&gt; 3    C1     R1C3     1     3      year        year            NA</span>
+<span class="co">#&gt; 4    D1     R1C4     1     4   lifeExp     lifeExp            NA</span>
+<span class="co">#&gt; 5    E1     R1C5     1     5       pop         pop            NA</span>
+<span class="co">#&gt; 6    F1     R1C6     1     6 gdpPercap   gdpPercap            NA</span>
+
+<span class="co"># convert to a named (character) vector</span>
+gap_1row %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</span>()
+<span class="co">#&gt;          A1          B1          C1          D1          E1          F1 </span>
+<span class="co">#&gt;   &quot;country&quot; &quot;continent&quot;      &quot;year&quot;   &quot;lifeExp&quot;       &quot;pop&quot; &quot;gdpPercap&quot;</span>
+
+<span class="co"># Example: single column</span>
+gap_1col &lt;-<span class="st"> </span>gap %&gt;%<span class="st"> </span><span class="kw">gs_read_cellfeed</span>(<span class="st">&quot;Europe&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_cols</span>(<span class="dv">3</span>))
+<span class="co">#&gt; Accessing worksheet titled 'Europe'.</span>
+gap_1col
+<span class="co">#&gt; Source: local data frame [361 x 7]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     cell cell_alt   row   col value input_value numeric_value</span>
+<span class="co">#&gt;    (chr)    (chr) (int) (int) (chr)       (chr)         (chr)</span>
+<span class="co">#&gt; 1     C1     R1C3     1     3  year        year            NA</span>
+<span class="co">#&gt; 2     C2     R2C3     2     3  1952        1952        1952.0</span>
+<span class="co">#&gt; 3     C3     R3C3     3     3  1957        1957        1957.0</span>
+<span class="co">#&gt; 4     C4     R4C3     4     3  1962        1962        1962.0</span>
+<span class="co">#&gt; 5     C5     R5C3     5     3  1967        1967        1967.0</span>
+<span class="co">#&gt; 6     C6     R6C3     6     3  1972        1972        1972.0</span>
+<span class="co">#&gt; 7     C7     R7C3     7     3  1977        1977        1977.0</span>
+<span class="co">#&gt; 8     C8     R8C3     8     3  1982        1982        1982.0</span>
+<span class="co">#&gt; 9     C9     R9C3     9     3  1987        1987        1987.0</span>
+<span class="co">#&gt; 10   C10    R10C3    10     3  1992        1992        1992.0</span>
+<span class="co">#&gt; ..   ...      ...   ...   ...   ...         ...           ...</span>
+
+<span class="co"># drop the `year` variable name, convert to integer, return un-named vector</span>
+yr &lt;-<span class="st"> </span>gap_1col %&gt;%<span class="st"> </span><span class="kw">gs_simplify_cellfeed</span>(<span class="dt">notation =</span> <span class="st">&quot;none&quot;</span>)
+<span class="kw">str</span>(yr)
+<span class="co">#&gt;  int [1:360] 1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...</span></code></pre></div>
+</div>
+<div id="controlling-data-ingest-theory" class="section level4">
+<h4>Controlling data ingest, theory</h4>
+<p><code>googlesheets</code> provides control of data ingest in the style of <a href="http://cran.r-project.org/package=readr"><code>readr</code></a>. Some arguments are passed straight through to <code>readr::read_csv()</code> or <code>readr::type_convert()</code> and others are used internally by <code>googlesheets</code>, hopefully in the same way!</p>
+<p>Which cells?</p>
+<ul>
+<li><code>range</code> gives finest control and is enacted first. Available on <code>gs_read()</code>, which calls <code>gs_read_cellfeed()</code>, which can also be called directly.</li>
+<li><code>skip</code> skips rows, from the top only. Available in all read functions.</li>
+<li><code>comment</code> can be used to skip rows inside the data rectangle, if the <code>comment</code> string occurs at the start of the first cell. Available in all read functions.</li>
+<li><code>n_max</code> can be used to limit the number of rows. Available in all read functions.</li>
+<li>The list feed supports structured queries to filter rows. See its help file.</li>
+</ul>
+<p>Where do variable names come from?</p>
+<ul>
+<li><code>col_names</code> works just as it does in <code>readr</code>, for all read functions.
+<ul>
+<li><code>TRUE</code>, the default, will treat first row as a header row of variable names.</li>
+<li><code>FALSE</code> will cause <code>googlesheets</code> to create variable names. Combine that with <code>skip = 1</code> if the sheet contains variable names, but you just don’t like them.</li>
+<li>A character vector of names also works. Again, possibly combine with <code>skip = 1</code>.</li>
+</ul></li>
+<li>Two departures from <code>readr</code>:
+<ul>
+<li><code>googlesheets</code> will never return a data frame with <code>NA</code> as a variable name. Instead, it will create a dummy variable name, like <code>X5</code>.</li>
+<li>All read/reshape functions accept <code>check.names</code>, in the spirit of <code>utils::read.table()</code>, which defaults to <code>FALSE</code>. If <code>TRUE</code>, variable names will be run through <code>make.names(..., unique = TRUE)</code>.</li>
+</ul></li>
+</ul>
+<p>How to do type conversion of variables?</p>
+<ul>
+<li>The <code>readr</code> default behavior might be just fine. Try it!</li>
+<li>Read the <a href="https://cran.r-project.org/web/packages/readr/vignettes/column-types.html"><code>readr</code> vignette on column types</a> to better understand the automatic variable conversion behavior and how to use the <code>col_types</code> argument to override it.</li>
+<li><code>col_types</code>, <code>locale</code>, <code>trim_ws</code>, and <code>na</code> are all available for finer control.</li>
+<li>One departure from <code>readr</code>:
+<ul>
+<li>If a variable consists entirely of <code>NA</code>s, they will be logical <code>NA</code>s, not <code>NA_character_</code>.</li>
+</ul></li>
+</ul>
+<p>How to get raw formulas or numbers without numeric formatting applied?</p>
+<ul>
+<li><code>gs_read(..., literal = FALSE)</code> will get unformatted numbers via the cell feed. Useful if numeric formatting is causing a number to come in as character or if rounding is a problem.</li>
+<li>If you want full access to formulas and alternative definitions of cell contents, use <code>gs_read_cellfeed()</code> directly.</li>
+<li>See the “Formulas and Formatting” vignette for more.</li>
+</ul>
+</div>
+<div id="controlling-data-ingest-practice" class="section level4">
+<h4>Controlling data ingest, practice</h4>
+<p>Let’s make a practice sheet to explore ways to control data ingest. On different worksheets, we put the same data frame into slightly more challenging positions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">data_frame</span>(<span class="dt">thing1 =</span> <span class="kw">paste0</span>(<span class="st">&quot;A&quot;</span>, <span class="dv">2</span>:<span class="dv">5</span>),
+                 <span class="dt">thing2 =</span> <span class="kw">paste0</span>(<span class="st">&quot;B&quot;</span>, <span class="dv">2</span>:<span class="dv">5</span>),
+                 <span class="dt">thing3 =</span> <span class="kw">paste0</span>(<span class="st">&quot;C&quot;</span>, <span class="dv">2</span>:<span class="dv">5</span>))
+df$thing1[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;#&quot;</span>, df$thing1[<span class="dv">2</span>])
+df$thing2[<span class="dv">1</span>] &lt;-<span class="st"> &quot;*&quot;</span>
+df
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   thing1 thing2 thing3</span>
+<span class="co">#&gt;    (chr)  (chr)  (chr)</span>
+<span class="co">#&gt; 1     A2      *     C2</span>
+<span class="co">#&gt; 2    #A3     B3     C3</span>
+<span class="co">#&gt; 3     A4     B4     C4</span>
+<span class="co">#&gt; 4     A5     B5     C5</span>
+
+ss &lt;-<span class="st"> </span><span class="kw">gs_new</span>(<span class="st">&quot;data-ingest-practice&quot;</span>, <span class="dt">ws_title =</span> <span class="st">&quot;simple&quot;</span>,
+             <span class="dt">input =</span> df, <span class="dt">trim =</span> <span class="ot">TRUE</span>) %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">gs_ws_new</span>(<span class="st">&quot;one-blank-row&quot;</span>, <span class="dt">input =</span> df, <span class="dt">trim =</span> <span class="ot">TRUE</span>, <span class="dt">anchor =</span> <span class="st">&quot;A2&quot;</span>) %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">gs_ws_new</span>(<span class="st">&quot;two-blank-rows&quot;</span>, <span class="dt">input =</span> df, <span class="dt">trim =</span> <span class="ot">TRUE</span>, <span class="dt">anchor =</span> <span class="st">&quot;A3&quot;</span>)
+<span class="co">#&gt; Sheet &quot;data-ingest-practice&quot; created in Google Drive.</span>
+<span class="co">#&gt; Worksheet &quot;Sheet1&quot; renamed to &quot;simple&quot;.</span>
+<span class="co">#&gt; Range affected by the update: &quot;A1:C5&quot;</span>
+<span class="co">#&gt; Worksheet &quot;simple&quot; successfully updated with 15 new value(s).</span>
+<span class="co">#&gt; Accessing worksheet titled 'simple'.</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;data-ingest-practice&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'simple'.</span>
+<span class="co">#&gt; Worksheet &quot;simple&quot; dimensions changed to 5 x 3.</span>
+<span class="co">#&gt; Worksheet dimensions: 5 x 3.</span>
+<span class="co">#&gt; Worksheet &quot;one-blank-row&quot; added to sheet &quot;data-ingest-practice&quot;.</span>
+<span class="co">#&gt; Range affected by the update: &quot;A2:C6&quot;</span>
+<span class="co">#&gt; Worksheet &quot;one-blank-row&quot; successfully updated with 15 new value(s).</span>
+<span class="co">#&gt; Accessing worksheet titled 'one-blank-row'.</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;data-ingest-practice&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'one-blank-row'.</span>
+<span class="co">#&gt; Worksheet &quot;one-blank-row&quot; dimensions changed to 6 x 3.</span>
+<span class="co">#&gt; Worksheet dimensions: 6 x 3.</span>
+<span class="co">#&gt; Worksheet &quot;two-blank-rows&quot; added to sheet &quot;data-ingest-practice&quot;.</span>
+<span class="co">#&gt; Range affected by the update: &quot;A3:C7&quot;</span>
+<span class="co">#&gt; Worksheet &quot;two-blank-rows&quot; successfully updated with 15 new value(s).</span>
+<span class="co">#&gt; Accessing worksheet titled 'two-blank-rows'.</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;data-ingest-practice&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'two-blank-rows'.</span>
+<span class="co">#&gt; Worksheet &quot;two-blank-rows&quot; dimensions changed to 7 x 3.</span>
+<span class="co">#&gt; Worksheet dimensions: 7 x 3.</span></code></pre></div>
+<p>Go visit it in the browser via <code>gs_browse(ss)</code>. The first worksheet will look something like this:</p>
+<p><img src="data:image/png;base64,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" alt="simple-ingest" /></p>
+<p>Override the default variable names, but use <code>skip = 1</code> to keep them from ending up in the data frame. Try it with different read methods.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## will use gs_read_csv
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">col_names =</span> <span class="ot">FALSE</span>, <span class="dt">skip =</span> <span class="dv">1</span>)
+<span class="co">#&gt; Accessing worksheet titled 'simple'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;      X1    X2    X3</span>
+<span class="co">#&gt;   (chr) (chr) (chr)</span>
+<span class="co">#&gt; 1    A2     *    C2</span>
+<span class="co">#&gt; 2   #A3    B3    C3</span>
+<span class="co">#&gt; 3    A4    B4    C4</span>
+<span class="co">#&gt; 4    A5    B5    C5</span>
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">col_names =</span> letters[<span class="dv">1</span>:<span class="dv">3</span>], <span class="dt">skip =</span> <span class="dv">1</span>)
+<span class="co">#&gt; Accessing worksheet titled 'simple'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;       a     b     c</span>
+<span class="co">#&gt;   (chr) (chr) (chr)</span>
+<span class="co">#&gt; 1    A2     *    C2</span>
+<span class="co">#&gt; 2   #A3    B3    C3</span>
+<span class="co">#&gt; 3    A4    B4    C4</span>
+<span class="co">#&gt; 4    A5    B5    C5</span>
+
+## explicitly use gs_read_listfeed
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">col_names =</span> <span class="ot">FALSE</span>, <span class="dt">skip =</span> <span class="dv">1</span>)
+<span class="co">#&gt; Accessing worksheet titled 'simple'.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;      X1    X2    X3</span>
+<span class="co">#&gt;   (chr) (chr) (chr)</span>
+<span class="co">#&gt; 1    A2     *    C2</span>
+<span class="co">#&gt; 2   #A3    B3    C3</span>
+<span class="co">#&gt; 3    A4    B4    C4</span>
+<span class="co">#&gt; 4    A5    B5    C5</span>
+
+## use range to force use of gs_read_cellfeed
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">col_names =</span> <span class="ot">FALSE</span>, <span class="dt">skip =</span> <span class="dv">1</span>, <span class="dt">range =</span> <span class="kw">cell_cols</span>(<span class="st">&quot;A:Z&quot;</span>))
+<span class="co">#&gt; Accessing worksheet titled 'simple'.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;      X1    X2    X3</span>
+<span class="co">#&gt;   (chr) (chr) (chr)</span>
+<span class="co">#&gt; 1    A2     *    C2</span>
+<span class="co">#&gt; 2   #A3    B3    C3</span>
+<span class="co">#&gt; 3    A4    B4    C4</span>
+<span class="co">#&gt; 4    A5    B5    C5</span></code></pre></div>
+<p>Read from the worksheet with a blank row at the top. Start to play with some other ingest arguments.</p>
+<p><img src="data:image/png;base64,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" alt="top-filler" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## blank row causes variable names to show up in the data frame :(
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;one-blank-row&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'one-blank-row'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [5 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;       X1     X2     X3</span>
+<span class="co">#&gt;    (chr)  (chr)  (chr)</span>
+<span class="co">#&gt; 1 thing1 thing2 thing3</span>
+<span class="co">#&gt; 2     A2      *     C2</span>
+<span class="co">#&gt; 3    #A3     B3     C3</span>
+<span class="co">#&gt; 4     A4     B4     C4</span>
+<span class="co">#&gt; 5     A5     B5     C5</span>
+
+## skip = 1 fixes it :)
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;one-blank-row&quot;</span>, <span class="dt">skip =</span> <span class="dv">1</span>)
+<span class="co">#&gt; Accessing worksheet titled 'one-blank-row'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   thing1 thing2 thing3</span>
+<span class="co">#&gt;    (chr)  (chr)  (chr)</span>
+<span class="co">#&gt; 1     A2      *     C2</span>
+<span class="co">#&gt; 2    #A3     B3     C3</span>
+<span class="co">#&gt; 3     A4     B4     C4</span>
+<span class="co">#&gt; 4     A5     B5     C5</span>
+
+## more arguments, more better
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;one-blank-row&quot;</span>, <span class="dt">skip =</span> <span class="dv">2</span>,
+               <span class="dt">col_names =</span> <span class="kw">paste0</span>(<span class="st">&quot;yo ?!*&quot;</span>, <span class="dv">1</span>:<span class="dv">3</span>), <span class="dt">check.names =</span> <span class="ot">TRUE</span>,
+               <span class="dt">na =</span> <span class="st">&quot;*&quot;</span>, <span class="dt">comment =</span> <span class="st">&quot;#&quot;</span>, <span class="dt">n_max =</span> <span class="dv">2</span>)
+<span class="co">#&gt; Accessing worksheet titled 'one-blank-row'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [2 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   yo....1 yo....2 yo....3</span>
+<span class="co">#&gt;     (chr)   (chr)   (chr)</span>
+<span class="co">#&gt; 1      A2      NA      C2</span>
+<span class="co">#&gt; 2      A4      B4      C4</span>
+
+## also works on list feed
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;one-blank-row&quot;</span>, <span class="dt">skip =</span> <span class="dv">2</span>,
+                        <span class="dt">col_names =</span> <span class="kw">paste0</span>(<span class="st">&quot;yo ?!*&quot;</span>, <span class="dv">1</span>:<span class="dv">3</span>), <span class="dt">check.names =</span> <span class="ot">TRUE</span>,
+                        <span class="dt">na =</span> <span class="st">&quot;*&quot;</span>, <span class="dt">comment =</span> <span class="st">&quot;#&quot;</span>, <span class="dt">n_max =</span> <span class="dv">2</span>)
+<span class="co">#&gt; Accessing worksheet titled 'one-blank-row'.</span>
+<span class="co">#&gt; Source: local data frame [2 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   yo....1 yo....2 yo....3</span>
+<span class="co">#&gt;     (chr)   (chr)   (chr)</span>
+<span class="co">#&gt; 1      A2      NA      C2</span>
+<span class="co">#&gt; 2      A4      B4      C4</span>
+
+## also works on the cell feed
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;one-blank-row&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_cols</span>(<span class="st">&quot;A:Z&quot;</span>), <span class="dt">skip =</span> <span class="dv">2</span>,
+                        <span class="dt">col_names =</span> <span class="kw">paste0</span>(<span class="st">&quot;yo ?!*&quot;</span>, <span class="dv">1</span>:<span class="dv">3</span>), <span class="dt">check.names =</span> <span class="ot">TRUE</span>,
+                        <span class="dt">na =</span> <span class="st">&quot;*&quot;</span>, <span class="dt">comment =</span> <span class="st">&quot;#&quot;</span>, <span class="dt">n_max =</span> <span class="dv">2</span>)
+<span class="co">#&gt; Accessing worksheet titled 'one-blank-row'.</span>
+<span class="co">#&gt; Source: local data frame [2 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   yo....1 yo....2 yo....3</span>
+<span class="co">#&gt;     (chr)   (chr)   (chr)</span>
+<span class="co">#&gt; 1      A2      NA      C2</span>
+<span class="co">#&gt; 2      A4      B4      C4</span></code></pre></div>
+<p>Finally, we read from the worksheet with TWO blank rows at the top, which is more than the list feed can handle.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## use skip to get correct result via gs_read() --&gt; gs_read_csv()
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;two-blank-rows&quot;</span>, <span class="dt">skip =</span> <span class="dv">2</span>)
+<span class="co">#&gt; Accessing worksheet titled 'two-blank-rows'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   thing1 thing2 thing3</span>
+<span class="co">#&gt;    (chr)  (chr)  (chr)</span>
+<span class="co">#&gt; 1     A2      *     C2</span>
+<span class="co">#&gt; 2    #A3     B3     C3</span>
+<span class="co">#&gt; 3     A4     B4     C4</span>
+<span class="co">#&gt; 4     A5     B5     C5</span>
+
+## or use range in gs_read() --&gt; gs_read_cellfeed() + gs_reshape_cellfeed()
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;two-blank-rows&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_limits</span>(<span class="kw">c</span>(<span class="dv">3</span>, <span class="ot">NA</span>), <span class="kw">c</span>(<span class="ot">NA</span>, <span class="ot">NA</span>)))
+<span class="co">#&gt; Accessing worksheet titled 'two-blank-rows'.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   thing1 thing2 thing3</span>
+<span class="co">#&gt;    (chr)  (chr)  (chr)</span>
+<span class="co">#&gt; 1     A2      *     C2</span>
+<span class="co">#&gt; 2    #A3     B3     C3</span>
+<span class="co">#&gt; 3     A4     B4     C4</span>
+<span class="co">#&gt; 4     A5     B5     C5</span>
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;two-blank-rows&quot;</span>, <span class="dt">range =</span> <span class="kw">cell_cols</span>(<span class="st">&quot;A:C&quot;</span>))
+<span class="co">#&gt; Accessing worksheet titled 'two-blank-rows'.</span>
+<span class="co">#&gt; Source: local data frame [4 x 3]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   thing1 thing2 thing3</span>
+<span class="co">#&gt;    (chr)  (chr)  (chr)</span>
+<span class="co">#&gt; 1     A2      *     C2</span>
+<span class="co">#&gt; 2    #A3     B3     C3</span>
+<span class="co">#&gt; 3     A4     B4     C4</span>
+<span class="co">#&gt; 4     A5     B5     C5</span>
+
+## list feed can't cope because the 1st data row is empty
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;two-blank-rows&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'two-blank-rows'.</span>
+<span class="co">#&gt; Worksheet 'two-blank-rows' is empty.</span>
+<span class="co">#&gt; Source: local data frame [0 x 0]</span>
+ss %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span class="dt">ws =</span> <span class="st">&quot;two-blank-rows&quot;</span>, <span class="dt">skip =</span> <span class="dv">2</span>)
+<span class="co">#&gt; Accessing worksheet titled 'two-blank-rows'.</span>
+<span class="co">#&gt; Worksheet 'two-blank-rows' is empty.</span>
+<span class="co">#&gt; Source: local data frame [0 x 0]</span></code></pre></div>
+<p>Let’s clean up after ourselves.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_delete</span>(ss)
+<span class="co">#&gt; Success. &quot;data-ingest-practice&quot; moved to trash in Google Drive.</span></code></pre></div>
+</div>
+</div>
+<div id="create-sheets" class="section level3">
+<h3>Create sheets</h3>
+<p>You can use <code>googlesheets</code> to create new spreadsheets.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span><span class="kw">gs_new</span>(<span class="st">&quot;foo&quot;</span>)
+<span class="co">#&gt; Sheet &quot;foo&quot; created in Google Drive.</span>
+<span class="co">#&gt; Worksheet dimensions: 1000 x 26.</span>
+foo
+<span class="co">#&gt;                   Spreadsheet title: foo</span>
+<span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-03-17 08:07:45 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-03-17 08:07:43 GMT</span>
+<span class="co">#&gt;                          visibility: private</span>
+<span class="co">#&gt;                         permissions: rw</span>
+<span class="co">#&gt;                             version: new</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Contains 1 worksheets:</span>
+<span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
+<span class="co">#&gt; Sheet1: 1000 x 26</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Key: 10hNa5vBMssDkRJQg4z1Xr7USk74PX025kpJw1IRiMz4</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/10hNa5vBMssDkRJQg4z1Xr7USk74PX025kpJw1IRiMz4/</span></code></pre></div>
+<p><em>Note how we store the returned value from <code>gs_new()</code> (and all other sheet editing functions). That’s because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.</em></p>
+<p>By default, there will be an empty worksheet called “Sheet1”, but you can control its title, extent, and initial data with additional arguments to <code>gs_new()</code> (see <code>gs_edit_cells()</code> in the next section). You can also add, rename, and delete worksheets within an existing sheet via <code>gs_ws_new()</code>, <code>gs_ws_rename()</code>, and <code>gs_ws_delete()</code>. Copy an entire spreadsheet with <code>gs_copy()</code> and rename one with <code>gs_rename()</code>.</p>
+</div>
+<div id="edit-cells" class="section level3">
+<h3>Edit cells</h3>
+<p><em>Note how we continue to store the returned value from <code>gs_edit_cells()</code>. This workflow keeps the local registration info about the sheet up-to-date.</em></p>
+<p>There are two ways to edit cells within an existing worksheet of an existing spreadsheet:</p>
+<ul>
+<li><code>gs_edit_cells()</code> can write into an arbitrary cell rectangle</li>
+<li><code>gs_add_row()</code> can add a new row to the bottom of an existing cell rectangle</li>
+</ul>
+<p>If you have the choice, <code>gs_add_row()</code> is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">list feed</a>. <code>gs_edit_cells()</code> relies on <a href="https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request">batch editing</a> on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">cell feed</a>.</p>
+<p>We’ll work within the completely empty sheet created above, <code>foo</code>. If your edit populates the sheet with everything it should have, set <code>trim = TRUE</code> and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">## foo &lt;- gs_new(&quot;foo&quot;)
+## initialize the worksheets
+foo &lt;-<span class="st"> </span>foo %&gt;%<span class="st"> </span><span class="kw">gs_ws_new</span>(<span class="st">&quot;edit_cells&quot;</span>)
+<span class="co">#&gt; Worksheet &quot;edit_cells&quot; added to sheet &quot;foo&quot;.</span>
+<span class="co">#&gt; Worksheet dimensions: 1000 x 26.</span>
+foo &lt;-<span class="st"> </span>foo %&gt;%<span class="st"> </span><span class="kw">gs_ws_new</span>(<span class="st">&quot;add_row&quot;</span>)
+<span class="co">#&gt; Worksheet &quot;add_row&quot; added to sheet &quot;foo&quot;.</span>
+<span class="co">#&gt; Worksheet dimensions: 1000 x 26.</span>
+
+## add first six rows of iris data (and var names) into a blank sheet
+foo &lt;-<span class="st"> </span>foo %&gt;%
+<span class="st">  </span><span class="kw">gs_edit_cells</span>(<span class="dt">ws =</span> <span class="st">&quot;edit_cells&quot;</span>, <span class="dt">input =</span> <span class="kw">head</span>(iris), <span class="dt">trim =</span> <span class="ot">TRUE</span>)
+<span class="co">#&gt; Range affected by the update: &quot;A1:E7&quot;</span>
+<span class="co">#&gt; Worksheet &quot;edit_cells&quot; successfully updated with 35 new value(s).</span>
+<span class="co">#&gt; Accessing worksheet titled 'edit_cells'.</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;foo&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'edit_cells'.</span>
+<span class="co">#&gt; Worksheet &quot;edit_cells&quot; dimensions changed to 7 x 5.</span>
+
+## initialize sheet with column headers and one row of data
+## the list feed is picky about this
+foo &lt;-<span class="st"> </span>foo %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">gs_edit_cells</span>(<span class="dt">ws =</span> <span class="st">&quot;add_row&quot;</span>, <span class="dt">input =</span> <span class="kw">head</span>(iris, <span class="dv">1</span>), <span class="dt">trim =</span> <span class="ot">TRUE</span>)
+<span class="co">#&gt; Range affected by the update: &quot;A1:E2&quot;</span>
+<span class="co">#&gt; Worksheet &quot;add_row&quot; successfully updated with 10 new value(s).</span>
+<span class="co">#&gt; Accessing worksheet titled 'add_row'.</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;foo&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'add_row'.</span>
+<span class="co">#&gt; Worksheet &quot;add_row&quot; dimensions changed to 2 x 5.</span>
+## add the next 5 rows of data ... careful not to go too fast
+for (i in <span class="dv">2</span>:<span class="dv">6</span>) {
+  foo &lt;-<span class="st"> </span>foo %&gt;%<span class="st"> </span><span class="kw">gs_add_row</span>(<span class="dt">ws =</span> <span class="st">&quot;add_row&quot;</span>, <span class="dt">input =</span> iris[i, ])
+  <span class="kw">Sys.sleep</span>(<span class="fl">0.3</span>)
+}
+<span class="co">#&gt; Row successfully appended.</span>
+<span class="co">#&gt; Row successfully appended.</span>
+<span class="co">#&gt; Row successfully appended.</span>
+<span class="co">#&gt; Row successfully appended.</span>
+<span class="co">#&gt; Row successfully appended.</span>
+
+## let's inspect out work
+foo %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;edit_cells&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'edit_cells'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [6 x 5]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
+<span class="co">#&gt;          (dbl)       (dbl)        (dbl)       (dbl)   (chr)</span>
+<span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
+<span class="co">#&gt; 2          4.9         3.0          1.4         0.2  setosa</span>
+<span class="co">#&gt; 3          4.7         3.2          1.3         0.2  setosa</span>
+<span class="co">#&gt; 4          4.6         3.1          1.5         0.2  setosa</span>
+<span class="co">#&gt; 5          5.0         3.6          1.4         0.2  setosa</span>
+<span class="co">#&gt; 6          5.4         3.9          1.7         0.4  setosa</span>
+foo %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;add_row&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'add_row'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [6 x 5]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
+<span class="co">#&gt;          (dbl)       (dbl)        (dbl)       (dbl)   (chr)</span>
+<span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
+<span class="co">#&gt; 2          4.9         3.0          1.4         0.2  setosa</span>
+<span class="co">#&gt; 3          4.7         3.2          1.3         0.2  setosa</span>
+<span class="co">#&gt; 4          4.6         3.1          1.5         0.2  setosa</span>
+<span class="co">#&gt; 5          5.0         3.6          1.4         0.2  setosa</span>
+<span class="co">#&gt; 6          5.4         3.9          1.7         0.4  setosa</span></code></pre></div>
+<p>Go to <a href="https://docs.google.com/spreadsheets/u/0/">your Google Sheets home screen</a>, find the new sheet <code>foo</code> and look at it. You should see some iris data in the worksheets named <code>edit_cells</code> and <code>add_row</code>. You could also use <code>gs_browse()</code> to take you directly to those worksheets.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_browse</span>(foo, <span class="dt">ws =</span> <span class="st">&quot;edit_cells&quot;</span>)
+<span class="kw">gs_browse</span>(foo, <span class="dt">ws =</span> <span class="st">&quot;add_row&quot;</span>)</code></pre></div>
+<p>Read the function documentation for <code>gs_edit_cells()</code> for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the <code>byrow =</code> argument.</p>
+</div>
+<div id="delete-sheets" class="section level3">
+<h3>Delete sheets</h3>
+<p>Let’s clean up by deleting the <code>foo</code> spreadsheet we’ve been playing with.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_delete</span>(foo)
+<span class="co">#&gt; Success. &quot;foo&quot; moved to trash in Google Drive.</span></code></pre></div>
+<p>If you’d rather specify sheets for deletion by title, look at <code>gs_grepdel()</code> and <code>gs_vecdel()</code>. These functions also allow the deletion of multiple sheets at once.</p>
+</div>
+<div id="upload-delimited-files-or-excel-workbooks" class="section level3">
+<h3>Upload delimited files or Excel workbooks</h3>
+<p>Here’s how we can create a new spreadsheet from a suitable local file. First, we’ll write then upload a comma-delimited excerpt from the iris data.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
+<span class="st">  </span><span class="kw">head</span>(<span class="dv">5</span>) %&gt;%
+<span class="st">  </span><span class="kw">write.csv</span>(<span class="st">&quot;iris.csv&quot;</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)
+iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span class="st">&quot;iris.csv&quot;</span>)
+<span class="co">#&gt; File uploaded to Google Drive:</span>
+<span class="co">#&gt; iris.csv</span>
+<span class="co">#&gt; As the Google Sheet named:</span>
+<span class="co">#&gt; iris</span>
+iris_ss
+<span class="co">#&gt;                   Spreadsheet title: iris</span>
+<span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-03-17 08:08:20 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-03-17 08:08:18 GMT</span>
+<span class="co">#&gt;                          visibility: private</span>
+<span class="co">#&gt;                         permissions: rw</span>
+<span class="co">#&gt;                             version: new</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Contains 1 worksheets:</span>
+<span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
+<span class="co">#&gt; iris: 1000 x 26</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Key: 1XTJKEML3G4YF2GAsoKTpm0VAMuRpUOkYi1utLtDn_Uk</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1XTJKEML3G4YF2GAsoKTpm0VAMuRpUOkYi1utLtDn_Uk/</span>
+iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
+<span class="co">#&gt; Accessing worksheet titled 'iris'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [5 x 5]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
+<span class="co">#&gt;          (dbl)       (dbl)        (dbl)       (dbl)   (chr)</span>
+<span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
+<span class="co">#&gt; 2          4.9         3.0          1.4         0.2  setosa</span>
+<span class="co">#&gt; 3          4.7         3.2          1.3         0.2  setosa</span>
+<span class="co">#&gt; 4          4.6         3.1          1.5         0.2  setosa</span>
+<span class="co">#&gt; 5          5.0         3.6          1.4         0.2  setosa</span>
+<span class="kw">file.remove</span>(<span class="st">&quot;iris.csv&quot;</span>)
+<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<p>Now we’ll upload a multi-sheet Excel workbook. Slowly.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap_xlsx &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span class="kw">system.file</span>(<span class="st">&quot;mini-gap&quot;</span>, <span class="st">&quot;mini-gap.xlsx&quot;</span>,
+                                  <span class="dt">package =</span> <span class="st">&quot;googlesheets&quot;</span>))
+<span class="co">#&gt; File uploaded to Google Drive:</span>
+<span class="co">#&gt; /Users/jenny/rrr/googlesheets/inst/mini-gap/mini-gap.xlsx</span>
+<span class="co">#&gt; As the Google Sheet named:</span>
+<span class="co">#&gt; mini-gap</span>
+gap_xlsx
+<span class="co">#&gt;                   Spreadsheet title: mini-gap</span>
+<span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-03-17 08:08:25 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-03-17 08:08:22 GMT</span>
+<span class="co">#&gt;                          visibility: private</span>
+<span class="co">#&gt;                         permissions: rw</span>
+<span class="co">#&gt;                             version: new</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Contains 5 worksheets:</span>
+<span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
+<span class="co">#&gt; Africa: 1000 x 26</span>
+<span class="co">#&gt; Americas: 1000 x 26</span>
+<span class="co">#&gt; Asia: 1000 x 26</span>
+<span class="co">#&gt; Europe: 1000 x 26</span>
+<span class="co">#&gt; Oceania: 1000 x 26</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Key: 1P9zzCXYNRZXWBqvTdV3p9XfFGv9DOBgiOx72tWDpsTE</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1P9zzCXYNRZXWBqvTdV3p9XfFGv9DOBgiOx72tWDpsTE/</span>
+gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)
+<span class="co">#&gt; Accessing worksheet titled 'Asia'.</span>
+<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
+<span class="co">#&gt; Source: local data frame [5 x 6]</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;       country continent  year lifeExp       pop gdpPercap</span>
+<span class="co">#&gt;         (chr)     (chr) (int)   (dbl)     (int)     (dbl)</span>
+<span class="co">#&gt; 1 Afghanistan      Asia  1952  28.801   8425333  779.4453</span>
+<span class="co">#&gt; 2     Bahrain      Asia  1952  50.939    120447 9867.0848</span>
+<span class="co">#&gt; 3  Bangladesh      Asia  1952  37.484  46886859  684.2442</span>
+<span class="co">#&gt; 4    Cambodia      Asia  1952  39.417   4693836  368.4693</span>
+<span class="co">#&gt; 5       China      Asia  1952  44.000 556263527  400.4486</span></code></pre></div>
+<p>And we clean up after ourselves on Google Drive.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_vecdel</span>(<span class="kw">c</span>(<span class="st">&quot;iris&quot;</span>, <span class="st">&quot;mini-gap&quot;</span>))
+<span class="co">#&gt; Sheet successfully identified: &quot;mini-gap&quot;</span>
+<span class="co">#&gt; Success. &quot;mini-gap&quot; moved to trash in Google Drive.</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;iris&quot;</span>
+<span class="co">#&gt; Success. &quot;iris&quot; moved to trash in Google Drive.</span>
+<span class="co">#&gt; [1] TRUE TRUE</span>
+## achieves same as:
+## gs_delete(iris_ss)
+## gs_delete(gap_xlsx)</code></pre></div>
+</div>
+<div id="download-sheets-as-csv-pdf-or-xlsx-file" class="section level3">
+<h3>Download sheets as csv, pdf, or xlsx file</h3>
+<p>You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%
+<span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">ws =</span> <span class="st">&quot;Africa&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;gapminder-africa.csv&quot;</span>)
+<span class="co">#&gt; Sheet successfully identified: &quot;Gapminder&quot;</span>
+<span class="co">#&gt; Accessing worksheet titled 'Africa'.</span>
+<span class="co">#&gt; Sheet successfully downloaded:</span>
+<span class="co">#&gt; /Users/jenny/rrr/googlesheets/vignettes/gapminder-africa.csv</span>
+## is it there? yes!
+<span class="kw">read.csv</span>(<span class="st">&quot;gapminder-africa.csv&quot;</span>) %&gt;%<span class="st"> </span><span class="kw">head</span>()
+<span class="co">#&gt;   country continent year lifeExp      pop gdpPercap</span>
+<span class="co">#&gt; 1 Algeria    Africa 1952  43.077  9279525  2449.008</span>
+<span class="co">#&gt; 2 Algeria    Africa 1957  45.685 10270856  3013.976</span>
+<span class="co">#&gt; 3 Algeria    Africa 1962  48.303 11000948  2550.817</span>
+<span class="co">#&gt; 4 Algeria    Africa 1967  51.407 12760499  3246.992</span>
+<span class="co">#&gt; 5 Algeria    Africa 1972  54.518 14760787  4182.664</span>
+<span class="co">#&gt; 6 Algeria    Africa 1977  58.014 17152804  4910.417</span></code></pre></div>
+<p>Download the entire spreadsheet as an Excel workbook.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">to =</span> <span class="st">&quot;gapminder.xlsx&quot;</span>)
+<span class="co">#&gt; Warning: closing unused connection 6 (/Users/jenny/rrr/googlesheets/inst/</span>
+<span class="co">#&gt; mini-gap/mini-gap.xlsx)</span>
+<span class="co">#&gt; Warning: closing unused connection 5 (/Users/jenny/rrr/googlesheets/</span>
+<span class="co">#&gt; vignettes/iris.csv)</span>
+<span class="co">#&gt; Sheet successfully identified: &quot;Gapminder&quot;</span>
+<span class="co">#&gt; Sheet successfully downloaded:</span>
+<span class="co">#&gt; /Users/jenny/rrr/googlesheets/vignettes/gapminder.xlsx</span></code></pre></div>
+<p>Go check it out in Excel, if you wish!</p>
+<p>And now we clean up the downloaded files.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">file.remove</span>(<span class="kw">c</span>(<span class="st">&quot;gapminder.xlsx&quot;</span>, <span class="st">&quot;gapminder-africa.csv&quot;</span>))
+<span class="co">#&gt; [1] TRUE TRUE</span></code></pre></div>
+</div>
+<div id="authorization-using-oauth2" class="section level3">
+<h3>Authorization using OAuth2</h3>
+<p>If you use a function that requires authorization, it will be auto-triggered. But you can also initiate the process explicitly if you wish, like so:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Give googlesheets permission to access your spreadsheets and google drive</span>
+<span class="kw">gs_auth</span>() </code></pre></div>
+<p>Use <code>gs_auth(new_user = TRUE)</code>, to force the process to begin anew. Otherwise, the credentials left behind will be used to refresh your access token as needed.</p>
+<p>The function <code>gs_user()</code> will print and return some information about the current authenticated user and session.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">user_session_info &lt;-<span class="st"> </span><span class="kw">gs_user</span>()
+<span class="co">#&gt;           displayName: google sheets</span>
+<span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
+<span class="co">#&gt;                  date: 2016-03-17 08:03:17 GMT</span>
+<span class="co">#&gt;          access token: valid</span>
+<span class="co">#&gt;  peek at access token: ya29....N7A6s</span>
+<span class="co">#&gt; peek at refresh token: 1/LxW...4wRNU</span>
+user_session_info
+<span class="co">#&gt; $displayName</span>
+<span class="co">#&gt; [1] &quot;google sheets&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $emailAddress</span>
+<span class="co">#&gt; [1] &quot;gspreadr@gmail.com&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $date</span>
+<span class="co">#&gt; [1] &quot;2016-03-17 08:03:17 GMT&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $token_valid</span>
+<span class="co">#&gt; [1] TRUE</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $peek_acc</span>
+<span class="co">#&gt; [1] &quot;ya29....N7A6s&quot;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $peek_ref</span>
+<span class="co">#&gt; [1] &quot;1/LxW...4wRNU&quot;</span></code></pre></div>
+</div>
+<div id="old-google-sheets" class="section level3">
+<h3>“Old” Google Sheets</h3>
+<p>In March 2014 <a href="https://support.google.com/docs/answer/3541068?hl=en">Google introduced “new” Sheets</a>. “New” Sheets and “old” sheets behave quite differently with respect to access via API and present a big headache for us. In 2015, Google started forcibly converting sheets: <a href="https://support.google.com/docs/answer/6082736?p=new_sheets_migrate&amp;rd=1">all “old” Sheets will be switched over the “new” sheets during 2015</a>. For a while, there were still “old” sheets lying around, so we’ve made some effort to support them, when it’s easy to do so. But keep your expectations low. You can expect what little support there is to go away in the next version of <code>googlesheets</code>.</p>
+<p><code>gs_read_csv()</code> does not work for “old” sheets. Nor will it ever.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

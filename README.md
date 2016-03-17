@@ -66,7 +66,7 @@ GitHub versions:
 
 -   [Basic usage](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md)
 -   [Formulas and formatted numbers](https://github.com/jennybc/googlesheets/blob/master/vignettes/formulas-and-formatted-numbers.md)
--   [Managing Oauth tokens](https://github.com/jennybc/googlesheets/blob/master/vignettes/managing-auth-tokens.md)
+-   [Managing OAuth tokens](https://github.com/jennybc/googlesheets/blob/master/vignettes/managing-auth-tokens.md)
 
 ### Talks
 
@@ -113,7 +113,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-16 20:53:53 GMT
+#>   Date of googlesheets registration: 2016-03-17 09:45:48 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
