@@ -64,9 +64,9 @@ devtools::install_github("hadley/xml2")
 
 GitHub versions:
 
--   [Basic usage](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md)
--   [Formulas and formatted numbers](https://github.com/jennybc/googlesheets/blob/master/vignettes/formulas-and-formatted-numbers.md)
--   [Managing OAuth tokens](https://github.com/jennybc/googlesheets/blob/master/vignettes/managing-auth-tokens.md)
+-   [Basic usage](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html)
+-   [Formulas and formatted numbers](https://rawgit.com/jennybc/googlesheets/master/vignettes/formulas-and-formatted-numbers.html)
+-   [Managing OAuth tokens](https://rawgit.com/jennybc/googlesheets/master/vignettes/managing-auth-tokens.html)
 
 ### Talks
 
@@ -113,7 +113,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-17 09:45:48 GMT
+#>   Date of googlesheets registration: 2016-03-17 09:52:13 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
