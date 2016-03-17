@@ -6,7 +6,8 @@
 googlesheets.Rproj
 jenny-scratch/*
 googlesheets_token.rds
-*.html
+internal-projects/**/*.html
+inst/shiny-examples/**/*.html
 pics
 jenny_token.rds
 rsconnect

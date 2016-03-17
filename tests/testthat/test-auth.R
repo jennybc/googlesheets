@@ -21,7 +21,8 @@ test_that("User info is available and as expected", {
   expect_is(user_info$date, "POSIXct")
   expect_true(user_info$token_valid)
   ## don't be surprised when this regex breaks; I have no idea what's possible
-  expect_match(user_info[c('peek_acc', 'peek_ref')], "[/\\.\\w-]+", all = TRUE)
+  expect_match(unlist(user_info[c('peek_acc', 'peek_ref')]),
+               "[/\\.\\w-]+", all = TRUE)
 })
 
 test_that("Token peek works", {
