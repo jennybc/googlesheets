@@ -1,9 +1,13 @@
 ## Test environments
+
 * local OS X install, R 3.2.3
 * ubuntu 12.04 on travis-ci, R 3.2.3
-* win-builder, release 3.2.4 and devel
+* local-to-a-colleague Win 7 Professional, SP1, R 3.2.4
 
-This update resolves the WARNINGS in CRAN Package Check Results. I needed to adjust to new behavior in the dependency httr (version v1.1.0, released 2016-01-27). I also resolved a minor issue that caused a NOTE on some flavors: I now require R (>= 3.2.0) since I use get0.
+This update resolves the WARNINGS in CRAN Package Check Results. I
+needed to adjust to new behavior in the dependency httr (version v1.1.0,
+released 2016-01-27). I also resolved a minor issue that caused a NOTE
+on some flavors: I now require R (>= 3.2.0) since I use get0.
 
 ## R CMD check results
 
@@ -26,4 +30,11 @@ Found the following (possibly) invalid URLs:
     Status: 404
     Message: Not Found
 
-This URL goes to the Google Developers Console if and only if user is currently signed in with Google. Otherwise it redirects to a login screen. I assume something about that process is causing CRAN to think the URL is invalid.
+This URL goes to the Google Developers Console if and only if user is
+currently signed in with Google. Otherwise it redirects to a login
+screen. I assume something about that process is causing CRAN to think
+the URL is invalid.
+
+## Downstream dependencies
+
+There aren't any.
