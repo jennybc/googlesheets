@@ -18,4 +18,9 @@
     - `readr` exception #1: variables that consist entirely of missing values will be `NA` of the logical type, not `NA_character_`.
     - `readr` exception #2: `googlesheets` will never return a data frame with `NA` as a variable name. Instead, it will create a dummy variable name, like `X5`.
     - `readr` exception #3: All read/reshape functions accept `check.names`, in the spirit of `utils::read.table()`, which defaults to `FALSE`. If `TRUE`, variable names will be run through `make.names(..., unique = TRUE)`. (#208)
+  * `gs_read_cellfeed()` now returns all possible definitions of cell contents:
+    - `value`: The variable previously known as `cell_text`. What you see in the browser and what Sheets API returns by default.
+    - `input_value`: What you would have typed into the cell. Will give unevaluated formulas. (#18, #19, #152)
+    - `numeric_value`: An actual number, if such exists, unmangled by rounding or other numeric formatting. (#152, #178)
+  * New argument `literal = FALSE` available in reading/reshaping functions that call the cell feed. Tries to be clever about using different definitions of cell contents.
   * `gs_deauth()` is a newly exported function that allows you to suspend the current token and, optionally, disable the `.httr-oauth` token cache file by renaming it to `.httr-oauth-SUSPENDED`.
