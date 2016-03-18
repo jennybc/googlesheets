@@ -4,6 +4,12 @@
 * ubuntu 12.04 on travis-ci, R 3.2.3
 * local-to-a-colleague Win 7 Professional, SP1, R 3.2.4
 
+This is a resubmission. I've addressed these three concerns:
+
+  * There is now a build/vignettes.rds file = a pre-built vignette index.
+  * I have Rbuildignored some large figures that were not directly used in any vignettes. Tarball has shrunk from ~5MB to ~2MB.
+  * The .build.timestamp file has been removed.
+
 This update resolves the WARNINGS in CRAN Package Check Results. I
 needed to adjust to new behavior in the dependency httr (version v1.1.0,
 released 2016-01-27). I also resolved a minor issue that caused a NOTE
