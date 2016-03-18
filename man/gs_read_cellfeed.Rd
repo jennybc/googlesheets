@@ -101,7 +101,7 @@ gs_read_cellfeed(gap_ss, range = "A2:F3")
   respectively; \code{\link{gs_read}} is a pre-made wrapper that combines
   \code{gs_read_cellfeed} and \code{\link{gs_reshape_cellfeed}}
 
-Other data.consumption.functions: \code{\link{gs_read_csv}},
+Other data consumption functions: \code{\link{gs_read_csv}},
   \code{\link{gs_read_listfeed}}, \code{\link{gs_read}},
   \code{\link{gs_reshape_cellfeed}},
   \code{\link{gs_simplify_cellfeed}}

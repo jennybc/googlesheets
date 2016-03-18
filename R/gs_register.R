@@ -49,7 +49,7 @@
 #' only contain info from the spreadsheets feed if \code{lookup = TRUE}, which
 #' directs us to look up sheet-identifying information in the spreadsheets feed.
 #'
-#' @name googlesheet
+#' @name googlesheet-registration
 #'
 #' @param x sheet-identifying information; a character vector of length one
 #'   holding sheet title, key, browser URL or worksheets feed OR, in the case of

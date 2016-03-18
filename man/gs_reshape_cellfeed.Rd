@@ -82,7 +82,7 @@ gs_reshape_cellfeed(ff_cf, literal = FALSE) # more vars are numeric
 }
 }
 \seealso{
-Other data.consumption.functions: \code{\link{gs_read_cellfeed}},
+Other data consumption functions: \code{\link{gs_read_cellfeed}},
   \code{\link{gs_read_csv}},
   \code{\link{gs_read_listfeed}}, \code{\link{gs_read}},
   \code{\link{gs_simplify_cellfeed}}

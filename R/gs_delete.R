@@ -19,6 +19,8 @@
 #'   wrappers that help you delete sheets by title, with the ability to delete
 #'   multiple sheets at once
 #'
+#' @family sheet deletion functions
+#'
 #' @examples
 #' \dontrun{
 #' foo <- gs_new("new_sheet")
@@ -92,6 +94,10 @@ gs_delete <- function(ss, verbose = TRUE) {
 #'   matching \code{regex} to sheet titles
 #' @template verbose
 #'
+#' @seealso \code{\link{gs_delete}} for more detail on what you can and cannot
+#' delete and how to recover from accidental deletion
+#'
+#' @family sheet deletion functions
 #' @export
 gs_grepdel <- function(regex, ..., verbose = TRUE) {
 

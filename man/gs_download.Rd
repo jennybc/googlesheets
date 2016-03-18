@@ -32,10 +32,9 @@ The normalized path of the downloaded file, after confirmed success,
 Export a Google Sheet as a .csv, .pdf, or .xlsx file. You can download a
 sheet that you own or a sheet owned by a third party that has been made
 accessible via the sharing dialog options. You can download the entire
-spreadsheet (.pdf and .xlsx formats) or a single worksheet. This function
-calls the \href{https://developers.google.com/drive/v2/reference/}{Google
-Drive API}. Note that the current implementation of this function absolutely
-requires authorization.
+spreadsheet (.pdf and .xlsx formats only) or a single worksheet (all
+formats). This function calls the
+\href{https://developers.google.com/drive/v2/reference/}{Google Drive API}.
 }
 \details{
 If the worksheet is unspecified, i.e. if \code{ws = NULL}, then the entire

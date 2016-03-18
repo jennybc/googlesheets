@@ -37,5 +37,7 @@ gs_delete(foo)
 \code{\link{gs_grepdel}} and \code{\link{gs_vecdel}} for handy
   wrappers that help you delete sheets by title, with the ability to delete
   multiple sheets at once
+
+Other sheet deletion functions: \code{\link{gs_grepdel}}
 }
 
