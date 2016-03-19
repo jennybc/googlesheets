@@ -7,23 +7,19 @@ google_user <- function() {
 
   ## require pre-existing token, to avoid recursion that would arise if
   ## this function called gs_auth()
-  if (token_available(verbose = FALSE)) {
-
-    ## https://developers.google.com/drive/v2/reference/about
-    url <- file.path(.state$gd_base_url, "drive/v2/about")
-    req <- httr::GET(url, google_token()) %>%
-      httr::stop_for_status()
-    rc <- content_as_json_UTF8(req)
-
-    list(displayName = rc$user$displayName,
-         emailAddress = rc$user$emailAddress,
-         date = req$headers$date %>% httr::parse_http_date())
-
-  } else {
-
-    NULL
-
+  if (!token_available(verbose = FALSE)) {
+    return(NULL)
   }
+
+  ## https://developers.google.com/drive/v2/reference/about
+  url <- file.path(.state$gd_base_url, "drive/v2/about")
+  req <- httr::GET(url, google_token()) %>%
+    httr::stop_for_status()
+  rc <- content_as_json_UTF8(req)
+
+  list(displayName = rc$user$displayName,
+       emailAddress = rc$user$emailAddress,
+       date = req$headers$date %>% httr::parse_http_date())
 
 }
 
@@ -50,40 +46,36 @@ google_user <- function() {
 #' @export
 gd_user <- function(verbose = TRUE) {
 
-  if(token_available(verbose = verbose) && is_legit_token(.state$token)) {
+  if (!token_available(verbose = verbose) || !is_legit_token(.state$token)) {
+    invisible(return(NULL))
+  }
 
-    token <- .state$token
+  token <- .state$token
 
-    token_valid <- token$validate()
+  token_valid <- token$validate()
 
-    ret <- list(
-      displayName = .state$user$displayName,
-      emailAddress = .state$user$emailAddress,
-      date = .state$user$date,
-      token_valid = token_valid,
-      peek_acc = paste(stringr::str_sub(token$credentials$access_token,
-                                        end = 5),
-                       stringr::str_sub(token$credentials$access_token,
-                                        start = -5), sep = "..."),
-      peek_ref = paste(stringr::str_sub(token$credentials$refresh_token,
-                                        end = 5),
-                       stringr::str_sub(token$credentials$refresh_token,
-                                        start = -5), sep = "..."))
+  ret <- list(
+    displayName = .state$user$displayName,
+    emailAddress = .state$user$emailAddress,
+    date = .state$user$date,
+    token_valid = token_valid,
+    peek_acc = paste(stringr::str_sub(token$credentials$access_token,
+                                      end = 5),
+                     stringr::str_sub(token$credentials$access_token,
+                                      start = -5), sep = "..."),
+    peek_ref = paste(stringr::str_sub(token$credentials$refresh_token,
+                                      end = 5),
+                     stringr::str_sub(token$credentials$refresh_token,
+                                      start = -5), sep = "..."))
 
-    if(verbose) {
-      mpf("          displayName: %s",  ret$displayName)
-      mpf("         emailAddress: %s", ret$emailAddress)
-      mpf("                 date: %s", format(ret$date, usetz = TRUE))
-      mpf("         access token: %s",
-          if(token_valid) "valid" else "expired, will auto-refresh")
-      mpf(" peek at access token: %s", ret$peek_acc)
-      mpf("peek at refresh token: %s", ret$peek_ref)
-    }
-
-  } else {
-
-    ret <- NULL
-
+  if (verbose) {
+    cpf("          displayName: %s",  ret$displayName)
+    cpf("         emailAddress: %s", ret$emailAddress)
+    cpf("                 date: %s", format(ret$date, usetz = TRUE))
+    cpf("         access token: %s",
+        if (token_valid) "valid" else "expired, will auto-refresh")
+    cpf(" peek at access token: %s", ret$peek_acc)
+    cpf("peek at refresh token: %s", ret$peek_ref)
   }
 
   invisible(ret)
