@@ -125,7 +125,7 @@ test_that("We get correct number and titles of worksheets", {
 
 test_that("Print method for googlesheet works", {
 
-  ss <- gs_ws_feed(gs_gap_ws_feed(), lookup = FALSE)
+  ss <- gs_gap()
   expect_output(print(ss), paste("Spreadsheet title:", ss$sheet_title))
   expect_output(print(ss), paste("Key:", gs_gap_key()))
 

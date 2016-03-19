@@ -14,7 +14,7 @@ activate_test_token()
 test_that("Testing token is in force", expect_true(token_available()))
 
 test_that("User info is available and as expected", {
-  user_info <- gd_user()
+  expect_output(user_info <- gd_user(), "displayName")
   expect_is(user_info, "list")
   expect_identical(user_info$displayName, "google sheets")
   expect_identical(user_info$emailAddress, "gspreadr@gmail.com")
@@ -26,12 +26,12 @@ test_that("User info is available and as expected", {
 })
 
 test_that("Token peek works", {
-  ui <- gd_user()
+  expect_output(user_info <- gd_user(), "displayName")
   ttt <- readRDS("googlesheets_token.rds")
   expect_identical(substr(ttt$credentials$access_token, 1, 5),
-                   substr(ui$peek_acc, 1, 5))
+                   substr(user_info$peek_acc, 1, 5))
   expect_identical(substr(ttt$credentials$refresh_token, 1, 5),
-                   substr(ui$peek_ref, 1, 5))
+                   substr(user_info$peek_ref, 1, 5))
 
 })
 
