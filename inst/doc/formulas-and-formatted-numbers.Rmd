@@ -1,15 +1,32 @@
-# Formulas and formatted numbers
-Jenny Bryan  
-`r Sys.Date()`  
+---
+title: "Formulas and formatted numbers"
+author: "Jenny Bryan"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Formulas and formatted numbers}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
 
-
+```{r setup, echo = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
+)
+```
 
 ## Preliminaries
 
 Load `googlesheets` and `dplyr`, from which we use the `%>%` pipe operator and which gives us nicer printing of data frames (`tbl_df`s)
 
-
-```r
+```{r load-package}
 library(googlesheets)
 suppressMessages(library(dplyr))
 ```
@@ -18,8 +35,7 @@ suppressMessages(library(dplyr))
 
 To see how your data comes in as a data frame *without numeric formatting*, try this:
 
-
-```r
+```{r eval = FALSE}
 gs_read(..., literal = FALSE)
 ```
 
@@ -28,55 +44,21 @@ Here's an example:
   * First variable comes in properly as numeric when `literal = FALSE` vs as character when `literal = TRUE` (the default)
   * Second variable does not lose precision due to rounding when `literal = FALSE`.
 
-
-```r
+```{r}
 gs_ff() %>% 
   gs_read(range = cell_cols("B:C"))
-#> Accessing worksheet titled 'Sheet1'.
-#> Source: local data frame [5 x 2]
-#> 
-#>   number_formatted number_rounded
-#>              (chr)          (dbl)
-#> 1          654,321           1.23
-#> 2           12.34%           2.35
-#> 3         1.23E+09           3.46
-#> 4            3 1/7           4.57
-#> 5            $0.36           5.68
 gs_ff() %>% 
   gs_read(literal = FALSE, range = cell_cols("B:C"))
-#> Accessing worksheet titled 'Sheet1'.
-#> Source: local data frame [5 x 2]
-#> 
-#>   number_formatted number_rounded
-#>              (dbl)          (dbl)
-#> 1     6.543210e+05         1.2345
-#> 2     1.234000e-01         2.3456
-#> 3     1.234568e+09         3.4567
-#> 4     3.141593e+00         4.5678
-#> 5     3.600000e-01         5.6789
 ```
 
 If you want full access to cell contents, use `gs_read_cellfeed(..., literal = FALSE)` to get a data frame with one per cell. Then take your pick from `value`, `input_value`, and `numeric_value`. Here's an example with lots of formulas:
 
-
-```r
+```{r results = "asis"}
 gs_ff() %>% 
   gs_read_cellfeed(range = cell_cols("E")) %>% 
   select(-cell_alt, -row, -col) %>% 
   knitr::kable()
-#> Accessing worksheet titled 'Sheet1'.
 ```
-
-
-
-cell   value          input_value                                               numeric_value 
------  -------------  --------------------------------------------------------  --------------
-E1     formula        formula                                                   NA            
-E2     Google         =HYPERLINK("http://www.google.com/","Google")             NA            
-E3     1,271,591.00   =sum(R[-1]C[-4]:R[3]C[-4])                                1271591.0     
-E4                    =IMAGE("https://www.google.com/images/srpr/logo3w.png")   NA            
-E5     $A$1           =ADDRESS(1,1)                                             NA            
-E6                    =SPARKLINE(R[-4]C[-4]:R[0]C[-4])                          NA            
 
 Read on if you want to know more.
 
@@ -122,22 +104,10 @@ It's one of the built-in example sheets. Access it with various functions that s
 
 Here's how it comes in as a data frame by default: you get "literal values" (suppressing a boring column in order to show the interesting ones).
 
-
-```r
+```{r}
 gs_ff() %>% 
   gs_read() %>% 
   select(-integer)
-#> Accessing worksheet titled 'Sheet1'.
-#> No encoding supplied: defaulting to UTF-8.
-#> Source: local data frame [5 x 5]
-#> 
-#>   number_formatted number_rounded character      formula formula_formatted
-#>              (chr)          (dbl)     (chr)        (chr)             (chr)
-#> 1          654,321           1.23       one       Google          3.18E+05
-#> 2           12.34%           2.35        NA 1,271,591.00            52.63%
-#> 3         1.23E+09           3.46     three           NA              0.22
-#> 4            3 1/7           4.57      four         $A$1        123,456.00
-#> 5            $0.36           5.68      five           NA           317,898
 ```
 
 What if you want unformatted numbers? What if you want the actual formulas? You can now get them the cell feed, which, in `googlesheets`, means you must use `gs_read_cellfeed()`. You can cause `gs_read()` to consult the cell feed by specifying `literal = FALSE`.
@@ -154,51 +124,20 @@ What if you need more control over which cells? What if you want input or numeri
   * `input_value`: What you would have typed into the cell (if you are a total spreadsheet nerd, when it comes to percentages).
   * `numeric_value`: The actual number, if such exists.
 
-
-```r
+```{r}
 cf <- gs_read_cellfeed(gs_ff())
-#> Accessing worksheet titled 'Sheet1'.
 ```
 
 ![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
 
-
-cell   value               input_value                                               numeric_value       
------  ------------------  --------------------------------------------------------  --------------------
-A1     integer             integer                                                   NA                  
-A2     123456              123456                                                    123456.0            
-A3     345678              345678                                                    345678.0            
-A4     234567              234567                                                    234567.0            
-A6     567890              567890                                                    567890.0            
-B1     number_formatted    number_formatted                                          NA                  
-B2     654,321             654321                                                    654321.0            
-B3     12.34%              12.34%                                                    0.1234              
-B4     1.23E+09            1234567890                                                1.23456789E9        
-B5     3 1/7               3.14159265359                                             3.14159265359       
-B6     \$0.36              0.36                                                      0.36                
-C1     number_rounded      number_rounded                                            NA                  
-C2     1.23                1.2345                                                    1.2345              
-C3     2.35                2.3456                                                    2.3456              
-C4     3.46                3.4567                                                    3.4567              
-C5     4.57                4.5678                                                    4.5678              
-C6     5.68                5.6789                                                    5.6789              
-D1     character           character                                                 NA                  
-D2     one                 one                                                       NA                  
-D4     three               three                                                     NA                  
-D5     four                four                                                      NA                  
-D6     five                five                                                      NA                  
-E1     formula             formula                                                   NA                  
-E2     Google              =HYPERLINK("http://www.google.com/","Google")             NA                  
-E3     1,271,591.00        =sum(R[-1]C[-4]:R[3]C[-4])                                1271591.0           
-E4                         =IMAGE("https://www.google.com/images/srpr/logo3w.png")   NA                  
-E5     \$A\$1              =ADDRESS(1,1)                                             NA                  
-E6                         =SPARKLINE(R[-4]C[-4]:R[0]C[-4])                          NA                  
-F1     formula_formatted   formula_formatted                                         NA                  
-F2     3.18E+05            =average(R[0]C[-5]:R[4]C[-5])                             317897.75           
-F3     52.63%              =R[-1]C[-5]/R[1]C[-5]                                     0.5263144432081239  
-F4     0.22                =R[-2]C[-5]/R[2]C[-5]                                     0.21739421366813996 
-F5     123,456.00          =min(R[-3]C[-5]:R[1]C[-5])                                123456.0            
-F6     317,898             =average(R2C1:R6C1)                                       317897.75           
+```{r echo = FALSE, results = "asis"}
+cf_printme <- cf %>%
+  arrange(col, row) %>%
+  select(cell, value, input_value, numeric_value)
+knitr::kable(cf_printme %>%
+               purrr::dmap_if(purrr::is_character,
+                              ~gsub('$', '\\$', .x, fixed = TRUE)))
+```
 
 ![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
 
@@ -214,42 +153,20 @@ Column 2, `number_formatted`, holds variously formatted numbers. It is quite pat
   * `input_value` is attractive for the first number, because an integer looks like an integer, which is ultimately good for type conversion. But this variable would still import as character, because of the percent sign.
   * `numeric_value` (what you usually want?) is a good default for numbers, although the true integer has gained `.0` as suffix.
 
-
-```r
+```{r}
 cf %>%
   filter(col == 2) %>%
   select(value, input_value, numeric_value)
-#> Source: local data frame [6 x 3]
-#> 
-#>              value      input_value numeric_value
-#>              (chr)            (chr)         (chr)
-#> 1 number_formatted number_formatted            NA
-#> 2          654,321           654321      654321.0
-#> 3           12.34%           12.34%        0.1234
-#> 4         1.23E+09       1234567890  1.23456789E9
-#> 5            3 1/7    3.14159265359 3.14159265359
-#> 6            $0.36             0.36          0.36
 ```
 
 #### Rounded numbers
 
 Column 3, `number_rounded`, holds numbers with four decimal places, rounded to show just two. Here we clearly want `numeric_value`.
 
-
-```r
+```{r}
 cf %>%
   filter(col == 3) %>%
   select(value, input_value, numeric_value)
-#> Source: local data frame [6 x 3]
-#> 
-#>            value    input_value numeric_value
-#>            (chr)          (chr)         (chr)
-#> 1 number_rounded number_rounded            NA
-#> 2           1.23         1.2345        1.2345
-#> 3           2.35         2.3456        2.3456
-#> 4           3.46         3.4567        3.4567
-#> 5           4.57         4.5678        4.5678
-#> 6           5.68         5.6789        5.6789
 ```
 
 #### Formulas
@@ -260,22 +177,11 @@ Column 5, `formula`, holds various formulas, not necessarily numeric. *Note we h
   * `input_value` holds the actual formulas.
   * `numeric_value` is what you want for the single formula that is numeric.
 
-
-```r
+```{r}
 cf %>%
   filter(col == 5) %>%
   select(value, input_value, numeric_value) %>% 
   mutate(input_value = substr(input_value, 1, 43))
-#> Source: local data frame [6 x 3]
-#> 
-#>          value                                 input_value numeric_value
-#>          (chr)                                       (chr)         (chr)
-#> 1      formula                                     formula            NA
-#> 2       Google =HYPERLINK("http://www.google.com/","Google            NA
-#> 3 1,271,591.00                  =sum(R[-1]C[-4]:R[3]C[-4])     1271591.0
-#> 4              =IMAGE("https://www.google.com/images/srpr/            NA
-#> 5         $A$1                               =ADDRESS(1,1)            NA
-#> 6                         =SPARKLINE(R[-4]C[-4]:R[0]C[-4])            NA
 ```
 
 #### Numeric formulas, formatted
@@ -286,21 +192,10 @@ Column 6, `formula_formatted`, holds formatted numeric formulas:
   * `input_value` holds the actual formulas.
   * `numeric_value` (what you usualy want, when it exists) holds the calcuated numbers.
 
-
-```r
+```{r}
 cf %>%
   filter(col == 6) %>%
   select(value, input_value, numeric_value)
-#> Source: local data frame [6 x 3]
-#> 
-#>               value                   input_value       numeric_value
-#>               (chr)                         (chr)               (chr)
-#> 1 formula_formatted             formula_formatted                  NA
-#> 2          3.18E+05 =average(R[0]C[-5]:R[4]C[-5])           317897.75
-#> 3            52.63%         =R[-1]C[-5]/R[1]C[-5]  0.5263144432081239
-#> 4              0.22         =R[-2]C[-5]/R[2]C[-5] 0.21739421366813996
-#> 5        123,456.00    =min(R[-3]C[-5]:R[1]C[-5])            123456.0
-#> 6           317,898           =average(R2C1:R6C1)           317897.75
 ```
 
 ## Logic for cell contents when `literal = FALSE`
