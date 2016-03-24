@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jenny Bryan" />
 
-<meta name="date" content="2016-03-17" />
+<meta name="date" content="2016-03-23" />
 
 <title>Managing OAuth Tokens</title>
 
@@ -56,6 +56,7 @@ code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* Com
 code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
+
 <link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
 
 </head>
@@ -69,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title">Managing OAuth Tokens</h1>
 <h4 class="author"><em>Jenny Bryan</em></h4>
-<h4 class="date"><em>2016-03-17</em></h4>
+<h4 class="date"><em>2016-03-23</em></h4>
 
 </div>
 
@@ -84,9 +85,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li><a href="#token-expiration-and-refresh">Token expiration and refresh</a></li>
 <li><a href="#tokens-for-testing">Tokens for testing</a></li>
 <li><a href="#encrypting-tokens-for-hosted-continuous-integration">Encrypting tokens for hosted continuous integration</a></li>
-<li><a href="#the-making-of-googlesheets-for-cran">The Making of <code>googlesheets</code> for CRAN</a><ul>
-<li><a href="#the-setup">The setup</a></li>
-<li><a href="#the-.tar.gz-procedure">The <code>.tar.gz</code> procedure</a></li>
+<li><a href="#the-making-of-googlesheets.tar.gz-for-cran">The Making of <code>googlesheets.tar.gz</code> for CRAN</a><ul>
+<li><a href="#prepare-the-source-package">Prepare the source package</a></li>
+<li><a href="#create-the-.tar.gz">Create the <code>.tar.gz</code></a></li>
 </ul></li>
 </ul>
 </div>
@@ -153,10 +154,10 @@ iris_ss %&gt;%<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2016-03-17 08:09:48 GMT</span>
+<span class="co">#&gt;                  date: 2016-03-24 06:58:05 GMT</span>
 <span class="co">#&gt;          access token: valid</span>
-<span class="co">#&gt;  peek at access token: ya29....eMozs</span>
-<span class="co">#&gt; peek at refresh token: 1/LxW...4wRNU</span></code></pre></div>
+<span class="co">#&gt;  peek at access token: ya29....zXe0w</span>
+<span class="co">#&gt; peek at refresh token: 1/goh...Mm6_0</span></code></pre></div>
 </div>
 <div id="where-do-tokens-live-in-between-r-sessions" class="section level2">
 <h2>Where do tokens live in between R sessions?</h2>
@@ -239,8 +240,7 @@ token &lt;-<span class="st"> </span><span class="kw">gs_auth</span>()
 <p>In affected testing files, we explicitly put the token into force:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">suppressMessages</span>(<span class="kw">gs_auth</span>(<span class="dt">token =</span> <span class="st">&quot;googlesheets_token.rds&quot;</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>))</code></pre></div>
 <p>run the tests that require authorization and then suspend token usage (but do NOT revoke the refresh token):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_auth_suspend</span>(<span class="dt">verbose =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p><em>Note: <code>gs_auth_suspend()</code> is currently unexported, but I am happy to change that.</em></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_deauth</span>(<span class="dt">verbose =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <div id="running-the-googlesheets-tests-yourself" class="section level4">
 <h4>Running the <code>googlesheets</code> tests yourself</h4>
 <p>If you want to check the <code>googlesheets</code> package, you will need to store a valid token in <code>tests/testthat/googlesheets_token.rds</code>.</p>
@@ -283,121 +283,146 @@ tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token
 </ul>
 <p>At this point, if you blindly bundle the package and send it to win-builder or CRAN, the unencrypted token will be included. See the next section for how to handle that.</p>
 </div>
-<div id="the-making-of-googlesheets-for-cran" class="section level2">
-<h2>The Making of <code>googlesheets</code> for CRAN</h2>
-<p>Both CRAN and win-builder take a source package bundle as their input. And then they run <code>R CMD check</code> on it. Packages like <code>googlesheets</code> present some challenges:</p>
+<div id="the-making-of-googlesheets.tar.gz-for-cran" class="section level2">
+<h2>The Making of <code>googlesheets.tar.gz</code> for CRAN</h2>
+<p>Both CRAN and win-builder take a package bundle as their input. And then they run <code>R CMD check</code> on it, which calls <code>R CMD build</code> among other things.</p>
+<p>Here’s my problem: to compile <code>googlesheets</code>’s vignettes and run tests, you need an OAuth2 token. But I can’t send that.</p>
 <ul>
-<li>How to create a tarball for CRAN submission that includes fully built vignettes but not the token?</li>
-<li>How to keep CRAN from executing any token-requiring code?</li>
-<li>How to do this without disrupting your normal development setup, where all tests run locally and on Travis and you rebuild full vignettes regularly?</li>
+<li>How to create a tarball for CRAN/win-builder submission that includes fully built vignettes but not the token?</li>
+<li>How to keep CRAN from executing any token-requiring code? E.g. in tests and vignettes.</li>
+<li>How to do this with minimal disruption to your normal development setup, where all tests run locally and on Travis and you rebuild full vignettes regularly?</li>
 </ul>
-<p>Irony: Getting something onto CRAN requires me to disable machinery that is meant to insure quality (tests) and usability/documentation (vignettes). The fundamental problem is that you can secure an encrypted token file on Travis and but cannot do so on CRAN (or winbuilder). This is also why all of the <code>googlesheets</code> examples are inside <code>\dontrun{}</code>. It’s a perverse situation. Sometime you hear claims that “CRAN &gt;&gt; GitHub”. If you are wrapping an API and using tests and continuous integration, this statement is pretty misleading.</p>
-<p>To compile <code>googlesheets</code>’s vignettes, you need an OAuth2 token. But it shouldn’t be in the tarball. Also, CRAN’s attempt to re-compile the vignettes (in two different ways!) must succeed. Two key things:</p>
+<p>Observation: Getting something onto CRAN requires me to short-circuit machinery that is meant to insure quality (tests) and usability/documentation (vignettes). The problem is that you can secure an encrypted token file on Travis but cannot do so on CRAN or win-builder. This is also why all of the <code>googlesheets</code> examples are inside <code>\dontrun{}</code>. Sometimes you hear unqualified claims that “CRAN &gt;&gt; GitHub”. But if your package wraps an API, reality is more complicated.</p>
+<p>Two main principles:</p>
 <ul>
+<li>Vignette and test source has to be in a state that anything unsafe for CRAN is conditionally suppressed there.</li>
 <li>Vignette building and tarball building have to be separate steps, so you can Rbuildignore the token in between them.</li>
-<li>Vignette (and test) source has to be in a state that anything unsafe for CRAN is conditionally suppressed there.</li>
 </ul>
-<div id="the-setup" class="section level3">
-<h3>The setup</h3>
-<p><strong>Embrace the <code>NOT_CRAN</code> environment variable.</strong> Commit fully and with your whole heart. It’s not just for <code>testthat::skip_on_cran()</code> anymore! I have this line in <code>~/.Renviron</code>:</p>
-<pre><code>    NOT_CRAN=true</code></pre>
-<p>where the <code>true</code> state is the default, development state.</p>
+<div id="prepare-the-source-package" class="section level3">
+<h3>Prepare the source package</h3>
+<p><strong>Embrace the <code>NOT_CRAN</code> environment variable.</strong> It’s not just for <code>testthat::skip_on_cran()</code> anymore! Commit fully and with your whole heart. I have this line in <code>~/.Renviron</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">NOT_CRAN=</span>true</code></pre></div>
+<p>where <code>true</code> is the default, development state. You’ll temporarily toggle it to <code>false</code> when making your final <code>.tar.gz</code> for CRAN.</p>
 <p><strong>Testing.</strong> Determine which tests can run on CRAN and which can not.</p>
 <ul>
-<li>If most can, put <code>testthat::skip_on_cran()</code> inside individual tests that are not safe for CRAN.</li>
-<li><p>If most/all cannot, shut testing down entirely on CRAN. Unfortunately that is what I had to do. Here is my <code>tests/testthat.R</code> file:</p>
-<pre><code>library(testthat)
-library(googlesheets)
+<li>If most can, put <code>testthat::skip_on_cran()</code> inside individual tests that are not safe for CRAN. This function consults the <code>NOT_CRAN</code> env var.</li>
+<li>If most/all cannot, shut testing down entirely on CRAN. Unfortunately that is what I had to do. Here is my <code>tests/testthat.R</code> file:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(testthat)
+<span class="kw">library</span>(googlesheets)
 
-if (identical(tolower(Sys.getenv(&quot;NOT_CRAN&quot;)), &quot;true&quot;)) {
-  test_check(&quot;googlesheets&quot;)
-}</code></pre></li>
-</ul>
-<p><strong>Vignettes and <code>NOT_CRAN</code>.</strong> Chunk options can take values from R expression. In an early setup chunk, consult the <code>NOT_CRAN</code> environment variable to create an R object by the same name:</p>
-<pre><code>    NOT_CRAN &lt;- identical(tolower(Sys.getenv(&quot;NOT_CRAN&quot;)), &quot;true&quot;)
-    </code></pre>
-<p>You will use this to set chunk options.</p>
-<p><strong>Vignette double jeopardy.</strong> There are two vignette checks that hit our OAuth pain point. They correspond to these two lines from a (successful!) log file:</p>
+if (<span class="kw">identical</span>(<span class="kw">tolower</span>(<span class="kw">Sys.getenv</span>(<span class="st">&quot;NOT_CRAN&quot;</span>)), <span class="st">&quot;true&quot;</span>)) {
+  <span class="kw">test_check</span>(<span class="st">&quot;googlesheets&quot;</span>)
+}</code></pre></div>
+<p>This way all tests run all the time locally and on Travis, but never on CRAN.</p>
+<p><strong>Vignettes.</strong> Recall that <code>knitr</code> chunk options can take values from R an expression. In an early setup chunk, consult the <code>NOT_CRAN</code> environment variable to create an eponymous R object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">NOT_CRAN &lt;-<span class="st"> </span><span class="kw">identical</span>(<span class="kw">tolower</span>(<span class="kw">Sys.getenv</span>(<span class="st">&quot;NOT_CRAN&quot;</span>)), <span class="st">&quot;true&quot;</span>)</code></pre></div>
+<p>You will use the <code>NOT_CRAN</code> object to set chunk options that control code execution.</p>
+<p><strong>Vignette double jeopardy.</strong> There are two vignette checks that hit our OAuth pain point. They correspond to these two lines from a log file:</p>
 <pre><code>    * checking running R code from vignettes ... OK
-    * checking re-building of vignette outputs ... [30s] OK
-  </code></pre>
-<p>Why does the vignette code get executed twice? Good question! See <a href="http://thread.gmane.org/gmane.comp.lang.r.devel/36031/focus=36031">this thread on R-devel</a>. Bottom line: you have to deal with both of these and they require separate solutions.</p>
+    * checking re-building of vignette outputs ... OK</code></pre>
+<p>Why does the vignette code get executed twice? Even though the vignettes used are the ones you build? Good question! See <a href="http://thread.gmane.org/gmane.comp.lang.r.devel/36031/focus=36031">this thread on R-devel</a>. Bottom line: you have to deal with both of these and they require separate solutions.</p>
 <ul>
-<li>Chunk option <code>purl</code> controls whether a chunk is extracted and rerun.</li>
-<li>Chunk option <code>eval</code> controls whether a chunk is run when vignette is compiled.</li>
+<li>Chunk option <code>purl</code> controls whether a chunk is extracted and rerun during “running R code from vignettes”.</li>
+<li>Chunk option <code>eval</code> controls whether a chunk is run during the “re-building of vignette outputs”.</li>
 <li>If most of your chunks are CRAN safe, put <code>purl = NOT_CRAN</code> and <code>eval = NOT_CRAN</code> in the options of specific chunks that should not run on CRAN.</li>
-<li><p>If most or all of your chunks are not CRAN safe, put these chunk options in your setup chunk to apply them globally, e.g.</p>
-<pre><code>knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = &quot;#&gt;&quot;,
-  purl = NOT_CRAN,
-  eval = NOT_CRAN
-)</code></pre></li>
+<li>If most or all of your chunks are not CRAN safe, put these chunk options in your setup chunk to apply them globally, e.g.</li>
 </ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr::opts_chunk$<span class="kw">set</span>(
+  <span class="dt">collapse =</span> <span class="ot">TRUE</span>,
+  <span class="dt">comment =</span> <span class="st">&quot;#&gt;&quot;</span>,
+  <span class="dt">purl =</span> NOT_CRAN,
+  <span class="dt">eval =</span> NOT_CRAN
+)</code></pre></div>
 <p>Recap:</p>
 <ul>
 <li>Define <code>NOT_CRAN</code> in <code>.Renviron</code>.</li>
-<li>Use <code>NOT_CRAN</code> to conditionally suppress tests that are not CRAN safe.</li>
-<li>Use <code>NOT_CRAN</code> to conditionally suppress extraction and compilation of vignette chunks that are not CRAN safe.</li>
+<li>Create a companion <code>NOT_CRAN</code> R object in your vignette.</li>
+<li>Use <code>NOT_CRAN</code> via <code>testthat::skip_on_cran()</code> to conditionally suppress tests that are not CRAN safe.</li>
+<li>Use <code>NOT_CRAN</code> via chunk options to conditionally suppress extraction and compilation of vignette chunks that are not CRAN safe.</li>
 </ul>
 </div>
-<div id="the-.tar.gz-procedure" class="section level3">
-<h3>The <code>.tar.gz</code> procedure</h3>
-<p>If you use version control, now would be a good time to create and checkout a branch for this particular CRAN submission. If you use <code>devtools</code>, you may need to remove <code>inst/doc</code> from <code>.gitignore</code>. <code>devtools::use_vignette()</code> will put it there.</p>
-<p>Start in your default development state:</p>
+<div id="create-the-.tar.gz" class="section level3">
+<h3>Create the <code>.tar.gz</code></h3>
+<p><em>I have had two rather inept CRAN submissions now. I submitted tarballs with too few files, too many files, wrong files, you name it. Kurt Hornik has been very patient and helpful. These notes are written with 20/20 hindsight. Hopefully I’ll nail it the third time?</em></p>
+<p>I use Git and create a branch to document the process of CRAN submission.</p>
+<p>Start in the default development state:</p>
 <ul>
-<li><code>NOT_CRAN=true</code> in <code>~/.Renviron</code></li>
-<li>Token is present and not Rbuildignored</li>
+<li><code>NOT_CRAN=true</code> in <code>~/.Renviron</code>.</li>
+<li>OAuth token is not Rbuildignored.</li>
 </ul>
-<div id="build-your-vignettes-take-one" class="section level4">
-<h4>Build your vignettes, take one:</h4>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.getenv</span>(<span class="st">&quot;NOT_CRAN&quot;</span>) <span class="co"># this should be true!</span>
-devtools::<span class="kw">build_vignettes</span>()
-## or in the shell
-## Rscript -e &quot;devtools::build_vignettes()&quot;</code></pre></div>
-<p>The <code>.Rmd</code> files of your vignettes will remain in <code>vignettes</code>. But any downstream products that may have been there will disappear.</p>
-<p>The vignette-associated <code>.R</code>, <code>.Rmd</code>, and <code>.html</code> files will appear in <code>inst/doc</code>.</p>
-<p>These are the <code>.html</code> files that CRAN will use. Look at them and make sure they are what you want.</p>
-<p>Note these <code>.R</code> files include all chunks. You can’t leave them this way!</p>
-<p>This is a good time to commit on your CRAN submission branch.</p>
-</div>
-<div id="build-your-vignettes-take-two" class="section level4">
-<h4>Build your vignettes, take two:</h4>
-<p>Go into the CRAN state:</p>
+<p><strong>Delete <code>build/</code> and <code>inst/doc</code></strong> if they happen to exist in your source package. They probably don’t. But delete and make a commit if they do.</p>
+<p><strong>Build the package, pass 1 of 2.</strong> In the parent directory of your package, confirm that <code>NOT_CRAN</code> is “true” and build the package:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">Rscript</span> -e <span class="st">'Sys.getenv(&quot;NOT_CRAN&quot;)'</span>
+<span class="kw">R</span> CMD build googlesheets</code></pre></div>
+<p><strong>Unpack the bundle.</strong> Move <code>googlesheets_VERSION.tar.gz</code> somewhere safe and unpack it.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">mkdir</span> googlesheets-unpack
+<span class="kw">mv</span> googlesheets_VERSION.tar.gz googlesheets-unpack/
+<span class="kw">cd</span> googlesheets-unpack
+<span class="kw">tar</span> xvf googlesheets_VERSION.tar.gz</code></pre></div>
+<p>What are the main differences between your original source package and this unpacked bundle?</p>
 <ul>
-<li><code>NOT_CRAN=false</code> in <code>~/.Renviron</code></li>
+<li><code>DESCRIPTION</code> has probably been re-formatted and gained a couple of entries re: who packaged what when and whether your package requires compilation.</li>
+<li>Rbuildignores: lots of files and directories have vanished, either because <code>R CMD build</code> ignores them by design or because they’re listed in <code>.Rbuildignore</code>.
+<ul>
+<li>Examples for me: <code>.RData</code>, <code>.Rproj.user</code>, <code>.git/</code>, <code>.httr-oauth</code>, <code>README.Rmd</code>, <code>man-roxygen</code>, <code>jenny-scratch</code>.</li>
+</ul></li>
+<li><code>build</code> is an entirely new directory. It contains <code>vignette.rds</code> which is the “prebuilt vignette index”. This is a data frame with one row per vignette and variables that contain, e.g., vignette source file name and vignette title. <em>Pro tip: The file <code>inst/doc/index.html</code> is NOT the “prebuilt vignette index” that CRAN expects. Ask me how I know.</em></li>
+<li><code>vignettes/</code> has been purged of any downstream products. If <code>vignettes/</code> contained anything like <code>foo.html</code>, associated to rendering vignette <code>foo.Rmd</code>, it is now gone. <code>vignettes/</code> will just hold source files <code>foo.Rmd</code> and, in my case, some static screenshots under <code>vignettes/img</code>.</li>
+<li><code>inst/doc</code> is an entirely new subdirectory, which now holds <code>foo.R</code>, <code>foo.Rmd</code>, and <code>foo.html</code> for each vignette <code>foo.Rmd</code> in <code>vignettes/</code>.
+<ul>
+<li>These are the <code>.html</code> files that CRAN will use as your vignettes. Look at them carefully and make sure they are what you want!</li>
+<li>These are the <code>.R</code> files that will be displayed as your vignette source but CRAN does not execute them. It’s OK that all chunks are here.</li>
+</ul></li>
 </ul>
-<p>Restart R, unless you’re doing all of this the <code>Rscript</code> way or similar. This is to ensure that the new value of <code>NOT_CRAN</code> is honored.</p>
-<p>Re-build your vignettes:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Sys.getenv</span>(<span class="st">&quot;NOT_CRAN&quot;</span>) <span class="co"># this should be false!</span>
-devtools::<span class="kw">build_vignettes</span>()
-## or in the shell
-## Rscript -e &quot;devtools::build_vignettes()&quot;</code></pre></div>
-<p>The only diffs you should see are the <code>.R</code> files, which should consist only of chunks that are “safe for CRAN”. In my case, that is only the setup chunk. If you are able to run more, great.</p>
-<p>This is a good time to commit on your CRAN submission branch.</p>
-</div>
-<div id="make-the-tarball" class="section level4">
-<h4>Make the tarball</h4>
-<p>Now you want to Rbuildignore any sensitive files that were necessary for vignette building but that shouldn’t go out on the internet. I add a line to <code>.Rbuildignore</code> to ignore my OAuth2 token (note it is already gitignored):</p>
-<pre><code>tests/testthat/googlesheets_token.rds</code></pre>
-<p>You could make the final commit now on the CRAN submission branch.</p>
-<p>Build the tarball, while suppressing the rebuild of vignettes. Do this at the command line:</p>
-<pre><code>R CMD build --no-build-vignettes googlesheets</code></pre>
-<p>Or from R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">devtools::<span class="kw">build</span>(<span class="dt">vignettes =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p>The resulting <code>googlesheets_VERSION.tar.gz</code> is suitable for CRAN submission. The fully built vignettes are present and will be used by CRAN, the OAuth2 token file is not included, and the vignettes / vignette code will “run” successfully for CRAN.</p>
+<p><strong>Preserve everything about the vignettes for inclusion in final build.</strong> If you’re tracking the CRAN submission process in a git branch, copy these new/modified directories over to your source package:</p>
+<ul>
+<li><code>build/vignette.rds</code></li>
+<li><code>inst/doc/*</code></li>
+<li><code>vignettes/*</code></li>
+</ul>
+<p>Verify that you’re NOT gitignoring all html – you want the html for your vignettes to be in this commit! If you use <code>devtools</code>, you may also need to remove <code>inst/doc</code> from <code>.gitignore</code>. <code>devtools::use_vignette()</code> puts it there. Commit.</p>
+<p><strong>Leave your development state and enter the CRAN state.</strong> Toggle the value of <code>NOT_CRAN</code> in <code>~/.Renviron</code>:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">NOT_CRAN=</span>false</code></pre></div>
+<p><strong>Rbuildignore any sensitive files</strong> that were necessary for vignette building but that shouldn’t go out on the internet. In my case, I add this line to <code>.Rbuildignore</code> to ignore my unencrypted OAuth2 token (note it is always gitignored):</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">^<span class="kw">tests/testthat/googlesheets_token.rds</span>$</code></pre></div>
+<p><strong>Build the package, pass 2 of 2.</strong> If you copied the post-build state of <code>build/</code>, <code>inst/doc/</code>, and <code>vignettes</code> back into your source package, build from there. Otherwise, do this on your unpacked package bundle from the first <code>R CMD build</code> pass. Make sure <code>NOT_CRAN</code> is <code>false</code> now!</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">Rscript</span> -e <span class="st">'Sys.getenv(&quot;NOT_CRAN&quot;)'</span>
+<span class="kw">R</span> CMD build googlesheets</code></pre></div>
+<p>For me this is extremely fast compared to the first build, because so much testing and vignette code is suppressed when <code>NOT_CRAN</code> is <code>false</code>.</p>
+<p>This will produce <code>googlesheets_VERSION.tar.gz</code>. Again. This is what’s going to CRAN.</p>
+<p><strong>Check your work.</strong> Unpack this new <code>.tar.gz</code> and have a look around.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">mv</span> googlesheets_VERSION.tar.gz googlesheets-unpack/
+<span class="kw">cd</span> googlesheets-unpack
+<span class="kw">tar</span> xvf googlesheets_VERSION.tar.gz</code></pre></div>
+<p>The only difference I see from the previously unpacked bundle is that my token file is gone. Which is perfect. This is the <code>.tar.gz</code> I want to send:</p>
+<ul>
+<li>vignettes and their index are fully built</li>
+<li>token is NOT included</li>
+<li>tests and vignette chunks that are unsafe for CRAN are conditionally suppressed</li>
+</ul>
+<p>You could make a final commit in your CRAN submission branch. The only change it will show is the change to <code>.Rbuildignore</code>. Presumably you are already gitignoring any sensitive files.</p>
 <p>You have ended in the CRAN state:</p>
 <ul>
 <li><code>NOT_CRAN=false</code> in <code>~/.Renviron</code></li>
 <li>Token is present but is Rbuildignored (and gitignored).</li>
 </ul>
-<p>To get back to normal development state, remember to:</p>
+<p><strong>Get back to normal development state:</strong></p>
 <ul>
 <li>Restore <code>NOT_CRAN=true</code> in <code>~/.Renviron</code>.</li>
 <li>Remove line re: token from <code>.Rbuildignore</code> (but leave it gitignored).</li>
-<li>Restart R.</li>
+<li>Possibly delete <code>build/</code> and <code>inst/doc</code>? Re-render your vignettes or re-<code>document()</code>?</li>
 </ul>
-</div>
+<p>If you’ve been working in a git branch, just reset the <code>NOT_CRAN</code> env var and checkout master!</p>
+<p>Recap:</p>
+<ul>
+<li><code>R CMD build</code> with <code>NOT_CRAN=true</code>. Unpack the <code>.tar.gz</code>.</li>
+<li>Verify <code>build/vignette.rds</code> and <code>inst/doc</code> exist, with correct contents.</li>
+<li>Rbuildignore sensitive files.</li>
+<li><code>R CMD build</code> on unpacked bundle from first build with <code>NOT_CRAN=false</code>. Submit this <code>.tar.gz</code>.</li>
+<li>Reset: <code>NOT_CRAN=true</code>, delete <code>build/</code> and <code>inst/doc</code>, un-Rbuildignore sensitive files.</li>
+</ul>
+<p>Observation: It sure would be nice if there was a concept of <code>.tar.gz</code>-ignore. The token file could be used during <code>R CMD build</code>, but would be excluded from the tarball.</p>
 </div>
 </div>
 

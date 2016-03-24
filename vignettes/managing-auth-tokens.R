@@ -10,7 +10,9 @@ knitr::opts_chunk$set(
 ## ----token-path, include = FALSE, eval = NOT_CRAN------------------------
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
-token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
+## does not work
+## token_path <- testthat::test_path("googlesheets_token.rds")
+token_path <- file.path("..", "tests", "testthat","googlesheets_token.rds")
 suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 
 ## ----make-clean, include = FALSE, eval = NOT_CRAN------------------------
@@ -57,20 +59,24 @@ gs_user()
 #  suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 
 ## ----eval = FALSE--------------------------------------------------------
-#  gs_auth_suspend(verbose = FALSE)
+#  gs_deauth(verbose = FALSE)
 
 ## ----eval = FALSE--------------------------------------------------------
-#  Sys.getenv("NOT_CRAN") # this should be true!
-#  devtools::build_vignettes()
-#  ## or in the shell
-#  ## Rscript -e "devtools::build_vignettes()"
+#  library(testthat)
+#  library(googlesheets)
+#  
+#  if (identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
+#    test_check("googlesheets")
+#  }
 
 ## ----eval = FALSE--------------------------------------------------------
-#  Sys.getenv("NOT_CRAN") # this should be false!
-#  devtools::build_vignettes()
-#  ## or in the shell
-#  ## Rscript -e "devtools::build_vignettes()"
+#  NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 
 ## ----eval = FALSE--------------------------------------------------------
-#  devtools::build(vignettes = FALSE)
+#  knitr::opts_chunk$set(
+#    collapse = TRUE,
+#    comment = "#>",
+#    purl = NOT_CRAN,
+#    eval = NOT_CRAN
+#  )
 

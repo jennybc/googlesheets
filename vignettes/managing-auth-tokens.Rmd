@@ -25,7 +25,9 @@ knitr::opts_chunk$set(
 ```{r token-path, include = FALSE, eval = NOT_CRAN}
 ## I grab the token from the testing directory because that's where it is to be
 ## found on Travis
-token_path <- file.path("..", "tests", "testthat", "googlesheets_token.rds")
+## does not work
+## token_path <- testthat::test_path("googlesheets_token.rds")
+token_path <- file.path("..", "tests", "testthat","googlesheets_token.rds")
 suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ```
 
@@ -214,10 +216,8 @@ suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 run the tests that require authorization and then suspend token usage (but do NOT revoke the refresh token):
 
 ```{r eval = FALSE}
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)
 ```
-
-*Note: `gs_auth_suspend()` is currently unexported, but I am happy to change that.*
 
 #### Running the `googlesheets` tests yourself
 
@@ -273,152 +273,191 @@ __Do not get mixed up re: what gets ignored where.__
 
 At this point, if you blindly bundle the package and send it to win-builder or CRAN, the unencrypted token will be included. See the next section for how to handle that.
 
-## The Making of `googlesheets` for CRAN
+## The Making of `googlesheets.tar.gz` for CRAN
 
-Both CRAN and win-builder take a source package bundle as their input. And then they run `R CMD check` on it. Packages like `googlesheets` present some challenges:
+Both CRAN and win-builder take a package bundle as their input. And then they run `R CMD check` on it, which calls `R CMD build` among other things.
 
-  * How to create a tarball for CRAN submission that includes fully built vignettes but not the token?
-  * How to keep CRAN from executing any token-requiring code?
-  * How to do this without disrupting your normal development setup, where all tests run locally and on Travis and you rebuild full vignettes regularly?
+Here's my problem: to compile `googlesheets`'s vignettes and run tests, you need an OAuth2 token. But I can't send that.
+
+  * How to create a tarball for CRAN/win-builder submission that includes fully built vignettes but not the token?
+  * How to keep CRAN from executing any token-requiring code? E.g. in tests and vignettes.
+  * How to do this with minimal disruption to your normal development setup, where all tests run locally and on Travis and you rebuild full vignettes regularly?
   
-Irony: Getting something onto CRAN requires me to disable machinery that is meant to insure quality (tests) and usability/documentation (vignettes).  The fundamental problem is that you can secure an encrypted token file on Travis and but cannot do so on CRAN (or winbuilder). This is also why all of the `googlesheets` examples are inside `\dontrun{}`. It's a perverse situation. Sometime you hear claims that "CRAN >> GitHub". If you are wrapping an API and using tests and continuous integration, this statement is pretty misleading.
+Observation: Getting something onto CRAN requires me to short-circuit machinery that is meant to insure quality (tests) and usability/documentation (vignettes).  The problem is that you can secure an encrypted token file on Travis but cannot do so on CRAN or win-builder. This is also why all of the `googlesheets` examples are inside `\dontrun{}`. Sometimes you hear unqualified claims that "CRAN >> GitHub". But if your package wraps an API, reality is more complicated.
 
-To compile `googlesheets`'s vignettes, you need an OAuth2 token. But it shouldn't be in the tarball. Also, CRAN's attempt to re-compile the vignettes (in two different ways!) must succeed. Two key things:
+Two main principles:
 
+  * Vignette and test source has to be in a state that anything unsafe for CRAN is conditionally suppressed there.
   * Vignette building and tarball building have to be separate steps, so you can Rbuildignore the token in between them.
-  * Vignette (and test) source has to be in a state that anything unsafe for CRAN is conditionally suppressed there.
 
-### The setup
+### Prepare the source package
 
-**Embrace the `NOT_CRAN` environment variable.** Commit fully and with your whole heart. It's not just for `testthat::skip_on_cran()` anymore! I have this line in `~/.Renviron`:
-        
-        NOT_CRAN=true
-    
-where the `true` state is the default, development state.
+**Embrace the `NOT_CRAN` environment variable.** It's not just for `testthat::skip_on_cran()` anymore! Commit fully and with your whole heart. I have this line in `~/.Renviron`:
+
+``` bash
+NOT_CRAN=true
+```
+
+where `true` is the default, development state. You'll temporarily toggle it to `false` when making your final `.tar.gz` for CRAN.
 
 **Testing.** Determine which tests can run on CRAN and which can not.
 
-  * If most can, put `testthat::skip_on_cran()` inside individual tests that are not safe for CRAN.
+  * If most can, put `testthat::skip_on_cran()` inside individual tests that are not safe for CRAN. This function consults the `NOT_CRAN` env var.
   * If most/all cannot, shut testing down entirely on CRAN. Unfortunately that is what I had to do. Here is my `tests/testthat.R` file:
-    
-        library(testthat)
-        library(googlesheets)
-        
-        if (identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
-          test_check("googlesheets")
-        }
 
-**Vignettes and `NOT_CRAN`.** Chunk options can take values from R expression. In an early setup chunk, consult the `NOT_CRAN` environment variable to create an R object by the same name:
-    
-        NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
-        
-You will use this to set chunk options.
+```{r eval = FALSE}
+library(testthat)
+library(googlesheets)
 
-**Vignette double jeopardy.** There are two vignette checks that hit our OAuth pain point. They correspond to these two lines from a (successful!) log file:
+if (identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
+  test_check("googlesheets")
+}
+```
+
+This way all tests run all the time locally and on Travis, but never on CRAN.
+
+**Vignettes.** Recall that `knitr` chunk options can take values from R an expression. In an early setup chunk, consult the `NOT_CRAN` environment variable to create an eponymous R object:
+
+```{r eval = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+```
+
+You will use the `NOT_CRAN` object to set chunk options that control code execution.
+
+**Vignette double jeopardy.** There are two vignette checks that hit our OAuth pain point. They correspond to these two lines from a log file:
 
         * checking running R code from vignettes ... OK
-        * checking re-building of vignette outputs ... [30s] OK
-      
-Why does the vignette code get executed twice? Good question! See [this thread on R-devel](http://thread.gmane.org/gmane.comp.lang.r.devel/36031/focus=36031). Bottom line: you have to deal with both of these and they require separate solutions.
+        * checking re-building of vignette outputs ... OK
 
-  * Chunk option `purl` controls whether a chunk is extracted and rerun.
-  * Chunk option `eval` controls whether a chunk is run when vignette is compiled.
+Why does the vignette code get executed twice? Even though the vignettes used are the ones you build? Good question! See [this thread on R-devel](http://thread.gmane.org/gmane.comp.lang.r.devel/36031/focus=36031). Bottom line: you have to deal with both of these and they require separate solutions.
+
+  * Chunk option `purl` controls whether a chunk is extracted and rerun during "running R code from vignettes".
+  * Chunk option `eval` controls whether a chunk is run during the "re-building of vignette outputs".
   * If most of your chunks are CRAN safe, put `purl = NOT_CRAN` and `eval = NOT_CRAN` in the options of specific chunks that should not run on CRAN.
   * If most or all of your chunks are not CRAN safe, put these chunk options in your setup chunk to apply them globally, e.g.
 
-        knitr::opts_chunk$set(
-          collapse = TRUE,
-          comment = "#>",
-          purl = NOT_CRAN,
-          eval = NOT_CRAN
-        )
+```{r eval = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
+)
+```
 
 Recap:
 
   * Define `NOT_CRAN` in `.Renviron`.
-  * Use `NOT_CRAN` to conditionally suppress tests that are not CRAN safe.
-  * Use `NOT_CRAN` to conditionally suppress extraction and compilation of vignette chunks that are not CRAN safe.
+  * Create a companion `NOT_CRAN` R object in your vignette.
+  * Use `NOT_CRAN` via `testthat::skip_on_cran()` to conditionally suppress tests that are not CRAN safe.
+  * Use `NOT_CRAN` via chunk options to conditionally suppress extraction and compilation of vignette chunks that are not CRAN safe.
   
-### The `.tar.gz` procedure
+### Create the `.tar.gz`
 
-If you use version control, now would be a good time to create and checkout a branch for this particular CRAN submission.  If you use `devtools`, you may need to remove `inst/doc` from `.gitignore`. `devtools::use_vignette()` will put it there.
+*I have had two rather inept CRAN submissions now. I submitted tarballs with too few files, too many files, wrong files, you name it. Kurt Hornik has been very patient and helpful. These notes are written with 20/20 hindsight. Hopefully I'll nail it the third time?*
 
-Start in your default development state:
+I use Git and create a branch to document the process of CRAN submission.
 
-  * `NOT_CRAN=true` in `~/.Renviron`
-  * Token is present and not Rbuildignored
+Start in the default development state:
+
+  * `NOT_CRAN=true` in `~/.Renviron`.
+  * OAuth token is not Rbuildignored.
+
+**Delete `build/` and `inst/doc`** if they happen to exist in your source package. They probably don't. But delete and make a commit if they do.
+
+**Build the package, pass 1 of 2.** In the parent directory of your package, confirm that `NOT_CRAN` is "true" and build the package:
+
+``` bash
+Rscript -e 'Sys.getenv("NOT_CRAN")'
+R CMD build googlesheets
+```
+
+**Unpack the bundle.** Move `googlesheets_VERSION.tar.gz` somewhere safe and unpack it.
+
+``` bash
+mkdir googlesheets-unpack
+mv googlesheets_VERSION.tar.gz googlesheets-unpack/
+cd googlesheets-unpack
+tar xvf googlesheets_VERSION.tar.gz
+```
+
+What are the main differences between your original source package and this unpacked bundle?
+
+  * `DESCRIPTION` has probably been re-formatted and gained a couple of entries re: who packaged what when and whether your package requires compilation.
+  * Rbuildignores: lots of files and directories have vanished, either because `R CMD build` ignores them by design or because they're listed in `.Rbuildignore`.
+    - Examples for me: `.RData`, `.Rproj.user`, `.git/`, `.httr-oauth`, `README.Rmd`, `man-roxygen`, `jenny-scratch`.
+  * `build` is an entirely new directory. It contains `vignette.rds` which is the "prebuilt vignette index". This is a data frame with one row per vignette and variables that contain, e.g., vignette source file name and vignette title. *Pro tip: The file `inst/doc/index.html` is NOT the "prebuilt vignette index" that CRAN expects. Ask me how I know.*
+  * `vignettes/` has been purged of any downstream products. If `vignettes/` contained anything like `foo.html`, associated to rendering vignette `foo.Rmd`, it is now gone. `vignettes/` will just hold source files `foo.Rmd` and, in my case, some static screenshots under `vignettes/img`.
+  * `inst/doc` is an entirely new subdirectory, which now holds `foo.R`, `foo.Rmd`, and `foo.html` for each vignette `foo.Rmd` in `vignettes/`.
+    - These are the `.html` files that CRAN will use as your vignettes. Look at them carefully and make sure they are what you want!
+    - These are the `.R` files that will be displayed as your vignette source but CRAN does not execute them. It's OK that all chunks are here.
+
+**Preserve everything about the vignettes for inclusion in final build.** If you're tracking the CRAN submission process in a git branch, copy these new/modified directories over to your source package:
+
+  * `build/vignette.rds`
+  * `inst/doc/*`
+  * `vignettes/*`
   
-#### Build your vignettes, take one:
+Verify that you're NOT gitignoring all html -- you want the html for your vignettes to be in this commit! If you use `devtools`, you may also need to remove `inst/doc` from `.gitignore`. `devtools::use_vignette()` puts it there. Commit.
 
-```{r eval = FALSE}
-Sys.getenv("NOT_CRAN") # this should be true!
-devtools::build_vignettes()
-## or in the shell
-## Rscript -e "devtools::build_vignettes()"
+**Leave your development state and enter the CRAN state.** Toggle the value of `NOT_CRAN` in `~/.Renviron`:
+
+``` bash
+NOT_CRAN=false
 ```
 
-The `.Rmd` files of your vignettes will remain in `vignettes`. But any downstream products that may have been there will disappear.
+**Rbuildignore any sensitive files** that were necessary for vignette building but that shouldn't go out on the internet. In my case, I add this line to `.Rbuildignore` to ignore my unencrypted OAuth2 token (note it is always gitignored):
 
-The vignette-associated `.R`, `.Rmd`, and `.html` files will appear in `inst/doc`.
-
-These are the `.html` files that CRAN will use. Look at them and make sure they are what you want.
-
-Note these `.R` files include all chunks. You can't leave them this way!
-
-This is a good time to commit on your CRAN submission branch.
-
-#### Build your vignettes, take two:
-
-Go into the CRAN state:
-
-  * `NOT_CRAN=false` in `~/.Renviron`
-
-Restart R, unless you're doing all of this the `Rscript` way or similar. This is to ensure that the new value of `NOT_CRAN` is honored.
-
-Re-build your vignettes:
-
-```{r eval = FALSE}
-Sys.getenv("NOT_CRAN") # this should be false!
-devtools::build_vignettes()
-## or in the shell
-## Rscript -e "devtools::build_vignettes()"
+``` bash
+^tests/testthat/googlesheets_token.rds$
 ```
 
-The only diffs you should see are the `.R` files, which should consist only of chunks that are "safe for CRAN". In my case, that is only the setup chunk. If you are able to run more, great.
+**Build the package, pass 2 of 2.** If you copied the post-build state of `build/`, `inst/doc/`, and `vignettes` back into your source package, build from there. Otherwise, do this on your unpacked package bundle from the first `R CMD build` pass. Make sure `NOT_CRAN` is `false` now!
 
-This is a good time to commit on your CRAN submission branch.
-
-#### Make the tarball
-
-Now you want to Rbuildignore any sensitive files that were necessary for vignette building but that shouldn't go out on the internet. I add a line to `.Rbuildignore` to ignore my OAuth2 token (note it is already gitignored):
-
-```
-tests/testthat/googlesheets_token.rds
+``` bash
+Rscript -e 'Sys.getenv("NOT_CRAN")'
+R CMD build googlesheets
 ```
 
-You could make the final commit now on the CRAN submission branch.
+For me this is extremely fast compared to the first build, because so much testing and vignette code is suppressed when `NOT_CRAN` is `false`.
 
-Build the tarball, while suppressing the rebuild of vignettes. Do this at the command line:
+This will produce `googlesheets_VERSION.tar.gz`. Again. This is what's going to CRAN.
 
-```
-R CMD build --no-build-vignettes googlesheets
-```
+**Check your work.** Unpack this new `.tar.gz` and have a look around. 
 
-Or from R:
-
-```{r eval = FALSE}
-devtools::build(vignettes = FALSE)
+``` bash
+mv googlesheets_VERSION.tar.gz googlesheets-unpack/
+cd googlesheets-unpack
+tar xvf googlesheets_VERSION.tar.gz
 ```
 
-The resulting `googlesheets_VERSION.tar.gz` is suitable for CRAN submission. The fully built vignettes are present and will be used by CRAN, the OAuth2 token file is not included, and the vignettes / vignette code will "run" successfully for CRAN.
+The only difference I see from the previously unpacked bundle is that my token file is gone. Which is perfect. This is the `.tar.gz` I want to send:
+
+  * vignettes and their index are fully built
+  * token is NOT included
+  * tests and vignette chunks that are unsafe for CRAN are conditionally suppressed
+
+You could make a final commit in your CRAN submission branch. The only change it will show is the change to `.Rbuildignore`. Presumably you are already gitignoring any sensitive files.
 
 You have ended in the CRAN state:
 
   * `NOT_CRAN=false` in `~/.Renviron`
   * Token is present but is Rbuildignored (and gitignored).
 
-To get back to normal development state, remember to:
+**Get back to normal development state:**
 
   * Restore `NOT_CRAN=true` in `~/.Renviron`.
   * Remove line re: token from `.Rbuildignore` (but leave it gitignored).
-  * Restart R.
+  * Possibly delete `build/` and `inst/doc`? Re-render your vignettes or re-`document()`?
+
+If you've been working in a git branch, just reset the `NOT_CRAN` env var and checkout master! 
+
+Recap:
+
+  * `R CMD build` with `NOT_CRAN=true`. Unpack the `.tar.gz`.
+  * Verify `build/vignette.rds` and `inst/doc` exist, with correct contents.
+  * Rbuildignore sensitive files.
+  * `R CMD build` on unpacked bundle from first build with `NOT_CRAN=false`. Submit this `.tar.gz`.
+  * Reset: `NOT_CRAN=true`, delete `build/` and `inst/doc`, un-Rbuildignore sensitive files.
+
+Observation: It sure would be nice if there was a concept of `.tar.gz`-ignore. The token file could be used during `R CMD build`, but would be excluded from the tarball.
