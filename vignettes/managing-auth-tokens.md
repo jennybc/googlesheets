@@ -95,10 +95,9 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-03-24 06:58:05 GMT
-#>          access token: valid
-#>  peek at access token: ya29....zXe0w
-#> peek at refresh token: 1/goh...Mm6_0
+#>                  date: 2016-03-26 22:53:57 GMT
+#>          permissionId: 14497944239034869033
+#>          rootFolderId: 0AOdw-qi1jh3fUk9PVA
 ```
 
 ## Where do tokens live in between R sessions?
@@ -136,12 +135,13 @@ Tokens, stored in `.httr-oauth` or elsewhere, grant whoever's got them the power
 
 In `googlesheets`, we've built some functionality into `gs_auth()` so the user can retrieve the current token for explicit storage to file and can load such a stored token from file. To be clear, most users should just enjoy the automagic token management offered by `httr` and the `.httr-oauth` cache file. But for non-interactive work and testing/developing `googlesheets` itself, we found it helpful to take more control.
 
-Store a token from an interactive session:
+In an interactive session, create and store a token. Caching properties are baked into a token, so if you never want this token to be cached to `.httr-oauth`, such as when it gets refreshed, specify that at creation time via `cache = FALSE`. Use `gd_token()` at any time to see some info on the current token.
 
 
 ```r
 library(googlesheets)
-token <- gs_auth()
+token <- gs_auth(cache = FALSE)
+gd_token()
 saveRDS(token, file = "googlesheets_token.rds")
 ```
 
@@ -149,9 +149,9 @@ saveRDS(token, file = "googlesheets_token.rds")
 
 Things to think about:
 
-  * Is there an existing `.httr-oauth` file in working directory? If so, the token will come from there! If that's not what you want, force the creation of a fresh token with `gs_auth(new_user = TRUE)`.
+  * Is there an existing `.httr-oauth` file in working directory? If so, the token will come from there! If that's not what you want, force the creation of a fresh token with `gs_auth(new_user = TRUE)` or remove `.httr-oauth` first.
   * Do you want to provide your own app key and secret? Use arguments `key` and `secret` to specify that. If that's a global preference for all your `googlesheets` work, see the docs for `gs_auth()` for lines to put in `.Rprofile`.
-  * Do you want this token to be cached to `.httr-oauth` in current working directory? Specify `cache = FALSE` to prevent that. If that's a global preference for all your `googlesheets` work, see the docs for `gs_auth()` for lines to put in `.Rprofile`.
+  * Do you want this token to be cached to `.httr-oauth` in current working directory? If not, specify `cache = FALSE` to prevent that. If that's a global preference for all your `googlesheets` work, see the docs for `gs_auth()` for lines to put in `.Rprofile`.
   * Do you have multiple Google accounts? Make sure you log into Google via the intended account when you authenticate in the browser.
   
 Let's focus on the R script or Rmd file you are preparing for non-interactive execution. Put these lines in it:
