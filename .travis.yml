@@ -1,8 +1,4 @@
 language: R
-sudo: false
-env:
-  global:
-  - NOT_CRAN: true
 cache: packages
 before_install:
   - openssl aes-256-cbc -K $encrypted_1ac2f65e8ef8_key -iv $encrypted_1ac2f65e8ef8_iv
