@@ -18,9 +18,9 @@ a \code{request} object (an S3 class provided by \code{httr})
 \description{
 If token is not already available, call \code{\link{gs_auth}} to either load
 from cache or initiate OAuth2.0 flow. Return the token -- not "bare" but,
-rather, prepared for inclusion in downstream requests. Use \code{gd_token} or
-\code{gs_token} to reveal the actual access token, suitable for use with
-\code{curl}.
+rather, prepared for inclusion in downstream requests. Use
+\code{access_token()} to reveal the actual access token, suitable for use
+with \code{curl}.
 }
 \keyword{internal}
 

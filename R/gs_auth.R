@@ -142,9 +142,9 @@ gs_auth <- function(token = NULL,
 #'
 #' If token is not already available, call \code{\link{gs_auth}} to either load
 #' from cache or initiate OAuth2.0 flow. Return the token -- not "bare" but,
-#' rather, prepared for inclusion in downstream requests. Use \code{gd_token} or
-#' \code{gs_token} to reveal the actual access token, suitable for use with
-#' \code{curl}.
+#' rather, prepared for inclusion in downstream requests. Use
+#' \code{access_token()} to reveal the actual access token, suitable for use
+#' with \code{curl}.
 #'
 #' @return a \code{request} object (an S3 class provided by \code{httr})
 #'
@@ -256,7 +256,7 @@ is_legit_token <- function(x, verbose = FALSE) {
 }
 
 ## useful when debugging
-gd_token <- gs_token <- function() {
+access_token <- function() {
   if (!token_available(verbose = TRUE)) return(NULL)
   .state$token$credentials$access_token
 }
