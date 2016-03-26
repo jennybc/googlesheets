@@ -69,8 +69,7 @@
 #'   credentials in the default cache file \code{.httr-oauth}
 #' @template verbose
 #'
-#' @return an OAuth token object, specifically a
-#'   \code{\link[=Token-class]{Token2.0}}, invisibly
+#' @template return-Token2
 #'
 #' @export
 #'
@@ -132,7 +131,7 @@ gs_auth <- function(token = NULL,
         "token,\nnor a path to an .rds file containing a token.")
   }
 
-  .state$user <- google_user()
+  .state$user <- drive_user()
 
   invisible(.state$token)
 
@@ -155,9 +154,9 @@ google_token <- function(verbose = FALSE) {
 }
 
 #' @rdname google_token
-include_token_if <- function(cond) if(cond) google_token() else NULL
+include_token_if <- function(cond) if (cond) google_token() else NULL
 #' @rdname google_token
-omit_token_if <- function(cond) if(cond) NULL else google_token()
+omit_token_if <- function(cond) if (cond) NULL else google_token()
 
 #' Check token availability
 #'
@@ -171,7 +170,7 @@ token_available <- function(verbose = TRUE) {
 
   if (is.null(.state$token)) {
     if (verbose) {
-      if(file.exists(".httr-oauth")) {
+      if (file.exists(".httr-oauth")) {
         message("A .httr-oauth file exists in current working ",
                 "directory.\nWhen/if needed, the credentials cached in ",
                 ".httr-oauth will be used for this session.\nOr run gs_auth() ",
@@ -207,7 +206,7 @@ token_available <- function(verbose = TRUE) {
 gs_deauth <- function(clear_cache = TRUE, verbose = TRUE) {
 
   if (clear_cache && file.exists(".httr-oauth")) {
-    if(verbose) {
+    if (verbose) {
       message("Disabling .httr-oauth by renaming to .httr-oauth-SUSPENDED")
     }
     file.rename(".httr-oauth", ".httr-oauth-SUSPENDED")
@@ -232,22 +231,22 @@ gs_deauth <- function(clear_cache = TRUE, verbose = TRUE) {
 is_legit_token <- function(x, verbose = FALSE) {
 
   if (!inherits(x, "Token2.0")) {
-    if(verbose) message("Not a Token2.0 object.")
+    if (verbose) message("Not a Token2.0 object.")
     return(FALSE)
   }
 
-  if("invalid_client" %in% unlist(x$credentials)) {
+  if ("invalid_client" %in% unlist(x$credentials)) {
     # shouldn't happen if id and secret are good
-    if(verbose) {
+    if (verbose) {
       message("Authorization error. Please check client_id and client_secret.")
     }
     return(FALSE)
   }
 
-  if("invalid_request" %in% unlist(x$credentials)) {
+  if ("invalid_request" %in% unlist(x$credentials)) {
     # in past, this could happen if user clicks "Cancel" or "Deny" instead of
     # "Accept" when OAuth2 flow kicks to browser ... but httr now catches this
-    if(verbose) message("Authorization error. No access token obtained.")
+    if (verbose) message("Authorization error. No access token obtained.")
     return(FALSE)
   }
 
