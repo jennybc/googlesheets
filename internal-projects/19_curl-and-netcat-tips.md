@@ -11,9 +11,7 @@ Parking some command line stuff from recent conversations with Craig Citro. Some
 ```r
 ## library(googlesheets)
 ## gs_auth() or whatever's necessary to get into auth state w/ correct user
-googlesheets:::gd_token()
-## or
-googlesheets:::gs_token()
+googlesheets:::access_token()
 ```
 
 Get info about the user associated with current access token:

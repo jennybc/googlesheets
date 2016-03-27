@@ -4,8 +4,8 @@ test_that("No token is in force",
           expect_false(token_available(verbose = FALSE)))
 
 test_that("No .httr-oauth* file is here", {
-  (fls <- list.files(pattern = "^\\.httr-oauth", all.files = TRUE))
-  expect_true(length(fls) == 0)
+  fls <- list.files(pattern = "^\\.httr-oauth", all.files = TRUE)
+  expect_length(fls, 0)
 })
 
 ## PUT THE MAIN TESTING TOKEN INTO FORCE via .rds file
@@ -14,25 +14,24 @@ activate_test_token()
 test_that("Testing token is in force", expect_true(token_available()))
 
 test_that("User info is available and as expected", {
-  expect_output(user_info <- gd_user(), "displayName")
+  user_info <- gd_user()
+  expect_is(user_info, "drive_user")
   expect_is(user_info, "list")
-  expect_identical(user_info$displayName, "google sheets")
-  expect_identical(user_info$emailAddress, "gspreadr@gmail.com")
+  expect_identical(user_info$user$displayName, "google sheets")
+  expect_identical(user_info$user$emailAddress, "gspreadr@gmail.com")
   expect_is(user_info$date, "POSIXct")
-  expect_true(user_info$token_valid)
-  ## don't be surprised when this regex breaks; I have no idea what's possible
-  expect_match(unlist(user_info[c('peek_acc', 'peek_ref')]),
-               "[/\\.\\w-]+", all = TRUE)
 })
 
-test_that("Token peek works", {
-  expect_output(user_info <- gd_user(), "displayName")
+test_that("Token printing works", {
+  out <- capture_output(gd_token()) %>% strsplit("\n")
+  out <- out[[1]]
   ttt <- readRDS("googlesheets_token.rds")
-  expect_identical(substr(ttt$credentials$access_token, 1, 5),
-                   substr(user_info$peek_acc, 1, 5))
-  expect_identical(substr(ttt$credentials$refresh_token, 1, 5),
-                   substr(user_info$peek_ref, 1, 5))
-
+  ## don't have an expectation about the access token! it changes!
+  #at <- ttt$credentials$access_token
+  rt <- ttt$credentials$refresh_token
+  last_five <- function(x) substr(x, start = nchar(x) - 4, stop = nchar(x))
+  expect_identical(last_five(rt),
+                   last_five(grep("peek at refresh", out, value = TRUE)))
 })
 
 ## SUSPEND THE MAIN TESTING TOKEN

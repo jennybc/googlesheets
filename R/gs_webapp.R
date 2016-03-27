@@ -118,6 +118,6 @@ gs_webapp_get_token <-
                          cache_path = FALSE)
 
     .state$token <- token_formatted
-    .state$user <- google_user()
+    .state$user <- drive_user()
     .state$token
   }

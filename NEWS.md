@@ -1,5 +1,9 @@
 # googlesheets 0.2.0.9000
 
+  * Functions prefixed with `gd_` refer to Google Drive and might eventually migrate into a separate Google Drive package. Generally there is a synonym with the `gs_` prefix.
+  * `gd_token()` is a new function to expose information about the current Google token. Some of this was migrated out of `gd_user()` and into `gd_token()`. New information includes scopes and cache path.
+  * `gd_user()` now returns an S3 object of class `drive_user`, but it's really just a list with a nice print method. It exposes information about the current Google user. New information includes user's Drive `permissionId` and `rootFolderId`.
+
 # googlesheets 0.2.0
 
   * Added a `NEWS.md` file to track changes to the package.

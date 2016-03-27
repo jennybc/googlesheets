@@ -31,5 +31,7 @@ Suggests:
     knitr,
     testthat,
     rmarkdown
+Remotes:
+    hadley/testthat
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1.9000
