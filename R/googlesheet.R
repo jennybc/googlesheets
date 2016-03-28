@@ -34,7 +34,7 @@ as.googlesheet <-
 as.googlesheet.ws_feed <- function(x, ssf = NULL,
                                    lookup, verbose = TRUE, ...) {
 
-  req <- httr::GET(x, omit_token_if(grepl("public", x))) %>%
+  req <- rGET(x, omit_token_if(grepl("public", x))) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 

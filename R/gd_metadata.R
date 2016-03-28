@@ -20,7 +20,7 @@ gd_metadata <- function(id, auth = TRUE) {
   fields <- paste(fields, collapse = ",")
   the_url <- file.path(.state$gd_base_url_files_v3, id)
   the_url <- httr::modify_url(the_url, query = list(fields = fields))
-  req <- httr::GET(the_url, include_token_if(auth)) %>%
+  req <- rGET(the_url, include_token_if(auth)) %>%
     httr::stop_for_status()
   httr::content(req)
 }

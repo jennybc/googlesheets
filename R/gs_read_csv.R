@@ -48,9 +48,9 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
   }
 
   req <-
-    httr::GET(this_ws$exportcsv,
-              omit_token_if(ss$is_public),
-              if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
+    rGET(this_ws$exportcsv,
+         omit_token_if(ss$is_public),
+         if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
     httr::stop_for_status()
   stop_for_content_type(req, "text/csv")
 

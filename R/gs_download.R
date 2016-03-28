@@ -79,14 +79,14 @@ gs_download <-
     stop(mess)
   }
 
-  httr::GET(link, omit_token_if(grepl("public", from$ws_feed)),
-            if (interactive()) httr::progress() else NULL,
-            httr::write_disk(to, overwrite = overwrite))
+  rGET(link, omit_token_if(grepl("public", from$ws_feed)),
+       if (interactive()) httr::progress() else NULL,
+       httr::write_disk(to, overwrite = overwrite))
 
   if (file.exists(to)) {
 
     to <- normalizePath(to)
-    if(verbose) {
+    if (verbose) {
       mpf("Sheet successfully downloaded:\n%s", to)
     }
     return(invisible(to))

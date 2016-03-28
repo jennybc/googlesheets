@@ -59,9 +59,9 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
   ## http://stackoverflow.com/questions/11361956/limiting-the-resultset-size-on-a-google-spreadsheets-forms-list-feed
   ## http://stackoverflow.com/questions/27678331/retreive-a-range-of-rows-from-google-spreadsheet-using-list-based-feed-api-and
   the_url <- this_ws$listfeed
-  req <- httr::GET(the_url,
-                   omit_token_if(grepl("public", the_url)),
-                   query = list(`max-results` = 1)) %>%
+  req <- rGET(the_url,
+              omit_token_if(grepl("public", the_url)),
+              query = list(`max-results` = 1)) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
 
