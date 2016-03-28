@@ -15,7 +15,7 @@ drive_user <- function() {
 
   ## https://developers.google.com/drive/v2/reference/about
   url <- file.path(.state$gd_base_url, "drive/v2/about")
-  req <- httr::GET(url, google_token()) %>%
+  req <- rGET(url, google_token()) %>%
     httr::stop_for_status()
   rc <- content_as_json_UTF8(req)
   rc$date <- req$headers$date %>% httr::parse_http_date()

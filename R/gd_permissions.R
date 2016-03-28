@@ -32,7 +32,7 @@
 gs_perm_ls <- function(ss, filter = NULL) {
 
   url <- file.path(.state$gd_base_url_files_v2, ss$sheet_key, "permissions")
-  req <- httr::GET(url, google_token()) %>%
+  req <- rGET(url, google_token()) %>%
     httr::stop_for_status()
   req <- content_as_json_UTF8(req)
 

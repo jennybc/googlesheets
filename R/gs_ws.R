@@ -313,7 +313,7 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
-  req <- httr::GET(this_ws$ws_id, google_token()) %>%
+  req <- rGET(this_ws$ws_id, google_token()) %>%
     httr::stop_for_status()
   stop_for_content_type(req, expected = "application/atom+xml; charset=UTF-8")
   ## yes, that's right

@@ -1,5 +1,6 @@
 language: R
 cache: packages
+sudo: false
 before_install:
   - openssl aes-256-cbc -K $encrypted_1ac2f65e8ef8_key -iv $encrypted_1ac2f65e8ef8_iv
     -in tests/testthat/googlesheets_token.rds.enc -out tests/testthat/googlesheets_token.rds -d
