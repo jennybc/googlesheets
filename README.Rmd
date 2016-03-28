@@ -106,6 +106,7 @@ To play nicely with tab completion, we use consistent prefixes:
 
   * `gs_` = all functions in the package.
   * `gs_ws_` = all functions that operate on worksheets or tabs within a spreadsheet.
+  * `gd_` = something to do with Google Drive, usually has a `gs_` synonym, might one day migrate to a Drive client.
 
 ### Quick demo
 

@@ -88,6 +88,7 @@ To play nicely with tab completion, we use consistent prefixes:
 
 -   `gs_` = all functions in the package.
 -   `gs_ws_` = all functions that operate on worksheets or tabs within a spreadsheet.
+-   `gd_` = something to do with Google Drive, usually has a `gs_` synonym, might one day migrate to a Drive client.
 
 ### Quick demo
 
@@ -113,7 +114,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-03-17 09:52:13 GMT
+#>   Date of googlesheets registration: 2016-03-28 18:39:26 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
