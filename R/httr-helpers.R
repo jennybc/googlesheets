@@ -24,25 +24,19 @@ content_as_xml_UTF8 <- function(req) {
 }
 
 ## http://www.iana.org/assignments/http-status-codes/http-status-codes-1.csv
-coarsen_code <- function(code)
-  #cut(code, c(0, 299, 500, 600), right = FALSE, labels = FALSE)
-  cut(code, c(0, 500, 600), right = FALSE, labels = FALSE)
 
 VERB_n <- function(VERB, n = 5) {
   function(...) {
     for (i in seq_len(n)) {
       out <- VERB(...)
       status <- httr::status_code(out)
-      switch(coarsen_code(status),
-             break, ## < 500
-             {## >= 500
-               backoff <- runif(n = 1, min = 0, max = 2 ^ i - 1)
-               ## TO DO: honor a verbose argument or option
-               mess <- paste("HTTP error %s on attempt %d ...\n",
-                             "  backing off %0.2f seconds, retrying")
-               mpf(mess, status, i, backoff)
-               Sys.sleep(backoff)
-             })
+      if (status < 500 || i == n) break
+      backoff <- runif(n = 1, min = 0, max = 2 ^ i - 1)
+      ## TO DO: honor a verbose argument or option
+      mess <- paste("HTTP error %s on attempt %d ...\n",
+                    "  backing off %0.2f seconds, retrying")
+      mpf(mess, status, i, backoff)
+      Sys.sleep(backoff)
     }
     out
   }

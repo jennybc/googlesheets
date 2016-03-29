@@ -1,5 +1,7 @@
 # googlesheets 0.2.0.9000
 
+  * Automatic retries for `Internal Server Error (HTTP 500)`. On or around 2016-03-11, there was a huge increase in the frequency of this error on Google Drive API calls.
+    - Remedy: all HTTP `GET` calls in the package are automatically retried up to 5 times, with exponential backoff, for statuses 500 and higher.
   * Functions prefixed with `gd_` refer to Google Drive and might eventually migrate into a separate Google Drive package. Generally there is a synonym with the `gs_` prefix.
   * `gd_token()` is a new function to expose information about the current Google token. Some of this was migrated out of `gd_user()` and into `gd_token()`. New information includes scopes and cache path.
   * `gd_user()` now returns an S3 object of class `drive_user`, but it's really just a list with a nice print method. It exposes information about the current Google user. New information includes user's Drive `permissionId` and `rootFolderId`.
