@@ -1,6 +1,6 @@
 context("edit cells")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 pts_copy <- p_("pts-copy")
 ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
@@ -45,7 +45,7 @@ test_that("Single cell can be updated", {
                  "successfully updated")
   Sys.sleep(1)
   tmp <- ss %>%
-    gs_read_cellfeed(ws, range = "A1") %>%
+    gs_read_cellfeed(ws, range = "A1", verbose = FALSE) %>%
     gs_simplify_cellfeed(col_names = FALSE)
   expect_identical(tmp, c(A1 = "eggplant"))
 
@@ -74,26 +74,26 @@ iris_ish$Species <- iris_ish$Species %>% as.character()
 test_that("2-dimensional things can be uploaded", {
 
   # update with empty strings to "clear" cells
-  tmp <- ss %>% gs_read_cellfeed(ws)
+  tmp <- ss %>% gs_read_cellfeed(ws, verbose = FALSE)
   if(nrow(tmp) > 0) {
     input <- matrix("", nrow = max(tmp$row), ncol = max(tmp$col))
     ss <- ss %>% gs_edit_cells(ws, input)
     Sys.sleep(1)
-    tmp <- ss %>% gs_read_cellfeed(ws)
+    tmp <- ss %>% gs_read_cellfeed(ws, verbose = FALSE)
   }
-  expect_equal(dim(tmp), c(0, 5))
+  expect_equal(dim(tmp), c(0, 7))
 
   # update w/ a data.frame, col_names = FALSE
   ss <- ss %>% gs_edit_cells(ws, iris_ish, col_names = FALSE)
   Sys.sleep(1)
-  tmp <- ss %>% gs_read(ws, header = FALSE) # header goes to read.csv()
+  tmp <- ss %>% gs_read(ws, col_names = FALSE, verbose = FALSE)
   names(tmp) <- names(iris_ish) # I know these disagree, so just equate them
   expect_equivalent(tmp, iris_ish)
 
   # update w/ a data.frame, col_names = TRUE
   ss <- ss %>% gs_edit_cells(ws, iris_ish)
   Sys.sleep(1)
-  tmp <- ss %>% gs_read(ws)
+  tmp <- ss %>% gs_read(ws, verbose = FALSE)
   expect_identical(tmp, iris_ish)
 
 })
@@ -105,15 +105,15 @@ test_that("Vectors can be uploaded", {
   # byrow = FALSE
   ss <- ss %>% gs_edit_cells(ws, LETTERS[1:5], "A8")
   Sys.sleep(2)
-  tmp <- ss %>% gs_read_cellfeed(ws, range = "A8:A12") %>%
+  tmp <- ss %>% gs_read_cellfeed(ws, range = "A8:A12", verbose = FALSE) %>%
     gs_simplify_cellfeed()
   expect_equivalent(tmp, LETTERS[1:5])
 
   # byrow = TRUE
   ss <- ss %>% gs_edit_cells(ws, LETTERS[5:1], "A15", byrow = TRUE)
   Sys.sleep(2)
-  tmp <- ss %>% gs_read_cellfeed(ws, range = "A15:E15") %>%
-                                   gs_simplify_cellfeed()
+  tmp <- ss %>% gs_read_cellfeed(ws, range = "A15:E15", verbose = FALSE) %>%
+    gs_simplify_cellfeed()
   expect_equivalent(tmp, LETTERS[5:1])
 
 })
@@ -132,19 +132,24 @@ test_that("We can add a row", {
   ws <- "shipwrecks"
   ss <- ss %>% gs_add_row(ws = ws, input = c("Dona Paz", "1987-12-20"))
   expect_is(ss, "googlesheet")
-  expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
-               dplyr::data_frame(id = "Dona Paz", wreckdate = "1987-12-20"))
+  expect_equal(ss %>% gs_read(ws = ws, verbose = FALSE) %>% tail(1),
+               dplyr::data_frame(id = "Dona Paz",
+                                 wreckdate = as.Date("1987-12-20")))
 
 })
 
 test_that("Row input is given the proper length", {
 
   ws <- "shipwrecks"
-  expect_message(ss <- ss %>% gs_add_row(ws = ws, input = "Vasa"),
-                 "too short")
+  expect_message(ss <- ss %>% gs_add_row(ws = ws, input = "Vasa"), "too short")
   expect_is(ss, "googlesheet")
-  expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
-               dplyr::data_frame(id = "Vasa", wreckdate = NA_character_))
+  ## integer vs double date problem
+  ## https://github.com/hadley/readr/issues/357
+  ## so just suppress date for now
+  expect_equivalent(
+    ss %>% gs_read(ws = ws, col_types = "cc", verbose = FALSE) %>% tail(1),
+    dplyr::data_frame(id = "Vasa", wreckdate = NA_character_)
+    )
 
   expect_message(ss <- ss %>%
                    gs_add_row(ws = ws,
@@ -152,10 +157,21 @@ test_that("Row input is given the proper length", {
                                         "Pearl Harbor")),
                  "too long")
   expect_is(ss, "googlesheet")
-  expect_equal(ss %>% gs_read(ws = ws) %>% tail(1),
-               dplyr::data_frame(id = "USS Arizona", wreckdate = "1941-12-07"))
+  expect_equal(ss %>% gs_read(ws = ws, verbose = FALSE) %>% tail(1),
+               dplyr::data_frame(id = "USS Arizona",
+                                 wreckdate = as.Date("1941-12-07")))
 
 })
 
+test_that("We can add multiple rows", {
+  ws <- "shipwrecks"
+  input <- dplyr::data_frame(id = c("Dona Paz", "USS Arizona"),
+                             wreckdate = as.Date(c("1987-12-20", "1941-12-07")))
+
+  ss <- ss %>% gs_add_row(ws = ws, input = input)
+  expect_is(ss, "googlesheet")
+  expect_equal(ss %>% gs_read(ws = ws, verbose = FALSE) %>% tail(2), input)
+})
+
 gs_grepdel(TEST, verbose = FALSE)
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

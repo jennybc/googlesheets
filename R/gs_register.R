@@ -88,16 +88,15 @@ gs_key <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
   lookup <- set_lookup(lookup, visibility, verbose)
   visibility <- set_visibility(visibility, lookup)
 
-  if(lookup) {
+  if (lookup) {
     ssf <- x %>%
       gs_lookup("sheet_key", verbose)
     x <- ssf$ws_feed
   } else {
     x <- x %>%
       construct_ws_feed_from_key(visibility)
-    if(verbose) {
-      sprintf("Worksheets feed constructed with %s visibility", visibility) %>%
-        message()
+    if (verbose) {
+      mpf("Worksheets feed constructed with %s visibility", visibility)
     }
     ssf <- NULL
   }
@@ -122,9 +121,7 @@ gs_url <- function(x, lookup = NULL, visibility = NULL, verbose = TRUE) {
 
   x <- extract_key_from_url(x)
 
-  if(verbose) {
-    message(sprintf("Putative key: %s", x))
-  }
+  if(verbose) mpf("Putative key: %s", x)
 
   x %>%
     gs_key(lookup, visibility, verbose)
@@ -176,7 +173,7 @@ gs_gs <- function(x, visibility = NULL, verbose = TRUE) {
 
 set_lookup <- function(lookup = NULL, visibility = NULL, verbose = TRUE) {
 
-  stopifnot(isTOGGLE(lookup))
+  stopifnot(is_toggle(lookup))
 
   auth_seems_possible <- !is.null(.state$token) || file.exists(".httr-oauth")
 
@@ -189,11 +186,6 @@ set_lookup <- function(lookup = NULL, visibility = NULL, verbose = TRUE) {
                        private = TRUE,
                        auth_seems_possible)
     }
-  }
-
-  if(verbose) {
-    sprintf("Authorization will %sbe used.", if(lookup) "" else "not ") %>%
-      message()
   }
 
   lookup
@@ -246,8 +238,7 @@ gs_lookup <- function(x, lvar = "sheet_title", verbose = TRUE) {
   }
 
   if(verbose) {
-    sprintf("Sheet successfully identifed: \"%s\"", ssf$sheet_title[i]) %>%
-      message()
+    mpf("Sheet successfully identified: \"%s\"", ssf$sheet_title[i])
   }
 
   ssf[i, ]

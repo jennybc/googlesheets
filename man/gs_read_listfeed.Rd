@@ -4,7 +4,8 @@
 \alias{gs_read_listfeed}
 \title{Read data via the "list feed"}
 \usage{
-gs_read_listfeed(ss, ws = 1, verbose = TRUE)
+gs_read_listfeed(ss, ws = 1, reverse = NULL, orderby = NULL, sq = NULL,
+  ..., verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
@@ -13,43 +14,131 @@ object}
 \item{ws}{positive integer or character string specifying index or title,
 respectively, of the worksheet}
 
+\item{reverse}{logical, optional. Indicates whether to request reverse row
+order in the actual API call.}
+
+\item{orderby}{character, optional. Specifies a column to sort on in the
+actual API call.}
+
+\item{sq}{character, optional. Provides a structured query for row filtering
+in the actual API call.}
+
+\item{...}{\strong{Optional} arguments to control data download, parsing, and
+  reshaping; for most purposes, the defaults should be fine. Anything that is
+  not listed here will be silently ignored.
+\describe{
+  \item{\code{progress}}{Logical. Whether to display download progress if in
+  an interactive session.}
+  \item{\code{col_types}}{Seize control of type conversion for variables.
+  Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}. Follow those links
+  or read the \code{vignette("column-types")} for details.}
+  \item{\code{locale, trim_ws, na}}{Specify locale, the fate of leading or
+  trailing whitespace, or a character vector of strings that should become
+  missing values. Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}.}
+  \item{\code{comment, skip, n_max}}{Specify a string used to identify
+  comments, request to skip lines before reading data, or specify the
+  maximum number of data rows to read.}
+  \item{\code{col_names}}{Either \code{TRUE}, \code{FALSE} or a character
+  vector of column names. If \code{TRUE}, the first row of the data rectangle
+  will be used for names. If \code{FALSE}, column names will be X1, X2, etc.
+  If a character vector, it will be used as column names. If the sheet
+  contains column names and you just don't like them, specify \code{skip = 1}
+  so they don't show up in your data.}
+  \item{\code{check.names}}{Logical. Whether to run column names through
+  \code{\link{make.names}} with \code{unique = TRUE}, just like
+  \code{\link{read.table}} does. By default, \code{googlesheets} implements
+  the \code{readr} data ingest philosophy, which leaves column names "as is",
+  with one exception: data frames returned by \code{googlesheets} will have
+  a name for each variable, even if we have to create one.}
+}}
+
 \item{verbose}{logical; do you want informative messages?}
 }
 \value{
-a tbl_df
+a \code{data.frame} or, if \code{dplyr} is loaded, a
+  \code{\link[dplyr]{tbl_df}}
 }
 \description{
 Gets data via the "list feed", which assumes populated cells form a neat
 rectangle. The list feed consumes data row by row. The first row is assumed
-to hold variable or column names. The related function,
-\code{\link{gs_read_csv}}, also returns data from a rectangle of cells,
-but it is generally faster and more resilient to, e.g. empty rows, so use it
-if you can. However, you may need to use this function if you are dealing
-with an "old" Google Sheet, which \code{\link{gs_read_csv}} does not
-support). Consult the Google Sheets API documentation for more details about
-\href{https://developers.google.com/google-apps/spreadsheets/data#work_with_list-based_feeds}{the
-"list feed"}.
+to hold variable or column names; it can be empty. The second row is assumed
+to hold the first data row and, if it is empty, no data will be read and you
+will get an empty data frame.
 }
-\note{
-When you use the "list feed", the Sheets API transforms the variable or
-  column names like so: 'The column names are the header values of the
-  worksheet lowercased and with all non-alpha-numeric characters removed. For
-  example, if the cell A1 contains the value "Time 2 Eat!" the column name
-  would be "time2eat".' If this is intolerable to you, use a different
-  function to read the data. Or, at least, consume the first row via the cell
-  feed and manually restore the variable names \emph{post hoc}.
+\details{
+The other read functions are generally superior, so use them if you can.
+However, you may need to use this function if you are dealing with an "old"
+Google Sheet, which is beyond the reach of \code{\link{gs_read_csv}}. The
+list feed also has some ability to sort and filter rows via the API (more
+below). Consult the Google Sheets API documentation for more details about
+\href{https://developers.google.com/google-apps/spreadsheets/data#work_with_list-based_feeds}{the
+list feed}.
+}
+\section{Column names}{
+
+
+  For the list feed, and only for the list feed, the Sheets API wants to
+  transform the variable or column names like so: 'The column names are the
+  header values of the worksheet lowercased and with all non-alpha-numeric
+  characters removed. For example, if the cell A1 contains the value "Time 2
+  Eat!" the column name would be "time2eat".' In \code{googlesheets}, we do
+  not let this happen and, instead, use the column names "as is", for
+  consistent output across all \code{gs_read*} functions. If you direct
+  \code{gs_read_listfeed} to pass query parameters to the actual API call,
+  you must refer to variables using the column names \emph{under this
+  API-enforced transformation}. For example, to order the data by the column
+  with "Time 2 Eat!" in the header row, you must specify \code{orderby =
+  "time2eat"} in the \code{gs_read_listfeed} call.
+}
+
+\section{Sorting and filtering via the API}{
+
+
+  Why on earth would you want to sort and filter via the API instead of in R?
+  Just because you can? It is conceivable there are situations, such as a
+  large spreadsheet, in which it is faster to sort or filter via API. Be sure
+  to refer to variables using the API-transformed column names explained
+  above! It is a
+  \href{https://code.google.com/a/google.com/p/apps-api-issues/issues/detail?id=3588}{known
+   bug} that \code{reverse=true} alone will NOT, in fact, reverse the row
+  order of the result. In our experience, the \code{reverse} query parameter
+  will only have effect in combination with explicit specification of a
+  column to sort on via \code{orderby}. The syntax for these queries
+  \href{http://stackoverflow.com/questions/25732784/official-reference-for-google-spreadsheet-api-structured-query-syntax}{is
+   apparently undocumented}, so keep it simple or bring your spirit of
+  adventure!
 }
 \examples{
 \dontrun{
 gap_ss <- gs_gap() # register the Gapminder example sheet
 oceania_lf <- gs_read_listfeed(gap_ss, ws = "Oceania")
-str(oceania_lf)
-oceania_lf
+head(oceania_lf, 3)
+
+## do row ordering and filtering in the API call
+oceania_fancy <-
+  gs_read_listfeed(gap_ss,
+                   ws = "Oceania",
+                   reverse = TRUE, orderby = "gdppercap",
+                   sq = "lifeexp > 79 or year < 1960")
+oceania_fancy
+
+## passing args through to readr::type_convert()
+oceania_crazy <-
+  gs_read_listfeed(gap_ss,
+                   ws = "Oceania",
+                   col_names = paste0("z", 1:6), skip = 1,
+                   col_types = "ccncnn",
+                   na = "1962")
+oceania_crazy
 }
 
 }
 \seealso{
-Other data.consumption.functions: \code{\link{gs_read_cellfeed}},
+Other data consumption functions: \code{\link{gs_read_cellfeed}},
   \code{\link{gs_read_csv}}, \code{\link{gs_read}},
   \code{\link{gs_reshape_cellfeed}},
   \code{\link{gs_simplify_cellfeed}}

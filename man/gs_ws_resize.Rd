@@ -35,7 +35,7 @@ Setting rows and columns to less than the current worksheet dimensions
 \examples{
 \dontrun{
 yo <- gs_new("yo")
-yo <- gs_edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+yo <- gs_edit_cells(yo, input = head(iris), trim = TRUE)
 gs_read_csv(yo)
 yo <- gs_ws_resize(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
 gs_read_csv(yo)

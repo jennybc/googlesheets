@@ -19,26 +19,26 @@
 #' @export
 print.googlesheet <- function(x, ...) {
 
-  sprintf("                  Spreadsheet title: %s\n", x$sheet_title) %>% cat()
-  sprintf("                 Spreadsheet author: %s\n", x$author) %>% cat()
-  sprintf("  Date of googlesheets registration: %s\n",
-          x$reg_date %>% format.POSIXct(usetz = TRUE)) %>% cat()
-  sprintf("    Date of last spreadsheet update: %s\n",
-          x$updated %>% format.POSIXct(usetz = TRUE)) %>% cat()
-  sprintf("                         visibility: %s\n", x$visibility) %>% cat()
-  sprintf("                        permissions: %s\n", x$perm) %>% cat()
-  sprintf("                            version: %s\n", x$version) %>% cat()
+  cpf("                  Spreadsheet title: %s", x$sheet_title)
+  cpf("                 Spreadsheet author: %s", x$author)
+  cpf("  Date of googlesheets registration: %s",
+      x$reg_date %>% format.POSIXct(usetz = TRUE))
+  cpf("    Date of last spreadsheet update: %s",
+      x$updated %>% format.POSIXct(usetz = TRUE))
+  cpf("                         visibility: %s", x$visibility)
+  cpf("                        permissions: %s", x$perm)
+  cpf("                            version: %s", x$version)
   cat("\n")
 
   ws_output <-
     sprintf("%s: %d x %d",
             x$ws$ws_title, x$ws$row_extent, x$ws$col_extent)
-  sprintf("Contains %d worksheets:\n", x$n_ws) %>% cat()
+  cpf("Contains %d worksheets:", x$n_ws)
   cat("(Title): (Nominal worksheet extent as rows x columns)\n")
   cat(ws_output, sep = "\n")
 
   cat("\n")
-  sprintf("Key: %s\n", x$sheet_key) %>% cat()
-  if(!is.na(x$alt_key)) sprintf("Alternate key: %s\n", x$alt_key) %>% cat()
-  sprintf("Browser URL: %s\n", x$browser_url) %>% cat()
+  cpf("Key: %s", x$sheet_key)
+  if (!is.na(x$alt_key)) cpf("Alternate key: %s", x$alt_key)
+  cpf("Browser URL: %s", x$browser_url)
 }

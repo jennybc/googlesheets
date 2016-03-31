@@ -4,29 +4,19 @@
 #' \code{tbl_df} or \code{data.frame}. Don't be spooked by the "csv" thing --
 #' the data is NOT actually written to file during this process. Data is read
 #' from the "maximal data rectangle", i.e. the rectangle spanned by the maximal
-#' row and column extent of the data. Empty cells within this rectangle will be
-#' assigned NA. This is the fastest method of data consumption, so use it as
-#' long as you can tolerate the lack of control re: which cells are being read.
-#'
-#' How does this compare to consumption via the list feed, implemented by
-#' \code{\link{gs_read_listfeed}}? First, \code{gs_read_csv} is much, much
-#' faster. Second, the first row, potentially containing column or variable
-#' names, is NOT transformed/mangled, as it is via the list feed. Finally,
-#' consumption via the \code{exportcsv} link is more tolerant of data that does
-#' not form a perfect, neat rectangle, e.g. the read does NOT stop upon
-#' encountering an empty row.
+#' row and column extent of the data. By default, empty cells within this
+#' rectangle will be assigned \code{NA}. This is the fastest method of data
+#' consumption, so use it as long as you can tolerate the lack of control re:
+#' which cells are being read.
 #'
 #' @template ss
 #' @template ws
-#' @param ... Further arguments to be passed to the csv parser. This is
-#'   currently \code{\link{read.csv}}, but expect a switch to
-#'   \code{readr::read_csv} in the not-too-distant future! Note that by default
-#'   \code{\link{read.csv}} is called with \code{stringsAsFactors = FALSE}.
+#' @template read-ddd
 #' @template verbose
 #'
 #' @family data consumption functions
 #'
-#' @return a tbl_df
+#' @template return-tbl-df
 #'
 #' @examples
 #' \dontrun{
@@ -34,63 +24,58 @@
 #' oceania_csv <- gs_read_csv(gap_ss, ws = "Oceania")
 #' str(oceania_csv)
 #' oceania_csv
+#'
+#' ## crazy demo of passing args through to readr::read_csv()
+#' oceania_crazy <- gs_read_csv(gap_ss, ws = "Oceania",
+#'   col_names = paste0("Z", 1:6), na = "1962", col_types = "cccccc", skip = 1)
+#' oceania_crazy
 #' }
 #' @export
 gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
 
   stopifnot(inherits(ss, "googlesheet"))
-
+  ddd <- parse_read_ddd(..., verbose = verbose)
   this_ws <- gs_ws(ss, ws, verbose)
 
-  if(is.null(this_ws$exportcsv)) {
-    stop(paste("This appears to be an \"old\" Google Sheet. The old Sheets do",
-               "not offer the API access required by this function.",
-               "Consider converting it from an old Sheet to a new Sheet.",
-               "Or use another data consumption function, such as",
-               "gs_read_listfeed() or gs_read_cellfeed(). Or use gs_download()",
-               "to export it to a local file and then read it into R."))
+  if (is.null(this_ws$exportcsv)) {
+    stop("This appears to be an \"old\" Google Sheet. The old Sheets do\n",
+         "not offer the API access required by this function.\n",
+         "Consider converting it from an old Sheet to a new Sheet.\n",
+         "Or use another data consumption function, such as\n",
+         "gs_read_listfeed() or gs_read_cellfeed(). Or use gs_download()\n",
+         "to export it to a local file and then read it into R.",
+         call. = FALSE)
   }
 
-  req <- gsheets_GET(this_ws$exportcsv, to_xml = FALSE,
-                     use_auth = !ss$is_public)
+  req <-
+    rGET(this_ws$exportcsv,
+         omit_token_if(ss$is_public),
+         if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
+    httr::stop_for_status()
+  stop_for_content_type(req, "text/csv")
 
-  if(req$headers$`content-type` != "text/csv") {
-    stop1 <- "Cannot access this sheet via csv."
-    stop2 <- "Are you sure you have permission to access this Sheet?"
-    stop3 <- paste("If this Sheet is supposed to be public, make sure it is",
-                   "\"published to the web\", which is NOT the same as",
-                   "\"public on the web\".")
-    stop4 <- sprintf("status_code: %s", req$status_code)
-    stop5 <- sprintf("content-type: %s", req$headers$`content-type`)
-    stop(paste(stop1, stop2, stop3, stop4, stop5, sep = "\n"))
+  if (is.null(req$content) || length(req$content) == 0L) {
+    if (verbose) mpf("Worksheet '%s' is empty.", this_ws$ws_title)
+    return(dplyr::data_frame())
   }
 
-  if(is.null(req$content) || length(req$content) == 0L) {
-    message(sprintf("Worksheet \"%s\" is empty.", this_ws$ws_title))
-    dplyr::data_frame()
-  } else {
-    ## numeric columns have an NA for empty cells
-    ## character columns have "" for empty cells
-    ## hence the value of na.strings
-    req %>%
-      httr::content(type = "text/csv", na.strings = c("", "NA"),
-                    encoding = "UTF-8", ...) %>%
-      dplyr::as_data_frame() %>%
-      dplyr::as.tbl()
-    ## in future, I'm interested in using readr::read_csv(), either directly
-    ## or indirectly, if httr make it the parser when MIME type is text/csv
-    ## won't do it know because doesn't support vector valued na.strings,
-    ## comment.char, etc.
-    ## track progress on these issues:
-    ## https://github.com/hadley/readr/issues/167
-    ## https://github.com/hadley/readr/issues/114
-    ## https://github.com/hadley/readr/issues/125
-    ## parsing content "by hand" with readr_csv() might look like so:
-    ## req %>%
-    ##   httr::content(type = "text", encoding = "UTF-8") %>%
-    ##   readr::read_csv()
+  content <- httr::content(req, as = "text")
+  if (!stringr::str_detect(content, "\n")) {
+    content <- stringr::str_c(content, "\n")
   }
+
+  allowed_args <- c("col_types", "col_names", "locale", "trim_ws", "na",
+                    ## specific to csv
+                    "comment", "skip", "n_max")
+  read_csv_args <- c(list(file = content), dropnulls(ddd[allowed_args]))
+  df <- do.call(readr::read_csv, read_csv_args)
+
+  ## our departures from readr data ingest:
+  ## no NA variable names
+  ## NA vars should be logical, not character
+  nms <- names(df)
+  names(df) <- fix_names(nms, ddd$check.names)
+  df %>%
+    purrr::dmap(force_na_type)
 
 }
-
-

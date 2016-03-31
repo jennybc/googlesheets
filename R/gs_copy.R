@@ -24,39 +24,43 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
   stopifnot(inherits(from, "googlesheet"))
 
   key <- gs_get_alt_key(from)
-  if(is.null(to)) {
+  if (is.null(to)) {
     to <- paste("Copy of", from$sheet_title)
   }
 
+  current_sheets <- gs_ls(regex = to, fixed = TRUE, verbose = FALSE)
+
+  if (!is.null(current_sheets) && verbose) {
+    wpf(paste("At least one sheet matching \"%s\" already exists, so you",
+              "may\nneed to identify by key, not title, in future."), to)
+  }
+
+  the_url <- file.path(.state$gd_base_url_files_v2, key, "copy")
   the_body <- list("title" = to)
+  req <-
+    httr::POST(the_url, google_token(), encode = "json", body = the_body) %>%
+    httr::stop_for_status()
+  rc <- content_as_json_UTF8(req)
 
-  the_url <-
-    paste("https://www.googleapis.com/drive/v2/files", key, "copy", sep = "/")
-
-  req <- gdrive_POST(the_url, body = the_body)
-
-  new_key <- httr::content(req)$id
-
-  new_ss <- try(gs_key(new_key, verbose = FALSE), silent = TRUE)
+  new_ss <- try(gs_key(rc$id, verbose = FALSE), silent = TRUE)
 
   cannot_find_sheet <- inherits(new_ss, "try-error")
 
-  if(cannot_find_sheet) {
-    if(verbose) {
+  if (cannot_find_sheet) {
+    if (verbose) {
       message("Cannot verify whether spreadsheet copy was successful.")
     }
-    invisible(NULL)
-  } else {
-    ## this looks crazy but unless I sleep for several seconds, new_ss reflects
-    ## the default "copy of ..." title instead of sheet title requested in `to
-    ## =`
-    new_ss$sheet_title <- to
-    if(verbose) {
-      message(sprintf("Successful copy! New sheet is titled \"%s\".",
-                      new_ss$sheet_title))
-    }
-    new_ss %>%
-      invisible()
+    return(invisible(NULL))
   }
 
-}
+  ## this looks crazy but unless I sleep for several seconds, new_ss reflects
+  ## the default "copy of ..." title instead of sheet title requested in `to
+  ## =`
+  new_ss$sheet_title <- to
+  if (verbose) {
+    mpf("Successful copy! New sheet is titled \"%s\".", new_ss$sheet_title)
+  }
+  new_ss %>%
+    invisible()
+
+  }

@@ -1,3 +1,4 @@
+# nocov start
 .onLoad <- function(libname, pkgname) {
 
   op <- options()
@@ -19,3 +20,13 @@
   invisible()
 
 }
+
+# store base urls in the '.state' internal environment (created in gs_auth.R)
+.state$gd_base_url <- "https://www.googleapis.com"
+.state$gd_base_url_files_v2 <-
+  file.path(.state$gd_base_url, "drive", "v2", "files")
+.state$gd_base_url_files_v3 <-
+  file.path(.state$gd_base_url, "drive", "v3", "files")
+#.state$gs_base_url <- "https://spreadsheets.google.com/feeds"
+
+# nocov end

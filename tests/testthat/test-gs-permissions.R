@@ -1,6 +1,6 @@
 context("permissions")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 new_ss <- gs_new(p_("test-gs-permissions"), verbose = FALSE)
 gap_ss <- gs_gap()
@@ -12,7 +12,7 @@ test_that("Permissions for a spreadsheet are listed", {
   expect_equal(gs_perm_ls(new_ss)$role, "owner")
 
   expect_is(gs_perm_ls(gap_ss), "tbl_df")
-  expect_more_than(gs_perm_ls(gap_ss) %>% nrow(), 1L)
+  expect_gt(gs_perm_ls(gap_ss) %>% nrow(), 1L)
   expect_equal(gs_perm_ls(gap_ss, "anyone")$role, "reader")
 
 })
@@ -53,4 +53,4 @@ test_that("Permissions can be deleted", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

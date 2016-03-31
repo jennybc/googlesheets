@@ -10,4 +10,8 @@ man-roxygen
 rsconnect
 ^cran-comments.md$
 ^README.html$
-tests/testthat/googlesheets_token.rds.enc
+^managing-auth-tokens-diagrams.key$
+^user-login-consent.png$
+^user-login-consent.tiff$
+^.build.timestamp$
+^tests/testthat/googlesheets_token.rds.enc$

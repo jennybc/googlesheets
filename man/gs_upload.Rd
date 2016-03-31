@@ -29,7 +29,7 @@ This function calls the
 write.csv(head(iris, 5), "iris.csv", row.names = FALSE)
 iris_ss <- gs_upload("iris.csv")
 iris_ss
-gs_read_listfeed(iris_ss)
+gs_read(iris_ss)
 file.remove("iris.csv")
 gs_delete(iris_ss)
 }

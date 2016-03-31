@@ -29,7 +29,7 @@
 #'   order to populate the new worksheet with data
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @seealso \code{\link{gs_edit_cells}} for specifics on populating the new
 #'   sheet with some data and \code{\link{gs_upload}} for creating a new
@@ -59,29 +59,27 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
                    verbose = TRUE) {
 
   current_sheets <- gs_ls(regex = title, fixed = TRUE, verbose = FALSE)
-  if(!is.null(current_sheets)) {
-    mess <- paste("At least one sheet matching \"%s\" already exists, so you",
-                  "may need to identify by key, not title, in future.") %>%
-      sprintf(title)
-    warning(mess)
+  if (!is.null(current_sheets)) {
+    wpf(paste("At least one sheet matching \"%s\" already exists, so you",
+              "may\nneed to identify by key, not title, in future."), title)
   }
 
   the_body <- list(title = title,
                    mimeType = "application/vnd.google-apps.spreadsheet")
+  req <- httr::POST(.state$gd_base_url_files_v2, google_token(),
+                    encode = "json", body = the_body) %>%
+    httr::stop_for_status()
+  rc <- content_as_json_UTF8(req)
 
-  req <-
-    gdrive_POST(url = "https://www.googleapis.com/drive/v2/files",
-                body = the_body)
-
-  ss <- httr::content(req)$id %>%
+  ss <- rc$id %>%
     gs_key(verbose = FALSE)
 
-  if(inherits(ss, "googlesheet")) {
-    if(verbose) {
-      message(sprintf("Sheet \"%s\" created in Google Drive.", ss$sheet_title))
+  if (inherits(ss, "googlesheet")) {
+    if (verbose) {
+      mpf("Sheet \"%s\" created in Google Drive.", ss$sheet_title)
     }
   } else {
-    stop(sprintf("Unable to create Sheet \"%s\" in Google Drive.", title))
+    spf("Unable to create Sheet \"%s\" in Google Drive.", title)
   }
 
   if(!is.null(ws_title)) {
@@ -89,12 +87,10 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
       gs_ws_rename(from = 1, to = ws_title, verbose = FALSE)
     if(verbose && !is.null(ws_title)) {
       if(ws_title %in% ss$ws$ws_title) {
-        sprintf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title) %>%
-          message()
+        mpf("Worksheet \"%s\" renamed to \"%s\".", "Sheet1", ws_title)
       } else {
-        sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                      "renamed to \"%s\"."), "Sheet1", ws_title) %>%
-          message()
+        mpf(paste("Cannot verify whether worksheet \"%s\" was",
+                  "renamed to \"%s\"."), "Sheet1", ws_title)
       }
     }
   }
@@ -115,8 +111,7 @@ gs_new <- function(title = "my_sheet", ws_title = NULL,
   }
 
   if(verbose) {
-    message(sprintf("Worksheet dimensions: %d x %d.",
-                    ss$ws$row_extent, ss$ws$col_extent))
+    mpf("Worksheet dimensions: %d x %d.", ss$ws$row_extent, ss$ws$col_extent)
   }
 
   invisible(ss)

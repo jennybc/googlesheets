@@ -54,4 +54,10 @@ gs_ls(regex = "TEST-[a-zA-Z]*cat[a-zA-Z]*$", ignore.case = TRUE)
 }
 
 }
+\seealso{
+\code{\link{gs_delete}} for more detail on what you can and cannot
+delete and how to recover from accidental deletion
+
+Other sheet deletion functions: \code{\link{gs_delete}}
+}
 

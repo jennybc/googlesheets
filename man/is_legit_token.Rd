@@ -7,9 +7,7 @@
 is_legit_token(x, verbose = FALSE)
 }
 \description{
-This unexported function exists to catch tokens that are technically valid,
-i.e. `inherits(token, "Token2.0")` is TRUE, but that have dysfunctional
-credentials.
+Check that token appears to be legitimate
 }
 \keyword{internal}
 

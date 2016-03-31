@@ -1,6 +1,6 @@
 context("upload sheets")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 test_that("Nonexistent or wrong-extension files throw error", {
 
@@ -18,7 +18,8 @@ test_that("Different file formats can be uploaded", {
   upload_titles <- p_(files_to_upload)
 
   tmp <- mapply(gs_upload,
-                file = system.file(files_to_upload, package = "googlesheets"),
+                file = system.file("mini-gap",
+                                   files_to_upload, package = "googlesheets"),
                 sheet_title = upload_titles, SIMPLIFY = FALSE)
 
   Sys.sleep(1)
@@ -33,4 +34,4 @@ test_that("Different file formats can be uploaded", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

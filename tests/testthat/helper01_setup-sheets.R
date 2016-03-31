@@ -1,17 +1,5 @@
 `%>%` <- dplyr::`%>%`
 
-## Gapminder (owned by rpackagetest)
-GAP_KEY <- gs_gap_key()
-GAP_URL <- gs_gap_url()
-GAP_WS_FEED <- gs_gap_ws_feed()
-GAP_TITLE <- "test-gs-gapminder"
-
-## Mini gapminder (owned by rpackagetest)
-mini_gap_url <- "https://docs.google.com/spreadsheets/d/1BMtx1V2pk2KG2HGANvvBOaZM4Jx1DUdRrFdEx-OJIGY/edit#gid=2141688971"
-mini_gap_title <- "test-gs-mini-gapminder"
-mini_gap_key <- "1BMtx1V2pk2KG2HGANvvBOaZM4Jx1DUdRrFdEx-OJIGY"
-mini_gap_ws_feed <- construct_ws_feed_from_key(mini_gap_key, "public")
-
 ## Public testing sheet (owned by rpackagetest)
 pts_url <- "https://docs.google.com/spreadsheets/d/1amnxLg9VVDoE6KSIZvutYkEGNgQyJSnLJgHthehruy8/"
 pts_title <- "test-gs-public-testing-sheet"
@@ -58,18 +46,6 @@ wtf2_url <- "https://docs.google.com/spreadsheets/d/1upHM4Kg9Zr3dmzW2LW_rMG44NFJ
 ## http://its.faith.edu.ph/news/oldstylegooglesheet
 ## the actual link to make a copy of an old style sheet is this:
 ## https://drive.google.com/open?id=0AixWk2YYzNjidGxZS1ItdkN1bzJyeFFTSGxjc0lXamc&authuser=0&newcopy
-
-## Gapminder alternative (owned by gspreadr)
-gap_alt_url <- "https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/"
-gap_alt_title <- "Gapminder"
-gap_alt_key <- "1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA"
-gap_alt_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/private/full"
-
-## Public testing sheet (owned by gspreadr)
-pts_alt_url <- "https://docs.google.com/spreadsheets/d/1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk/"
-pts_alt_title <- "Public Testing Sheet"
-pts_alt_key <- "1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk"
-pts_alt_ws_feed <- "https://spreadsheets.google.com/feeds/worksheets/1hff6AzFAZgFdb5-onYc1FZySxTP4hlrcsPSkR0dG3qk/private/full"
 
 ## Private iris sheet (owned by gspreadr)
 iris_pvt_url <- "https://docs.google.com/spreadsheets/d/1UXr4-haIQsmJfyjkEhlkNt2PXduBkB97e15jez9ogRo/"

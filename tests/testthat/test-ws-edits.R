@@ -1,6 +1,6 @@
 context("edit worksheets")
 
-suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
+activate_test_token()
 
 pts_copy <- p_("pts-copy")
 ss <- gs_copy(gs_key(pts_key, lookup = FALSE, verbose = FALSE),
@@ -15,9 +15,9 @@ test_that("Add a new worksheet", {
 
   new_ws_index <- ss_before$n_ws + 1
   expect_equal(new_ws_index, ss_after$n_ws)
-  expect_equal(ss_after$ws[[new_ws_index, "row_extent"]], 7L)
-  expect_equal(ss_after$ws[[new_ws_index, "col_extent"]], 5L)
-  expect_equal(ss_after$ws[[new_ws_index, "ws_title"]], "Test Sheet")
+  expect_equal(ss_after$ws$row_extent[new_ws_index], 7L)
+  expect_equal(ss_after$ws$col_extent[new_ws_index], 5L)
+  expect_equal(ss_after$ws$ws_title[new_ws_index], "Test Sheet")
 
   ## this worksheet gets deleted below
 
@@ -111,4 +111,4 @@ test_that("Worksheet modification errors for invalid args", {
 })
 
 gs_grepdel(TEST, verbose = FALSE)
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)

@@ -1,8 +1,11 @@
 #' Read data from cells
 #'
 #' This function consumes data via the "cell feed", which, as the name suggests,
-#' retrieves data cell by cell. Note that the output is a \code{tbl_df} or
-#' \code{data.frame} with \strong{one row per cell}.
+#' retrieves data cell by cell. Note that the output is a data frame with
+#' \strong{one row per cell}. Consult the Google Sheets API documentation for
+#' more details about
+#' \href{https://developers.google.com/google-apps/spreadsheets/data#work_with_cell-based_feeds}{the
+#' cell feed}.
 #'
 #' Use the \code{range} argument to specify which cells you want to read. See
 #' the examples and the help file for the \link[=cell-specification]{cell
@@ -17,17 +20,18 @@
 #' Empty cells, even if "embedded" in a rectangular region of populated cells,
 #' are not normally returned by the cell feed. This function won't return them
 #' either when \code{return_empty = FALSE} (default), but will if you set
-#' \code{return_empty = TRUE}. If you don't specify any limits AND you set
-#' \code{return_empty = TRUE}, you could be in for a bit of a wait, as the feed
-#' will return all cells, which defaults to 1000 rows and 26 columns.
+#' \code{return_empty = TRUE}.
 #'
 #' @template ss
 #' @template ws
 #' @template range
+#' @template read-ddd
 #' @param return_empty logical; indicates whether to return empty cells
 #' @param return_links logical; indicates whether to return the edit and self
 #'   links (used internally in cell editing workflow)
 #' @template verbose
+#'
+#' @template return-tbl-df
 #'
 #' @seealso \code{\link{gs_reshape_cellfeed}} or
 #'   \code{\link{gs_simplify_cellfeed}} to perform reshaping or simplification,
@@ -37,23 +41,26 @@
 #' @examples
 #' \dontrun{
 #' gap_ss <- gs_gap() # register the Gapminder example sheet
-#' first_4_rows <-
-#'   gs_read_cellfeed(gap_ss, "Asia", range = cell_limits(c(NA, 4)))
-#' first_4_rows
-#' gs_reshape_cellfeed(first_4_rows)
-#' gs_reshape_cellfeed(gs_read_cellfeed(gap_ss, "Asia",
-#'                       range = cell_limits(c(NA, 4), c(3, NA))))
+#' col_4_and_above <-
+#'   gs_read_cellfeed(gap_ss, ws = "Asia", range = cell_limits(c(NA, 4)))
+#' col_4_and_above
+#' gs_reshape_cellfeed(col_4_and_above)
+#'
+#' gs_read_cellfeed(gap_ss, range = "A2:F3")
 #' }
 #' @family data consumption functions
 #'
 #' @export
 gs_read_cellfeed <- function(
   ss, ws = 1, range = NULL,
+  ...,
   return_empty = FALSE, return_links = FALSE,
   verbose = TRUE) {
 
   stopifnot(inherits(ss, "googlesheet"))
   this_ws <- gs_ws(ss, ws, verbose)
+  ## yes, we do need this here: remember 'progress'!
+  ddd <- parse_read_ddd(..., verbose = FALSE)
 
   limits <- range %>%
     cellranger::as.cell_limits() %>%
@@ -62,36 +69,38 @@ gs_read_cellfeed <- function(
     validate_limits(this_ws$row_extent, this_ws$col_extent)
 
   query <- limits
-  if(return_empty) {
+  if (return_empty) {
     ## the return-empty parameter is not documented in current sheets API, but
     ## is discussed in older internet threads re: the older gdata API; so if
     ## this stops working, consider that they finally stopped supporting this
     ## query parameter
-    query <- query %>% c(list("return-empty" = "true"))
+    query <- c(query , list("return-empty" = "true"))
   }
 
-  ## to prevent appending of "?=" to url when query elements are all NULL
-  if(query %>% unlist() %>% is.null()) {
-    query <- NULL
-    ## I think this can be eliminated upon next CRAN release of httr
-    ## https://github.com/hadley/httr/commit/6d06ad571316dcba5944a5e545c374b64d6979d6
-  }
+  the_url <- this_ws$cellsfeed
+  req <-
+    rGET(the_url,
+         omit_token_if(grepl("public", the_url)),
+         query = query,
+         if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
+    httr::stop_for_status()
+  rc <- content_as_xml_UTF8(req)
 
-  req <- gsheets_GET(this_ws$cellsfeed, query = query)
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
-  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
-
-  x <- req$content %>%
+  x <- rc %>%
     xml2::xml_find_all("feed:entry", ns)
 
-  if(length(x) == 0L) {
+  if (length(x) == 0L) {
     # the pros outweighed the cons re: setting up a zero row data.frame that,
     # at least, has the correct variables
     x <- dplyr::data_frame(cell = character(),
                            cell_alt = character(),
                            row = integer(),
                            col = integer(),
-                           cell_text = character(),
+                           value = character(),
+                           input_value = character(),
+                           numeric_value = character(),
                            edit_link = character(),
                            cell_id = character())
   } else {
@@ -100,46 +109,44 @@ gs_read_cellfeed <- function(
       xml2::xml_attr("href")
 
     ## this will be true if user does not have permission to edit
-    if(length(edit_links) == 0) {
+    if (length(edit_links) == 0) {
       edit_links <- NA_character_
     }
 
     x <- dplyr::data_frame_(
-      list(cell = ~ xml2::xml_find_all(x, ".//feed:title", ns) %>%
+      list(cell = ~xml2::xml_find_all(x, ".//feed:title", ns) %>%
              xml2::xml_text(),
-           edit_link = ~ edit_links,
-           cell_id = ~ xml2::xml_find_all(x, ".//feed:id", ns) %>%
+           edit_link = ~edit_links,
+           cell_id = ~xml2::xml_find_all(x, ".//feed:id", ns) %>%
              xml2::xml_text(),
-           cell_alt = ~ cell_id %>% basename(),
-           row = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           cell_alt = ~cell_id %>% basename(),
+           row = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("row") %>%
              as.integer(),
-           col = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           col = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("col") %>%
              as.integer(),
-           cell_text = ~ xml2::xml_find_all(x, ".//gs:cell", ns) %>%
-             xml2::xml_text()
+           value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_text(),
+           input_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_attr("inputValue"),
+           numeric_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+             xml2::xml_attr("numericValue")
       ))
-    # see issue #19 about all the places cell data is (mostly redundantly)
-    # stored in the XML, such as: content_text = x$content$text,
-    # cell_inputValue = x$cell$.attrs["inputValue"], cell_numericValue =
-    # x$cell$.attrs["numericValue"], when/if we think about formulas
-    # explicitly, we will want to come back and distinguish between inputValue
-    # and numericValue
   }
 
   x <- x %>%
-    dplyr::select_(~ cell, ~ cell_alt, ~ row, ~ col, ~ cell_text,
-                   ~ edit_link, ~ cell_id) %>%
-    dplyr::as_data_frame()
+    dplyr::select_(~cell, ~cell_alt, ~row, ~col,
+                   ~value, ~input_value, ~numeric_value,
+                   ~edit_link, ~cell_id)
 
   attr(x, "ws_title") <- this_ws$ws_title
 
-  if(return_links) {
+  if (return_links) {
     x
   } else {
     x %>%
-      dplyr::select_(~ -edit_link, ~ -cell_id)
+      dplyr::select_(~-edit_link, ~-cell_id)
   }
 
 }

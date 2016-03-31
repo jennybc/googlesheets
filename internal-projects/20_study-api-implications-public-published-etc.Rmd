@@ -1,0 +1,56 @@
+---
+title: "Study of what makes a Sheet available via the API"
+output: github_document
+---
+
+I want to get to the bottom of what makes a Sheet available to whom via the API. Accessing one's own Sheet is trivial. More difficult is making something readable by all people or a specific set of people AND having it apply to all the read methods supported by `googlesheets`. It's clearly more complicated than "Publishing to the web" or making something "Public on the web" (which are, in fact, not the same thing).
+
+Issues or Sheets that have presented unexpected problems (some of which are probably due to known Sheets API bugs and not me):
+
+  * [Sheet that holds the data](https://docs.google.com/spreadsheets/d/1KYMUjrCulPtpUHwep9bVvsBvmVsDEbucdyRZ5uHCDxw/edit#gid=0) for [this caffeine and calories plot](http://www.informationisbeautiful.net/visualizations/caffeine-and-calories/) from informationisbeautiful:
+    - <https://github.com/jennybc/googlesheets/issues/167>
+  * The candy data gave us some trouble, I recall
+    - <https://github.com/STAT545-UBC/Discussion/issues/193>
+    - but I think I probably talked Dave into sharing it all possible ways to design away our problem.
+  * Gapminder-provided Google Sheets have this property where they can be read via cellfeed and listfeed but not exportcsv
+    - <https://github.com/STAT545-UBC/Discussion/issues/194>
+    
+*I'll be back ....*
+
+*TO DO: remember to include `visibility` (public vs private) from Sheet feeds in this exercise.*
+
+```{r}
+##https://docs.google.com/spreadsheets/d/137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4/pubhtml
+library(googlesheets)
+ingest_key <- "137pijO8ml6LAeRjvnEquQgWlPPlr5sysvybuUUs7vX4"
+ss <- gs_key(ingest_key, lookup = FALSE)
+
+csv <- gs_read_csv(ss)
+lf <- gs_read_listfeed(ss)
+cf <- gs_read_cellfeed(ss)
+
+csv
+lf
+cf
+
+if (!interactive()) {
+  gs_auth(file.path("..", "tests", "testthat", "googlesheets_token.rds"))
+}
+meta <- googlesheets:::gd_metadata(ingest_key)
+jsonlite::toJSON(meta, pretty = TRUE, auto_unbox = TRUE)
+
+## not sure a data frame is a convenient form for this?
+## anyway -- combine this info with the above for a complete report on
+## WHO CAN DO WHAT
+perm <- googlesheets:::gs_perm_ls(ss)
+as.data.frame(perm)
+```
+
+I am most interested in:
+
+  * *whether user can even retrieve Drive metadata for specific file id*
+  * shared
+  * ownedByMe
+  * capabilities: canEdit, canComment, canShare, canCopy
+  * viewersCanCopyContent
+  * writersCanShare

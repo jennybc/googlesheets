@@ -4,7 +4,7 @@
 \alias{gs_read}
 \title{Read data}
 \usage{
-gs_read(ss, ws = 1, range = NULL, ..., verbose = TRUE)
+gs_read(ss, ws = 1, range = NULL, literal = TRUE, ..., verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
@@ -15,32 +15,64 @@ respectively, of the worksheet}
 
 \item{range}{a cell range, as described in \code{\link{cell-specification}}}
 
-\item{...}{optional arguments passed on to functions that control reading and
-transforming the data}
+\item{literal}{logical, indicating whether to work only with literal values
+returned by the API or to consult alternate cell contents}
+
+\item{...}{\strong{Optional} arguments to control data download, parsing, and
+  reshaping; for most purposes, the defaults should be fine. Anything that is
+  not listed here will be silently ignored.
+\describe{
+  \item{\code{progress}}{Logical. Whether to display download progress if in
+  an interactive session.}
+  \item{\code{col_types}}{Seize control of type conversion for variables.
+  Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}. Follow those links
+  or read the \code{vignette("column-types")} for details.}
+  \item{\code{locale, trim_ws, na}}{Specify locale, the fate of leading or
+  trailing whitespace, or a character vector of strings that should become
+  missing values. Passed straight through to
+  \code{\link[readr:read_delim]{readr::read_csv}} or
+  \code{\link[readr:type_convert]{readr::type_convert}}.}
+  \item{\code{comment, skip, n_max}}{Specify a string used to identify
+  comments, request to skip lines before reading data, or specify the
+  maximum number of data rows to read.}
+  \item{\code{col_names}}{Either \code{TRUE}, \code{FALSE} or a character
+  vector of column names. If \code{TRUE}, the first row of the data rectangle
+  will be used for names. If \code{FALSE}, column names will be X1, X2, etc.
+  If a character vector, it will be used as column names. If the sheet
+  contains column names and you just don't like them, specify \code{skip = 1}
+  so they don't show up in your data.}
+  \item{\code{check.names}}{Logical. Whether to run column names through
+  \code{\link{make.names}} with \code{unique = TRUE}, just like
+  \code{\link{read.table}} does. By default, \code{googlesheets} implements
+  the \code{readr} data ingest philosophy, which leaves column names "as is",
+  with one exception: data frames returned by \code{googlesheets} will have
+  a name for each variable, even if we have to create one.}
+}}
 
 \item{verbose}{logical; do you want informative messages?}
 }
 \value{
-a tbl_df
+a \code{data.frame} or, if \code{dplyr} is loaded, a
+  \code{\link[dplyr]{tbl_df}}
 }
 \description{
-This function reads data from a worksheet and returns it as a \code{tbl_df}
-or \code{data.frame}. It wraps up the most common usage of other, lower-level
-functions for data consumption and transformation, but you can call always
-call them directly for finer control.
+This function reads data from a worksheet and returns a data frame. It wraps
+up the most common usage of other, lower-level functions for data consumption
+and transformation, but you can call always call them directly for finer
+control.
 }
 \details{
-If the \code{range} argument is not specified, all data will be read via
-\code{\link{gs_read_csv}}. In this case, you can pass additional arguments to
-the csv parser via \code{...}; see \code{\link{gs_read_cellfeed}} for more
-details. Don't worry -- no intermediate \code{*.csv} files were written in
-the reading of your data! We just request the data from the Sheets API via
-the \code{exportcsv} link.
+If the \code{range} argument is not specified and \code{literal = TRUE}, all
+data will be read via \code{\link{gs_read_csv}}. Don't worry -- no
+intermediate \code{*.csv} files are written! We just request the data from
+the Sheets API via the \code{exportcsv} link.
 
-If the \code{range} argument is specified, data will be read for the
-targetted cells via \code{\link{gs_read_cellfeed}}, then reshaped with
-\code{\link{gs_reshape_cellfeed}}. In this case, you can pass additional
-arguments to \code{\link{gs_reshape_cellfeed}} via \code{...}.
+If the \code{range} argument is specified or if \code{literal = FALSE}, data
+will be read for the targetted cells via \code{\link{gs_read_cellfeed}}, then
+reshaped and type converted with \code{\link{gs_reshape_cellfeed}}. See
+\code{\link{gs_reshape_cellfeed}} for details.
 }
 \examples{
 \dontrun{
@@ -49,16 +81,22 @@ oceania_csv <- gs_read(gap_ss, ws = "Oceania")
 str(oceania_csv)
 oceania_csv
 
+gs_read(gap_ss, ws = "Europe", n_max = 4, col_types = c("cccccc"))
+
 gs_read(gap_ss, ws = "Oceania", range = "A1:C4")
 gs_read(gap_ss, ws = "Oceania", range = "R1C1:R4C3")
 gs_read(gap_ss, ws = "Oceania", range = "R2C1:R4C3", col_names = FALSE)
 gs_read(gap_ss, ws = "Oceania", range = "R2C5:R4C6",
         col_names = c("thing_one", "thing_two"))
-gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 4), c(1, 3)))
+gs_read(gap_ss, ws = "Oceania", range = cell_limits(c(1, 3), c(1, 4)),
+        col_names = FALSE)
 gs_read(gap_ss, ws = "Oceania", range = cell_rows(1:5))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols(4:6))
 gs_read(gap_ss, ws = "Oceania", range = cell_cols("A:D"))
-gs_read(gap_ss, ws = "Oceania", range = cell_rows(1), col_names = FALSE)
+
+ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
+gs_read(ff_ss)                  # almost all vars are character
+gs_read(ff_ss, literal = FALSE) # more vars are properly numeric
 }
 
 }
@@ -66,7 +104,7 @@ gs_read(gap_ss, ws = "Oceania", range = cell_rows(1), col_names = FALSE)
 The \code{\link{cell-specification}} topic for more about targetting
   specific cells.
 
-Other data.consumption.functions: \code{\link{gs_read_cellfeed}},
+Other data consumption functions: \code{\link{gs_read_cellfeed}},
   \code{\link{gs_read_csv}},
   \code{\link{gs_read_listfeed}},
   \code{\link{gs_reshape_cellfeed}},

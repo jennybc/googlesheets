@@ -6,12 +6,7 @@ test_that("Data frames are plotted as ggplot objects", {
 
   expect_is(gs_inspect(df_with_empty), "ggplot")
 
-  expect_is(
-    readRDS("for_reference/gap_sheet5_gs_read_cellfeed.rds") %>% gs_inspect(),
-    "ggplot")
-  expect_is(readRDS(
-    "for_reference/gap_sheet5_gs_read_listfeed.rds") %>% gs_inspect(),
-    "ggplot")
+  expect_is(readRDS("for_reference/ff.rds") %>% gs_inspect(), "ggplot")
   expect_is(readRDS("for_reference/pts_special_chars.rds") %>% gs_inspect(),
             "ggplot")
 

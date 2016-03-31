@@ -1,12 +1,16 @@
 .Rproj.user
 .Rhistory
 .RData
+.Rprofile
 .httr-oauth*
 googlesheets.Rproj
 jenny-scratch/*
 googlesheets_token.rds
-*.html
+internal-projects/**/*.html
+inst/shiny-examples/**/*.html
 pics
 jenny_token.rds
 rsconnect
 shiny_app_token.rds
+old_snails
+internal-projects/*not-cran-this*

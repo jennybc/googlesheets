@@ -19,45 +19,38 @@
 #'   wrappers that help you delete sheets by title, with the ability to delete
 #'   multiple sheets at once
 #'
+#' @family sheet deletion functions
+#'
 #' @examples
 #' \dontrun{
 #' foo <- gs_new("new_sheet")
 #' gs_delete(foo)
-#'
-#' foo <- gs_new("new_sheet")
-#' gs_delete(gs_title("new_sheet"))
 #' }
 #'
 #' @export
 gs_delete <- function(ss, verbose = TRUE) {
 
-  if(!inherits(ss, "googlesheet")) {
-    mess <-
-      paste("Input must be a 'googlesheet'.",
-            "Trying to delete by title? See gs_grepdel() and gs_vecdel().",
-            sep = "\n")
-    stop(mess)
+  if (!inherits(ss, "googlesheet")) {
+    spf("Input must be a 'googlesheet'.\n",
+        "Trying to delete by title? See gs_grepdel() and gs_vecdel().")
   }
 
   key <- gs_get_alt_key(ss)
-  the_url <- paste("https://www.googleapis.com/drive/v2/files",
-                   key, "trash", sep = "/")
+  the_url <- file.path(.state$gd_base_url_files_v2, key)
 
-  post <- gdrive_POST(the_url, body = NULL)
-  status <- post$status_code
+  req <- httr::DELETE(the_url, google_token()) %>%
+    httr::stop_for_status()
+  status <- httr::status_code(req)
 
-  if(verbose) {
-    if(status == 200L) {
-      sprintf("Success. \"%s\" moved to trash in Google Drive.",
-              ss$sheet_title) %>%
-        message()
+  if (verbose) {
+    if (status == 204L) {
+      mpf("Success. \"%s\" moved to trash in Google Drive.", ss$sheet_title)
     } else {
-      sprintf("Oops. \"%s\" was NOT deleted.", ss$sheet_title) %>%
-        message()
+      mpf("Oops. \"%s\" was NOT deleted.", ss$sheet_title)
     }
   }
 
-  if(status == 200L) invisible(TRUE) else invisible(FALSE)
+  if(status == 204L) invisible(TRUE) else invisible(FALSE)
 
 }
 
@@ -101,6 +94,10 @@ gs_delete <- function(ss, verbose = TRUE) {
 #'   matching \code{regex} to sheet titles
 #' @template verbose
 #'
+#' @seealso \code{\link{gs_delete}} for more detail on what you can and cannot
+#' delete and how to recover from accidental deletion
+#'
+#' @family sheet deletion functions
 #' @export
 gs_grepdel <- function(regex, ..., verbose = TRUE) {
 

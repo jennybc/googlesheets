@@ -24,7 +24,7 @@
 #' @inheritParams gs_new
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @examples
 #' \dontrun{
@@ -47,8 +47,8 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
   ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
   if(ws_title_exist) {
-    stop(sprintf(paste("A worksheet titled \"%s\" already exists, please",
-                       "choose a different name."), ws_title))
+    spf(paste("A worksheet titled \"%s\" already exists, please",
+              "choose a different name."), ws_title)
   }
 
   the_body <-
@@ -62,7 +62,13 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   the_body <- XML::toString.XMLNode(the_body)
 
-  req <- gsheets_POST(ss$ws_feed, the_body)
+  req <- httr::POST(
+    ss$ws_feed,
+    google_token(),
+    httr::add_headers("Content-Type" = "application/atom+xml"),
+    body = the_body
+  ) %>%
+    httr::stop_for_status()
 
   ss <- req$url %>%
     extract_key_from_url() %>%
@@ -70,30 +76,30 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
-  if(ws_title_exist) {
+  if (ws_title_exist) {
     this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
     if(verbose) {
-      message(sprintf("Worksheet \"%s\" added to sheet \"%s\".",
-                      this_ws$ws_title, ss$sheet_title))
+      mpf("Worksheet \"%s\" added to sheet \"%s\".",
+          this_ws$ws_title, ss$sheet_title)
     }
   } else {
-    message(sprintf(paste("Cannot verify whether worksheet \"%s\" was added",
-                          "to sheet \"%s\"."), ws_title, ss$sheet_title))
+    mpf(paste("Cannot verify whether worksheet \"%s\" was added",
+              "to sheet \"%s\"."), ws_title, ss$sheet_title)
     return(invisible(NULL))
   }
 
   dotdotdot <- list(...)
-  if(length(dotdotdot)) {
+  if (length(dotdotdot)) {
     gs_edit_cells_arg_list <-
       c(list(ss = ss), list(ws = this_ws$ws_title),
         dotdotdot, list(verbose = verbose))
     ss <- do.call(gs_edit_cells, gs_edit_cells_arg_list)
   }
 
-  if(verbose) {
+  if (verbose) {
     this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
-    message(sprintf("Worksheet dimensions: %d x %d.",
-                    this_ws$row_extent, this_ws$col_extent))
+    mpf("Worksheet dimensions: %d x %d.",
+        this_ws$row_extent, this_ws$col_extent)
   }
 
   invisible(ss)
@@ -108,15 +114,14 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 #' @template ws
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @examples
 #' \dontrun{
 #' gap_ss <- gs_copy(gs_gap(), to = "gap_copy")
 #' gs_ws_ls(gap_ss)
 #' gap_ss <- gs_ws_new(gap_ss, "new_stuff")
-#' gap_ss <- gs_edit_cells(gap_ss, "new_stuff", input = head(iris),
-#'                         header = TRUE, trim = TRUE)
+#' gap_ss <- gs_edit_cells(gap_ss, "new_stuff", input = head(iris), trim = TRUE)
 #' gap_ss
 #' gap_ss <- gs_ws_delete(gap_ss, "new_stuff")
 #' gs_ws_ls(gap_ss)
@@ -132,7 +137,8 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
   this_ws <- ss %>% gs_ws(ws)
 
-  req <- gsheets_DELETE(this_ws$ws_id)
+  req <- httr::DELETE(this_ws$ws_id, google_token()) %>%
+    httr::stop_for_status()
 
   ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
 
@@ -140,12 +146,12 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
   if(verbose) {
     if(ws_title_exist) {
-      message(sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                            "deleted from sheet \"%s\"."),
-                      this_ws$ws_title, ss_refresh$sheet_title))
+      mpf(paste("Cannot verify whether worksheet \"%s\" was",
+                "deleted from sheet \"%s\"."),
+          this_ws$ws_title, ss_refresh$sheet_title)
     } else {
-      message(sprintf("Worksheet \"%s\" deleted from sheet \"%s\".",
-                      this_ws$ws_title, ss$sheet_title))
+      mpf("Worksheet \"%s\" deleted from sheet \"%s\".",
+          this_ws$ws_title, ss$sheet_title)
     }
   }
 
@@ -167,7 +173,7 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 #' @param to character string for new title of worksheet
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @note Since the edit link is used in the PUT request, the version path in the
 #'   url changes everytime changes are made to the worksheet, hence consecutive
@@ -204,10 +210,10 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 
   if(verbose) {
     if(from_is_gone && to_is_there) {
-      message(sprintf("Worksheet \"%s\" renamed to \"%s\".", from_title, to))
+      mpf("Worksheet \"%s\" renamed to \"%s\".", from_title, to)
     } else {
-      message(sprintf(paste("Cannot verify whether worksheet \"%s\" was",
-                            "renamed to \"%s\"."), from_title, to))
+      mpf(paste("Cannot verify whether worksheet \"%s\" was",
+                "renamed to \"%s\"."), from_title, to)
     }
   }
 
@@ -234,7 +240,7 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 #' @examples
 #' \dontrun{
 #' yo <- gs_new("yo")
-#' yo <- gs_edit_cells(yo, input = head(iris), header = TRUE, trim = TRUE)
+#' yo <- gs_edit_cells(yo, input = head(iris), trim = TRUE)
 #' gs_read_csv(yo)
 #' yo <- gs_ws_resize(yo, ws = "Sheet1", row_extent = 5, col_extent = 4)
 #' gs_read_csv(yo)
@@ -279,8 +285,8 @@ gs_ws_resize <- function(ss, ws = 1,
                        c(row_extent, col_extent))
 
   if(verbose && success) {
-    message(sprintf("Worksheet \"%s\" dimensions changed to %d x %d.",
-                    this_ws$ws_title, new_row_extent, new_col_extent))
+    mpf("Worksheet \"%s\" dimensions changed to %d x %d.",
+        this_ws$ws_title, new_row_extent, new_col_extent)
   }
 
   ss_refresh %>%
@@ -297,7 +303,7 @@ gs_ws_resize <- function(ss, ws = 1,
 #'   worksheet
 #' @template verbose
 #'
-#' @return a \code{\link{googlesheet}} object
+#' @template return-googlesheet
 #'
 #' @keywords internal
 gs_ws_modify <- function(ss, from = NULL, to = NULL,
@@ -307,30 +313,36 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   this_ws <- ss %>% gs_ws(from, verbose = FALSE)
 
-  req <- gsheets_GET(this_ws$ws_id, to_xml = FALSE)
+  req <- rGET(this_ws$ws_id, google_token()) %>%
+    httr::stop_for_status()
+  stop_for_content_type(req, expected = "application/atom+xml; charset=UTF-8")
+  ## yes, that's right
+  ## the content MUST be xml but I'm about to parse it as text
+  ## this nuttiness will go away when we can use xml2 to write xml
+  ## below I edit the xml using regex to avoid XML package pain
   the_body <- req %>% httr::content(as = "text", encoding = "UTF-8")
 
-  if(!is.null(to)) { # rename a worksheet
+  if (!is.null(to)) { # rename a worksheet
 
-    stopifnot(to %>% is.character(), length(to) == 1L)
+    stopifnot(is.character(to), length(to) == 1L)
 
-    if(to %in% gs_ws_ls(ss)) {
-      stop(sprintf(paste("A worksheet titled \"%s\" already exists in sheet",
-                         "\"%s\". Please choose another worksheet title."),
-                   to, ss$sheet_title))
+    if (to %in% gs_ws_ls(ss)) {
+      spf(paste("A worksheet titled \"%s\" already exists in sheet",
+                "\"%s\".\nPlease choose another worksheet title."),
+          to, ss$sheet_title)
     }
 
     ## TO DO: we should probably be doing something more XML-y here, instead
     ## of doing XML --> string --> regex based subsitution --> XML
     title_replacement <- paste0("\\1", to, "\\3")
-    the_body <- the_body %>%
-      sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, .)
+    the_body <-
+      sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, the_body)
   }
 
-  if(!is.null(new_dim)) { # resize a worksheet
+  if (!is.null(new_dim)) { # resize a worksheet
 
-    stopifnot(new_dim %>% is.numeric(),
-              identical(new_dim %>% names(), c("row_extent", "col_extent")))
+    stopifnot(is.numeric(new_dim),
+              identical(names(new_dim), c("row_extent", "col_extent")))
 
     row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
     col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
@@ -340,8 +352,13 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
       sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
   }
 
-  req <- gsheets_PUT(this_ws$edit, the_body)
-  ## TO DO (?): inspect req
+  req <-
+    httr::PUT(this_ws$edit,
+              google_token(),
+              httr::add_headers("Content-Type" = "application/atom+xml"),
+              body = the_body) %>%
+    httr::stop_for_status()
+
   req$url %>%
     extract_key_from_url() %>%
     gs_key(verbose = verbose)
@@ -367,17 +384,17 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
   if(is.character(ws)) {
     index <- match(ws, ss$ws$ws_title)
     if(is.na(index)) {
-      stop(sprintf("Worksheet %s not found.", ws))
+      spf("Worksheet %s not found.", ws)
     } else {
       ws <- index
     }
   }
   ws <- ws %>% as.integer()
   if(ws > ss$n_ws) {
-    stop(sprintf("Spreadsheet only contains %d worksheets.", ss$n_ws))
+    spf("Spreadsheet only contains %d worksheets.", ss$n_ws)
   }
   if(verbose) {
-    message(sprintf("Accessing worksheet titled \"%s\"", ss$ws$ws_title[ws]))
+    mpf("Accessing worksheet titled '%s'.", ss$ws$ws_title[ws])
   }
   ss$ws[ws, ]
 }

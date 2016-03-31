@@ -8,8 +8,6 @@ Jenny Bryan
 
 
 
-*This is a draft vignette for the [`googlesheets` package](https://github.com/jennybc/googlesheets). Feel free to provide feedback in an issue.*
-
 ## Who should read this
 
 This vignette explains Google auth token management for anyone who wants to use `googlesheets` in code that runs non-interactively. Examples:
@@ -20,7 +18,9 @@ This vignette explains Google auth token management for anyone who wants to use 
   * Automated unit tests, e.g. [`testthat`](http://r-pkgs.had.co.nz/tests.html)
   * Hosted continuous integration, e.g. [Travis CI](https://travis-ci.org)
   
-Since `googlesheets` gets its authorization functionality from [`httr`](https://cran.r-project.org/web/packages/httr/index.html), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
+Since `googlesheets` gets its authorization functionality from [`httr`](http://cran.r-project.org/package=httr), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
+
+Bonus content: The Making of `googlesheets` for CRAN. At the end are my notes on CRAN submission when a package makes extensive use of OAuth.
 
 ## How to completely avoid reading this document
 
@@ -36,9 +36,9 @@ gs_gap_key() %>%
   gs_key(lookup = FALSE) %>% 
   gs_read() %>% 
   head(3)
-#> Authorization will not be used.
 #> Worksheets feed constructed with public visibility
-#> Accessing worksheet titled "Africa"
+#> Accessing worksheet titled 'Africa'.
+#> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [3 x 6]
 #> 
 #>   country continent  year lifeExp      pop gdpPercap
@@ -59,7 +59,8 @@ Of course, many other activities do require authorization. For example, creating
 iris_ss <- gs_new("iris_bit", input = head(iris, 3), trim = TRUE, verbose = FALSE)
 iris_ss %>% 
   gs_read()
-#> Accessing worksheet titled "Sheet1"
+#> Accessing worksheet titled 'Sheet1'.
+#> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [3 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -94,10 +95,9 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2015-10-26 23:03:31 GMT
-#>          access token: valid
-#>  peek at access token: ya29....rDR68
-#> peek at refresh token: 1/zNh...ATCKT
+#>                  date: 2016-03-26 22:53:57 GMT
+#>          permissionId: 14497944239034869033
+#>          rootFolderId: 0AOdw-qi1jh3fUk9PVA
 ```
 
 ## Where do tokens live in between R sessions?
@@ -106,7 +106,7 @@ By default, when `googlesheets` gets a token for you, it's stored in memory for 
 
 ![](img/google-oauth-flow-plus-httr-oauth-cache.png)
 
-Note: If you use RStudio, the file browser hides most dotfiles, including `.httr-oauth`. From R itself, you can use `list.files(all.files = TRUE)` to get a list of files in current working directory, including dotfiles. It's a good idea to inform yourself about the presence/absence/location of `.httr-oauth`, especially if you're having trouble with non-interactive authorization.
+It's a good idea to inform yourself about the presence/absence/location of `.httr-oauth`, especially if you're having trouble with non-interactive authorization. Not all methods of file browsing will reveal dotfiles, so be aware of that. Recent versions of RStudio will show `.httr-oauth`, but older versions will not. From R itself, you can use `list.files(all.files = TRUE)` to get a list of files in current working directory, including dotfiles. 
 
 In subsequent R sessions, at the first need for authorization, `googlesheets` looks for a cached token in `.httr-oauth` before initiating the entire OAuth 2.0 flow. Many APIs limit the number of active tokens per account, so it's better to refresh existing tokens than to request completely new ones. More on refreshing later.
 
@@ -135,12 +135,13 @@ Tokens, stored in `.httr-oauth` or elsewhere, grant whoever's got them the power
 
 In `googlesheets`, we've built some functionality into `gs_auth()` so the user can retrieve the current token for explicit storage to file and can load such a stored token from file. To be clear, most users should just enjoy the automagic token management offered by `httr` and the `.httr-oauth` cache file. But for non-interactive work and testing/developing `googlesheets` itself, we found it helpful to take more control.
 
-Store a token from an interactive session:
+In an interactive session, create and store a token. Caching properties are baked into a token, so if you never want this token to be cached to `.httr-oauth`, such as when it gets refreshed, specify that at creation time via `cache = FALSE`. Use `gd_token()` at any time to see some info on the current token.
 
 
 ```r
 library(googlesheets)
-token <- gs_auth()
+token <- gs_auth(cache = FALSE)
+gd_token()
 saveRDS(token, file = "googlesheets_token.rds")
 ```
 
@@ -148,9 +149,9 @@ saveRDS(token, file = "googlesheets_token.rds")
 
 Things to think about:
 
-  * Is there an existing `.httr-oauth` file in working directory? If so, the token will come from there! If that's not what you want, force the creation of a fresh token with `gs_auth(new_user = TRUE)`.
+  * Is there an existing `.httr-oauth` file in working directory? If so, the token will come from there! If that's not what you want, force the creation of a fresh token with `gs_auth(new_user = TRUE)` or remove `.httr-oauth` first.
   * Do you want to provide your own app key and secret? Use arguments `key` and `secret` to specify that. If that's a global preference for all your `googlesheets` work, see the docs for `gs_auth()` for lines to put in `.Rprofile`.
-  * Do you want this token to be cached to `.httr-oauth` in current working directory? Specify `cache = FALSE` to prevent that. If that's a global preference for all your `googlesheets` work, see the docs for `gs_auth()` for lines to put in `.Rprofile`.
+  * Do you want this token to be cached to `.httr-oauth` in current working directory? If not, specify `cache = FALSE` to prevent that. If that's a global preference for all your `googlesheets` work, see the docs for `gs_auth()` for lines to put in `.Rprofile`.
   * Do you have multiple Google accounts? Make sure you log into Google via the intended account when you authenticate in the browser.
   
 Let's focus on the R script or Rmd file you are preparing for non-interactive execution. Put these lines in it:
@@ -196,7 +197,7 @@ The latter point is the most relevant to an active project. If you're developing
 
 ## Tokens for testing
 
-We use [`testthat`](https://cran.r-project.org/web/packages/testthat/index.html) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
+We use [`testthat`](http://cran.r-project.org/package=testthat) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
 
 
 ```r
@@ -218,10 +219,8 @@ run the tests that require authorization and then suspend token usage (but do NO
 
 
 ```r
-gs_auth_suspend(verbose = FALSE)
+gs_deauth(verbose = FALSE)
 ```
-
-*Note: `gs_auth_suspend()` is currently unexported, but I am happy to change that.*
 
 #### Running the `googlesheets` tests yourself
 
@@ -275,7 +274,196 @@ __Do not get mixed up re: what gets ignored where.__
   * Why do we Rbuildignore the encrypted token? You don't want the encrypted version to be bundled and distributed with your package.
   * Why do we NOT Rbuildignore the unencrypted token? If you put `token_file.rds` in `.Rbuildignore`, it will not be copied over into the `my_package.Rcheck` directory during `R CMD check`, and your tests will fail.
 
-At this point, if you blindly bundle the package and send it to win-builder or CRAN, the unencrypted token will be included. So remember to add `tests/testthat/googlesheets_token.rds` to `.Rbuildignore` prior to such submissions, perhaps in a dedicated branch. You will also need to take care in tests and vignettes that no token-requiring code is executed by CRAN.
+At this point, if you blindly bundle the package and send it to win-builder or CRAN, the unencrypted token will be included. See the next section for how to handle that.
+
+## The Making of `googlesheets.tar.gz` for CRAN
+
+Both CRAN and win-builder take a package bundle as their input. And then they run `R CMD check` on it, which calls `R CMD build` among other things.
+
+Here's my problem: to compile `googlesheets`'s vignettes and run tests, you need an OAuth2 token. But I can't send that.
+
+  * How to create a tarball for CRAN/win-builder submission that includes fully built vignettes but not the token?
+  * How to keep CRAN from executing any token-requiring code? E.g. in tests and vignettes.
+  * How to do this with minimal disruption to your normal development setup, where all tests run locally and on Travis and you rebuild full vignettes regularly?
+  
+Observation: Getting something onto CRAN requires me to short-circuit machinery that is meant to insure quality (tests) and usability/documentation (vignettes).  The problem is that you can secure an encrypted token file on Travis but cannot do so on CRAN or win-builder. This is also why all of the `googlesheets` examples are inside `\dontrun{}`. Sometimes you hear unqualified claims that "CRAN >> GitHub". But if your package wraps an API, reality is more complicated.
+
+Two main principles:
+
+  * Vignette and test source has to be in a state that anything unsafe for CRAN is conditionally suppressed there.
+  * Vignette building and tarball building have to be separate steps, so you can Rbuildignore the token in between them.
+
+### Prepare the source package
+
+**Embrace the `NOT_CRAN` environment variable.** It's not just for `testthat::skip_on_cran()` anymore! Commit fully and with your whole heart. I have this line in `~/.Renviron`:
+
+``` bash
+NOT_CRAN=true
+```
+
+where `true` is the default, development state. You'll temporarily toggle it to `false` when making your final `.tar.gz` for CRAN.
+
+**Testing.** Determine which tests can run on CRAN and which can not.
+
+  * If most can, put `testthat::skip_on_cran()` inside individual tests that are not safe for CRAN. This function consults the `NOT_CRAN` env var.
+  * If most/all cannot, shut testing down entirely on CRAN. Unfortunately that is what I had to do. Here is my `tests/testthat.R` file:
 
 
+```r
+library(testthat)
+library(googlesheets)
 
+if (identical(tolower(Sys.getenv("NOT_CRAN")), "true")) {
+  test_check("googlesheets")
+}
+```
+
+This way all tests run all the time locally and on Travis, but never on CRAN.
+
+**Vignettes.** Recall that `knitr` chunk options can take values from R an expression. In an early setup chunk, consult the `NOT_CRAN` environment variable to create an eponymous R object:
+
+
+```r
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+```
+
+You will use the `NOT_CRAN` object to set chunk options that control code execution.
+
+**Vignette double jeopardy.** There are two vignette checks that hit our OAuth pain point. They correspond to these two lines from a log file:
+
+        * checking running R code from vignettes ... OK
+        * checking re-building of vignette outputs ... OK
+
+Why does the vignette code get executed twice? Even though the vignettes used are the ones you build? Good question! See [this thread on R-devel](http://thread.gmane.org/gmane.comp.lang.r.devel/36031/focus=36031). Bottom line: you have to deal with both of these and they require separate solutions.
+
+  * Chunk option `purl` controls whether a chunk is extracted and rerun during "running R code from vignettes".
+  * Chunk option `eval` controls whether a chunk is run during the "re-building of vignette outputs".
+  * If most of your chunks are CRAN safe, put `purl = NOT_CRAN` and `eval = NOT_CRAN` in the options of specific chunks that should not run on CRAN.
+  * If most or all of your chunks are not CRAN safe, put these chunk options in your setup chunk to apply them globally, e.g.
+
+
+```r
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
+)
+```
+
+Recap:
+
+  * Define `NOT_CRAN` in `.Renviron`.
+  * Create a companion `NOT_CRAN` R object in your vignette.
+  * Use `NOT_CRAN` via `testthat::skip_on_cran()` to conditionally suppress tests that are not CRAN safe.
+  * Use `NOT_CRAN` via chunk options to conditionally suppress extraction and compilation of vignette chunks that are not CRAN safe.
+  
+### Create the `.tar.gz`
+
+*I have had two rather inept CRAN submissions now. I submitted tarballs with too few files, too many files, wrong files, you name it. Kurt Hornik has been very patient and helpful. These notes are written with 20/20 hindsight. Hopefully I'll nail it the third time?*
+
+I use Git and create a branch to document the process of CRAN submission.
+
+Start in the default development state:
+
+  * `NOT_CRAN=true` in `~/.Renviron`.
+  * OAuth token is not Rbuildignored.
+
+**Delete `build/` and `inst/doc`** if they happen to exist in your source package. They probably don't. But delete and make a commit if they do.
+
+**Build the package, pass 1 of 2.** In the parent directory of your package, confirm that `NOT_CRAN` is "true" and build the package:
+
+``` bash
+Rscript -e 'Sys.getenv("NOT_CRAN")'
+R CMD build googlesheets
+```
+
+**Unpack the bundle.** Move `googlesheets_VERSION.tar.gz` somewhere safe and unpack it.
+
+``` bash
+mkdir googlesheets-unpack
+mv googlesheets_VERSION.tar.gz googlesheets-unpack/
+cd googlesheets-unpack
+tar xvf googlesheets_VERSION.tar.gz
+```
+
+What are the main differences between your original source package and this unpacked bundle?
+
+  * `DESCRIPTION` has probably been re-formatted and gained a couple of entries re: who packaged what when and whether your package requires compilation.
+  * Rbuildignores: lots of files and directories have vanished, either because `R CMD build` ignores them by design or because they're listed in `.Rbuildignore`.
+    - Examples for me: `.RData`, `.Rproj.user`, `.git/`, `.httr-oauth`, `README.Rmd`, `man-roxygen`, `jenny-scratch`.
+  * `build` is an entirely new directory. It contains `vignette.rds` which is the "prebuilt vignette index". This is a data frame with one row per vignette and variables that contain, e.g., vignette source file name and vignette title. *Pro tip: The file `inst/doc/index.html` is NOT the "prebuilt vignette index" that CRAN expects. Ask me how I know.*
+  * `vignettes/` has been purged of any downstream products. If `vignettes/` contained anything like `foo.html`, associated to rendering vignette `foo.Rmd`, it is now gone. `vignettes/` will just hold source files `foo.Rmd` and, in my case, some static screenshots under `vignettes/img`.
+  * `inst/doc` is an entirely new subdirectory, which now holds `foo.R`, `foo.Rmd`, and `foo.html` for each vignette `foo.Rmd` in `vignettes/`.
+    - These are the `.html` files that CRAN will use as your vignettes. Look at them carefully and make sure they are what you want!
+    - These are the `.R` files that will be displayed as your vignette source but CRAN does not execute them. It's OK that all chunks are here.
+
+**Preserve everything about the vignettes for inclusion in final build.** If you're tracking the CRAN submission process in a git branch, copy these new/modified directories over to your source package:
+
+  * `build/vignette.rds`
+  * `inst/doc/*`
+  * `vignettes/*`
+  
+Verify that you're NOT gitignoring all html -- you want the html for your vignettes to be in this commit! If you use `devtools`, you may also need to remove `inst/doc` from `.gitignore`. `devtools::use_vignette()` puts it there. Commit.
+
+**Leave your development state and enter the CRAN state.** Toggle the value of `NOT_CRAN` in `~/.Renviron`:
+
+``` bash
+NOT_CRAN=false
+```
+
+**Rbuildignore any sensitive files** that were necessary for vignette building but that shouldn't go out on the internet. In my case, I add this line to `.Rbuildignore` to ignore my unencrypted OAuth2 token (note it is always gitignored):
+
+``` bash
+^tests/testthat/googlesheets_token.rds$
+```
+
+**Build the package, pass 2 of 2.** If you copied the post-build state of `build/`, `inst/doc/`, and `vignettes` back into your source package, build from there. Otherwise, do this on your unpacked package bundle from the first `R CMD build` pass. Make sure `NOT_CRAN` is `false` now!
+
+``` bash
+Rscript -e 'Sys.getenv("NOT_CRAN")'
+R CMD build googlesheets
+```
+
+For me this is extremely fast compared to the first build, because so much testing and vignette code is suppressed when `NOT_CRAN` is `false`.
+
+This will produce `googlesheets_VERSION.tar.gz`. Again. This is what's going to CRAN.
+
+**Check your work.** Unpack this new `.tar.gz` and have a look around. 
+
+``` bash
+mv googlesheets_VERSION.tar.gz googlesheets-unpack/
+cd googlesheets-unpack
+tar xvf googlesheets_VERSION.tar.gz
+```
+
+The only difference I see from the previously unpacked bundle is that my token file is gone. Which is perfect. This is the `.tar.gz` I want to send:
+
+  * vignettes and their index are fully built
+  * token is NOT included
+  * tests and vignette chunks that are unsafe for CRAN are conditionally suppressed
+
+You could make a final commit in your CRAN submission branch. The only change it will show is the change to `.Rbuildignore`. Presumably you are already gitignoring any sensitive files.
+
+You have ended in the CRAN state:
+
+  * `NOT_CRAN=false` in `~/.Renviron`
+  * Token is present but is Rbuildignored (and gitignored).
+
+**Get back to normal development state:**
+
+  * Restore `NOT_CRAN=true` in `~/.Renviron`.
+  * Remove line re: token from `.Rbuildignore` (but leave it gitignored).
+  * Possibly delete `build/` and `inst/doc`? Re-render your vignettes or re-`document()`?
+
+If you've been working in a git branch, just reset the `NOT_CRAN` env var and checkout master! 
+
+Recap:
+
+  * `R CMD build` with `NOT_CRAN=true`. Unpack the `.tar.gz`.
+  * Verify `build/vignette.rds` and `inst/doc` exist, with correct contents.
+  * Rbuildignore sensitive files.
+  * `R CMD build` on unpacked bundle from first build with `NOT_CRAN=false`. Submit this `.tar.gz`.
+  * Reset: `NOT_CRAN=true`, delete `build/` and `inst/doc`, un-Rbuildignore sensitive files.
+
+Observation: It sure would be nice if there was a concept of `.tar.gz`-ignore. The token file could be used during `R CMD build`, but would be excluded from the tarball.

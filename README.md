@@ -1,5 +1,6 @@
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/web/packages/googlesheets/index.html) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
+[![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/package=googlesheets) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
 
 ------------------------------------------------------------------------
 
@@ -47,10 +48,9 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub (which currently depends on the development version of [`readr`](https://github.com/hadley/readr)):
+Or you can get the development version from GitHub:
 
 ``` r
-devtools::install_github("hadley/readr")
 devtools::install_github("jennybc/googlesheets")
 ```
 
@@ -60,17 +60,22 @@ If you use Windows, you may want to install the development version of `xml2`. T
 devtools::install_github("hadley/xml2")
 ```
 
-### Take a look at the vignette
+### Vignettes
 
-Read [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) on GitHub.
+GitHub versions:
 
-### Slides from UseR2015
+-   [Basic usage](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html)
+-   [Formulas and formatted numbers](https://rawgit.com/jennybc/googlesheets/master/vignettes/formulas-and-formatted-numbers.html)
+-   [Managing OAuth tokens](https://rawgit.com/jennybc/googlesheets/master/vignettes/managing-auth-tokens.html)
 
-[Slides](https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015) for a talk in July 2015 at the [UseR2015 conference](http://user2015.math.aau.dk)
+### Talks
+
+-   [Slides](https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015) for a talk in July 2015 at [useR! 2015](http://user2015.math.aau.dk)
+-   [Slides](https://speakerdeck.com/jennybc/googlesheets-1) for an [rOpenSci Community Call in March 2016](https://github.com/ropensci/commcalls/issues/9)
 
 ### Load googlesheets
 
-`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator available in your own work by loading [`dplyr`](http://cran.r-project.org/web/packages/dplyr/index.html) or [`magrittr`](http://cran.r-project.org/web/packages/magrittr/index.html).
+`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](https://cran.r-project.org/package=dplyr). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator available in your own work by loading [`dplyr`](https://cran.r-project.org/package=dplyr) or [`magrittr`](https://cran.r-project.org/package=magrittr).
 
 ``` r
 library("googlesheets")
@@ -79,7 +84,11 @@ suppressPackageStartupMessages(library("dplyr"))
 
 ### Function naming convention
 
-All functions start with `gs_`, which plays nicely with tab completion. If the function has something to do with worksheets or tabs within a spreadsheet, then it will start with `gs_ws_`.
+To play nicely with tab completion, we use consistent prefixes:
+
+-   `gs_` = all functions in the package.
+-   `gs_ws_` = all functions that operate on worksheets or tabs within a spreadsheet.
+-   `gd_` = something to do with Google Drive, usually has a `gs_` synonym, might one day migrate to a Drive client.
 
 ### Quick demo
 
@@ -96,7 +105,7 @@ Register a Sheet (in this case, by title):
 
 ``` r
 gap <- gs_title("Gapminder")
-#> Sheet successfully identifed: "Gapminder"
+#> Sheet successfully identified: "Gapminder"
 ```
 
 Here's a registered `googlesheet` object:
@@ -105,7 +114,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2015-10-29 15:06:57 GMT
+#>   Date of googlesheets registration: 2016-03-28 18:39:26 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -123,11 +132,19 @@ gap
 #> Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
 ```
 
+Visit a registered `googlesheet` in the browser:
+
+``` r
+gap %>% gs_browse()
+gap %>% gs_browse(ws = "Europe")
+```
+
 Read all the data in a worksheet:
 
 ``` r
 africa <- gs_read(gap)
-#> Accessing worksheet titled "Africa"
+#> Accessing worksheet titled 'Africa'.
+#> No encoding supplied: defaulting to UTF-8.
 str(africa)
 #> Classes 'tbl_df', 'tbl' and 'data.frame':    624 obs. of  6 variables:
 #>  $ country  : chr  "Algeria" "Algeria" "Algeria" "Algeria" ...
@@ -157,20 +174,39 @@ gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
 gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
 ```
 
+Full `readr`-style control of data ingest -- highly artificial example!
+
+``` r
+gap %>%
+  gs_read(ws = "Oceania", col_names = paste0("Z", 1:6),
+          na = c("1962", "1977"), col_types = "cccccc", skip = 1, n_max = 7)
+#> Accessing worksheet titled 'Oceania'.
+#> No encoding supplied: defaulting to UTF-8.
+#> Source: local data frame [7 x 6]
+#> 
+#>          Z1      Z2    Z3    Z4       Z5       Z6
+#>       (chr)   (chr) (chr) (chr)    (chr)    (chr)
+#> 1 Australia Oceania  1952 69.12  8691212  10039.6
+#> 2 Australia Oceania  1957 70.33  9712569 10949.65
+#> 3 Australia Oceania    NA 70.93 10794968 12217.23
+#> 4 Australia Oceania  1967  71.1 11872264 14526.12
+#> 5 Australia Oceania  1972 71.93 13177000 16788.63
+#> 6 Australia Oceania    NA 73.49 14074100  18334.2
+#> 7 Australia Oceania  1982 74.74 15184200 19477.01
+```
+
 Create a new Sheet:
 
 ``` r
 iris_ss <- gs_new("iris", input = head(iris, 3), trim = TRUE)
-#> Warning in gs_new("iris", input = head(iris, 3), trim = TRUE): At least one
-#> sheet matching "iris" already exists, so you may need to identify by key,
-#> not title, in future.
+#> Warning: At least one sheet matching "iris" already exists, so you may
+#> need to identify by key, not title, in future.
 #> Sheet "iris" created in Google Drive.
 #> Range affected by the update: "A1:E4"
 #> Worksheet "Sheet1" successfully updated with 20 new value(s).
-#> Accessing worksheet titled "Sheet1"
-#> Authorization will be used.
-#> Sheet successfully identifed: "iris"
-#> Accessing worksheet titled "Sheet1"
+#> Accessing worksheet titled 'Sheet1'.
+#> Sheet successfully identified: "iris"
+#> Accessing worksheet titled 'Sheet1'.
 #> Worksheet "Sheet1" dimensions changed to 4 x 5.
 #> Worksheet dimensions: 4 x 5.
 ```
@@ -193,7 +229,8 @@ Look at what we have wrought:
 ``` r
 iris_ss %>% 
   gs_read()
-#> Accessing worksheet titled "Sheet1"
+#> Accessing worksheet titled 'Sheet1'.
+#> No encoding supplied: defaulting to UTF-8.
 #> Source: local data frame [4 x 5]
 #> 
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
@@ -209,17 +246,18 @@ Download this precious thing (other formats are possible):
 ``` r
 iris_ss %>% 
   gs_download(to = "iris-ish-stuff.csv", overwrite = TRUE)
-#> Sheet successfully downloaded: /Users/jenny/rrr/googlesheets/iris-ish-stuff.csv
+#> Sheet successfully downloaded:
+#> /Users/jenny/rrr/googlesheets/iris-ish-stuff.csv
 ```
 
 Clean up our mess:
 
 ``` r
-gs_vecdel("iris", "Gapminder")
+gs_vecdel(c("iris", "Gapminder"))
 file.remove("iris-ish-stuff.csv")
 ```
 
-Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/jennybc/googlesheets/master/vignettes/basic-usage.html) shows a lot more usage.
+Remember, [the vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) shows a lot more usage.
 
 ### Overview of functions
 
@@ -230,6 +268,7 @@ Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercon
 | gs\_key()                | Register a Sheet by key                                   |
 | gs\_url()                | Register a Sheet by URL                                   |
 | gs\_gs()                 | Re-register a `googlesheet`                               |
+| gs\_browse()             | Visit a registered `googlesheet` in the browser           |
 | gs\_read()               | Read data and let `googlesheets` figure out how           |
 | gs\_read\_csv()          | Read explicitly via the fast exportcsv link               |
 | gs\_read\_listfeed()     | Read explicitly via the list feed                         |
@@ -240,6 +279,7 @@ Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercon
 | gs\_add\_row()           | Append a row to pre-existing data table                   |
 | gs\_new()                | Create a new Sheet and optionally populate                |
 | gs\_copy()               | Copy a Sheet into a new Sheet                             |
+| gs\_rename()             | Rename an existing Sheet                                  |
 | gs\_ws\_ls()             | List the worksheets in a Sheet                            |
 | gs\_ws\_new()            | Create a new worksheet and optionally populate            |
 | gs\_ws\_rename()         | Rename a worksheet                                        |
@@ -250,6 +290,7 @@ Remember, [the vignette](http://htmlpreview.github.io/?https://raw.githubusercon
 | gs\_upload()             | Upload local file into a new Sheet                        |
 | gs\_download()           | Download a Sheet into a local file                        |
 | gs\_auth()               | Authorize the package                                     |
+| gs\_deauth()             | De-authorize the package                                  |
 | gs\_user()               | Get info about current user and auth status               |
 | gs\_webapp\_auth\_url()  | Facilitates auth by user of a Shiny app                   |
 | gs\_webapp\_get\_token() | Facilitates auth by user of a Shiny app                   |

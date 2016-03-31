@@ -66,10 +66,12 @@ gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
 
   # only calling spreadsheets feed from here, so hardwiring url
   the_url <- "https://spreadsheets.google.com/feeds/spreadsheets/private/full"
+  req <- rGET(the_url, google_token()) %>%
+    httr::stop_for_status()
+  rc <- content_as_xml_UTF8(req)
 
-  req <- gsheets_GET(the_url)
-  ns <- xml2::xml_ns_rename(xml2::xml_ns(req$content), d1 = "feed")
-  entries <- req$content %>% xml2::xml_find_all(".//feed:entry", ns)
+  ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
+  entries <- rc %>% xml2::xml_find_all(".//feed:entry", ns)
   links <- entries %>% xml2::xml_find_all(".//feed:link", ns)
 
   link_dat <- dplyr::data_frame(
