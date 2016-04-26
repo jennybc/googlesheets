@@ -39,6 +39,8 @@
 #'   the consent page once for the first time through the authorization
 #'   sequence. If set to "force" then user will have to grant consent everytime
 #'   even if they have previously done so.
+#' @param state This value will be returned as a parameter of the redirect URL
+#'   after authentication. You can use this to keep track of user settings.
 #'
 #' @seealso \code{\link{gs_webapp_get_token}}
 #'
@@ -47,7 +49,8 @@ gs_webapp_auth_url <-
   function(client_id = getOption("googlesheets.webapp.client_id"),
            redirect_uri = getOption("googlesheets.webapp.redirect_uri"),
            access_type = "online",
-           approval_prompt = "auto") {
+           approval_prompt = "auto",
+           state = "securitytoken") {
 
     scope_list <- paste("https://spreadsheets.google.com/feeds",
                         "https://docs.google.com/feeds")
@@ -58,7 +61,7 @@ gs_webapp_auth_url <-
                    client_id = client_id,
                    redirect_uri = redirect_uri,
                    scope = scope_list,
-                   state = "securitytoken",
+                   state = state,
                    access_type = access_type,
                    approval_prompt = approval_prompt))
 
