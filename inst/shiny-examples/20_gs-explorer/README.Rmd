@@ -42,7 +42,7 @@ gs_webapp_auth_url()
 
 ## Setting up authorization in your own app
 
-You must create your own web application in [Google Developer's Console](https://console.developers.google.com/). Obtain the client ID, client secret and set the redirect URI to some static local url ie. `http://127.0.0.1:4642` (for testing so every time you would run `runApp(port = 4642)` ). Depending on where you will deploy your app, you will later come back and add that destination as another redirect uri. 
+You must create your own web application in [Google Developer's Console](https://console.developers.google.com/). Obtain the client ID, client secret and set the redirect URI to some static local url ie. `http://127.0.0.1:4642` (for testing so every time you would run `runApp(port = 4642)` ). Depending on where you will deploy your app, you will later come back and add that destination as another redirect uri. You also need to enable the access to the Google Drive API.
 
 After setting up the web application, in your `server.R` set client ID and secret, and redirect uri specific to your project by:
 
@@ -52,5 +52,6 @@ options("googlesheets.shiny.client_secret" = MY_CLIENT_SECRET)
 options("googlesheets.shiny.redirect_uri" = MY_REDIRECT_URI)
 ```
 
+You should store the credentials outside your codebase, e.g. in your .Rprofile.
 
 
