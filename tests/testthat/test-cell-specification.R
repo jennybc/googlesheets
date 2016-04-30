@@ -15,9 +15,5 @@ test_that("Ranges can be converted to a cell limit list", {
                jfun(c(1, 4, 3, 4)))
   expect_equal("R3C1:R5C4" %>% cellranger::as.cell_limits() %>% limit_list(),
                jfun(c(3, 5, 1, 4)))
-
-  expect_equal("a3:b4" %>% cellranger::as.cell_limits() %>% limit_list(),
-               jfun(c(3, 4, 1, 2)))
-
 })
 
