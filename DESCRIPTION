@@ -30,7 +30,8 @@ Suggests:
     ggplot2,
     knitr,
     testthat,
-    rmarkdown
+    rmarkdown,
+    rprojroot
 Remotes:
     hadley/testthat
 VignetteBuilder: knitr
