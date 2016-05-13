@@ -4,12 +4,6 @@ Extract an example for testing xml2's new ability to create XML
 This just contains code needed to extract the input needed to test drive xml2's XML-authoring capability. And that is actually done in the next file, because I posted that stuff as a gist for sharing with others.
 
 ``` r
-#devtools::install_github("hadley/xml2#76")
-si <- devtools::session_info("xml2")$packages
-stopifnot(si$source[si$package == "xml2"] == "Github (jimhester/xml2@04a83fe)")
-```
-
-``` r
 library(rprojroot)
 ```
 
@@ -52,7 +46,7 @@ library(dplyr)
 
     ##                   Spreadsheet title: xml2-test
     ##                  Spreadsheet author: gspreadr
-    ##   Date of googlesheets registration: 2016-05-13 00:14:30 GMT
+    ##   Date of googlesheets registration: 2016-05-13 16:11:53 GMT
     ##     Date of last spreadsheet update: 2016-05-11 19:31:50 GMT
     ##                          visibility: private
     ##                         permissions: rw

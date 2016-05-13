@@ -48,15 +48,65 @@ feed_node <-
 ## here's what I actually send as body of an httr::POST request:
 write(toString.XMLNode(feed_node), "27_feed-node-XML.xml")
 
-#' Here's a very rough pass at doing something similar with xml2. First, here's
-#' the version of xml2 I'm using.
+#' Installing / verifying `xml2` from the relevant PR.
+#+ xml2-setup
+#devtools::install_github("hadley/xml2#76")
 si <- devtools::session_info("xml2")$packages
 si$source[si$package == "xml2"]
 
-#' Now I create the feed node and add just one entry. I'm leaving it for
-#' @jimhester to show me the best way to add many entries at once.
+#' Current approach given by @jimhester.
+#+ xml2-write
 library(xml2)
+d <- xml_new_document() %>%
+  xml_add_child("feed",
+                xmlns = "http://www.w3.org/2005/Atom",
+                "xmlns:batch" = "http://schemas.google.com/gdata/batch",
+                "xmlns:gs" = "http://schemas.google.com/spreadsheets/2006")
 
+d %>% xml_add_child("id", africa_cellsfeed)
+f_XML <- function(cell, cell_id, edit_link, row, col, update_value) {
+  d %>%
+    xml_add_child("entry") %>%
+    xml_add_child("batch:id", cell) %>%
+    xml_add_sibling("batch:operation", type = "update") %>%
+    xml_add_sibling("id", cell_id) %>%
+    xml_add_sibling("link", rel = "edit", type = "application/atom+xml",
+                    href = edit_link) %>%
+    xml_add_sibling("gs:cell", row = as.character(row), col = as.character(col),
+                    inputValue = update_value)
+}
+
+update_fodder %>% pwalk(f_XML)
+
+write_xml(d, "27_feed-node-xml2.xml")
+
+#' How does this compare to the output from the `XML` package? `xml2` adds an
+#' XML declaration.
+#+ xml-diff, engine='bash'
+diff -b -U 0 27_feed-node-XML.xml 27_feed-node-xml2.xml
+
+#' Can `xml2` roundtrip it's own XML? I.e. the new linebreaks don't cause
+#' trouble? I wonder because of <https://github.com/hadley/xml2/issues/49>.
+rt <- read_xml("27_feed-node-xml2.xml")
+identical(as_list(d), as_list(rt))
+head(all.equal(as_list(d), as_list(rt)))
+xml_children(d)[[2]]
+xml_children(rt)[[2]]
+as_list(xml_children(d)[[2]])
+as_list(xml_children(rt)[[2]])
+#' No, the linebreaks do cause problems!
+#'
+#' But notice it doesn't affect XML written to file.
+write_xml(rt, "27_feed-node-xml2-roundtrip.xml")
+
+#+ xml2-diff, engine='bash'
+diff -b 27_feed-node-xml2.xml 27_feed-node-xml2-roundtrip.xml
+
+#' __Everything below here is old.__
+#'
+#' Here's my original rough pass at writing XML with xml2. Done with
+#' jimhester/xml2@04a83fe, which is now out-of-date. Code is not run.
+#+ xml2-first-pass, eval = FALSE
 feed <- xml_new_document() %>%
   xml_add_child("feed",
                 xmlns = "http://www.w3.org/2005/Atom",

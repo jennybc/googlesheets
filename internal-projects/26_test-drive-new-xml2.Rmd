@@ -9,12 +9,6 @@ This just contains code needed to extract the input needed to test drive xml2's 
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r xml2-setup}
-#devtools::install_github("hadley/xml2#76")
-si <- devtools::session_info("xml2")$packages
-stopifnot(si$source[si$package == "xml2"] == "Github (jimhester/xml2@04a83fe)")
-```
-
 ```{r path-prep}
 library(rprojroot)
 pkg_root <- function(...) file.path(find_package_root_file(), ...) 
