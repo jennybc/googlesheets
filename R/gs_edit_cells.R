@@ -74,12 +74,12 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   ## user, i.e. learn it from anchor, instead of defaulting to A1
   range <- limits %>%
     cellranger::as.range()
-  if(verbose) mpf("Range affected by the update: \"%s\"", range)
+  if (verbose) mpf("Range affected by the update: \"%s\"", range)
   limits <- limits %>%
     limit_list()
 
-  if(limits$`max-row` > this_ws$row_extent ||
-     limits$`max-col` > this_ws$col_extent) {
+  if (limits$`max-row` > this_ws$row_extent ||
+      limits$`max-col` > this_ws$col_extent) {
     ss <- ss %>%
       gs_ws_resize(this_ws$ws_title,
                    max(this_ws$row_extent, limits$`max-row`),
@@ -90,9 +90,9 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 
   ## redundant with the default col_names-setting logic from cellranger :(
   ## but we need it here as well to pass directions to as_character_vector()
-  if(is.null(dim(input))) { # input is 1-dimensional
+  if (is.null(dim(input))) { # input is 1-dimensional
     col_names <- FALSE
-  } else if(is.null(col_names)) {
+  } else if (is.null(col_names)) {
     col_names <- !is.null(colnames(input))
   }
 
