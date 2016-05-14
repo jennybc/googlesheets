@@ -255,8 +255,8 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
 gs_ws_resize <- function(ss, ws = 1,
                          row_extent = NULL, col_extent = NULL, verbose = TRUE) {
 
-  stopifnot(ss %>% inherits("googlesheet"),
-            ws %>% is.numeric() || ws %>% is.character(),
+  stopifnot(inherits(ss, "googlesheet"),
+            is.numeric(ws) || is.character(ws),
             length(ws) == 1L)
 
   this_ws <- ss %>% gs_ws(ws, verbose)
@@ -269,8 +269,8 @@ gs_ws_resize <- function(ss, ws = 1,
     col_extent <- this_ws$col_extent
   }
 
-  stopifnot(row_extent %>% is.numeric(), length(row_extent) == 1L,
-            col_extent %>% is.numeric(), length(col_extent) == 1L)
+  stopifnot(is.numeric(row_extent), length(row_extent) == 1L,
+            is.numeric(col_extent), length(col_extent) == 1L)
 
   ss_refresh <-
     gs_ws_modify(ss, ws,
@@ -299,7 +299,7 @@ gs_ws_resize <- function(ss, ws = 1,
 #' @template ss
 #' @template ws_from
 #' @param to character string for new title of worksheet
-#' @param new_dim list of length 2 specifying the row and column extent of the
+#' @param new_dim vector of length 2 specifying the row and column extent of the
 #'   worksheet
 #' @template verbose
 #'
@@ -315,48 +315,33 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   req <- rGET(this_ws$ws_id, google_token()) %>%
     httr::stop_for_status()
-  stop_for_content_type(req, expected = "application/atom+xml; charset=UTF-8")
-  ## yes, that's right
-  ## the content MUST be xml but I'm about to parse it as text
-  ## this nuttiness will go away when we can use xml2 to write xml
-  ## below I edit the xml using regex to avoid XML package pain
-  the_body <- req %>% httr::content(as = "text", encoding = "UTF-8")
+  rc <- content_as_xml_UTF8(req)
 
   if (!is.null(to)) { # rename a worksheet
-
     stopifnot(is.character(to), length(to) == 1L)
-
     if (to %in% gs_ws_ls(ss)) {
       spf(paste("A worksheet titled \"%s\" already exists in sheet",
                 "\"%s\".\nPlease choose another worksheet title."),
           to, ss$sheet_title)
     }
-
-    ## TO DO: we should probably be doing something more XML-y here, instead
-    ## of doing XML --> string --> regex based subsitution --> XML
-    title_replacement <- paste0("\\1", to, "\\3")
-    the_body <-
-      sub("(<title type=\'text\'>)(.*)(</title>)", title_replacement, the_body)
+    title_node <- xml2::xml_find_one(rc, "//d1:title", xml2::xml_ns(rc))
+    xml_text(title_node) <- to
   }
 
   if (!is.null(new_dim)) { # resize a worksheet
-
     stopifnot(is.numeric(new_dim),
               identical(names(new_dim), c("row_extent", "col_extent")))
-
-    row_replacement <- paste0("\\1", new_dim["row_extent"], "\\3")
-    col_replacement <- paste0("\\1", new_dim["col_extent"], "\\3")
-
-    the_body <- the_body %>%
-      sub("(<gs:rowCount>)(.*)(</gs:rowCount>)", row_replacement, .) %>%
-      sub("(<gs:colCount>)(.*)(</gs:colCount>)", col_replacement, .)
+    rowCount_node <- xml2::xml_find_one(rc, "//gs:rowCount", xml2::xml_ns(rc))
+    xml_text(rowCount_node) <- as.character(new_dim["row_extent"])
+    colCount_node <- xml2::xml_find_one(rc, "//gs:colCount", xml2::xml_ns(rc))
+    xml_text(colCount_node) <- as.character(new_dim["col_extent"])
   }
 
   req <-
     httr::PUT(this_ws$edit,
               google_token(),
               httr::add_headers("Content-Type" = "application/atom+xml"),
-              body = the_body) %>%
+              body = as.character(rc)) %>%
     httr::stop_for_status()
 
   req$url %>%
