@@ -325,16 +325,16 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
           to, ss$sheet_title)
     }
     title_node <- xml2::xml_find_one(rc, "//d1:title", xml2::xml_ns(rc))
-    xml_text(title_node) <- to
+    xml2::xml_text(title_node) <- to
   }
 
   if (!is.null(new_dim)) { # resize a worksheet
     stopifnot(is.numeric(new_dim),
               identical(names(new_dim), c("row_extent", "col_extent")))
     rowCount_node <- xml2::xml_find_one(rc, "//gs:rowCount", xml2::xml_ns(rc))
-    xml_text(rowCount_node) <- as.character(new_dim["row_extent"])
+    xml2::xml_text(rowCount_node) <- as.character(new_dim["row_extent"])
     colCount_node <- xml2::xml_find_one(rc, "//gs:colCount", xml2::xml_ns(rc))
-    xml_text(colCount_node) <- as.character(new_dim["col_extent"])
+    xml2::xml_text(colCount_node) <- as.character(new_dim["col_extent"])
   }
 
   req <-
