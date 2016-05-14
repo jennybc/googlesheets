@@ -23,7 +23,6 @@ Imports:
     stringr,
     tidyr,
     utils,
-    XML,
     xml2 (>= 0.1.2.9000)
 Suggests:
     covr,

@@ -97,7 +97,7 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
       xmlns = "http://www.w3.org/2005/Atom",
       "xmlns:gsx" = "http://schemas.google.com/spreadsheets/2006/extended"
     )
-  walk2(child_node_names, input, ~ xml2::xml_add_child(new_row, .x, .y))
+  purrr::walk2(child_node_names, input, ~ xml2::xml_add_child(new_row, .x, .y))
 
   req <- httr::POST(
     lf_post_link,
