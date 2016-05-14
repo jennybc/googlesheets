@@ -46,27 +46,27 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
-  if(ws_title_exist) {
+  if (ws_title_exist) {
     spf(paste("A worksheet titled \"%s\" already exists, please",
               "choose a different name."), ws_title)
   }
 
   the_body <-
-    XML::xmlNode("entry",
-                 namespaceDefinitions =
-                   c("http://www.w3.org/2005/Atom",
-                     gs = "http://schemas.google.com/spreadsheets/2006"),
-                 XML::xmlNode("title", ws_title),
-                 XML::xmlNode("gs:rowCount", row_extent),
-                 XML::xmlNode("gs:colCount", col_extent))
-
-  the_body <- XML::toString.XMLNode(the_body)
+    xml2::xml_new_document() %>%
+    xml2::xml_add_child(
+      "entry",
+      xmlns = "http://www.w3.org/2005/Atom",
+      "xmlns:gs" = "http://schemas.google.com/spreadsheets/2006"
+    )
+  the_body %>% xml2::xml_add_child("title", ws_title)
+  the_body %>% xml2::xml_add_child("gs:rowCount", row_extent)
+  the_body %>% xml2::xml_add_child("gs:colCount", col_extent)
 
   req <- httr::POST(
     ss$ws_feed,
     google_token(),
     httr::add_headers("Content-Type" = "application/atom+xml"),
-    body = the_body
+    body = as.character(the_body)
   ) %>%
     httr::stop_for_status()
 
@@ -78,7 +78,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   if (ws_title_exist) {
     this_ws <- ss %>% gs_ws(ws_title, verbose = FALSE)
-    if(verbose) {
+    if (verbose) {
       mpf("Worksheet \"%s\" added to sheet \"%s\".",
           this_ws$ws_title, ss$sheet_title)
     }
@@ -144,8 +144,8 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
 
   ws_title_exist <- this_ws$ws_title %in% gs_ws_ls(ss_refresh)
 
-  if(verbose) {
-    if(ws_title_exist) {
+  if (verbose) {
+    if (ws_title_exist) {
       mpf(paste("Cannot verify whether worksheet \"%s\" was",
                 "deleted from sheet \"%s\"."),
           this_ws$ws_title, ss_refresh$sheet_title)
@@ -155,7 +155,7 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
     }
   }
 
-  if(ws_title_exist) {
+  if (ws_title_exist) {
     NULL
   } else {
     ss_refresh %>% invisible()
@@ -208,8 +208,8 @@ gs_ws_rename <- function(ss, from = 1, to, verbose = TRUE) {
   from_is_gone <- !(from_title %in% gs_ws_ls(ss_refresh))
   to_is_there <- to %in% gs_ws_ls(ss_refresh)
 
-  if(verbose) {
-    if(from_is_gone && to_is_there) {
+  if (verbose) {
+    if (from_is_gone && to_is_there) {
       mpf("Worksheet \"%s\" renamed to \"%s\".", from_title, to)
     } else {
       mpf(paste("Cannot verify whether worksheet \"%s\" was",
@@ -262,10 +262,10 @@ gs_ws_resize <- function(ss, ws = 1,
   this_ws <- ss %>% gs_ws(ws, verbose)
 
   # if row or col extent not specified, make it the same as before
-  if(is.null(row_extent)) {
+  if (is.null(row_extent)) {
     row_extent <- this_ws$row_extent
   }
-  if(is.null(col_extent)) {
+  if (is.null(col_extent)) {
     col_extent <- this_ws$col_extent
   }
 
@@ -284,7 +284,7 @@ gs_ws_resize <- function(ss, ws = 1,
   success <- all.equal(c(new_row_extent, new_col_extent),
                        c(row_extent, col_extent))
 
-  if(verbose && success) {
+  if (verbose && success) {
     mpf("Worksheet \"%s\" dimensions changed to %d x %d.",
         this_ws$ws_title, new_row_extent, new_col_extent)
   }
@@ -381,19 +381,19 @@ gs_ws <- function(ss, ws, verbose = TRUE) {
             length(ws) == 1L,
             is.character(ws) || (is.numeric(ws) && ws > 0))
 
-  if(is.character(ws)) {
+  if (is.character(ws)) {
     index <- match(ws, ss$ws$ws_title)
-    if(is.na(index)) {
+    if (is.na(index)) {
       spf("Worksheet %s not found.", ws)
     } else {
       ws <- index
     }
   }
   ws <- ws %>% as.integer()
-  if(ws > ss$n_ws) {
+  if (ws > ss$n_ws) {
     spf("Spreadsheet only contains %d worksheets.", ss$n_ws)
   }
-  if(verbose) {
+  if (verbose) {
     mpf("Accessing worksheet titled '%s'.", ss$ws$ws_title[ws])
   }
   ss$ws[ws, ]
