@@ -32,6 +32,6 @@ Suggests:
     rmarkdown,
     rprojroot
 Remotes:
-    hadley/xml2#76
+    hadley/xml2
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1.9000

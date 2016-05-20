@@ -15,7 +15,7 @@ respectively, of the worksheet}
 
 \item{to}{character string for new title of worksheet}
 
-\item{new_dim}{list of length 2 specifying the row and column extent of the
+\item{new_dim}{vector of length 2 specifying the row and column extent of the
 worksheet}
 
 \item{verbose}{logical; do you want informative messages?}
