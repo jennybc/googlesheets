@@ -1,0 +1,255 @@
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:batch="http://schemas.google.com/gdata/batch" xmlns:gs="http://schemas.google.com/spreadsheets/2006">
+ <id>SOME_URL</id>
+ <entry>
+  <batch:id>A1</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C1</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C1/fu9n6e"/>
+  <gs:cell row="1" col="1" inputValue="country"/>
+ </entry>
+ <entry>
+  <batch:id>B1</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C2</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C2/skdkms"/>
+  <gs:cell row="1" col="2" inputValue="continent"/>
+ </entry>
+ <entry>
+  <batch:id>C1</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C3</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C3/m6lh9"/>
+  <gs:cell row="1" col="3" inputValue="year"/>
+ </entry>
+ <entry>
+  <batch:id>D1</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C4</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C4/2ix4zl"/>
+  <gs:cell row="1" col="4" inputValue="lifeExp"/>
+ </entry>
+ <entry>
+  <batch:id>E1</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C5</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C5/140rbl"/>
+  <gs:cell row="1" col="5" inputValue="pop"/>
+ </entry>
+ <entry>
+  <batch:id>F1</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C6</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R1C6/ttswx4"/>
+  <gs:cell row="1" col="6" inputValue="gdpPercap"/>
+ </entry>
+ <entry>
+  <batch:id>A2</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C1</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C1/cdj6rl"/>
+  <gs:cell row="2" col="1" inputValue="Algeria"/>
+ </entry>
+ <entry>
+  <batch:id>B2</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C2</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C2/wo1nru"/>
+  <gs:cell row="2" col="2" inputValue="Africa"/>
+ </entry>
+ <entry>
+  <batch:id>C2</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C3</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C3/kua4l"/>
+  <gs:cell row="2" col="3" inputValue="1952"/>
+ </entry>
+ <entry>
+  <batch:id>D2</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C4</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C4/olavj5"/>
+  <gs:cell row="2" col="4" inputValue="43.077"/>
+ </entry>
+ <entry>
+  <batch:id>E2</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C5</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C5/7ot21p"/>
+  <gs:cell row="2" col="5" inputValue="9279525"/>
+ </entry>
+ <entry>
+  <batch:id>F2</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C6</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R2C6/emxr9d"/>
+  <gs:cell row="2" col="6" inputValue="2449.0082"/>
+ </entry>
+ <entry>
+  <batch:id>A3</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C1</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C1/widqne"/>
+  <gs:cell row="3" col="1" inputValue="Angola"/>
+ </entry>
+ <entry>
+  <batch:id>B3</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C2</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C2/wo5vh6"/>
+  <gs:cell row="3" col="2" inputValue="Africa"/>
+ </entry>
+ <entry>
+  <batch:id>C3</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C3</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C3/ksvk5"/>
+  <gs:cell row="3" col="3" inputValue="1952"/>
+ </entry>
+ <entry>
+  <batch:id>D3</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C4</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C4/p6lnb7"/>
+  <gs:cell row="3" col="4" inputValue="30.015"/>
+ </entry>
+ <entry>
+  <batch:id>E3</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C5</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C5/59q5sf"/>
+  <gs:cell row="3" col="5" inputValue="4232095"/>
+ </entry>
+ <entry>
+  <batch:id>F3</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C6</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R3C6/dsxy4s"/>
+  <gs:cell row="3" col="6" inputValue="3520.6103"/>
+ </entry>
+ <entry>
+  <batch:id>A4</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C1</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C1/126nkg"/>
+  <gs:cell row="4" col="1" inputValue="Benin"/>
+ </entry>
+ <entry>
+  <batch:id>B4</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C2</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C2/wo4gwq"/>
+  <gs:cell row="4" col="2" inputValue="Africa"/>
+ </entry>
+ <entry>
+  <batch:id>C4</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C3</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C3/krgzp"/>
+  <gs:cell row="4" col="3" inputValue="1952"/>
+ </entry>
+ <entry>
+  <batch:id>D4</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C4</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C4/oqzg8a"/>
+  <gs:cell row="4" col="4" inputValue="38.223"/>
+ </entry>
+ <entry>
+  <batch:id>E4</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C5</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C5/1cdhnw"/>
+  <gs:cell row="4" col="5" inputValue="1738315"/>
+ </entry>
+ <entry>
+  <batch:id>F4</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C6</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R4C6/qb9pxt"/>
+  <gs:cell row="4" col="6" inputValue="1062.7522"/>
+ </entry>
+ <entry>
+  <batch:id>A5</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C1</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C1/17iysp"/>
+  <gs:cell row="5" col="1" inputValue="Botswana"/>
+ </entry>
+ <entry>
+  <batch:id>B5</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C2</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C2/wnxg2i"/>
+  <gs:cell row="5" col="2" inputValue="Africa"/>
+ </entry>
+ <entry>
+  <batch:id>C5</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C3</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C3/kq2f9"/>
+  <gs:cell row="5" col="3" inputValue="1952"/>
+ </entry>
+ <entry>
+  <batch:id>D5</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C4</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C4/onmdxn"/>
+  <gs:cell row="5" col="4" inputValue="47.622"/>
+ </entry>
+ <entry>
+  <batch:id>E5</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C5</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C5/qjynih"/>
+  <gs:cell row="5" col="5" inputValue="442308"/>
+ </entry>
+ <entry>
+  <batch:id>F5</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C6</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R5C6/1pp67w"/>
+  <gs:cell row="5" col="6" inputValue="851.2411"/>
+ </entry>
+ <entry>
+  <batch:id>A6</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C1</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C1/jsdcfb"/>
+  <gs:cell row="6" col="1" inputValue="Burkina Faso"/>
+ </entry>
+ <entry>
+  <batch:id>B6</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C2</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C2/wnw1i2"/>
+  <gs:cell row="6" col="2" inputValue="Africa"/>
+ </entry>
+ <entry>
+  <batch:id>C6</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C3</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C3/konut"/>
+  <gs:cell row="6" col="3" inputValue="1952"/>
+ </entry>
+ <entry>
+  <batch:id>D6</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C4</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C4/p6vsqv"/>
+  <gs:cell row="6" col="4" inputValue="31.975"/>
+ </entry>
+ <entry>
+  <batch:id>E6</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C5</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C5/8hjliw"/>
+  <gs:cell row="6" col="5" inputValue="4469979"/>
+ </entry>
+ <entry>
+  <batch:id>F6</batch:id>
+  <batch:operation type="update"/>
+  <id>https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C6</id>
+  <link rel="edit" type="application/atom+xml" href="https://spreadsheets.google.com/feeds/cells/1tP1SAErOJbMrTTCONdL0a9lwe3KkhTuZaGhCy3MPZP8/ozf3txt/private/full/R6C6/8m4llm"/>
+  <gs:cell row="6" col="6" inputValue="543.2552"/>
+ </entry>
+</feed>

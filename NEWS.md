@@ -1,5 +1,6 @@
 # googlesheets 0.2.0.9000
 
+  * `XML` is no longer a dependency.
   * Automatic retries for `Internal Server Error (HTTP 500)`. On or around 2016-03-11, there was a huge increase in the frequency of this error on Google Drive API calls.
     - Remedy: all HTTP `GET` calls in the package are automatically retried up to 5 times, with exponential backoff, for statuses 500 and higher.
   * Functions prefixed with `gd_` refer to Google Drive and might eventually migrate into a separate Google Drive package. Generally there is a synonym with the `gs_` prefix.
