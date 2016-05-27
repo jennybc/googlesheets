@@ -31,7 +31,7 @@ VERB_n <- function(VERB, n = 5) {
       out <- VERB(...)
       status <- httr::status_code(out)
       if (status < 500 || i == n) break
-      backoff <- runif(n = 1, min = 0, max = 2 ^ i - 1)
+      backoff <- stats::runif(n = 1, min = 0, max = 2 ^ i - 1)
       ## TO DO: honor a verbose argument or option
       mess <- paste("HTTP error %s on attempt %d ...\n",
                     "  backing off %0.2f seconds, retrying")

@@ -23,15 +23,15 @@ Imports:
     stringr,
     tidyr,
     utils,
-    XML,
-    xml2
+    xml2 (>= 0.1.2.9000)
 Suggests:
     covr,
     ggplot2,
     knitr,
     testthat,
-    rmarkdown
+    rmarkdown,
+    rprojroot
 Remotes:
-    hadley/testthat
+    hadley/xml2
 VignetteBuilder: knitr
 RoxygenNote: 5.0.1.9000

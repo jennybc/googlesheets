@@ -74,12 +74,12 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   ## user, i.e. learn it from anchor, instead of defaulting to A1
   range <- limits %>%
     cellranger::as.range()
-  if(verbose) mpf("Range affected by the update: \"%s\"", range)
+  if (verbose) mpf("Range affected by the update: \"%s\"", range)
   limits <- limits %>%
     limit_list()
 
-  if(limits$`max-row` > this_ws$row_extent ||
-     limits$`max-col` > this_ws$col_extent) {
+  if (limits$`max-row` > this_ws$row_extent ||
+      limits$`max-col` > this_ws$col_extent) {
     ss <- ss %>%
       gs_ws_resize(this_ws$ws_title,
                    max(this_ws$row_extent, limits$`max-row`),
@@ -90,54 +90,47 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 
   ## redundant with the default col_names-setting logic from cellranger :(
   ## but we need it here as well to pass directions to as_character_vector()
-  if(is.null(dim(input))) { # input is 1-dimensional
+  if (is.null(dim(input))) { # input is 1-dimensional
     col_names <- FALSE
-  } else if(is.null(col_names)) {
+  } else if (is.null(col_names)) {
     col_names <- !is.null(colnames(input))
   }
 
   input <- input %>% as_character_vector(col_names = col_names)
 
   cells_df <- ss %>%
-    gs_read_cellfeed(
-      ws, range = range, return_empty = TRUE,
-      return_links = TRUE, verbose = FALSE) %>%
-    dplyr::mutate_(update_value = ~ input)
-
-  f <- function(cell, cell_id, edit_link, row, col, update_value) {
-    XML::xmlNode("entry",
-                 XML::xmlNode("batch:id", cell),
-                 XML::xmlNode("batch:operation",
-                              attrs = c("type" = "update")),
-                 XML::xmlNode("id", cell_id),
-                 XML::xmlNode("link",
-                              attrs = c("rel" = "edit",
-                                        "type" = "application/atom+xml",
-                                        "href" = edit_link)),
-                 XML::xmlNode("gs:cell",
-                              attrs = c("row" = row,
-                                        "col" = col,
-                                        "inputValue" = update_value)))
-  }
+    gs_read_cellfeed(ws, range = range, return_empty = TRUE,
+                     return_links = TRUE, verbose = FALSE)
   update_entries <- cells_df %>%
     dplyr::select_(quote(-cell_alt), quote(-value),
                    quote(-input_value), quote(-numeric_value)) %>%
-    purrr::pmap(f)
-
-  update_feed <-
-    XML::xmlNode("feed",
-                 namespaceDefinitions =
-                   c("http://www.w3.org/2005/Atom",
-                     batch = "http://schemas.google.com/gdata/batch",
-                     gs = "http://schemas.google.com/spreadsheets/2006"),
-                 .children = list(XML::xmlNode("id", this_ws$cellsfeed))) %>%
-    XML::addChildren(kids = update_entries) %>%
-    XML::toString.XMLNode()
+    dplyr::mutate_(update_value = ~ input)
+  feed_node <-
+    xml2::xml_new_document() %>%
+    xml2::xml_add_child(
+      "feed",
+      xmlns = "http://www.w3.org/2005/Atom",
+      "xmlns:batch" = "http://schemas.google.com/gdata/batch",
+      "xmlns:gs" = "http://schemas.google.com/spreadsheets/2006"
+    )
+  feed_node %>% xml2::xml_add_child("id", this_ws$cellsfeed)
+  add_one_entry <- function(cell, cell_id, edit_link, row, col, update_value) {
+    feed_node %>%
+      xml2::xml_add_child("entry") %>%
+      xml2::xml_add_child("batch:id", cell) %>%
+      xml2::xml_add_sibling("batch:operation", type = "update") %>%
+      xml2::xml_add_sibling("id", cell_id) %>%
+      xml2::xml_add_sibling("link", rel = "edit", type = "application/atom+xml",
+                            href = edit_link) %>%
+      xml2::xml_add_sibling("gs:cell", row = as.character(row),
+                            col = as.character(col), inputValue = update_value)
+  }
+  update_entries %>% purrr::pwalk(add_one_entry)
 
   req <- httr::POST(
     file.path(this_ws$cellsfeed, "batch"),
     google_token(),
-    body = update_feed,
+    body = as.character(feed_node),
     httr::add_headers("Content-Type" = "application/atom+xml")
   ) %>%
     httr::stop_for_status()
@@ -159,7 +152,7 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
     }
   }
 
-  if(trim &&
+  if (trim &&
      (limits$`max-row` < this_ws$row_extent ||
       limits$`max-col` < this_ws$col_extent)) {
 
@@ -176,12 +169,12 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
 
 catch_hopeless_input <- function(x) {
 
-  if(x %>% is.recursive() && !(x %>% is.data.frame())) {
+  if (x %>% is.recursive() && !(x %>% is.data.frame())) {
     stop(paste("Non-data-frame, list-like objects not suitable as input.",
                "Maybe pre-process it yourself?"))
   }
 
-  if(!is.null(dim(x)) && length(dim(x)) > 2) {
+  if (!is.null(dim(x)) && length(dim(x)) > 2) {
     stop("Input has more than 2 dimensions.")
   }
 
@@ -199,18 +192,18 @@ as_character_vector <- function(x, col_names) {
 
   ## instead of fiddly tests on x (see comments below), just go with it, if x
   ## can be turned into a character vector
-  if(is.null(dim(x))) {
+  if (is.null(dim(x))) {
     y <- try(as.character(x), silent = TRUE)
-  } else if(length(dim(x)) == 2L) {
+  } else if (length(dim(x)) == 2L) {
     x_colnames <- colnames(x)
     y <- try(x %>% t() %>% as.character() %>% drop(), silent = TRUE)
   }
 
-  if(y %>% inherits("try-error")) {
+  if (y %>% inherits("try-error")) {
     stop("Input cannot be converted to character vector.")
   }
 
-  if(col_names) {
+  if (col_names) {
     y <- c(x_colnames, y)
   }
 

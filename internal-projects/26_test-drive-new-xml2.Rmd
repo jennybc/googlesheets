@@ -1,0 +1,39 @@
+---
+title: "Extract an example for testing xml2's new ability to create XML"
+output: github_document
+---
+
+This just contains code needed to extract the input needed to test drive xml2's XML-authoring capability. And that is actually done in the next file, because I posted that stuff as a gist for sharing with others.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r path-prep}
+library(rprojroot)
+pkg_root <- function(...) file.path(find_package_root_file(), ...) 
+library(googlesheets)
+```
+
+```{r token-load}
+token_path <- pkg_root("tests", "testthat", "googlesheets_token.rds")
+gs_auth(token = token_path, verbose = FALSE)
+```
+
+```{r get-update-fodder}
+library(dplyr)
+# (ss <- gs_mini_gap() %>% 
+#   gs_copy("xml2-test"))
+(ss <- gs_title("xml2-test"))
+cells_df <- ss %>%
+  gs_read_cellfeed(ws = "Africa", return_links = TRUE)
+update_fodder <- cells_df %>%
+  mutate(update_value = value) %>% 
+  select(-cell_alt, -value, -input_value, -numeric_value)
+readr::write_csv(update_fodder, "27_update-fodder.csv")
+```
+
+```{r}
+#gs_delete(ss)
+```
+
