@@ -117,7 +117,7 @@ entries &lt;- req$content %&gt;%
 length(entries)</code></pre>
 <pre><code>## [1] 36</code></pre>
 <pre class="r"><code>req$content %&gt;%
-  xml_find_one(entries[1])</code></pre>
+  xml_find_first(entries[1])</code></pre>
 <pre><code>## {xml_node}
 ## &lt;entry&gt;
 ## [1] &lt;id&gt;https://spreadsheets.google.com/feeds/spreadsheets/private/full/ ...
@@ -174,7 +174,7 @@ title_stuff</code></pre>
 <h3>Marshall all links returned by the spreadsheets feed</h3>
 <p>Each <code>entry</code> node has an <code>id</code> element containing a URL plus 3 additional nodes named <code>link</code>. I gather all 4 into a <code>tbl_df</code> for systematic exploration</p>
 <pre class="r"><code>jfun &lt;- function(x) { # gymnastics required for one sheet's worth of links
-  x &lt;- req$content %&gt;% xml_find_one(x)
+  x &lt;- req$content %&gt;% xml_find_first(x)
   links &lt;- x %&gt;% 
     xml_find_all(&quot;feed:link&quot;, ns) %&gt;% 
     lapply(xml_attrs) %&gt;% 
@@ -184,10 +184,10 @@ title_stuff</code></pre>
     mutate(source = &quot;content/entry/link&quot;)
   links %&gt;%
     rbind(data.frame(rel = NA, type = NA,
-                     href = x %&gt;% xml_find_one(&quot;feed:id&quot;, ns) %&gt;% xml_text(),
+                     href = x %&gt;% xml_find_first(&quot;feed:id&quot;, ns) %&gt;% xml_text(),
                      source = &quot;content/entry/id&quot;)) %&gt;% 
     mutate(feed = &quot;ss&quot;,
-           sheet_title = x %&gt;% xml_find_one(&quot;feed:title&quot;, ns) %&gt;% xml_text()) %&gt;% 
+           sheet_title = x %&gt;% xml_find_first(&quot;feed:title&quot;, ns) %&gt;% xml_text()) %&gt;% 
     select(sheet_title, feed, source, href, rel, type)
 }
 links &lt;- entries %&gt;% lapply(jfun) %&gt;% 
@@ -914,7 +914,7 @@ entry
 </tbody>
 </table>
 <p>The variation is in the multiplicity of <code>link</code> and <code>entry</code> elements. We pursue that below, but let’s inspect the more boring components before we move on. We can predict what some of this stuff is based on what we saw in the spreadsheets feed. I’m also going to check if the info here agrees with the spreadsheets feed.</p>
-<pre class="r"><code>f &lt;- function(x, xpath) xml_find_one(x, xpath, ns_ws) %&gt;% xml_text()
+<pre class="r"><code>f &lt;- function(x, xpath) xml_find_first(x, xpath, ns_ws) %&gt;% xml_text()
 wsf_stuff &lt;-
   data_frame(title = sapply(content, f, &quot;feed:title&quot;),
              updated = sapply(content, f, &quot;feed:updated&quot;),
@@ -1278,10 +1278,10 @@ ari copy
     mutate(source = &quot;content/entry/link&quot;)
   links %&gt;%
     rbind(data.frame(rel = NA, type = NA,
-                     href = x %&gt;% xml_find_one(&quot;feed:id&quot;, ns_ws) %&gt;% xml_text(),
+                     href = x %&gt;% xml_find_first(&quot;feed:id&quot;, ns_ws) %&gt;% xml_text(),
                      source = &quot;content/entry/id&quot;)) %&gt;% 
     mutate(feed = &quot;ws&quot;,
-           sheet_title = x %&gt;% xml_find_one(&quot;feed:title&quot;, ns_ws)
+           sheet_title = x %&gt;% xml_find_first(&quot;feed:title&quot;, ns_ws)
            %&gt;% xml_text()) %&gt;% 
     select(sheet_title, feed, source, href, rel, type)
 }
@@ -1716,7 +1716,7 @@ ws_links %&gt;% sapply(length)</code></pre>
     bind_rows()
   links %&gt;%
     mutate(sheet_title = x %&gt;%
-             xml_find_one(&quot;feed:title&quot;, ns_ws) %&gt;% xml_text()) %&gt;% 
+             xml_find_first(&quot;feed:title&quot;, ns_ws) %&gt;% xml_text()) %&gt;% 
     select(sheet_title, href, rel, type)
 }
 one_ws_links &lt;-

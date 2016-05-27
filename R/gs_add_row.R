@@ -67,7 +67,7 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")
 
   var_names <- rc %>%
-    xml2::xml_find_one("(//feed:entry)[1]", ns) %>%
+    xml2::xml_find_first("(//feed:entry)[1]", ns) %>%
     xml2::xml_find_all(".//gsx:*", ns) %>%
     xml2::xml_name()
   nc <- length(var_names)
@@ -86,7 +86,7 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
   stopifnot(length(input) == nc)
 
   lf_post_link <- rc %>%
-    xml2::xml_find_one("//feed:link[contains(@rel,'2005#post')]", ns) %>%
+    xml2::xml_find_first("//feed:link[contains(@rel,'2005#post')]", ns) %>%
     xml2::xml_attr("href")
 
   child_node_names <- paste("gsx", var_names, sep = ":")
