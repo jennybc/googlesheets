@@ -52,7 +52,7 @@ length(entries)
 
 ```r
 req$content %>%
-  xml_find_one(entries[1])
+  xml_find_first(entries[1])
 ```
 
 ```
@@ -135,7 +135,7 @@ Each `entry` node has an `id` element containing a URL plus 3 additional nodes n
 
 ```r
 jfun <- function(x) { # gymnastics required for one sheet's worth of links
-  x <- req$content %>% xml_find_one(x)
+  x <- req$content %>% xml_find_first(x)
   links <- x %>% 
     xml_find_all("feed:link", ns) %>% 
     lapply(xml_attrs) %>% 
@@ -145,10 +145,10 @@ jfun <- function(x) { # gymnastics required for one sheet's worth of links
     mutate(source = "content/entry/link")
   links %>%
     rbind(data.frame(rel = NA, type = NA,
-                     href = x %>% xml_find_one("feed:id", ns) %>% xml_text(),
+                     href = x %>% xml_find_first("feed:id", ns) %>% xml_text(),
                      source = "content/entry/id")) %>% 
     mutate(feed = "ss",
-           sheet_title = x %>% xml_find_one("feed:title", ns) %>% xml_text()) %>% 
+           sheet_title = x %>% xml_find_first("feed:title", ns) %>% xml_text()) %>% 
     select(sheet_title, feed, source, href, rel, type)
 }
 links <- entries %>% lapply(jfun) %>% 
@@ -931,7 +931,7 @@ The variation is in the multiplicity of `link` and `entry` elements.  We pursue 
 
 
 ```r
-f <- function(x, xpath) xml_find_one(x, xpath, ns_ws) %>% xml_text()
+f <- function(x, xpath) xml_find_first(x, xpath, ns_ws) %>% xml_text()
 wsf_stuff <-
   data_frame(title = sapply(content, f, "feed:title"),
              updated = sapply(content, f, "feed:updated"),
@@ -1179,10 +1179,10 @@ jfun <- function(x) { # gymnastics required for one sheet's worth of links
     mutate(source = "content/entry/link")
   links %>%
     rbind(data.frame(rel = NA, type = NA,
-                     href = x %>% xml_find_one("feed:id", ns_ws) %>% xml_text(),
+                     href = x %>% xml_find_first("feed:id", ns_ws) %>% xml_text(),
                      source = "content/entry/id")) %>% 
     mutate(feed = "ws",
-           sheet_title = x %>% xml_find_one("feed:title", ns_ws)
+           sheet_title = x %>% xml_find_first("feed:title", ns_ws)
            %>% xml_text()) %>% 
     select(sheet_title, feed, source, href, rel, type)
 }
@@ -1566,7 +1566,7 @@ jfun <- function(x) { # gymnastics required for one sheet's worth of links
     bind_rows()
   links %>%
     mutate(sheet_title = x %>%
-             xml_find_one("feed:title", ns_ws) %>% xml_text()) %>% 
+             xml_find_first("feed:title", ns_ws) %>% xml_text()) %>% 
     select(sheet_title, href, rel, type)
 }
 one_ws_links <-

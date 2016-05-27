@@ -44,9 +44,9 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL,
 
   ss$sheet_key <- req$url %>% extract_key_from_url()
   ss$sheet_title <- rc %>%
-    xml2::xml_find_one("./feed:title", ns) %>% xml2::xml_text()
+    xml2::xml_find_first("./feed:title", ns) %>% xml2::xml_text()
   ss$n_ws <- rc %>%
-    xml2::xml_find_one("./openSearch:totalResults", ns) %>%
+    xml2::xml_find_first("./openSearch:totalResults", ns) %>%
     xml2::xml_text() %>%
     as.integer()
 
@@ -61,9 +61,9 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL,
   ss$is_public <- ss$visibility == "public"
 
   ss$author <- rc %>%
-    xml2::xml_find_one("./feed:author/feed:name", ns) %>% xml2::xml_text()
+    xml2::xml_find_first("./feed:author/feed:name", ns) %>% xml2::xml_text()
   ss$email <- rc %>%
-    xml2::xml_find_one("./feed:author/feed:email", ns) %>% xml2::xml_text()
+    xml2::xml_find_first("./feed:author/feed:email", ns) %>% xml2::xml_text()
 
   ## FIXME: this is way of setting perm is clearly incorrect; redo this based on
   ## permissions or capabilities
