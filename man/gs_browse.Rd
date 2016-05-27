@@ -14,7 +14,7 @@ object}
 respectively, of the worksheet}
 }
 \value{
-nothing
+the \code{\link{googlesheet}} object given as input, invisibly
 }
 \description{
 Visit a Google Sheet in the browser
@@ -25,6 +25,9 @@ gap_ss <- gs_gap()
 gs_browse(gap_ss)
 gs_browse(gap_ss, ws = 3)
 gs_browse(gap_ss, ws = "Europe")
+
+## assign and browse at once
+gap_ss <- gs_gap() \%>\% gs_browse()
 }
 }
 
