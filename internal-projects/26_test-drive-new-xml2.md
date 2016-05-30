@@ -5,12 +5,7 @@ This just contains code needed to extract the input needed to test drive xml2's 
 
 ``` r
 library(rprojroot)
-```
-
-    ## Warning: package 'rprojroot' was built under R version 3.2.4
-
-``` r
-pkg_root <- function(...) file.path(find_package_root_file(), ...) 
+pkg_root <- find_package_root_file
 library(googlesheets)
 ```
 
@@ -46,7 +41,7 @@ library(dplyr)
 
     ##                   Spreadsheet title: xml2-test
     ##                  Spreadsheet author: gspreadr
-    ##   Date of googlesheets registration: 2016-05-13 16:11:53 GMT
+    ##   Date of googlesheets registration: 2016-05-30 03:21:48 GMT
     ##     Date of last spreadsheet update: 2016-05-11 19:31:50 GMT
     ##                          visibility: private
     ##                         permissions: rw

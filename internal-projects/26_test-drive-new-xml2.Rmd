@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r path-prep}
 library(rprojroot)
-pkg_root <- function(...) file.path(find_package_root_file(), ...) 
+pkg_root <- find_package_root_file
 library(googlesheets)
 ```
 
