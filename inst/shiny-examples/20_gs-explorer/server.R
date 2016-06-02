@@ -27,7 +27,7 @@ shinyServer(function(input, output, session) {
   ## If auth_code is returned then don't show login button
   output$loginButton <- renderUI({
     if(is.null(isolate(access_token()))) {
-      actionButton("loginButton",
+      actionLink("loginButton",
                    label = a("Authorize App",
                              href = gs_webapp_auth_url()))
     } else {
@@ -38,7 +38,7 @@ shinyServer(function(input, output, session) {
   output$logoutButton <- renderUI({
     if(!is.null(access_token())) {
       # Revoke the token too? use access_token$revoke()
-      actionButton("logoutButton",
+      actionLink("logoutButton",
                    label = a("Logout",
                              href = getOption("googlesheets.shiny.redirect_uri")))
     } else {
