@@ -1,10 +1,8 @@
 library(shiny)
-library(shinythemes)
 library(googlesheets)
 
 shinyUI(
   fluidPage(
-    theme = shinytheme("cosmo"),
     titlePanel("Read a public Google Sheet"),
     sidebarLayout(
       sidebarPanel(
