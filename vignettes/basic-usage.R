@@ -23,7 +23,7 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ## ----pre-clean, include = FALSE------------------------------------------
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
-googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice"),
+googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice", "boring"),
                         verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 
@@ -35,6 +35,9 @@ my_sheets %>% glimpse()
 ## ----copy-gapminder, eval = FALSE----------------------------------------
 #  gs_gap() %>%
 #    gs_copy(to = "Gapminder")
+
+## ----ls-gapminder--------------------------------------------------------
+gs_ls("Gapminder")
 
 ## ----register-sheet------------------------------------------------------
 gap <- gs_title("Gapminder")
@@ -51,7 +54,10 @@ third_party_gap <- GAP_KEY %>%
 (GAP_URL <- gs_gap_url())
 third_party_gap <- GAP_URL %>%
   gs_url()
-# note: registration via URL may not work for "old" sheets
+
+# Want to dig the key out of a URL?
+# registration by key is the safest, long-run strategy
+extract_key_from_url(GAP_URL)
 
 # Worried that a spreadsheet's registration is out-of-date?
 # Re-register it!
@@ -69,7 +75,12 @@ gap <- gs_gap()
 Sys.sleep(20)
 
 ## ------------------------------------------------------------------------
-oceania <- gap %>% gs_read(ws = "Oceania")
+gap
+gs_ws_ls(gap)
+
+## ------------------------------------------------------------------------
+oceania <- gap %>%
+  gs_read(ws = "Oceania")
 oceania
 str(oceania)
 glimpse(oceania)
@@ -80,6 +91,94 @@ gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
 gap %>% gs_read(ws = "Europe", range = cell_rows(100:103), col_names = FALSE)
 gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
 gap %>% gs_read(ws = "Asia", range = cell_limits(c(1, 4), c(5, NA)))
+
+## ----new-sheet, warning = FALSE------------------------------------------
+boring_ss <- gs_new("boring", ws_title = "iris-gs_new", input = head(iris),
+                    trim = TRUE, verbose = FALSE)
+boring_ss %>% 
+  gs_read()
+
+## ----new-worksheet, warning = FALSE--------------------------------------
+boring_ss <- boring_ss %>% 
+  gs_ws_new(ws_title = "mtcars-gs_ws_new", input = head(mtcars),
+                    trim = TRUE, verbose = FALSE)
+boring_ss %>% 
+  gs_read(ws = 2)
+
+## ----delete-rename-worksheet---------------------------------------------
+boring_ss <- boring_ss %>% 
+  gs_ws_delete(ws = 2) %>% 
+  gs_ws_rename(to = "iris")
+boring_ss
+
+## ----edit-cells----------------------------------------------------------
+foo <- gs_new("foo") %>% 
+  gs_ws_rename(from = "Sheet1", to = "edit_cells") %>% 
+  gs_ws_new("add_row")
+foo
+
+## add first six rows of iris data (and var names) into a blank sheet
+foo <- foo %>%
+  gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
+
+## initialize sheet with column headers and one row of data
+## the list feed is picky about this
+foo <- foo %>% 
+  gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
+## add the next 5 rows of data ... careful not to go too fast
+for (i in 2:6) {
+  foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
+  Sys.sleep(0.3)
+}
+
+## gs_add_row() will actually handle multiple rows at once
+foo <- foo %>% 
+  gs_add_row(ws = "add_row", input = tail(iris))
+
+## let's inspect our work
+foo %>% gs_read(ws = "edit_cells")
+foo %>% gs_read(ws = "add_row")
+
+## ----eval = FALSE--------------------------------------------------------
+#  gs_browse(foo, ws = "edit_cells")
+#  gs_browse(foo, ws = "add_row")
+
+## ----delete-sheet--------------------------------------------------------
+gs_delete(foo)
+
+## ----new-sheet-from-file-------------------------------------------------
+iris %>%
+  head(5) %>%
+  write.csv("iris.csv", row.names = FALSE)
+iris_ss <- gs_upload("iris.csv")
+iris_ss
+iris_ss %>% gs_read()
+file.remove("iris.csv")
+
+## ----new-sheet-from-xlsx-------------------------------------------------
+gap_xlsx <- gs_upload(system.file("mini-gap", "mini-gap.xlsx",
+                                  package = "googlesheets"))
+gap_xlsx
+gap_xlsx %>% gs_read(ws = "Asia")
+
+## ----delete-moar-sheets--------------------------------------------------
+gs_vecdel(c("iris", "mini-gap"))
+## achieves same as:
+## gs_delete(iris_ss)
+## gs_delete(gap_xlsx)
+
+## ----export-sheet-as-csv-------------------------------------------------
+gs_title("Gapminder") %>%
+  gs_download(ws = "Africa", to = "gapminder-africa.csv")
+## is it there? yes!
+read.csv("gapminder-africa.csv") %>% head()
+
+## ----export-sheet-as-xlsx------------------------------------------------
+gs_title("Gapminder") %>% 
+  gs_download(to = "gapminder.xlsx")
+
+## ----clean-exported-files------------------------------------------------
+file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 
 ## ----csv-list-and-cell-feed----------------------------------------------
 # Get the data for worksheet "Oceania": the super-fast csv way
@@ -205,75 +304,6 @@ gs_delete(ss)
 
 ## ----include = FALSE-----------------------------------------------------
 Sys.sleep(20)
-
-## ----new-sheet-----------------------------------------------------------
-foo <- gs_new("foo")
-foo
-
-## ----edit-cells----------------------------------------------------------
-## foo <- gs_new("foo")
-## initialize the worksheets
-foo <- foo %>% gs_ws_new("edit_cells")
-foo <- foo %>% gs_ws_new("add_row")
-
-## add first six rows of iris data (and var names) into a blank sheet
-foo <- foo %>%
-  gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
-
-## initialize sheet with column headers and one row of data
-## the list feed is picky about this
-foo <- foo %>% 
-  gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
-## add the next 5 rows of data ... careful not to go too fast
-for (i in 2:6) {
-  foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
-  Sys.sleep(0.3)
-}
-
-## let's inspect out work
-foo %>% gs_read(ws = "edit_cells")
-foo %>% gs_read(ws = "add_row")
-
-## ----eval = FALSE--------------------------------------------------------
-#  gs_browse(foo, ws = "edit_cells")
-#  gs_browse(foo, ws = "add_row")
-
-## ----delete-sheet--------------------------------------------------------
-gs_delete(foo)
-
-## ----new-sheet-from-file-------------------------------------------------
-iris %>%
-  head(5) %>%
-  write.csv("iris.csv", row.names = FALSE)
-iris_ss <- gs_upload("iris.csv")
-iris_ss
-iris_ss %>% gs_read()
-file.remove("iris.csv")
-
-## ----new-sheet-from-xlsx-------------------------------------------------
-gap_xlsx <- gs_upload(system.file("mini-gap", "mini-gap.xlsx",
-                                  package = "googlesheets"))
-gap_xlsx
-gap_xlsx %>% gs_read(ws = "Asia")
-
-## ----delete-moar-sheets--------------------------------------------------
-gs_vecdel(c("iris", "mini-gap"))
-## achieves same as:
-## gs_delete(iris_ss)
-## gs_delete(gap_xlsx)
-
-## ----export-sheet-as-csv-------------------------------------------------
-gs_title("Gapminder") %>%
-  gs_download(ws = "Africa", to = "gapminder-africa.csv")
-## is it there? yes!
-read.csv("gapminder-africa.csv") %>% head()
-
-## ----export-sheet-as-xlsx------------------------------------------------
-gs_title("Gapminder") %>% 
-  gs_download(to = "gapminder.xlsx")
-
-## ----clean-exported-files------------------------------------------------
-file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 
 ## ----gs_auth, eval = FALSE-----------------------------------------------
 #  # Give googlesheets permission to access your spreadsheets and google drive

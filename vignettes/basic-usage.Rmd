@@ -43,14 +43,14 @@ suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
 ```{r pre-clean, include = FALSE}
 ## in case a previous compilation of this document exited uncleanly, pre-clean 
 ## working directory and Google Drive first
-googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice"),
+googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice", "boring"),
                         verbose = FALSE)
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 ```
 
-### See some spreadsheets you can access
+### List your Google Sheets
 
-The `gs_ls()` function returns the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).
+The `gs_ls()` function returns a data frame of the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).
 
 ```{r list-sheets}
 (my_sheets <- gs_ls())
@@ -58,7 +58,7 @@ The `gs_ls()` function returns the sheets you would see in your Google Sheets ho
 my_sheets %>% glimpse()
 ```
 
-### Get a Google spreadsheet to practice with
+### Get a Google Sheet to practice with
 
 Don't worry if you don't have any suitable Google Sheets lying around! We've published a sheet for you to practice with and have built functions into `googlesheets` to help you access it. The example sheet holds some of the [Gapminder data](https://github.com/jennybc/gapminder); feel free to [visit the Sheet in the browser](https://w3id.org/people/jennybc/googlesheets_gap_url). The code below will put a copy of this sheet into your Drive, titled "Gapminder".
 
@@ -67,9 +67,15 @@ gs_gap() %>%
   gs_copy(to = "Gapminder")
 ```
 
-If that seems to have worked, go check for a sheet named "Gapminder" in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. You could also run `gs_ls()` again and make sure the Gapminder sheet is listed.
+If that seems to have worked, go check for a sheet named "Gapminder" in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>.
 
-### Register a spreadsheet
+You can also call `gs_ls()` again to see if the Gapminder sheet appears. Give it a regular expression to narrow the listing down, if you like::
+
+```{r ls-gapminder}
+gs_ls("Gapminder")
+```
+
+### Register a Sheet
 
 If you plan to consume data from a sheet or edit it, you must first __register__ it. This is how `googlesheets` records important info about the sheet that is required downstream by the Google Sheets or Google Drive APIs. Once registered, you can print the result to get some basic info about the sheet.
 
@@ -92,7 +98,10 @@ third_party_gap <- GAP_KEY %>%
 (GAP_URL <- gs_gap_url())
 third_party_gap <- GAP_URL %>%
   gs_url()
-# note: registration via URL may not work for "old" sheets
+
+# Want to dig the key out of a URL?
+# registration by key is the safest, long-run strategy
+extract_key_from_url(GAP_URL)
 
 # Worried that a spreadsheet's registration is out-of-date?
 # Re-register it!
@@ -105,7 +114,7 @@ gap <- gs_gap()
 
 The registration functions `gs_title()`, `gs_key()`, `gs_url()`, and `gs_gs()` return a registered sheet as a `googlesheet` object, which is the first argument to practically every function in this package. Likewise, almost every function returns a freshly registered `googlesheet` object, ready to be stored or piped into the next command.
 
-*We export a utility function, `extract_key_from_url()`, to help you get and store the key from a browser URL. Registering via browser URL is fine, but registering by key is probably a better idea in the long-run.*
+The utility function, `extract_key_from_url()`, helps you dig the key out of a browser URL. Registering via browser URL is fine, but registering by key is a better idea in the long-run.
 
 Use `gs_browse()` to visit the Sheet corresponding to a registered `googlesheet`
 in your browser. Optionally, you can specify the worksheet of interest.
@@ -120,18 +129,28 @@ gap %>% gs_browse(ws = "Europe")
 Sys.sleep(20)
 ```
 
-### Consume data
+### Inspect a Sheet
 
-#### Ignorance is bliss
-
-If you want to consume the data in a worksheet and get something rectangular back, use the all-purpose function `gs_read()`. By default, it reads all the data in a worksheet.
+Once you've registered a Sheet, print it to get an overview of, e.g., its worksheets, their names, and dimensions. Use `gs_ws_ls()` to get worksheet names as a character vector.
 
 ```{r}
-oceania <- gap %>% gs_read(ws = "Oceania")
+gap
+gs_ws_ls(gap)
+```
+
+### Read all the data in one worksheet
+
+`gs_read()` returns the contents of a worksheet as a data frame.
+
+```{r}
+oceania <- gap %>%
+  gs_read(ws = "Oceania")
 oceania
 str(oceania)
 glimpse(oceania)
 ```
+
+### Read only certain cells
 
 You can target specific cells via the `range =` argument. The simplest usage is to specify an Excel-like cell range, such as range = "D12:F15" or range = "R1C12:R6C15". The cell rectangle can be specified in various other ways, using helper functions. It can be degenerate, i.e. open-ended.
 
@@ -143,9 +162,171 @@ gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
 gap %>% gs_read(ws = "Asia", range = cell_limits(c(1, 4), c(5, NA)))
 ```
 
-`gs_read()` is a wrapper that bundles together the most common methods to read data from the API and transform it for downstream use. You can refine it's behavior further, by passing more arguments via `...`. See the section below on `readr`-style data ingest.
+Do you need more control?
 
-If `gs_read()` doesn't do what you need, then keep reading for the underlying functions to read and post-process data.
+  * `googlesheets` aims to match the interface of the [`readr` package](https://cran.r-project.org/package=readr). See more below on how to pass more arguments via `...` to control `readr`-style data ingest.
+  * `gs_read()` is a wrapper that bundles together the most common methods to read data from the API and transform it for downstream use. Later sections discuss the underlying functions, in case you need to call them yourself.
+
+### Create a new Google Sheet
+
+Here we use `gs_new()` to create a new Sheet *de novo* and populate it with a bit of the iris data:
+
+```{r new-sheet, warning = FALSE}
+boring_ss <- gs_new("boring", ws_title = "iris-gs_new", input = head(iris),
+                    trim = TRUE, verbose = FALSE)
+boring_ss %>% 
+  gs_read()
+```
+
+Note how we store the returned value from `gs_new()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.
+
+You can copy an entire Sheet with `gs_copy()` and rename one with `gs_rename()`.
+
+### Add a new worksheet to an existing Google Sheet
+
+Let's add some mtcars data as a second worksheet to `boring_ss`.
+
+```{r new-worksheet, warning = FALSE}
+boring_ss <- boring_ss %>% 
+  gs_ws_new(ws_title = "mtcars-gs_ws_new", input = head(mtcars),
+                    trim = TRUE, verbose = FALSE)
+boring_ss %>% 
+  gs_read(ws = 2)
+```
+
+### Rename or delete worksheets
+
+Let's delete the mtcars worksheet and rename the iris worksheet:
+
+```{r delete-rename-worksheet}
+boring_ss <- boring_ss %>% 
+  gs_ws_delete(ws = 2) %>% 
+  gs_ws_rename(to = "iris")
+boring_ss
+```
+
+### Edit cells
+
+There are two ways to edit cells within an existing worksheet of an existing spreadsheet:
+
+  * `gs_edit_cells()` can write into an arbitrary cell rectangle
+  * `gs_add_row()` can add a new row to the bottom of an existing cell rectangle
+  
+They are both slow. If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
+
+We create a new Sheet, `foo`, and set up some well-named empty worksheets to practice with.
+
+```{r edit-cells}
+foo <- gs_new("foo") %>% 
+  gs_ws_rename(from = "Sheet1", to = "edit_cells") %>% 
+  gs_ws_new("add_row")
+foo
+
+## add first six rows of iris data (and var names) into a blank sheet
+foo <- foo %>%
+  gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
+
+## initialize sheet with column headers and one row of data
+## the list feed is picky about this
+foo <- foo %>% 
+  gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
+## add the next 5 rows of data ... careful not to go too fast
+for (i in 2:6) {
+  foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
+  Sys.sleep(0.3)
+}
+
+## gs_add_row() will actually handle multiple rows at once
+foo <- foo %>% 
+  gs_add_row(ws = "add_row", input = tail(iris))
+
+## let's inspect our work
+foo %>% gs_read(ws = "edit_cells")
+foo %>% gs_read(ws = "add_row")
+```
+
+Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and admire it. You should see some iris data in the worksheets named `edit_cells` and `add_row`. You could also use `gs_browse()` to take you directly to those worksheets.
+
+```{r eval = FALSE}
+gs_browse(foo, ws = "edit_cells")
+gs_browse(foo, ws = "add_row")
+```
+
+Do you need more control?
+
+ * Read the function documentation for `gs_edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
+ 
+Protip: If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.
+
+### Delete Sheets
+
+Let's clean up by deleting the `foo` spreadsheet we've been playing with.
+
+```{r delete-sheet}
+gs_delete(foo)
+```
+
+If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and `gs_vecdel()`. These functions also allow the deletion of multiple sheets at once.
+
+### Make new Sheets from local delimited files or Excel workbooks
+
+Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
+
+```{r new-sheet-from-file}
+iris %>%
+  head(5) %>%
+  write.csv("iris.csv", row.names = FALSE)
+iris_ss <- gs_upload("iris.csv")
+iris_ss
+iris_ss %>% gs_read()
+file.remove("iris.csv")
+```
+
+Now we'll upload a multi-sheet Excel workbook. Slowly.
+
+```{r new-sheet-from-xlsx}
+gap_xlsx <- gs_upload(system.file("mini-gap", "mini-gap.xlsx",
+                                  package = "googlesheets"))
+gap_xlsx
+gap_xlsx %>% gs_read(ws = "Asia")
+```
+
+And we clean up after ourselves on Google Drive.
+
+```{r delete-moar-sheets}
+gs_vecdel(c("iris", "mini-gap"))
+## achieves same as:
+## gs_delete(iris_ss)
+## gs_delete(gap_xlsx)
+```
+
+### Download Sheets as csv, pdf, or xlsx file
+
+You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
+
+```{r export-sheet-as-csv}
+gs_title("Gapminder") %>%
+  gs_download(ws = "Africa", to = "gapminder-africa.csv")
+## is it there? yes!
+read.csv("gapminder-africa.csv") %>% head()
+```
+
+Download the entire spreadsheet as an Excel workbook.
+
+```{r export-sheet-as-xlsx}
+gs_title("Gapminder") %>% 
+  gs_download(to = "gapminder.xlsx")
+```
+
+Go check it out in Excel, if you wish!
+
+And now we clean up the downloaded files.
+
+```{r clean-exported-files}
+file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
+```
+
+### Read data, but with more control
 
 #### Specify the consumption method
 
@@ -357,134 +538,6 @@ gs_delete(ss)
 
 ```{r include = FALSE}
 Sys.sleep(20)
-```
-
-### Create sheets
-
-You can use `googlesheets` to create new spreadsheets.
-
-```{r new-sheet}
-foo <- gs_new("foo")
-foo
-```
-
-*Note how we store the returned value from `gs_new()` (and all other sheet editing functions). That's because the registration info changes whenever we edit the sheet and we re-register it inside these functions, so this idiom will help you make sequential edits and queries to the same sheet.*
-
-By default, there will be an empty worksheet called "Sheet1", but you can control its title, extent, and initial data with additional arguments to `gs_new()` (see `gs_edit_cells()` in the next section). You can also add, rename, and delete worksheets within an existing sheet via `gs_ws_new()`, `gs_ws_rename()`, and `gs_ws_delete()`. Copy an entire spreadsheet with `gs_copy()` and rename one with `gs_rename()`.
-
-### Edit cells
-
-*Note how we continue to store the returned value from `gs_edit_cells()`. This workflow keeps the local registration info about the sheet up-to-date.*
-
-There are two ways to edit cells within an existing worksheet of an existing spreadsheet:
-
-  * `gs_edit_cells()` can write into an arbitrary cell rectangle
-  * `gs_add_row()` can add a new row to the bottom of an existing cell rectangle
-  
-If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
-
-We'll work within the completely empty sheet created above, `foo`. If your edit populates the sheet with everything it should have, set `trim = TRUE` and we will resize the sheet to match the data. Then the nominal worksheet extent is much more informative (vs. the default of 1000 rows and 26 columns) and future consumption via the cell feed will potentially be faster.
-
-```{r edit-cells}
-## foo <- gs_new("foo")
-## initialize the worksheets
-foo <- foo %>% gs_ws_new("edit_cells")
-foo <- foo %>% gs_ws_new("add_row")
-
-## add first six rows of iris data (and var names) into a blank sheet
-foo <- foo %>%
-  gs_edit_cells(ws = "edit_cells", input = head(iris), trim = TRUE)
-
-## initialize sheet with column headers and one row of data
-## the list feed is picky about this
-foo <- foo %>% 
-  gs_edit_cells(ws = "add_row", input = head(iris, 1), trim = TRUE)
-## add the next 5 rows of data ... careful not to go too fast
-for (i in 2:6) {
-  foo <- foo %>% gs_add_row(ws = "add_row", input = iris[i, ])
-  Sys.sleep(0.3)
-}
-
-## let's inspect out work
-foo %>% gs_read(ws = "edit_cells")
-foo %>% gs_read(ws = "add_row")
-```
-
-Go to [your Google Sheets home screen](https://docs.google.com/spreadsheets/u/0/), find the new sheet `foo` and look at it. You should see some iris data in the worksheets named `edit_cells` and `add_row`. You could also use `gs_browse()` to take you directly to those worksheets.
-
-```{r eval = FALSE}
-gs_browse(foo, ws = "edit_cells")
-gs_browse(foo, ws = "add_row")
-```
-
-Read the function documentation for `gs_edit_cells()` for how to specify where the data goes, via an anchor cell, and in which direction, via the shape of the input or the `byrow =` argument.
-
-### Delete sheets
-
-Let's clean up by deleting the `foo` spreadsheet we've been playing with.
-
-```{r delete-sheet}
-gs_delete(foo)
-```
-
-If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and `gs_vecdel()`. These functions also allow the deletion of multiple sheets at once.
-
-### Upload delimited files or Excel workbooks
-
-Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
-
-```{r new-sheet-from-file}
-iris %>%
-  head(5) %>%
-  write.csv("iris.csv", row.names = FALSE)
-iris_ss <- gs_upload("iris.csv")
-iris_ss
-iris_ss %>% gs_read()
-file.remove("iris.csv")
-```
-
-Now we'll upload a multi-sheet Excel workbook. Slowly.
-
-```{r new-sheet-from-xlsx}
-gap_xlsx <- gs_upload(system.file("mini-gap", "mini-gap.xlsx",
-                                  package = "googlesheets"))
-gap_xlsx
-gap_xlsx %>% gs_read(ws = "Asia")
-```
-
-And we clean up after ourselves on Google Drive.
-
-```{r delete-moar-sheets}
-gs_vecdel(c("iris", "mini-gap"))
-## achieves same as:
-## gs_delete(iris_ss)
-## gs_delete(gap_xlsx)
-```
-
-### Download sheets as csv, pdf, or xlsx file
-
-You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
-
-```{r export-sheet-as-csv}
-gs_title("Gapminder") %>%
-  gs_download(ws = "Africa", to = "gapminder-africa.csv")
-## is it there? yes!
-read.csv("gapminder-africa.csv") %>% head()
-```
-
-Download the entire spreadsheet as an Excel workbook.
-
-```{r export-sheet-as-xlsx}
-gs_title("Gapminder") %>% 
-  gs_download(to = "gapminder.xlsx")
-```
-
-Go check it out in Excel, if you wish!
-
-And now we clean up the downloaded files.
-
-```{r clean-exported-files}
-file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 ```
 
 ### Authorization using OAuth2
