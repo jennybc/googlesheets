@@ -22,12 +22,12 @@ shinyServer(function(input, output, session) {
   })
 
 
-  output$googleFormData <- renderDataTable({
+  output$googleFormData <- DT::renderDataTable({
     input$refresh
     ss_dat <- gs_read(ss) %>%
       mutate(Timestamp = Timestamp %>%
                as.POSIXct(format = "%m/%d/%Y %H:%M:%S", tz = "PST8PDT")) %>%
-      select(Timestamp, Name, Age = How.old.are.you.) %>%
+      select(Timestamp, Name, Age = `How old are you?`) %>%
       arrange(desc(Timestamp))
 
     DT::datatable(ss_dat)
