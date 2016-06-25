@@ -75,6 +75,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <div id="TOC">
 <ul>
+<li><a href="#function-naming-convention">Function naming convention</a></li>
 <li><a href="#list-your-google-sheets">List your Google Sheets</a></li>
 <li><a href="#get-a-google-sheet-to-practice-with">Get a Google Sheet to practice with</a></li>
 <li><a href="#register-a-sheet">Register a Sheet</a></li>
@@ -103,6 +104,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>First we load the <code>googlesheets</code> package and <code>dplyr</code>, from which we use the <code>%&gt;%</code> pipe operator, among other things. <code>googlesheets</code> usage <em>does not require</em> you to use <code>%&gt;%</code> though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
 <span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</code></pre></div>
+<div id="function-naming-convention" class="section level3">
+<h3>Function naming convention</h3>
+<p>To play nicely with tab completion, we use consistent prefixes:</p>
+<ul>
+<li><code>gs_</code> = all functions in the package.</li>
+<li><code>gs_ws_</code> = all functions that operate on worksheets or tabs within a spreadsheet.</li>
+<li><code>gd_</code> = something to do with Google Drive, usually has a <code>gs_</code> synonym, might one day migrate to a Drive client.</li>
+</ul>
+</div>
 <div id="list-your-google-sheets" class="section level3">
 <h3>List your Google Sheets</h3>
 <p>The <code>gs_ls()</code> function returns a data frame of the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).</p>
@@ -163,7 +173,7 @@ my_sheets %&gt;%<span class="st"> </span><span class="kw">glimpse</span>()
 gap
 <span class="co">#&gt;                   Spreadsheet title: Gapminder</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-06-24 19:38:36 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-06-25 01:18:42 GMT</span>
 <span class="co">#&gt;     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
@@ -221,7 +231,7 @@ gap %&gt;%<span class="st"> </span><span class="kw">gs_browse</span>(<span class
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">gap
 <span class="co">#&gt;                   Spreadsheet title: test-gs-gapminder</span>
 <span class="co">#&gt;                  Spreadsheet author: rpackagetest</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-06-24 19:38:45 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-06-25 01:18:48 GMT</span>
 <span class="co">#&gt;     Date of last spreadsheet update: 2015-04-22 18:27:11 GMT</span>
 <span class="co">#&gt;                          visibility: public</span>
 <span class="co">#&gt;                         permissions: rw</span>
@@ -366,7 +376,7 @@ boring_ss %&gt;%<span class="st"> </span>
 </div>
 <div id="add-a-new-worksheet-to-an-existing-google-sheet" class="section level3">
 <h3>Add a new worksheet to an existing Google Sheet</h3>
-<p>Let’s add some mtcars data as a second worksheet to <code>boring_ss</code>.</p>
+<p>Use <code>gs_ws_new()</code> to add some mtcars data as a second worksheet to <code>boring_ss</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boring_ss &lt;-<span class="st"> </span>boring_ss %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_ws_new</span>(<span class="dt">ws_title =</span> <span class="st">&quot;mtcars-gs_ws_new&quot;</span>, <span class="dt">input =</span> <span class="kw">head</span>(mtcars),
                     <span class="dt">trim =</span> <span class="ot">TRUE</span>, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)
@@ -386,7 +396,7 @@ boring_ss %&gt;%<span class="st"> </span>
 </div>
 <div id="rename-or-delete-worksheets" class="section level3">
 <h3>Rename or delete worksheets</h3>
-<p>Let’s delete the mtcars worksheet and rename the iris worksheet:</p>
+<p>We use <code>gs_ws_delete()</code> and <code>gs_ws_rename()</code> to delete the mtcars worksheet and rename the iris worksheets, respectively:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">boring_ss &lt;-<span class="st"> </span>boring_ss %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_ws_delete</span>(<span class="dt">ws =</span> <span class="dv">2</span>) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_ws_rename</span>(<span class="dt">to =</span> <span class="st">&quot;iris&quot;</span>)
@@ -398,8 +408,8 @@ boring_ss %&gt;%<span class="st"> </span>
 boring_ss
 <span class="co">#&gt;                   Spreadsheet title: boring</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-06-24 19:39:40 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-24 19:39:39 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-06-25 01:19:39 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-25 01:19:39 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -408,8 +418,8 @@ boring_ss
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; iris: 7 x 5</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1rs7r8GKgq6sXx1vCrcCAb66g033lfGy-P4nzwwk9Zu4</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1rs7r8GKgq6sXx1vCrcCAb66g033lfGy-P4nzwwk9Zu4/</span></code></pre></div>
+<span class="co">#&gt; Key: 1zfCFXP7RUw5yZ3KvJkU67n9Sh4zNoRR9Gzkm4cJ2pAU</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1zfCFXP7RUw5yZ3KvJkU67n9Sh4zNoRR9Gzkm4cJ2pAU/</span></code></pre></div>
 </div>
 <div id="edit-cells" class="section level3">
 <h3>Edit cells</h3>
@@ -418,7 +428,8 @@ boring_ss
 <li><code>gs_edit_cells()</code> can write into an arbitrary cell rectangle</li>
 <li><code>gs_add_row()</code> can add a new row to the bottom of an existing cell rectangle</li>
 </ul>
-<p>They are both slow. If you have the choice, <code>gs_add_row()</code> is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">list feed</a>. <code>gs_edit_cells()</code> relies on <a href="https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request">batch editing</a> on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">cell feed</a>.</p>
+<p>They are both slow and you’re better off using <code>gs_upload()</code> if you creating a new Sheet is compatible with your workflow.</p>
+<p>Of the two, <code>gs_add_row()</code> is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds">list feed</a>. <code>gs_edit_cells()</code> relies on <a href="https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request">batch editing</a> on the <a href="https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds">cell feed</a>.</p>
 <p>We create a new Sheet, <code>foo</code>, and set up some well-named empty worksheets to practice with.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">foo &lt;-<span class="st"> </span><span class="kw">gs_new</span>(<span class="st">&quot;foo&quot;</span>) %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_ws_rename</span>(<span class="dt">from =</span> <span class="st">&quot;Sheet1&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;edit_cells&quot;</span>) %&gt;%<span class="st"> </span>
@@ -433,8 +444,8 @@ boring_ss
 foo
 <span class="co">#&gt;                   Spreadsheet title: foo</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-06-24 19:39:47 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-24 19:39:46 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-06-25 01:19:45 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-25 01:19:45 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -444,8 +455,8 @@ foo
 <span class="co">#&gt; edit_cells: 1000 x 26</span>
 <span class="co">#&gt; add_row: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1xvEXI33tqIxzIWiYevp1lP4BnQKf_19M7eIc6uMEuPU</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1xvEXI33tqIxzIWiYevp1lP4BnQKf_19M7eIc6uMEuPU/</span>
+<span class="co">#&gt; Key: 1257zaEA4o_G83jXoIO9sFOXPMO-EfMAbthKCLgSWcgk</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1257zaEA4o_G83jXoIO9sFOXPMO-EfMAbthKCLgSWcgk/</span>
 
 ## add first six rows of iris data (and var names) into a blank sheet
 foo &lt;-<span class="st"> </span>foo %&gt;%
@@ -530,14 +541,14 @@ foo %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="
 </div>
 <div id="delete-sheets" class="section level3">
 <h3>Delete Sheets</h3>
-<p>Let’s clean up by deleting the <code>foo</code> spreadsheet we’ve been playing with.</p>
+<p>Use <code>gs_delete()</code> and friends to delete entire Sheets. Let’s clean up by deleting the <code>foo</code> spreadsheet.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_delete</span>(foo)
 <span class="co">#&gt; Success. &quot;foo&quot; moved to trash in Google Drive.</span></code></pre></div>
 <p>If you’d rather specify sheets for deletion by title, look at <code>gs_grepdel()</code> and <code>gs_vecdel()</code>. These functions also allow the deletion of multiple sheets at once.</p>
 </div>
 <div id="make-new-sheets-from-local-delimited-files-or-excel-workbooks" class="section level3">
 <h3>Make new Sheets from local delimited files or Excel workbooks</h3>
-<p>Here’s how we can create a new spreadsheet from a suitable local file. First, we’ll write then upload a comma-delimited excerpt from the iris data.</p>
+<p>Use <code>gs_upload()</code> to create a new Sheet <em>de novo</em> from a suitable local file. First, we’ll write then upload a comma-delimited excerpt from the iris data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">iris %&gt;%
 <span class="st">  </span><span class="kw">head</span>(<span class="dv">5</span>) %&gt;%
 <span class="st">  </span><span class="kw">write.csv</span>(<span class="st">&quot;iris.csv&quot;</span>, <span class="dt">row.names =</span> <span class="ot">FALSE</span>)
@@ -549,8 +560,8 @@ iris_ss &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span cl
 iris_ss
 <span class="co">#&gt;                   Spreadsheet title: iris</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-06-24 19:40:31 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-24 19:40:30 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-06-25 01:20:23 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-25 01:20:21 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -559,8 +570,8 @@ iris_ss
 <span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span>
 <span class="co">#&gt; iris: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1naQ6OHatzeeSzuw6u37QS9sL_9vagDYPI_arAM-ikvg</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1naQ6OHatzeeSzuw6u37QS9sL_9vagDYPI_arAM-ikvg/</span>
+<span class="co">#&gt; Key: 1Ff1YHdpG9u-jZDva9AYj-RpkrgW0Sfys_HTibkeKeZs</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1Ff1YHdpG9u-jZDva9AYj-RpkrgW0Sfys_HTibkeKeZs/</span>
 iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; Accessing worksheet titled 'iris'.</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
@@ -584,8 +595,8 @@ iris_ss %&gt;%<span class="st"> </span><span class="kw">gs_read</span>()
 gap_xlsx
 <span class="co">#&gt;                   Spreadsheet title: mini-gap</span>
 <span class="co">#&gt;                  Spreadsheet author: gspreadr</span>
-<span class="co">#&gt;   Date of googlesheets registration: 2016-06-24 19:40:36 GMT</span>
-<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-24 19:40:34 GMT</span>
+<span class="co">#&gt;   Date of googlesheets registration: 2016-06-25 01:20:26 GMT</span>
+<span class="co">#&gt;     Date of last spreadsheet update: 2016-06-25 01:20:24 GMT</span>
 <span class="co">#&gt;                          visibility: private</span>
 <span class="co">#&gt;                         permissions: rw</span>
 <span class="co">#&gt;                             version: new</span>
@@ -598,8 +609,8 @@ gap_xlsx
 <span class="co">#&gt; Europe: 1000 x 26</span>
 <span class="co">#&gt; Oceania: 1000 x 26</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Key: 1TdFJ7nNsFENYPuQRAlQTdaFTlPu5_zD1sfgJG_lteIs</span>
-<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1TdFJ7nNsFENYPuQRAlQTdaFTlPu5_zD1sfgJG_lteIs/</span>
+<span class="co">#&gt; Key: 1T6elO7Xm2E9gj8ZzvG3sw8k27LVCYAnxQeIJ6O7ssXQ</span>
+<span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1T6elO7Xm2E9gj8ZzvG3sw8k27LVCYAnxQeIJ6O7ssXQ/</span>
 gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)
 <span class="co">#&gt; Accessing worksheet titled 'Asia'.</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
@@ -624,7 +635,7 @@ gap_xlsx %&gt;%<span class="st"> </span><span class="kw">gs_read</span>(<span cl
 </div>
 <div id="download-sheets-as-csv-pdf-or-xlsx-file" class="section level3">
 <h3>Download Sheets as csv, pdf, or xlsx file</h3>
-<p>You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.</p>
+<p>Use <code>gs_download()</code> to download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_title</span>(<span class="st">&quot;Gapminder&quot;</span>) %&gt;%
 <span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">ws =</span> <span class="st">&quot;Africa&quot;</span>, <span class="dt">to =</span> <span class="st">&quot;gapminder-africa.csv&quot;</span>)
 <span class="co">#&gt; Sheet successfully identified: &quot;Gapminder&quot;</span>
@@ -761,27 +772,27 @@ oceania_cell_feed
 <tr class="odd">
 <td>user.self</td>
 <td align="left">0.030 (1.00)</td>
-<td align="left">0.260 (7.71)</td>
-<td align="left">1.530 (45.06)</td>
+<td align="left">0.270 (8.77)</td>
+<td align="left">1.570 (50.74)</td>
 </tr>
 <tr class="even">
 <td>sys.self</td>
 <td align="left">0.000 (1.00)</td>
 <td align="left">0.020 (5.67)</td>
-<td align="left">0.060 (21.00)</td>
+<td align="left">0.060 (21.67)</td>
 </tr>
 <tr class="odd">
 <td>elapsed</td>
-<td align="left">1.400 (1.00)</td>
-<td align="left">2.610 (1.87)</td>
-<td align="left">4.510 ( 3.24)</td>
+<td align="left">0.980 (1.00)</td>
+<td align="left">2.660 (2.71)</td>
+<td align="left">4.500 ( 4.59)</td>
 </tr>
 </tbody>
 </table>
 </div>
 <div id="post-processing-data-from-the-cell-feed" class="section level4">
 <h4>Post-processing data from the cell feed</h4>
-<p>If you consume data from the cell feed with <code>gs_read_cellfeed(..., range = ...)</code>, you get a data.frame back with <strong>one row per cell</strong>. The package offers two functions to post-process this into something more useful:</p>
+<p>If you consume data from the cell feed with <code>gs_read_cellfeed()</code>, you get a data.frame back with <strong>one row per cell</strong>. The package offers two functions to post-process this into something more useful:</p>
 <ul>
 <li><code>gs_reshape_cellfeed()</code>, makes a 2D thing, i.e. a data frame</li>
 <li><code>gs_simplify_cellfeed()</code> makes a 1D thing, i.e. a vector</li>
@@ -1108,7 +1119,7 @@ ss %&gt;%<span class="st"> </span><span class="kw">gs_read_listfeed</span>(<span
 user_session_info
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2016-06-24 19:42:37 GMT</span>
+<span class="co">#&gt;                  date: 2016-06-25 01:22:40 GMT</span>
 <span class="co">#&gt;          permissionId: 14497944239034869033</span>
 <span class="co">#&gt;          rootFolderId: 0AOdw-qi1jh3fUk9PVA</span></code></pre></div>
 </div>

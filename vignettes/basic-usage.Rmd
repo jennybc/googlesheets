@@ -48,6 +48,14 @@ googlesheets::gs_vecdel(c("foo", "iris", "data-ingest-practice", "boring"),
 file.remove(c("gapminder.xlsx", "gapminder-africa.csv", "iris"))
 ```
 
+### Function naming convention
+
+To play nicely with tab completion, we use consistent prefixes:
+
+  * `gs_` = all functions in the package.
+  * `gs_ws_` = all functions that operate on worksheets or tabs within a spreadsheet.
+  * `gd_` = something to do with Google Drive, usually has a `gs_` synonym, might one day migrate to a Drive client.
+
 ### List your Google Sheets
 
 The `gs_ls()` function returns a data frame of the sheets you would see in your Google Sheets home screen: <https://docs.google.com/spreadsheets/>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).
@@ -184,7 +192,7 @@ You can copy an entire Sheet with `gs_copy()` and rename one with `gs_rename()`.
 
 ### Add a new worksheet to an existing Google Sheet
 
-Let's add some mtcars data as a second worksheet to `boring_ss`.
+Use `gs_ws_new()` to add some mtcars data as a second worksheet to `boring_ss`.
 
 ```{r new-worksheet, warning = FALSE}
 boring_ss <- boring_ss %>% 
@@ -196,7 +204,7 @@ boring_ss %>%
 
 ### Rename or delete worksheets
 
-Let's delete the mtcars worksheet and rename the iris worksheet:
+We use `gs_ws_delete()` and `gs_ws_rename()` to delete the mtcars worksheet and rename the iris worksheets, respectively:
 
 ```{r delete-rename-worksheet}
 boring_ss <- boring_ss %>% 
@@ -212,7 +220,9 @@ There are two ways to edit cells within an existing worksheet of an existing spr
   * `gs_edit_cells()` can write into an arbitrary cell rectangle
   * `gs_add_row()` can add a new row to the bottom of an existing cell rectangle
   
-They are both slow. If you have the choice, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
+They are both slow and you're better off using `gs_upload()` if you creating a new Sheet is compatible with your workflow.
+
+Of the two, `gs_add_row()` is faster, but it can only be used when your data occupies a very neat rectangle in the upper left corner of the sheet. It relies on the [list feed](https://developers.google.com/google-apps/spreadsheets/#working_with_list-based_feeds). `gs_edit_cells()` relies on [batch editing](https://developers.google.com/google-apps/spreadsheets/#updating_multiple_cells_with_a_batch_request) on the [cell feed](https://developers.google.com/google-apps/spreadsheets/#working_with_cell-based_feeds).
 
 We create a new Sheet, `foo`, and set up some well-named empty worksheets to practice with.
 
@@ -260,7 +270,7 @@ Protip: If your edit populates the sheet with everything it should have, set `tr
 
 ### Delete Sheets
 
-Let's clean up by deleting the `foo` spreadsheet we've been playing with.
+Use `gs_delete()` and friends to delete entire Sheets. Let's clean up by deleting the `foo` spreadsheet.
 
 ```{r delete-sheet}
 gs_delete(foo)
@@ -270,7 +280,7 @@ If you'd rather specify sheets for deletion by title, look at `gs_grepdel()` and
 
 ### Make new Sheets from local delimited files or Excel workbooks
 
-Here's how we can create a new spreadsheet from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
+Use `gs_upload()` to create a new Sheet *de novo* from a suitable local file. First, we'll write then upload a comma-delimited excerpt from the iris data.
 
 ```{r new-sheet-from-file}
 iris %>%
@@ -302,7 +312,7 @@ gs_vecdel(c("iris", "mini-gap"))
 
 ### Download Sheets as csv, pdf, or xlsx file
 
-You can download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
+Use `gs_download()` to download a Google Sheet as a csv, pdf, or xlsx file. Downloading the spreadsheet as a csv file will export the first worksheet (default) unless another worksheet is specified.
 
 ```{r export-sheet-as-csv}
 gs_title("Gapminder") %>%
@@ -379,7 +389,7 @@ knitr::kable(tmat_show, row.names = TRUE)
 
 #### Post-processing data from the cell feed
 
-If you consume data from the cell feed with `gs_read_cellfeed(..., range = ...)`, you get a data.frame back with **one row per cell**. The package offers two functions to post-process this into something more useful:
+If you consume data from the cell feed with `gs_read_cellfeed()`, you get a data.frame back with **one row per cell**. The package offers two functions to post-process this into something more useful:
 
   * `gs_reshape_cellfeed()`, makes a 2D thing, i.e. a data frame
   * `gs_simplify_cellfeed()` makes a 1D thing, i.e. a vector
