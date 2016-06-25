@@ -1,25 +1,16 @@
 ## Test environments
 
-* local OS X install, R 3.2.3
-* ubuntu 12.04 on travis-ci, R 3.2.3
-* local-to-a-colleague Win 7 Professional, SP1, R 3.2.4
+* local OS X install, R 3.3.0
+* ubuntu 12.04 on travis-ci, R 3.3.0
+* win-builder, release 3.3.1 and devel
 
-This is a resubmission. I've addressed these three concerns:
-
-  * There is now a build/vignettes.rds file = a pre-built vignette index.
-  * I have Rbuildignored some large figures that were not directly used in any vignettes. Tarball has shrunk from ~5MB to ~2MB.
-  * The .build.timestamp file has been removed.
-
-This update resolves the WARNINGS in CRAN Package Check Results. I
-needed to adjust to new behavior in the dependency httr (version v1.1.0,
-released 2016-01-27). I also resolved a minor issue that caused a NOTE
-on some flavors: I now require R (>= 3.2.0) since I use get0.
+This is an update to accomodate xml2 1.0.0, which was just released.
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs. 
 
-There is one NOTE:
+There is one NOTE. It is the same NOTE as I have had in the past, with the same explanation.
 
 NOTE
 Maintainer: ‘Jennifer Bryan <jenny@stat.ubc.ca>’
