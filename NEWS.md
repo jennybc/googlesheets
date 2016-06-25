@@ -23,7 +23,7 @@
   * `readr`-style data ingest: We explicitly try to match the interface of `readr::read_csv()`. The read functions `gs_read()`, `gs_read_csv()`, and `gs_read_listfeed()` and the reshaper `gs_reshape_cellfeed()` should all return the same data frame when operating on the same worksheet. And this should match what `readr::read_csv()` would return on a `.csv` file exported from that worksheet. The type conversion arguments for `gs_simplify_cellfeed()` have also changed accordingly.
     - The `header` argument is no longer accepted. Use `col_names`.
     - If you're not happy with the defaults, take control via the `...` arguments of `gs_read*` or reshape/simplify functions. Specify `column_types`, `col_names`, `locale`, `na`, `trim_ws`, etc. here.
-    - See the sections "Controlling data ingest, theory and practice" in the [the basic usage vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) for details and examples.
+    - See the sections "Controlling data ingest, theory and practice" in the the Basic Usage vignette for details and examples.
     - `readr` exception #1: variables that consist entirely of missing values will be `NA` of the logical type, not `NA_character_`.
     - `readr` exception #2: `googlesheets` will never return a data frame with `NA` as a variable name. Instead, it will create a dummy variable name, like `X5`.
     - `readr` exception #3: All read/reshape functions accept `check.names`, in the spirit of `utils::read.table()`, which defaults to `FALSE`. If `TRUE`, variable names will be run through `make.names(..., unique = TRUE)`. (#208)
