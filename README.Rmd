@@ -1,5 +1,8 @@
 ---
-output: github_document
+output:
+  github_document:
+    toc: true 
+    toc_depth: 3
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -240,20 +243,24 @@ gs_gap_url(), Browser URL for the Gapminder practice Sheet
 knitr::kable(read.csv(text = fxn_table))
 ```
 
-#### What the hell do I do with this?
+### What the hell do I do with this?
 
 Think of `googlesheets` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
 
 Use a [Google Form](http://www.google.com/forms/about/) to conduct a survey, which populates a Google Sheet.
 
+  * The `googleformr` package provides an R API for Google Forms, allowing useRs to POST data securely to Google Forms without authentication. On [CRAN](https://cran.r-project.org/package=googleformr) and [GitHub](https://github.com/data-steve/googleformr) (README has lots of info and links to blog posts).
+
 Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en). Take advantage of [data validation](https://support.google.com/docs/answer/139705?hl=en) to limit the crazy on the way in. You do not have to be online to edit a Google Sheet! Work offline via [the Chrome browser](https://support.google.com/docs/answer/2375012?hl=en), the [Sheets app for Android](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en), or the [Sheets app for iOS](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8).
 
 There are various ways to harvest web data directly into a Google Sheet. For example:
 
-  * [This blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) from Aylien.com has a simple example that uses the `=IMPORTXML()` formula to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
+  * [IFTTT](https://ifttt.com), which stands for "if this, then that", makes it easy to create recipes in which changes in one web service, such as Gmail or Instagram, trigger another action, such as writing to a Google Sheet.
+    - Martin Hawksey blog post about [feeding a Google Sheet from IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/). 
+  * `IMPORTXML(), IMPORTHTML(), IMPORTFEED()`: Google Sheets offer functions to populate Sheets based on web data.
+    - Aylien.com [blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) on using `=IMPORTXML()` to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
+    - Martin Hawksey blog post, [Feeding Google Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/), shows how to scrape web data into a Google Sheet with no programming.
   * Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free Google Sheet template to setup and run automated collection of search results from Twitter.
-  * Martin Hawksey also has a great blog post, [Feeding Google Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/), that demonstrates how functions like `importHTML`, `importFeed`, and `importXML` help you get data from the web into a Google Sheet with no programming.
-  * Martin Hawksey has another blog post about [feeding a Google Sheet from IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/). [IFTTT](https://ifttt.com) stands for "if this, then that" and it's "a web-based service that allows users to create chains of simple conditional statements, called 'recipes', which are triggered based on changes to other web services such as Gmail, Facebook, Instagram, and Craigslist" (from [Wikipedia](http://en.wikipedia.org/wiki/IFTTT)).
 
 Use `googlesheets` to get all that data into R.
 

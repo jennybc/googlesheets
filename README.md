@@ -1,4 +1,14 @@
 
+-   [Google Sheets R API](#google-sheets-r-api)
+    -   [Install googlesheets](#install-googlesheets)
+    -   [Vignettes](#vignettes)
+    -   [Talks](#talks)
+    -   [Load googlesheets](#load-googlesheets)
+    -   [Function naming convention](#function-naming-convention)
+    -   [Quick demo](#quick-demo)
+    -   [Overview of functions](#overview-of-functions)
+    -   [What the hell do I do with this?](#what-the-hell-do-i-do-with-this)
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 [![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/package=googlesheets) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
 
@@ -88,7 +98,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-06-25 00:12:58 GMT
+#>   Date of googlesheets registration: 2016-06-25 00:48:15 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -289,20 +299,24 @@ Remember, [the vignette](https://github.com/jennybc/googlesheets/blob/master/vig
 | gs\_gap\_key()           | Key of the Gapminder practice Sheet                       |
 | gs\_gap\_url()           | Browser URL for the Gapminder practice Sheet              |
 
-#### What the hell do I do with this?
+### What the hell do I do with this?
 
 Think of `googlesheets` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
 
 Use a [Google Form](http://www.google.com/forms/about/) to conduct a survey, which populates a Google Sheet.
 
+-   The `googleformr` package provides an R API for Google Forms, allowing useRs to POST data securely to Google Forms without authentication. On [CRAN](https://cran.r-project.org/package=googleformr) and [GitHub](https://github.com/data-steve/googleformr) (README has lots of info and links to blog posts).
+
 Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en). Take advantage of [data validation](https://support.google.com/docs/answer/139705?hl=en) to limit the crazy on the way in. You do not have to be online to edit a Google Sheet! Work offline via [the Chrome browser](https://support.google.com/docs/answer/2375012?hl=en), the [Sheets app for Android](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en), or the [Sheets app for iOS](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8).
 
 There are various ways to harvest web data directly into a Google Sheet. For example:
 
--   [This blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) from Aylien.com has a simple example that uses the `=IMPORTXML()` formula to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
+-   [IFTTT](https://ifttt.com), which stands for "if this, then that", makes it easy to create recipes in which changes in one web service, such as Gmail or Instagram, trigger another action, such as writing to a Google Sheet.
+    -   Martin Hawksey blog post about [feeding a Google Sheet from IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/).
+-   `IMPORTXML(), IMPORTHTML(), IMPORTFEED()`: Google Sheets offer functions to populate Sheets based on web data.
+    -   Aylien.com [blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) on using `=IMPORTXML()` to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
+    -   Martin Hawksey blog post, [Feeding Google Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/), shows how to scrape web data into a Google Sheet with no programming.
 -   Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free Google Sheet template to setup and run automated collection of search results from Twitter.
--   Martin Hawksey also has a great blog post, [Feeding Google Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/), that demonstrates how functions like `importHTML`, `importFeed`, and `importXML` help you get data from the web into a Google Sheet with no programming.
--   Martin Hawksey has another blog post about [feeding a Google Sheet from IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/). [IFTTT](https://ifttt.com) stands for "if this, then that" and it's "a web-based service that allows users to create chains of simple conditional statements, called 'recipes', which are triggered based on changes to other web services such as Gmail, Facebook, Instagram, and Craigslist" (from [Wikipedia](http://en.wikipedia.org/wiki/IFTTT)).
 
 Use `googlesheets` to get all that data into R.
 
