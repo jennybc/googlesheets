@@ -98,7 +98,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-06-25 00:48:15 GMT
+#>   Date of googlesheets registration: 2016-06-25 02:05:56 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -258,7 +258,7 @@ gs_vecdel(c("iris", "Gapminder"))
 file.remove(c("iris-ish-stuff.csv", "iris-ish-stuff.xlsx"))
 ```
 
-Remember, [the vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) shows a lot more usage.
+Remember, [the vignette](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html) shows a lot more usage.
 
 ### Overview of functions
 

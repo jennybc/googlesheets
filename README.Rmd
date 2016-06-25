@@ -195,7 +195,7 @@ gs_delete(iris_ss)
 file.remove(c("iris-ish-stuff.csv", "iris-ish-stuff.xlsx"))
 ```
 
-Remember, [the vignette](https://github.com/jennybc/googlesheets/blob/master/vignettes/basic-usage.md) shows a lot more usage.
+Remember, [the vignette](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html) shows a lot more usage.
 
 ### Overview of functions
 
