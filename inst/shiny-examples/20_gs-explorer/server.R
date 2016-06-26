@@ -26,7 +26,7 @@ shinyServer(function(input, output, session) {
   ## Make a button to link to Google auth screen
   ## If auth_code is returned then don't show login button
   output$loginButton <- renderUI({
-    if(is.null(isolate(access_token()))) {
+    if (is.null(isolate(access_token()))) {
       tags$a("Authorize App",
              href = gs_webapp_auth_url(),
              class = "btn btn-default")
@@ -36,10 +36,10 @@ shinyServer(function(input, output, session) {
   })
 
   output$logoutButton <- renderUI({
-    if(!is.null(access_token())) {
+    if (!is.null(access_token())) {
       # Revoke the token too? use access_token$revoke()
       tags$a("Logout",
-            href = getOption("googlesheets.shiny.redirect_uri"),
+            href = getOption("googlesheets.webapp.redirect_uri"),
             class = "btn btn-default")
     } else {
       return()
@@ -51,7 +51,7 @@ shinyServer(function(input, output, session) {
     ## gets all the parameters in the URL. The auth code should be one of them.
     pars <- parseQueryString(session$clientData$url_search)
 
-    if(length(pars$code) > 0) {
+    if (length(pars$code) > 0) {
       ## extract the authorization code
       gs_webapp_get_token(auth_code = pars$code)
     } else {
@@ -181,10 +181,10 @@ shinyServer(function(input, output, session) {
 
   ## Update tab panel when sheet is selected
   observe({
-    if(is.null(input$selectSheet)) {
+    if (is.null(input$selectSheet)) {
       updateTabsetPanel(session, "panel", selected = "All Sheets")
     } else {
-      if(input$selectSheet != " ") {
+      if (input$selectSheet != " ") {
         updateTabsetPanel(session, "panel", selected = "Sheet Info")
       } else {
         updateTabsetPanel(session, "panel", selected = "All Sheets")

@@ -1,3 +1,6 @@
+My Google Sheets Explorer
+================
+
 ``` r
 library(googlesheets)
 ```
@@ -34,11 +37,11 @@ getOption("googlesheets.webapp.redirect_uri")
 
     ## [1] "http://127.0.0.1:4642"
 
-Two functions are used to get authorization working: `gs_shiny_get_url()` and `gs_shiny_get_token()`.
+Two functions are used to get authorization working: `gs_webapp_auth_url()` and `gs_webapp_get_token()`.
 
 The general flow is:
 
-1.  User clicks a button that will take them to the URL formed by `gs_shiny_get_url()`.
+1.  User clicks a button that will take them to the URL formed by `gs_webapp_auth_url`.
 
 ``` r
 # looks like this
@@ -49,7 +52,7 @@ gs_webapp_auth_url()
 
 1.  User authenticates is redirected back to app. An authorization code also gets returned in the url, which it can be extracted using `parseQueryString(session$clientData$url_search)$code`.
 
-2.  Use `gs_shiny_get_token()` to extract the authorization code, make a POST request to exchange for an access token, and put the token in the internal `googlesheets` environment for use in subsequent API requests.
+2.  Use `gs_webapp_get_token()` to extract the authorization code, make a POST request to exchange for an access token, and put the token in the internal `googlesheets` environment for use in subsequent API requests.
 
 Setting up authorization in your own app
 ----------------------------------------
@@ -58,6 +61,6 @@ You must create your own web application in [Google Developer's Console](https:/
 
 After setting up the web application, in your `server.R` set client ID and secret, and redirect uri specific to your project by:
 
-    options("googlesheets.shiny.client_id" = MY_CLIENT_ID)
-    options("googlesheets.shiny.client_secret" = MY_CLIENT_SECRET)
-    options("googlesheets.shiny.redirect_uri" = MY_REDIRECT_URI)
+    options("googlesheets.webapp.client_id" = MY_CLIENT_ID)
+    options("googlesheets.webapp.client_secret" = MY_CLIENT_SECRET)
+    options("googlesheets.webapp.redirect_uri" = MY_REDIRECT_URI)
