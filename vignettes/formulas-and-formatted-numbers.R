@@ -17,6 +17,8 @@ suppressMessages(library(dplyr))
 ## ------------------------------------------------------------------------
 gs_ff() %>% 
   gs_read(range = cell_cols("B:C"))
+
+## ------------------------------------------------------------------------
 gs_ff() %>% 
   gs_read(literal = FALSE, range = cell_cols("B:C"))
 
@@ -44,22 +46,26 @@ knitr::kable(cf_printme %>%
 
 ## ------------------------------------------------------------------------
 cf %>%
-  filter(col == 2) %>%
-  select(value, input_value, numeric_value)
-
-## ------------------------------------------------------------------------
-cf %>%
-  filter(col == 3) %>%
-  select(value, input_value, numeric_value)
-
-## ------------------------------------------------------------------------
-cf %>%
-  filter(col == 5) %>%
+  filter(row > 1, col == 2) %>%
   select(value, input_value, numeric_value) %>% 
-  mutate(input_value = substr(input_value, 1, 43))
+  readr::type_convert()
 
 ## ------------------------------------------------------------------------
 cf %>%
-  filter(col == 6) %>%
-  select(value, input_value, numeric_value)
+  filter(row > 1, col == 3) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
+
+## ------------------------------------------------------------------------
+cf %>%
+  filter(row > 1, col == 5) %>%
+  select(value, input_value, numeric_value) %>% 
+  mutate(input_value = substr(input_value, 1, 43)) %>% 
+  readr::type_convert()
+
+## ------------------------------------------------------------------------
+cf %>%
+  filter(row > 1, col == 6) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
 

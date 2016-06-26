@@ -23,15 +23,17 @@ To see how your data comes in as a data frame *without numeric formatting*, try 
 gs_read(..., literal = FALSE)
 ```
 
-Here's an example:
+The `googlesheets` package comes with functions to access a public Sheet with formulas and formatted numbers. [Visit it in the browser](https://w3id.org/people/jennybc/googlesheets_ff_url) or check out this screenshot.
 
-  * First variable comes in properly as numeric when `literal = FALSE` vs as character when `literal = TRUE` (the default)
-  * Second variable does not lose precision due to rounding when `literal = FALSE`.
+![](img/gs-test-formula-formatting-screenshot-smaller.png)
+
+We use it to demo the effect of `literal` in `gs_read()`. First we accept the default, which is `literal = TRUE`.
 
 
 ```r
 gs_ff() %>% 
   gs_read(range = cell_cols("B:C"))
+<<<<<<< HEAD:vignettes/formulas-and-formatted-numbers.md
 #> Accessing worksheet titled 'Sheet1'.
 #> Source: local data frame [5 x 2]
 #> 
@@ -42,6 +44,15 @@ gs_ff() %>%
 #> 3         1.23E+09           3.46
 #> 4            3 1/7           4.57
 #> 5            $0.36           5.68
+=======
+```
+
+See the problem? Numeric formatting causes the first column to come in as character.
+
+Try again with `literal = FALSE`:
+
+```{r}
+>>>>>>> ef669db... update vignette on formulas and formatting:inst/doc/formulas-and-formatted-numbers.Rmd
 gs_ff() %>% 
   gs_read(literal = FALSE, range = cell_cols("B:C"))
 #> Accessing worksheet titled 'Sheet1'.
@@ -55,6 +66,8 @@ gs_ff() %>%
 #> 4     3.141593e+00         4.5678
 #> 5     3.600000e-01         5.6789
 ```
+
+Fixed it! First column is numeric. And we've also gained precision in the second column, previously lost to rounding.
 
 If you want full access to cell contents, use `gs_read_cellfeed(..., literal = FALSE)` to get a data frame with one per cell. Then take your pick from `value`, `input_value`, and `numeric_value`. Here's an example with lots of formulas:
 
@@ -210,13 +223,14 @@ We explore the different cell contents for different variables. This motivates t
 
 Column 2, `number_formatted`, holds variously formatted numbers. It is quite pathological, because in real life numeric formatting is likely to be uniform within a column, which helps `readr` make good decisions about type conversion.
 
-  * `value` (what you get by default) will definitely import as character. Not good.
-  * `input_value` is attractive for the first number, because an integer looks like an integer, which is ultimately good for type conversion. But this variable would still import as character, because of the percent sign.
-  * `numeric_value` (what you usually want?) is a good default for numbers, although the true integer has gained `.0` as suffix.
+  * `value` (what you get by default) imports as character. Not good.
+  * `input_value` is attractive for the first number, because an integer looks like an integer, which is ultimately good for type conversion. But this variable still imports as character, because of the percent sign.
+  * `numeric_value` is usually what you want for numbers.
 
 
 ```r
 cf %>%
+<<<<<<< HEAD:vignettes/formulas-and-formatted-numbers.md
   filter(col == 2) %>%
   select(value, input_value, numeric_value)
 #> Source: local data frame [6 x 3]
@@ -229,15 +243,21 @@ cf %>%
 #> 4         1.23E+09       1234567890  1.23456789E9
 #> 5            3 1/7    3.14159265359 3.14159265359
 #> 6            $0.36             0.36          0.36
+=======
+  filter(row > 1, col == 2) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
+>>>>>>> ef669db... update vignette on formulas and formatting:inst/doc/formulas-and-formatted-numbers.Rmd
 ```
 
 #### Rounded numbers
 
-Column 3, `number_rounded`, holds numbers with four decimal places, rounded to show just two. Here we clearly want `numeric_value`.
+Column 3, `number_rounded`, holds numbers with four decimal places, rounded to show just two. Here we want `numeric_value`.
 
 
 ```r
 cf %>%
+<<<<<<< HEAD:vignettes/formulas-and-formatted-numbers.md
   filter(col == 3) %>%
   select(value, input_value, numeric_value)
 #> Source: local data frame [6 x 3]
@@ -250,6 +270,11 @@ cf %>%
 #> 4           3.46         3.4567        3.4567
 #> 5           4.57         4.5678        4.5678
 #> 6           5.68         5.6789        5.6789
+=======
+  filter(row > 1, col == 3) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
+>>>>>>> ef669db... update vignette on formulas and formatting:inst/doc/formulas-and-formatted-numbers.Rmd
 ```
 
 #### Formulas
@@ -263,8 +288,9 @@ Column 5, `formula`, holds various formulas, not necessarily numeric. *Note we h
 
 ```r
 cf %>%
-  filter(col == 5) %>%
+  filter(row > 1, col == 5) %>%
   select(value, input_value, numeric_value) %>% 
+<<<<<<< HEAD:vignettes/formulas-and-formatted-numbers.md
   mutate(input_value = substr(input_value, 1, 43))
 #> Source: local data frame [6 x 3]
 #> 
@@ -276,6 +302,10 @@ cf %>%
 #> 4              =IMAGE("https://www.google.com/images/srpr/            NA
 #> 5         $A$1                               =ADDRESS(1,1)            NA
 #> 6                         =SPARKLINE(R[-4]C[-4]:R[0]C[-4])            NA
+=======
+  mutate(input_value = substr(input_value, 1, 43)) %>% 
+  readr::type_convert()
+>>>>>>> ef669db... update vignette on formulas and formatting:inst/doc/formulas-and-formatted-numbers.Rmd
 ```
 
 #### Numeric formulas, formatted
@@ -289,6 +319,7 @@ Column 6, `formula_formatted`, holds formatted numeric formulas:
 
 ```r
 cf %>%
+<<<<<<< HEAD:vignettes/formulas-and-formatted-numbers.md
   filter(col == 6) %>%
   select(value, input_value, numeric_value)
 #> Source: local data frame [6 x 3]
@@ -301,11 +332,16 @@ cf %>%
 #> 4              0.22         =R[-2]C[-5]/R[2]C[-5] 0.21739421366813996
 #> 5        123,456.00    =min(R[-3]C[-5]:R[1]C[-5])            123456.0
 #> 6           317,898           =average(R2C1:R6C1)           317897.75
+=======
+  filter(row > 1, col == 6) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
+>>>>>>> ef669db... update vignette on formulas and formatting:inst/doc/formulas-and-formatted-numbers.Rmd
 ```
 
 ## Logic for cell contents when `literal = FALSE`
 
-Based on the above examples (and more), here's the current logic for which cell contents to use in `gs_read(..., literal = FALSE)` and `gs_reshape_cellfeed(..., literal = FALSE)`. The goal is to create an input that gives the desired result most often with default behavior of `readr::type_convert()`. If you think this is wrong, please discuss in [an issue](https://github.com/jennybc/googlesheets/issues).
+Based on the above examples (and more), here's the current logic for which cell contents are used in `gs_read(..., literal = FALSE)` and `gs_reshape_cellfeed(..., literal = FALSE)`. The goal is to create an input that gives the desired result most often with default behavior of `readr::type_convert()`. If you think this is wrong, please discuss in [an issue](https://github.com/jennybc/googlesheets/issues).
 
   * Create an indicator for: does `numeric_value` exist?
   * Create an indicator for: does this look like an integer that is at risk of looking like a double if we take `numeric_value`?

@@ -39,17 +39,27 @@ To see how your data comes in as a data frame *without numeric formatting*, try 
 gs_read(..., literal = FALSE)
 ```
 
-Here's an example:
+The `googlesheets` package comes with functions to access a public Sheet with formulas and formatted numbers. [Visit it in the browser](https://w3id.org/people/jennybc/googlesheets_ff_url) or check out this screenshot.
 
-  * First variable comes in properly as numeric when `literal = FALSE` vs as character when `literal = TRUE` (the default)
-  * Second variable does not lose precision due to rounding when `literal = FALSE`.
+![](img/gs-test-formula-formatting-screenshot-smaller.png)
+
+We use it to demo the effect of `literal` in `gs_read()`. First we accept the default, which is `literal = TRUE`.
 
 ```{r}
 gs_ff() %>% 
   gs_read(range = cell_cols("B:C"))
+```
+
+See the problem? Numeric formatting causes the first column to come in as character.
+
+Try again with `literal = FALSE`:
+
+```{r}
 gs_ff() %>% 
   gs_read(literal = FALSE, range = cell_cols("B:C"))
 ```
+
+Fixed it! First column is numeric. And we've also gained precision in the second column, previously lost to rounding.
 
 If you want full access to cell contents, use `gs_read_cellfeed(..., literal = FALSE)` to get a data frame with one per cell. Then take your pick from `value`, `input_value`, and `numeric_value`. Here's an example with lots of formulas:
 
@@ -149,24 +159,26 @@ We explore the different cell contents for different variables. This motivates t
 
 Column 2, `number_formatted`, holds variously formatted numbers. It is quite pathological, because in real life numeric formatting is likely to be uniform within a column, which helps `readr` make good decisions about type conversion.
 
-  * `value` (what you get by default) will definitely import as character. Not good.
-  * `input_value` is attractive for the first number, because an integer looks like an integer, which is ultimately good for type conversion. But this variable would still import as character, because of the percent sign.
-  * `numeric_value` (what you usually want?) is a good default for numbers, although the true integer has gained `.0` as suffix.
+  * `value` (what you get by default) imports as character. Not good.
+  * `input_value` is attractive for the first number, because an integer looks like an integer, which is ultimately good for type conversion. But this variable still imports as character, because of the percent sign.
+  * `numeric_value` is usually what you want for numbers.
 
 ```{r}
 cf %>%
-  filter(col == 2) %>%
-  select(value, input_value, numeric_value)
+  filter(row > 1, col == 2) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
 ```
 
 #### Rounded numbers
 
-Column 3, `number_rounded`, holds numbers with four decimal places, rounded to show just two. Here we clearly want `numeric_value`.
+Column 3, `number_rounded`, holds numbers with four decimal places, rounded to show just two. Here we want `numeric_value`.
 
 ```{r}
 cf %>%
-  filter(col == 3) %>%
-  select(value, input_value, numeric_value)
+  filter(row > 1, col == 3) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
 ```
 
 #### Formulas
@@ -179,9 +191,10 @@ Column 5, `formula`, holds various formulas, not necessarily numeric. *Note we h
 
 ```{r}
 cf %>%
-  filter(col == 5) %>%
+  filter(row > 1, col == 5) %>%
   select(value, input_value, numeric_value) %>% 
-  mutate(input_value = substr(input_value, 1, 43))
+  mutate(input_value = substr(input_value, 1, 43)) %>% 
+  readr::type_convert()
 ```
 
 #### Numeric formulas, formatted
@@ -194,13 +207,14 @@ Column 6, `formula_formatted`, holds formatted numeric formulas:
 
 ```{r}
 cf %>%
-  filter(col == 6) %>%
-  select(value, input_value, numeric_value)
+  filter(row > 1, col == 6) %>%
+  select(value, input_value, numeric_value) %>% 
+  readr::type_convert()
 ```
 
 ## Logic for cell contents when `literal = FALSE`
 
-Based on the above examples (and more), here's the current logic for which cell contents to use in `gs_read(..., literal = FALSE)` and `gs_reshape_cellfeed(..., literal = FALSE)`. The goal is to create an input that gives the desired result most often with default behavior of `readr::type_convert()`. If you think this is wrong, please discuss in [an issue](https://github.com/jennybc/googlesheets/issues).
+Based on the above examples (and more), here's the current logic for which cell contents are used in `gs_read(..., literal = FALSE)` and `gs_reshape_cellfeed(..., literal = FALSE)`. The goal is to create an input that gives the desired result most often with default behavior of `readr::type_convert()`. If you think this is wrong, please discuss in [an issue](https://github.com/jennybc/googlesheets/issues).
 
   * Create an indicator for: does `numeric_value` exist?
   * Create an indicator for: does this look like an integer that is at risk of looking like a double if we take `numeric_value`?
