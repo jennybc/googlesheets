@@ -1,12 +1,40 @@
-# Managing OAuth Tokens
-Jenny Bryan  
-`r Sys.Date()`  
+---
+title: "Managing OAuth Tokens"
+date: "`r Sys.Date()`"
+author: "Jenny Bryan"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Managing Auth Tokens}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
+```{r, echo = FALSE}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  purl = NOT_CRAN,
+  eval = NOT_CRAN
+)
+```
 
+```{r token-path, include = FALSE, eval = NOT_CRAN}
+## I grab the token from the testing directory because that's where it is to be
+## found on Travis
+## does not work
+## token_path <- testthat::test_path("googlesheets_token.rds")
+token_path <- file.path("..", "tests", "testthat","googlesheets_token.rds")
+suppressMessages(googlesheets::gs_auth(token = token_path, verbose = FALSE))
+```
 
-
-
-
+```{r make-clean, include = FALSE, eval = NOT_CRAN}
+## if previous compilation errored out, intended clean up may be incomplete
+googlesheets::gs_grepdel("^iris_bit$", verbose = FALSE)
+```
 
 ## Who should read this
 
@@ -28,24 +56,13 @@ Which Google Sheets activities require authorization? And which do not?
 
 Reading from a Sheet that is "published to the web" does not require authorization, if and only if you identify the Sheet via key or URL:
 
-
-```r
+```{r}
 library(googlesheets)
 suppressPackageStartupMessages(library(dplyr))
 gs_gap_key() %>%
   gs_key(lookup = FALSE) %>% 
   gs_read() %>% 
   head(3)
-#> Worksheets feed constructed with public visibility
-#> Accessing worksheet titled 'Africa'.
-#> No encoding supplied: defaulting to UTF-8.
-#> Source: local data frame [3 x 6]
-#> 
-#>   country continent  year lifeExp      pop gdpPercap
-#>     (chr)     (chr) (int)   (dbl)    (int)     (dbl)
-#> 1 Algeria    Africa  1952  43.077  9279525  2449.008
-#> 2 Algeria    Africa  1957  45.685 10270856  3013.976
-#> 3 Algeria    Africa  1962  48.303 11000948  2550.817
 ```
 
 On the other hand, if you identify a Sheet by its name, `googlesheets` will require authorization, because we must list of all your Sheets on Google Drive in order to look up the Sheet's key. This will be true even if the Sheet you seek is "published to the web". It's the key look up that requires auth, not reading the Sheet.
@@ -54,23 +71,15 @@ Implication: if your non-interactive `googlesheets` code only needs to read a pu
 
 Of course, many other activities do require authorization. For example, creating a new Sheet:
   
-
-```r
+```{r}
 iris_ss <- gs_new("iris_bit", input = head(iris, 3), trim = TRUE, verbose = FALSE)
 iris_ss %>% 
   gs_read()
-#> Accessing worksheet titled 'Sheet1'.
-#> No encoding supplied: defaulting to UTF-8.
-#> Source: local data frame [3 x 5]
-#> 
-#>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-#>          (dbl)       (dbl)        (dbl)       (dbl)   (chr)
-#> 1          5.1         3.5          1.4         0.2  setosa
-#> 2          4.9         3.0          1.4         0.2  setosa
-#> 3          4.7         3.2          1.3         0.2  setosa
 ```
 
-
+```{r include = FALSE}
+gs_grepdel("^iris_bit$")
+```
 
 ## Where do tokens come from? The OAuth 2.0 flow
 
@@ -90,14 +99,8 @@ Behind the scenes, `googlesheets` uses `httr::oauth2.0_token()` (and ultimately 
 
 You can use `gs_user()` to see if there is currently a valid token in force, who the associated Google user is, etc.:
 
-
-```r
+```{r}
 gs_user()
-#>           displayName: google sheets
-#>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-03-26 22:53:57 GMT
-#>          permissionId: 14497944239034869033
-#>          rootFolderId: 0AOdw-qi1jh3fUk9PVA
 ```
 
 ## Where do tokens live in between R sessions?
@@ -137,8 +140,7 @@ In `googlesheets`, we've built some functionality into `gs_auth()` so the user c
 
 In an interactive session, create and store a token. Caching properties are baked into a token, so if you never want this token to be cached to `.httr-oauth`, such as when it gets refreshed, specify that at creation time via `cache = FALSE`. Use `gd_token()` at any time to see some info on the current token.
 
-
-```r
+```{r eval = FALSE}
 library(googlesheets)
 token <- gs_auth(cache = FALSE)
 gd_token()
@@ -156,8 +158,7 @@ Things to think about:
   
 Let's focus on the R script or Rmd file you are preparing for non-interactive execution. Put these lines in it:
 
-
-```r
+```{r eval = FALSE}
 library(googlesheets)
 gs_auth(token = "googlesheets_token.rds")
 ## and you're back in business, using the same old token
@@ -199,8 +200,7 @@ The latter point is the most relevant to an active project. If you're developing
 
 We use [`testthat`](http://cran.r-project.org/package=testthat) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
 
-
-```r
+```{r eval = FALSE}
 library(googlesheets)
 token <- gs_auth()
 saveRDS(token, file = "tests/testthat/googlesheets_token.rds")
@@ -210,15 +210,13 @@ Pro tip: start with a fresh token or one near the beginning of the current 25-to
 
 In affected testing files, we explicitly put the token into force:
 
-
-```r
+```{r eval = FALSE}
 suppressMessages(gs_auth(token = "googlesheets_token.rds", verbose = FALSE))
 ```
 
 run the tests that require authorization and then suspend token usage (but do NOT revoke the refresh token):
 
-
-```r
+```{r eval = FALSE}
 gs_deauth(verbose = FALSE)
 ```
 
@@ -308,8 +306,7 @@ where `true` is the default, development state. You'll temporarily toggle it to 
   * If most can, put `testthat::skip_on_cran()` inside individual tests that are not safe for CRAN. This function consults the `NOT_CRAN` env var.
   * If most/all cannot, shut testing down entirely on CRAN. Unfortunately that is what I had to do. Here is my `tests/testthat.R` file:
 
-
-```r
+```{r eval = FALSE}
 library(testthat)
 library(googlesheets)
 
@@ -322,8 +319,7 @@ This way all tests run all the time locally and on Travis, but never on CRAN.
 
 **Vignettes.** Recall that `knitr` chunk options can take values from R an expression. In an early setup chunk, consult the `NOT_CRAN` environment variable to create an eponymous R object:
 
-
-```r
+```{r eval = FALSE}
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
 ```
 
@@ -341,8 +337,7 @@ Why does the vignette code get executed twice? Even though the vignettes used ar
   * If most of your chunks are CRAN safe, put `purl = NOT_CRAN` and `eval = NOT_CRAN` in the options of specific chunks that should not run on CRAN.
   * If most or all of your chunks are not CRAN safe, put these chunk options in your setup chunk to apply them globally, e.g.
 
-
-```r
+```{r eval = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
