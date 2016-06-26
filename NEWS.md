@@ -1,4 +1,4 @@
-# googlesheets 0.2.0.9000
+# googlesheets 0.2.1
 
   * `XML` is no longer a dependency.
   * Automatic retries for `Internal Server Error (HTTP 500)`. On or around 2016-03-11, there was a huge increase in the frequency of this error on Google Drive API calls.
