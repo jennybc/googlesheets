@@ -355,8 +355,6 @@ Recap:
   
 ### Create the `.tar.gz`
 
-*I have had two rather inept CRAN submissions now. I submitted tarballs with too few files, too many files, wrong files, you name it. Kurt Hornik has been very patient and helpful. These notes are written with 20/20 hindsight. Hopefully I'll nail it the third time?*
-
 I use Git and create a branch to document the process of CRAN submission.
 
 Start in the default development state:
