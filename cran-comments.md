@@ -10,7 +10,7 @@ This is an update to accomodate xml2 1.0.0, which was just released.
 
 There were no ERRORs or WARNINGs. 
 
-There is one NOTE. It is the same NOTE as I have had in the past, with the same explanation.
+There is one NOTE. It is a NOTE I have had in the past, with the same explanation.
 
 NOTE
 Maintainer: ‘Jennifer Bryan <jenny@stat.ubc.ca>’
