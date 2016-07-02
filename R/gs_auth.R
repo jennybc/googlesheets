@@ -70,7 +70,7 @@
 #' @template verbose
 #'
 #' @template return-Token2
-#'
+#' @family auth functions
 #' @export
 #'
 #' @examples
@@ -198,7 +198,8 @@ token_available <- function(verbose = TRUE) {
 #'   \code{.httr-oauth} file in working directory, if such exists, by renaming
 #'   to \code{.httr-oauth-SUSPENDED}
 #' @template verbose
-#'
+#' @export
+#' @family auth functions
 #' @examples
 #' \dontrun{
 #' gs_deauth()

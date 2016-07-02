@@ -46,4 +46,8 @@ gs_user()
 }
 
 }
+\seealso{
+Other auth functions: \code{\link{gs_auth}},
+  \code{\link{gs_deauth}}
+}
 

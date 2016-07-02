@@ -104,4 +104,8 @@ gs_auth(token = ttt)       # from an object
 gs_auth(token = "ttt.rds") # from .rds file
 }
 }
+\seealso{
+Other auth functions: \code{\link{gd_user}},
+  \code{\link{gs_deauth}}
+}
 

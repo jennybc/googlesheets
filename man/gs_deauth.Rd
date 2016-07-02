@@ -22,4 +22,8 @@ Drive and Sheets APIs on behalf of the authenticated user.
 gs_deauth()
 }
 }
+\seealso{
+Other auth functions: \code{\link{gd_user}},
+  \code{\link{gs_auth}}
+}
 

@@ -48,7 +48,7 @@ drive_user <- function() {
 #' @template verbose
 #'
 #' @template return-drive_user
-#'
+#' @family auth functions
 #' @export
 #' @examples
 #' \dontrun{
