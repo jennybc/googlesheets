@@ -143,10 +143,17 @@ test_that("query params work on the list feed", {
 
 test_that("readr parsing params are handled on the list feed", {
 
+  ## FOLLOW THIS ISSUE:
+  ## https://github.com/hadley/readr/issues/517
+  ## I use readr::type_convert() internally and might have to pre-process col
+  ## specs like "cccnnn" myself into one of the longer forms :(
+  ## temporary workaround while I decide what to do
+  cspec <- do.call(readr::cols, as.list(strsplit("cccnnn", "")[[1]]))
   oceania_tweaked <- gap %>%
     gs_read_listfeed(ws = "Oceania",
                      col_names = paste0("VAR", 1:6),
-                     col_types = "cccnnn",
+                     col_types = cspec,
+                     #col_types = "cccnnn",
                      n_max = 5, skip = 1)
   expect_identical(names(oceania_tweaked), paste0("VAR", 1:6))
   expect_equivalent(vapply(oceania_tweaked, class, character(1)),

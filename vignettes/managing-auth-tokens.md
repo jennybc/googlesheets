@@ -39,10 +39,9 @@ gs_gap_key() %>%
 #> Worksheets feed constructed with public visibility
 #> Accessing worksheet titled 'Africa'.
 #> No encoding supplied: defaulting to UTF-8.
-#> Source: local data frame [3 x 6]
-#> 
+#> <tibble [3 x 6]>
 #>   country continent  year lifeExp      pop gdpPercap
-#>     (chr)     (chr) (int)   (dbl)    (int)     (dbl)
+#>     <chr>     <chr> <int>   <dbl>    <int>     <dbl>
 #> 1 Algeria    Africa  1952  43.077  9279525  2449.008
 #> 2 Algeria    Africa  1957  45.685 10270856  3013.976
 #> 3 Algeria    Africa  1962  48.303 11000948  2550.817
@@ -61,10 +60,9 @@ iris_ss %>%
   gs_read()
 #> Accessing worksheet titled 'Sheet1'.
 #> No encoding supplied: defaulting to UTF-8.
-#> Source: local data frame [3 x 5]
-#> 
+#> <tibble [3 x 5]>
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-#>          (dbl)       (dbl)        (dbl)       (dbl)   (chr)
+#>          <dbl>       <dbl>        <dbl>       <dbl>   <chr>
 #> 1          5.1         3.5          1.4         0.2  setosa
 #> 2          4.9         3.0          1.4         0.2  setosa
 #> 3          4.7         3.2          1.3         0.2  setosa
@@ -95,7 +93,7 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-03-26 22:53:57 GMT
+#>                  date: 2016-07-04 15:40:30 GMT
 #>          permissionId: 14497944239034869033
 #>          rootFolderId: 0AOdw-qi1jh3fUk9PVA
 ```
@@ -359,8 +357,6 @@ Recap:
   * Use `NOT_CRAN` via chunk options to conditionally suppress extraction and compilation of vignette chunks that are not CRAN safe.
   
 ### Create the `.tar.gz`
-
-*I have had two rather inept CRAN submissions now. I submitted tarballs with too few files, too many files, wrong files, you name it. Kurt Hornik has been very patient and helpful. These notes are written with 20/20 hindsight. Hopefully I'll nail it the third time?*
 
 I use Git and create a branch to document the process of CRAN submission.
 
