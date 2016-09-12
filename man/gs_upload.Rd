@@ -4,13 +4,16 @@
 \alias{gs_upload}
 \title{Upload a file and convert it to a Google Sheet}
 \usage{
-gs_upload(file, sheet_title = NULL, verbose = TRUE)
+gs_upload(file, sheet_title = NULL, parents, verbose = TRUE)
 }
 \arguments{
 \item{file}{path to the file to upload}
 
 \item{sheet_title}{the title of the spreadsheet; optional, if not specified
 then the name of the file will be used}
+
+\item{parents}{(optional) folder ID where to upload the file, if not
+specified then the file will be uploaded to the root folder}
 
 \item{verbose}{logical; do you want informative messages?}
 }
@@ -30,6 +33,5 @@ gs_read(iris_ss)
 file.remove("iris.csv")
 gs_delete(iris_ss)
 }
-
 }
 
