@@ -22,7 +22,7 @@
 #' }
 #'
 #' @export
-gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
+gs_upload <- function(file, sheet_title = NULL, verbose = TRUE, overwrite = FALSE) {
 
   if (!file.exists(file)) {
     spf("\"%s\" does not exist!", file)
@@ -38,15 +38,27 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE) {
   if (is.null(sheet_title)) {
     sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
   }
+  if(overwrite) {
+    overwrite_failed <- FALSE
+    existing_files <- gs_ls()
+    if(sheet_title %in% existing_files[["sheet_title"]]) {
+      new_key <- existing_files[["sheet_key"]][existing_files[["sheet_title"]] %in% sheet_title]
+    }
+    else {
+      overwrite_failed <- TRUE
+    }
+  } 
 
   ## upload metadata --> get a fileId (Drive-speak) or key (Sheets-speak)
-  the_body <- list(title = sheet_title,
-                   mimeType = "application/vnd.google-apps.spreadsheet")
-  req <- httr::POST(.state$gd_base_url_files_v2, google_token(),
-                    body = the_body, encode = "json") %>%
-    httr::stop_for_status()
-  rc <- content_as_json_UTF8(req)
-  new_key <- rc$id
+  if(!overwrite || overwrite_failed) {
+    the_body <- list(title = sheet_title,
+                     mimeType = "application/vnd.google-apps.spreadsheet")
+    req <- httr::POST(.state$gd_base_url_files_v2, google_token(),
+                      body = the_body, encode = "json") %>%
+      httr::stop_for_status()
+    rc <- content_as_json_UTF8(req)
+    new_key <- rc$id
+  }
 
   ## the actual file upload
   the_url <- file.path(.state$gd_base_url, "upload/drive/v2/files", new_key)
