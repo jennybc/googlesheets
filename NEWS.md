@@ -1,5 +1,7 @@
 # googlesheets 0.2.1.9000
 
+  * `gs_upload()` now has an `overwrite` argument. (#285 @omgjens, @jennybc)
+
 # googlesheets 0.2.1
 
   * `XML` is no longer a dependency.
