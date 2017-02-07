@@ -34,33 +34,26 @@ test_that("Different file formats can be uploaded", {
 })
 
 test_that("Overwrite actually overwrites an existing file", {
-  
-  # Reference data
-  df1 <- data.frame(x=1)
-  df2 <- data.frame(x=2)
-  write.csv(df1, "df1.csv", row.names = F)
-  write.csv(df2, "df2.csv", row.names = F)
-  orig_file <- gs_upoad("df1.csv")
-  Sys.sleep(1)
-  # Generate 2 files: 1 using gs_edit, 1 using gs_upload(overwrite = T), which should be identical at the end
-  # First using editing
-  edited_file <- gs_copy(orig_file, to = "edited_file")
-  Sys.sleep(1)
-  gs_edit_cells(edited_file, input = df2)
-  Sys.sleep(1)
-  edited_file_content <- gs_read(edited_file)
-  Sys.sleep(1)
-  # Second using overwrite
-  overwritten_file <- gs_copy(orig_file, to = "overwritten_file")
-  Sys.sleep(1)
-  gs_upload("df2.csv", sheet_title = "df1", overwrite = T)
-  Sys.sleep(1)
-  overwritten_file_content <- gs_read(overwritten_file)
-  # Perform the test
-  expect_that(edited_file_content, equals(overwritten_file_content))
 
-  # Todo: test overwrite for identical name
-  
+  # Reference data
+  before <- tibble::tibble(x = "before")
+  after <- tibble::tibble(x = "after")
+  on.exit(file.remove(c("before.csv", "after.csv")))
+  readr::write_csv(before, "before.csv")
+  readr::write_csv(after, "after.csv")
+
+  ss <- gs_upload("before.csv", "overwrite_test_sheet")
+  Sys.sleep(1)
+
+  res <- gs_read(ss)
+  expect_identical(res$x[1], "before")
+
+  ss <- gs_upload("after.csv", "overwrite_test_sheet", overwrite = TRUE)
+  Sys.sleep(1)
+
+  res <- gs_read(ss)
+  expect_identical(res$x[1], "after")
+
 })
 
 
