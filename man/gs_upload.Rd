@@ -12,9 +12,9 @@ gs_upload(file, sheet_title = NULL, verbose = TRUE, overwrite = FALSE)
 \item{sheet_title}{the title of the spreadsheet; optional, if not specified
 then the name of the file will be used}
 
-\item{overwrite}{whether to overwrite an existing file with the same name}
-
 \item{verbose}{logical; do you want informative messages?}
+
+\item{overwrite}{whether to overwrite an existing Sheet with the same title}
 }
 \description{
 Google supports the following file types to be converted to a Google

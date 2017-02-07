@@ -10,6 +10,7 @@
 #' @param sheet_title the title of the spreadsheet; optional, if not specified
 #'   then the name of the file will be used
 #' @template verbose
+#' @param overwrite whether to overwrite an existing Sheet with the same title
 #'
 #' @examples
 #' \dontrun{
