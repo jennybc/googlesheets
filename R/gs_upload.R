@@ -38,19 +38,20 @@ gs_upload <- function(file, sheet_title = NULL, verbose = TRUE, overwrite = FALS
   if (is.null(sheet_title)) {
     sheet_title <- file %>% basename() %>% tools::file_path_sans_ext()
   }
-  if(overwrite) {
+
+  if (overwrite) {
     overwrite_failed <- FALSE
     existing_files <- gs_ls()
-    if(sheet_title %in% existing_files[["sheet_title"]]) {
+    if (sheet_title %in% existing_files[["sheet_title"]]) {
       new_key <- existing_files[["sheet_key"]][existing_files[["sheet_title"]] %in% sheet_title]
     }
     else {
       overwrite_failed <- TRUE
     }
-  } 
+  }
 
   ## upload metadata --> get a fileId (Drive-speak) or key (Sheets-speak)
-  if(!overwrite || overwrite_failed) {
+  if (!overwrite || overwrite_failed) {
     the_body <- list(title = sheet_title,
                      mimeType = "application/vnd.google-apps.spreadsheet")
     req <- httr::POST(.state$gd_base_url_files_v2, google_token(),
