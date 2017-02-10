@@ -20,7 +20,7 @@ content_as_json_UTF8 <- function(req) {
 
 content_as_xml_UTF8 <- function(req) {
   stop_for_content_type(req, expected = "application/atom+xml; charset=UTF-8")
-  xml2::read_xml(httr::content(req, as = "text", encoding = "UTF-8"))
+  xml2::read_xml(httr::content(req, as = "raw"))
 }
 
 ## http://www.iana.org/assignments/http-status-codes/http-status-codes-1.csv
