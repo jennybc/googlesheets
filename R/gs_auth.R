@@ -59,6 +59,8 @@
 #'
 #' @param token optional; an actual token object or the path to a valid token
 #'   stored as an \code{.rds} file
+#' @param service_account optional; the path to service account secret key
+#'   stored as an \code{.json} file
 #' @param new_user logical, defaults to \code{FALSE}. Set to \code{TRUE} if you
 #'   want to wipe the slate clean and re-authenticate with the same or different
 #'   Google account. This disables the \code{.httr-oauth} file in current
@@ -91,6 +93,7 @@
 #' gs_auth(token = "ttt.rds") # from .rds file
 #' }
 gs_auth <- function(token = NULL,
+                    service_account = NULL,
                     new_user = FALSE,
                     key = getOption("googlesheets.client_id"),
                     secret = getOption("googlesheets.client_secret"),
@@ -100,11 +103,11 @@ gs_auth <- function(token = NULL,
   if (new_user) {
     gs_deauth(clear_cache = TRUE, verbose = verbose)
   }
+  scope_list <- c("https://spreadsheets.google.com/feeds",
+                  "https://www.googleapis.com/auth/drive")
 
-  if (is.null(token)) {
+  if (is.null(token) && is.null(service_account)) {
 
-    scope_list <- c("https://spreadsheets.google.com/feeds",
-                    "https://www.googleapis.com/auth/drive")
     googlesheets_app <- httr::oauth_app("google", key = key, secret = secret)
     google_token <-
       httr::oauth2.0_token(httr::oauth_endpoints("google"), googlesheets_app,
@@ -126,9 +129,17 @@ gs_auth <- function(token = NULL,
       spf("File does not contain a proper token:\n%s", token)
     }
     .state$token <- google_token
+  } else if (inherits(service_account, "character") && grepl("(.*?).json$", service_account, ignore.case = T)) {
+    google_token <-
+      httr::oauth_service_token(httr::oauth_endpoints("google"),
+                         jsonlite::fromJSON(service_account),
+                         paste(scope_list,collapse=" "))
+    stopifnot(is_legit_token(google_token, verbose = TRUE))
+    .state$token <- google_token
   } else {
     spf("Input provided via 'token' is neither a",
-        "token,\nnor a path to an .rds file containing a token.")
+        "token,\nnor a path to an .rds file containing a token ",
+        "\nnor a .json file containing the service account secret key")
   }
 
   .state$user <- drive_user()
