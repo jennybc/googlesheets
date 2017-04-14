@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteFilterViewRequest}
 \title{gsv4_DeleteFilterViewRequest}
 \usage{
-gsv4_DeleteFilterViewRequest(filterId=NULL)
+gsv4_DeleteFilterViewRequest(filterId = NULL)
 }
 \arguments{
 \item{filterId}{integer. The ID of the filter to delete.}

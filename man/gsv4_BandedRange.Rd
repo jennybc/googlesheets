@@ -4,7 +4,8 @@
 \alias{gsv4_BandedRange}
 \title{gsv4_BandedRange}
 \usage{
-gsv4_BandedRange(range=NULL, bandedRangeId=NULL, columnProperties=NULL, rowProperties=NULL)
+gsv4_BandedRange(range = NULL, bandedRangeId = NULL,
+  columnProperties = NULL, rowProperties = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

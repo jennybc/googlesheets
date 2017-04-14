@@ -4,7 +4,8 @@
 \alias{gsv4_GridData}
 \title{gsv4_GridData}
 \usage{
-gsv4_GridData(columnMetadata=NULL, rowData=NULL, rowMetadata=NULL, startColumn=NULL, startRow=NULL)
+gsv4_GridData(columnMetadata = NULL, rowData = NULL, rowMetadata = NULL,
+  startColumn = NULL, startRow = NULL)
 }
 \arguments{
 \item{columnMetadata}{list of \code{\link{gsv4_DimensionProperties}} objects. Metadata about the requested columns in the grid, starting with the column

@@ -4,7 +4,7 @@
 \alias{gsv4_CutPasteRequest}
 \title{gsv4_CutPasteRequest}
 \usage{
-gsv4_CutPasteRequest(destination=NULL, pasteType=NULL, source=NULL)
+gsv4_CutPasteRequest(destination = NULL, pasteType = NULL, source = NULL)
 }
 \arguments{
 \item{destination}{\code{\link{gsv4_GridCoordinate}} object. A coordinate in a sheet.

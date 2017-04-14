@@ -4,7 +4,7 @@
 \alias{gsv4_SortSpec}
 \title{gsv4_SortSpec}
 \usage{
-gsv4_SortSpec(dimensionIndex=NULL, sortOrder=NULL)
+gsv4_SortSpec(dimensionIndex = NULL, sortOrder = NULL)
 }
 \arguments{
 \item{dimensionIndex}{integer. The dimension the sort should be applied to.}

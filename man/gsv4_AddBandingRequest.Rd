@@ -4,7 +4,7 @@
 \alias{gsv4_AddBandingRequest}
 \title{Google Sheets Object Makers}
 \usage{
-gsv4_AddBandingRequest(bandedRange=NULL)
+gsv4_AddBandingRequest(bandedRange = NULL)
 }
 \arguments{
 \item{bandedRange}{\code{\link{gsv4_BandedRange}} object. A banded (alternating colors) range in a sheet.}

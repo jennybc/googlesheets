@@ -4,7 +4,8 @@
 \alias{gsv4_UpdateEmbeddedObjectPositionRequest}
 \title{gsv4_UpdateEmbeddedObjectPositionRequest}
 \usage{
-gsv4_UpdateEmbeddedObjectPositionRequest(fields=NULL, newPosition=NULL, objectId=NULL)
+gsv4_UpdateEmbeddedObjectPositionRequest(fields = NULL, newPosition = NULL,
+  objectId = NULL)
 }
 \arguments{
 \item{fields}{string. The fields of OverlayPosition

@@ -4,7 +4,8 @@
 \alias{gsv4_EmbeddedObjectPosition}
 \title{gsv4_EmbeddedObjectPosition}
 \usage{
-gsv4_EmbeddedObjectPosition(sheetId=NULL, newSheet=NULL, overlayPosition=NULL)
+gsv4_EmbeddedObjectPosition(sheetId = NULL, newSheet = NULL,
+  overlayPosition = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet this is on. Set only if the embedded object

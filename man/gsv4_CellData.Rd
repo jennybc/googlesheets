@@ -4,7 +4,10 @@
 \alias{gsv4_CellData}
 \title{gsv4_CellData}
 \usage{
-gsv4_CellData(dataValidation=NULL, effectiveFormat=NULL, effectiveValue=NULL, formattedValue=NULL, hyperlink=NULL, note=NULL, pivotTable=NULL, textFormatRuns=NULL, userEnteredFormat=NULL, userEnteredValue=NULL)
+gsv4_CellData(dataValidation = NULL, effectiveFormat = NULL,
+  effectiveValue = NULL, formattedValue = NULL, hyperlink = NULL,
+  note = NULL, pivotTable = NULL, textFormatRuns = NULL,
+  userEnteredFormat = NULL, userEnteredValue = NULL)
 }
 \arguments{
 \item{dataValidation}{\code{\link{gsv4_DataValidationRule}} object. A data validation rule.}

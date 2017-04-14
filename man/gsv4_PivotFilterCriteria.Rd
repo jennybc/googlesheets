@@ -4,7 +4,7 @@
 \alias{gsv4_PivotFilterCriteria}
 \title{gsv4_PivotFilterCriteria}
 \usage{
-gsv4_PivotFilterCriteria(visibleValues=NULL)
+gsv4_PivotFilterCriteria(visibleValues = NULL)
 }
 \arguments{
 \item{visibleValues}{list. Values that should be included.  Values not listed here are excluded.}

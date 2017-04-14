@@ -4,7 +4,7 @@
 \alias{gsv4_BasicChartDomain}
 \title{gsv4_BasicChartDomain}
 \usage{
-gsv4_BasicChartDomain(domain=NULL)
+gsv4_BasicChartDomain(domain = NULL)
 }
 \arguments{
 \item{domain}{\code{\link{gsv4_ChartData}} object. The data included in a domain or series.}

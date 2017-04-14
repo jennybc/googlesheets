@@ -4,7 +4,8 @@
 \alias{gsv4_PivotValue}
 \title{gsv4_PivotValue}
 \usage{
-gsv4_PivotValue(formula=NULL, name=NULL, sourceColumnOffset=NULL, summarizeFunction=NULL)
+gsv4_PivotValue(formula = NULL, name = NULL, sourceColumnOffset = NULL,
+  summarizeFunction = NULL)
 }
 \arguments{
 \item{formula}{string. A custom formula to calculate the value.  The formula must start

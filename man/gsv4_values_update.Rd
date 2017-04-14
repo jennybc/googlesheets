@@ -4,7 +4,9 @@
 \alias{gsv4_values_update}
 \title{gsv4_values_update}
 \usage{
-gsv4_values_update(spreadsheetId, range, valueInputOption, includeValuesInResponse=NULL, responseDateTimeRenderOption=NULL, responseValueRenderOption=NULL, input, standard_params = list(...), ...)
+gsv4_values_update(spreadsheetId, range, valueInputOption,
+  includeValuesInResponse = NULL, responseDateTimeRenderOption = NULL,
+  responseValueRenderOption = NULL, input, standard_params = list(...), ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The ID of the spreadsheet to update.}

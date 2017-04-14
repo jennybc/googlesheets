@@ -4,7 +4,7 @@
 \alias{gsv4_TextFormatRun}
 \title{gsv4_TextFormatRun}
 \usage{
-gsv4_TextFormatRun(format=NULL, startIndex=NULL)
+gsv4_TextFormatRun(format = NULL, startIndex = NULL)
 }
 \arguments{
 \item{format}{\code{\link{gsv4_TextFormat}} object. The format of a run of text in a cell.

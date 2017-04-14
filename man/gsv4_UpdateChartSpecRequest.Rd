@@ -4,7 +4,7 @@
 \alias{gsv4_UpdateChartSpecRequest}
 \title{gsv4_UpdateChartSpecRequest}
 \usage{
-gsv4_UpdateChartSpecRequest(chartId=NULL, spec=NULL)
+gsv4_UpdateChartSpecRequest(chartId = NULL, spec = NULL)
 }
 \arguments{
 \item{chartId}{integer. The ID of the chart to update.}

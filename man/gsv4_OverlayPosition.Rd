@@ -4,7 +4,8 @@
 \alias{gsv4_OverlayPosition}
 \title{gsv4_OverlayPosition}
 \usage{
-gsv4_OverlayPosition(anchorCell=NULL, heightPixels=NULL, offsetXPixels=NULL, offsetYPixels=NULL, widthPixels=NULL)
+gsv4_OverlayPosition(anchorCell = NULL, heightPixels = NULL,
+  offsetXPixels = NULL, offsetYPixels = NULL, widthPixels = NULL)
 }
 \arguments{
 \item{anchorCell}{\code{\link{gsv4_GridCoordinate}} object. A coordinate in a sheet.

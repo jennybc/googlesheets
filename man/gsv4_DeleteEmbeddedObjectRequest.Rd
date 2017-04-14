@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteEmbeddedObjectRequest}
 \title{gsv4_DeleteEmbeddedObjectRequest}
 \usage{
-gsv4_DeleteEmbeddedObjectRequest(objectId=NULL)
+gsv4_DeleteEmbeddedObjectRequest(objectId = NULL)
 }
 \arguments{
 \item{objectId}{integer. The ID of the embedded object to delete.}

@@ -4,7 +4,7 @@
 \alias{gsv4_SetDataValidationRequest}
 \title{gsv4_SetDataValidationRequest}
 \usage{
-gsv4_SetDataValidationRequest(range=NULL, rule=NULL)
+gsv4_SetDataValidationRequest(range = NULL, rule = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

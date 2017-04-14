@@ -4,7 +4,7 @@
 \alias{gsv4_RepeatCellRequest}
 \title{gsv4_RepeatCellRequest}
 \usage{
-gsv4_RepeatCellRequest(range=NULL, fields=NULL, cell=NULL)
+gsv4_RepeatCellRequest(range = NULL, fields = NULL, cell = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

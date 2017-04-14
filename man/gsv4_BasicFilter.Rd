@@ -4,7 +4,7 @@
 \alias{gsv4_BasicFilter}
 \title{gsv4_BasicFilter}
 \usage{
-gsv4_BasicFilter(range=NULL, criteria=NULL, sortSpecs=NULL)
+gsv4_BasicFilter(range = NULL, criteria = NULL, sortSpecs = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

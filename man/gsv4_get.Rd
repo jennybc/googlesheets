@@ -4,7 +4,8 @@
 \alias{gsv4_get}
 \title{gsv4_get}
 \usage{
-gsv4_get(spreadsheetId, includeGridData=NULL, ranges=NULL, standard_params = list(...), ...)
+gsv4_get(spreadsheetId, includeGridData = NULL, ranges = NULL,
+  standard_params = list(...), ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The spreadsheet to request.}

@@ -4,7 +4,10 @@
 \alias{gsv4_ProtectedRange}
 \title{gsv4_ProtectedRange}
 \usage{
-gsv4_ProtectedRange(range=NULL, description=NULL, editors=NULL, namedRangeId=NULL, protectedRangeId=NULL, requestingUserCanEdit=NULL, unprotectedRanges=NULL, warningOnly=NULL)
+gsv4_ProtectedRange(range = NULL, description = NULL, editors = NULL,
+  namedRangeId = NULL, protectedRangeId = NULL,
+  requestingUserCanEdit = NULL, unprotectedRanges = NULL,
+  warningOnly = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

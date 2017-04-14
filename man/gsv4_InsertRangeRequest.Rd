@@ -4,7 +4,7 @@
 \alias{gsv4_InsertRangeRequest}
 \title{gsv4_InsertRangeRequest}
 \usage{
-gsv4_InsertRangeRequest(range=NULL, shiftDimension=NULL)
+gsv4_InsertRangeRequest(range = NULL, shiftDimension = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

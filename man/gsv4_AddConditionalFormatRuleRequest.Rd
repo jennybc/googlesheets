@@ -4,7 +4,7 @@
 \alias{gsv4_AddConditionalFormatRuleRequest}
 \title{gsv4_AddConditionalFormatRuleRequest}
 \usage{
-gsv4_AddConditionalFormatRuleRequest(index=NULL, rule=NULL)
+gsv4_AddConditionalFormatRuleRequest(index = NULL, rule = NULL)
 }
 \arguments{
 \item{index}{integer. The zero-based index where the rule should be inserted.}

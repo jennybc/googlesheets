@@ -4,7 +4,7 @@
 \alias{gsv4_ChartSourceRange}
 \title{gsv4_ChartSourceRange}
 \usage{
-gsv4_ChartSourceRange(sources=NULL)
+gsv4_ChartSourceRange(sources = NULL)
 }
 \arguments{
 \item{sources}{list of \code{\link{gsv4_GridRange}} objects. The ranges of data for a series or domain.

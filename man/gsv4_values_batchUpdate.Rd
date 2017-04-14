@@ -4,7 +4,8 @@
 \alias{gsv4_values_batchUpdate}
 \title{gsv4_values_batchUpdate}
 \usage{
-gsv4_values_batchUpdate(spreadsheetId, input, standard_params = list(...), ...)
+gsv4_values_batchUpdate(spreadsheetId, input, standard_params = list(...),
+  ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The ID of the spreadsheet to update.}

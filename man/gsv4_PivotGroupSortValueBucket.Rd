@@ -4,7 +4,7 @@
 \alias{gsv4_PivotGroupSortValueBucket}
 \title{gsv4_PivotGroupSortValueBucket}
 \usage{
-gsv4_PivotGroupSortValueBucket(buckets=NULL, valuesIndex=NULL)
+gsv4_PivotGroupSortValueBucket(buckets = NULL, valuesIndex = NULL)
 }
 \arguments{
 \item{buckets}{list of \code{\link{gsv4_ExtendedValue}} objects. Determines the bucket from which values are chosen to sort.

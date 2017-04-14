@@ -4,7 +4,7 @@
 \alias{gsv4_MoveDimensionRequest}
 \title{gsv4_MoveDimensionRequest}
 \usage{
-gsv4_MoveDimensionRequest(destinationIndex=NULL, source=NULL)
+gsv4_MoveDimensionRequest(destinationIndex = NULL, source = NULL)
 }
 \arguments{
 \item{destinationIndex}{integer. The zero-based start index of where to move the source data to,

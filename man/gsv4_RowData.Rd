@@ -4,7 +4,7 @@
 \alias{gsv4_RowData}
 \title{gsv4_RowData}
 \usage{
-gsv4_RowData(values=NULL)
+gsv4_RowData(values = NULL)
 }
 \arguments{
 \item{values}{list of \code{\link{gsv4_CellData}} objects. The values in the row, one per column.}

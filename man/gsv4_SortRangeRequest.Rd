@@ -4,7 +4,7 @@
 \alias{gsv4_SortRangeRequest}
 \title{gsv4_SortRangeRequest}
 \usage{
-gsv4_SortRangeRequest(range=NULL, sortSpecs=NULL)
+gsv4_SortRangeRequest(range = NULL, sortSpecs = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

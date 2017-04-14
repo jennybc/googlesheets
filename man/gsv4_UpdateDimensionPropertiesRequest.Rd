@@ -4,7 +4,8 @@
 \alias{gsv4_UpdateDimensionPropertiesRequest}
 \title{gsv4_UpdateDimensionPropertiesRequest}
 \usage{
-gsv4_UpdateDimensionPropertiesRequest(range=NULL, fields=NULL, properties=NULL)
+gsv4_UpdateDimensionPropertiesRequest(range = NULL, fields = NULL,
+  properties = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.

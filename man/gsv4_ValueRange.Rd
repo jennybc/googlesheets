@@ -4,7 +4,7 @@
 \alias{gsv4_ValueRange}
 \title{gsv4_ValueRange}
 \usage{
-gsv4_ValueRange(range=NULL, majorDimension=NULL, values=NULL)
+gsv4_ValueRange(range = NULL, majorDimension = NULL, values = NULL)
 }
 \arguments{
 \item{range}{string. The range the values cover, in A1 notation.

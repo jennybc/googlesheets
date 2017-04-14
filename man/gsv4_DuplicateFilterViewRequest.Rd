@@ -4,7 +4,7 @@
 \alias{gsv4_DuplicateFilterViewRequest}
 \title{gsv4_DuplicateFilterViewRequest}
 \usage{
-gsv4_DuplicateFilterViewRequest(filterId=NULL)
+gsv4_DuplicateFilterViewRequest(filterId = NULL)
 }
 \arguments{
 \item{filterId}{integer. The ID of the filter being duplicated.}

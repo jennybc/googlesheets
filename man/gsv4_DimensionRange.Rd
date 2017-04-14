@@ -4,7 +4,8 @@
 \alias{gsv4_DimensionRange}
 \title{gsv4_DimensionRange}
 \usage{
-gsv4_DimensionRange(sheetId=NULL, dimension=NULL, endIndex=NULL, startIndex=NULL)
+gsv4_DimensionRange(sheetId = NULL, dimension = NULL, endIndex = NULL,
+  startIndex = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet this span is on.}

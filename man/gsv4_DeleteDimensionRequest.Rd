@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteDimensionRequest}
 \title{gsv4_DeleteDimensionRequest}
 \usage{
-gsv4_DeleteDimensionRequest(range=NULL)
+gsv4_DeleteDimensionRequest(range = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.

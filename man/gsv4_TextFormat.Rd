@@ -4,7 +4,9 @@
 \alias{gsv4_TextFormat}
 \title{gsv4_TextFormat}
 \usage{
-gsv4_TextFormat(bold=NULL, fontFamily=NULL, fontSize=NULL, foregroundColor=NULL, italic=NULL, strikethrough=NULL, underline=NULL)
+gsv4_TextFormat(bold = NULL, fontFamily = NULL, fontSize = NULL,
+  foregroundColor = NULL, italic = NULL, strikethrough = NULL,
+  underline = NULL)
 }
 \arguments{
 \item{bold}{logical. TRUE if the text is bold.}

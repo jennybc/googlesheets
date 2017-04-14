@@ -4,7 +4,7 @@
 \alias{gsv4_UpdateFilterViewRequest}
 \title{gsv4_UpdateFilterViewRequest}
 \usage{
-gsv4_UpdateFilterViewRequest(fields=NULL, filter=NULL)
+gsv4_UpdateFilterViewRequest(fields = NULL, filter = NULL)
 }
 \arguments{
 \item{fields}{string. The fields that should be updated.  At least one field must be specified.

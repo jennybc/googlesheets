@@ -4,7 +4,9 @@
 \alias{gsv4_BatchUpdateValuesRequest}
 \title{gsv4_BatchUpdateValuesRequest}
 \usage{
-gsv4_BatchUpdateValuesRequest(data=NULL, includeValuesInResponse=NULL, responseDateTimeRenderOption=NULL, responseValueRenderOption=NULL, valueInputOption=NULL)
+gsv4_BatchUpdateValuesRequest(data = NULL, includeValuesInResponse = NULL,
+  responseDateTimeRenderOption = NULL, responseValueRenderOption = NULL,
+  valueInputOption = NULL)
 }
 \arguments{
 \item{data}{list of \code{\link{gsv4_ValueRange}} objects. The new values to apply to the spreadsheet.}

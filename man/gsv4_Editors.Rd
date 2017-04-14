@@ -4,7 +4,7 @@
 \alias{gsv4_Editors}
 \title{gsv4_Editors}
 \usage{
-gsv4_Editors(domainUsersCanEdit=NULL, groups=NULL, users=NULL)
+gsv4_Editors(domainUsersCanEdit = NULL, groups = NULL, users = NULL)
 }
 \arguments{
 \item{domainUsersCanEdit}{logical. TRUE if anyone in the document's domain has edit access to the protected

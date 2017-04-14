@@ -4,7 +4,7 @@
 \alias{gsv4_AddProtectedRangeRequest}
 \title{gsv4_AddProtectedRangeRequest}
 \usage{
-gsv4_AddProtectedRangeRequest(protectedRange=NULL)
+gsv4_AddProtectedRangeRequest(protectedRange = NULL)
 }
 \arguments{
 \item{protectedRange}{\code{\link{gsv4_ProtectedRange}} object. A protected range.}

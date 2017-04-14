@@ -4,7 +4,7 @@
 \alias{gsv4_Padding}
 \title{gsv4_Padding}
 \usage{
-gsv4_Padding(bottom=NULL, left=NULL, right=NULL, top=NULL)
+gsv4_Padding(bottom = NULL, left = NULL, right = NULL, top = NULL)
 }
 \arguments{
 \item{bottom}{integer. The bottom padding of the cell.}

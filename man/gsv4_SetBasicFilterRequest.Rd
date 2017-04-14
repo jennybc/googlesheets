@@ -4,7 +4,7 @@
 \alias{gsv4_SetBasicFilterRequest}
 \title{gsv4_SetBasicFilterRequest}
 \usage{
-gsv4_SetBasicFilterRequest(filter=NULL)
+gsv4_SetBasicFilterRequest(filter = NULL)
 }
 \arguments{
 \item{filter}{\code{\link{gsv4_BasicFilter}} object. The default filter associated with a sheet.}

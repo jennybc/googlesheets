@@ -4,7 +4,7 @@
 \alias{gsv4_BooleanRule}
 \title{gsv4_BooleanRule}
 \usage{
-gsv4_BooleanRule(condition=NULL, format=NULL)
+gsv4_BooleanRule(condition = NULL, format = NULL)
 }
 \arguments{
 \item{condition}{\code{\link{gsv4_BooleanCondition}} object. A condition that can evaluate to TRUE or FALSE.

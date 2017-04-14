@@ -4,7 +4,9 @@
 \alias{gsv4_SheetProperties}
 \title{gsv4_SheetProperties}
 \usage{
-gsv4_SheetProperties(sheetId=NULL, gridProperties=NULL, hidden=NULL, index=NULL, rightToLeft=NULL, sheetType=NULL, tabColor=NULL, title=NULL)
+gsv4_SheetProperties(sheetId = NULL, gridProperties = NULL, hidden = NULL,
+  index = NULL, rightToLeft = NULL, sheetType = NULL, tabColor = NULL,
+  title = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The ID of the sheet. Must be non-negative.

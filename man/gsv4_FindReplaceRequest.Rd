@@ -4,7 +4,9 @@
 \alias{gsv4_FindReplaceRequest}
 \title{gsv4_FindReplaceRequest}
 \usage{
-gsv4_FindReplaceRequest(sheetId=NULL, range=NULL, allSheets=NULL, find=NULL, includeFormulas=NULL, matchCase=NULL, matchEntireCell=NULL, replacement=NULL, searchByRegex=NULL)
+gsv4_FindReplaceRequest(sheetId = NULL, range = NULL, allSheets = NULL,
+  find = NULL, includeFormulas = NULL, matchCase = NULL,
+  matchEntireCell = NULL, replacement = NULL, searchByRegex = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet to find/replace over.}

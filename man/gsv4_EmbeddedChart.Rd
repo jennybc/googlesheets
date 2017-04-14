@@ -4,7 +4,7 @@
 \alias{gsv4_EmbeddedChart}
 \title{gsv4_EmbeddedChart}
 \usage{
-gsv4_EmbeddedChart(chartId=NULL, position=NULL, spec=NULL)
+gsv4_EmbeddedChart(chartId = NULL, position = NULL, spec = NULL)
 }
 \arguments{
 \item{chartId}{integer. The ID of the chart.}

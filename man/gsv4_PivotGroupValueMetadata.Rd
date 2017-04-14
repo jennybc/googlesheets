@@ -4,7 +4,7 @@
 \alias{gsv4_PivotGroupValueMetadata}
 \title{gsv4_PivotGroupValueMetadata}
 \usage{
-gsv4_PivotGroupValueMetadata(collapsed=NULL, value=NULL)
+gsv4_PivotGroupValueMetadata(collapsed = NULL, value = NULL)
 }
 \arguments{
 \item{collapsed}{logical. TRUE if the data corresponding to the value is collapsed.}

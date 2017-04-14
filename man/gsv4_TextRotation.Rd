@@ -4,7 +4,7 @@
 \alias{gsv4_TextRotation}
 \title{gsv4_TextRotation}
 \usage{
-gsv4_TextRotation(angle=NULL, vertical=NULL)
+gsv4_TextRotation(angle = NULL, vertical = NULL)
 }
 \arguments{
 \item{angle}{integer. The angle between the standard orientation and the desired orientation.

@@ -4,7 +4,8 @@
 \alias{gsv4_sheets_copyTo}
 \title{gsv4_sheets_copyTo}
 \usage{
-gsv4_sheets_copyTo(spreadsheetId, sheetId, input, standard_params = list(...), ...)
+gsv4_sheets_copyTo(spreadsheetId, sheetId, input, standard_params = list(...),
+  ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The ID of the spreadsheet containing the sheet to copy.}

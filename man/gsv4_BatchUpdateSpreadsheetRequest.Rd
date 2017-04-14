@@ -4,7 +4,8 @@
 \alias{gsv4_BatchUpdateSpreadsheetRequest}
 \title{gsv4_BatchUpdateSpreadsheetRequest}
 \usage{
-gsv4_BatchUpdateSpreadsheetRequest(includeSpreadsheetInResponse=NULL, requests=NULL, responseIncludeGridData=NULL, responseRanges=NULL)
+gsv4_BatchUpdateSpreadsheetRequest(includeSpreadsheetInResponse = NULL,
+  requests = NULL, responseIncludeGridData = NULL, responseRanges = NULL)
 }
 \arguments{
 \item{includeSpreadsheetInResponse}{logical. Determines if the update response should include the spreadsheet

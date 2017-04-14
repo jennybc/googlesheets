@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteSheetRequest}
 \title{gsv4_DeleteSheetRequest}
 \usage{
-gsv4_DeleteSheetRequest(sheetId=NULL)
+gsv4_DeleteSheetRequest(sheetId = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The ID of the sheet to delete.}

@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteProtectedRangeRequest}
 \title{gsv4_DeleteProtectedRangeRequest}
 \usage{
-gsv4_DeleteProtectedRangeRequest(protectedRangeId=NULL)
+gsv4_DeleteProtectedRangeRequest(protectedRangeId = NULL)
 }
 \arguments{
 \item{protectedRangeId}{integer. The ID of the protected range to delete.}

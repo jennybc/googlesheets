@@ -4,7 +4,26 @@
 \alias{gsv4_Request}
 \title{gsv4_Request}
 \usage{
-gsv4_Request(addBanding=NULL, addChart=NULL, addConditionalFormatRule=NULL, addFilterView=NULL, addNamedRange=NULL, addProtectedRange=NULL, addSheet=NULL, appendCells=NULL, appendDimension=NULL, autoFill=NULL, autoResizeDimensions=NULL, clearBasicFilter=NULL, copyPaste=NULL, cutPaste=NULL, deleteBanding=NULL, deleteConditionalFormatRule=NULL, deleteDimension=NULL, deleteEmbeddedObject=NULL, deleteFilterView=NULL, deleteNamedRange=NULL, deleteProtectedRange=NULL, deleteRange=NULL, deleteSheet=NULL, duplicateFilterView=NULL, duplicateSheet=NULL, findReplace=NULL, insertDimension=NULL, insertRange=NULL, mergeCells=NULL, moveDimension=NULL, pasteData=NULL, repeatCell=NULL, setBasicFilter=NULL, setDataValidation=NULL, sortRange=NULL, textToColumns=NULL, unmergeCells=NULL, updateBanding=NULL, updateBorders=NULL, updateCells=NULL, updateChartSpec=NULL, updateConditionalFormatRule=NULL, updateDimensionProperties=NULL, updateEmbeddedObjectPosition=NULL, updateFilterView=NULL, updateNamedRange=NULL, updateProtectedRange=NULL, updateSheetProperties=NULL, updateSpreadsheetProperties=NULL)
+gsv4_Request(addBanding = NULL, addChart = NULL,
+  addConditionalFormatRule = NULL, addFilterView = NULL,
+  addNamedRange = NULL, addProtectedRange = NULL, addSheet = NULL,
+  appendCells = NULL, appendDimension = NULL, autoFill = NULL,
+  autoResizeDimensions = NULL, clearBasicFilter = NULL, copyPaste = NULL,
+  cutPaste = NULL, deleteBanding = NULL,
+  deleteConditionalFormatRule = NULL, deleteDimension = NULL,
+  deleteEmbeddedObject = NULL, deleteFilterView = NULL,
+  deleteNamedRange = NULL, deleteProtectedRange = NULL,
+  deleteRange = NULL, deleteSheet = NULL, duplicateFilterView = NULL,
+  duplicateSheet = NULL, findReplace = NULL, insertDimension = NULL,
+  insertRange = NULL, mergeCells = NULL, moveDimension = NULL,
+  pasteData = NULL, repeatCell = NULL, setBasicFilter = NULL,
+  setDataValidation = NULL, sortRange = NULL, textToColumns = NULL,
+  unmergeCells = NULL, updateBanding = NULL, updateBorders = NULL,
+  updateCells = NULL, updateChartSpec = NULL,
+  updateConditionalFormatRule = NULL, updateDimensionProperties = NULL,
+  updateEmbeddedObjectPosition = NULL, updateFilterView = NULL,
+  updateNamedRange = NULL, updateProtectedRange = NULL,
+  updateSheetProperties = NULL, updateSpreadsheetProperties = NULL)
 }
 \arguments{
 \item{addBanding}{\code{\link{gsv4_AddBandingRequest}} object. Adds a new banded range to the spreadsheet.}

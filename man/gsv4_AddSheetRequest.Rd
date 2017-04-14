@@ -4,7 +4,7 @@
 \alias{gsv4_AddSheetRequest}
 \title{gsv4_AddSheetRequest}
 \usage{
-gsv4_AddSheetRequest(properties=NULL)
+gsv4_AddSheetRequest(properties = NULL)
 }
 \arguments{
 \item{properties}{\code{\link{gsv4_SheetProperties}} object. Properties of a sheet.}

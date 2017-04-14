@@ -4,7 +4,7 @@
 \alias{gsv4_AutoResizeDimensionsRequest}
 \title{gsv4_AutoResizeDimensionsRequest}
 \usage{
-gsv4_AutoResizeDimensionsRequest(dimensions=NULL)
+gsv4_AutoResizeDimensionsRequest(dimensions = NULL)
 }
 \arguments{
 \item{dimensions}{\code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.

@@ -4,7 +4,7 @@
 \alias{gsv4_NamedRange}
 \title{gsv4_NamedRange}
 \usage{
-gsv4_NamedRange(range=NULL, name=NULL, namedRangeId=NULL)
+gsv4_NamedRange(range = NULL, name = NULL, namedRangeId = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

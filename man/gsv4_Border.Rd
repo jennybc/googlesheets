@@ -4,7 +4,7 @@
 \alias{gsv4_Border}
 \title{gsv4_Border}
 \usage{
-gsv4_Border(color=NULL, style=NULL, width=NULL)
+gsv4_Border(color = NULL, style = NULL, width = NULL)
 }
 \arguments{
 \item{color}{\code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed

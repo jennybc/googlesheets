@@ -4,7 +4,9 @@
 \alias{gsv4_values_batchGet}
 \title{gsv4_values_batchGet}
 \usage{
-gsv4_values_batchGet(spreadsheetId, dateTimeRenderOption=NULL, majorDimension=NULL, ranges=NULL, valueRenderOption=NULL, standard_params = list(...), ...)
+gsv4_values_batchGet(spreadsheetId, dateTimeRenderOption = NULL,
+  majorDimension = NULL, ranges = NULL, valueRenderOption = NULL,
+  standard_params = list(...), ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The ID of the spreadsheet to retrieve data from.}

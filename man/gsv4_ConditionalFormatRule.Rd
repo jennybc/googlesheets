@@ -4,7 +4,8 @@
 \alias{gsv4_ConditionalFormatRule}
 \title{gsv4_ConditionalFormatRule}
 \usage{
-gsv4_ConditionalFormatRule(booleanRule=NULL, gradientRule=NULL, ranges=NULL)
+gsv4_ConditionalFormatRule(booleanRule = NULL, gradientRule = NULL,
+  ranges = NULL)
 }
 \arguments{
 \item{booleanRule}{\code{\link{gsv4_BooleanRule}} object. A rule that may or may not match, depending on the condition.}

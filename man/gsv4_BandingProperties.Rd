@@ -4,7 +4,8 @@
 \alias{gsv4_BandingProperties}
 \title{gsv4_BandingProperties}
 \usage{
-gsv4_BandingProperties(firstBandColor=NULL, footerColor=NULL, headerColor=NULL, secondBandColor=NULL)
+gsv4_BandingProperties(firstBandColor = NULL, footerColor = NULL,
+  headerColor = NULL, secondBandColor = NULL)
 }
 \arguments{
 \item{firstBandColor}{\code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed

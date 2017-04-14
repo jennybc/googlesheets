@@ -4,7 +4,8 @@
 \alias{gsv4_ChartSpec}
 \title{gsv4_ChartSpec}
 \usage{
-gsv4_ChartSpec(basicChart=NULL, hiddenDimensionStrategy=NULL, pieChart=NULL, title=NULL)
+gsv4_ChartSpec(basicChart = NULL, hiddenDimensionStrategy = NULL,
+  pieChart = NULL, title = NULL)
 }
 \arguments{
 \item{basicChart}{\code{\link{gsv4_BasicChartSpec}} object. The specification for a basic chart.  See BasicChartType for the list

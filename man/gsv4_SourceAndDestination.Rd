@@ -4,7 +4,8 @@
 \alias{gsv4_SourceAndDestination}
 \title{gsv4_SourceAndDestination}
 \usage{
-gsv4_SourceAndDestination(dimension=NULL, fillLength=NULL, source=NULL)
+gsv4_SourceAndDestination(dimension = NULL, fillLength = NULL,
+  source = NULL)
 }
 \arguments{
 \item{dimension}{string. The dimension that data should be filled into. dimension must take one of the following values: DIMENSION_UNSPECIFIED, ROWS, COLUMNS

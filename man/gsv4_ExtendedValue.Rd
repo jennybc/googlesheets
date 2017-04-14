@@ -4,7 +4,8 @@
 \alias{gsv4_ExtendedValue}
 \title{gsv4_ExtendedValue}
 \usage{
-gsv4_ExtendedValue(boolValue=NULL, errorValue=NULL, formulaValue=NULL, numberValue=NULL, stringValue=NULL)
+gsv4_ExtendedValue(boolValue = NULL, errorValue = NULL,
+  formulaValue = NULL, numberValue = NULL, stringValue = NULL)
 }
 \arguments{
 \item{boolValue}{logical. Represents a boolean value.}

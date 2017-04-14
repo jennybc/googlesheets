@@ -4,7 +4,8 @@
 \alias{gsv4_GridRange}
 \title{gsv4_GridRange}
 \usage{
-gsv4_GridRange(sheetId=NULL, endColumnIndex=NULL, endRowIndex=NULL, startColumnIndex=NULL, startRowIndex=NULL)
+gsv4_GridRange(sheetId = NULL, endColumnIndex = NULL, endRowIndex = NULL,
+  startColumnIndex = NULL, startRowIndex = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet this range is on.}

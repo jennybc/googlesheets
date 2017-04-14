@@ -4,7 +4,8 @@
 \alias{gsv4_TextToColumnsRequest}
 \title{gsv4_TextToColumnsRequest}
 \usage{
-gsv4_TextToColumnsRequest(delimiter=NULL, delimiterType=NULL, source=NULL)
+gsv4_TextToColumnsRequest(delimiter = NULL, delimiterType = NULL,
+  source = NULL)
 }
 \arguments{
 \item{delimiter}{string. The delimiter to use. Used only if delimiterType is

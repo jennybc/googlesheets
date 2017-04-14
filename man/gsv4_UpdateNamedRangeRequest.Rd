@@ -4,7 +4,7 @@
 \alias{gsv4_UpdateNamedRangeRequest}
 \title{gsv4_UpdateNamedRangeRequest}
 \usage{
-gsv4_UpdateNamedRangeRequest(fields=NULL, namedRange=NULL)
+gsv4_UpdateNamedRangeRequest(fields = NULL, namedRange = NULL)
 }
 \arguments{
 \item{fields}{string. The fields that should be updated.  At least one field must be specified.

@@ -4,7 +4,7 @@
 \alias{gsv4_NumberFormat}
 \title{gsv4_NumberFormat}
 \usage{
-gsv4_NumberFormat(pattern=NULL, type=NULL)
+gsv4_NumberFormat(pattern = NULL, type = NULL)
 }
 \arguments{
 \item{pattern}{string. Pattern string used for formatting.  If not set, a default pattern based on

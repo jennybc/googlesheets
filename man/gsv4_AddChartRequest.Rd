@@ -4,7 +4,7 @@
 \alias{gsv4_AddChartRequest}
 \title{gsv4_AddChartRequest}
 \usage{
-gsv4_AddChartRequest(chart=NULL)
+gsv4_AddChartRequest(chart = NULL)
 }
 \arguments{
 \item{chart}{\code{\link{gsv4_EmbeddedChart}} object. A chart embedded in a sheet.}

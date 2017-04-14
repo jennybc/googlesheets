@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteRangeRequest}
 \title{gsv4_DeleteRangeRequest}
 \usage{
-gsv4_DeleteRangeRequest(range=NULL, shiftDimension=NULL)
+gsv4_DeleteRangeRequest(range = NULL, shiftDimension = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

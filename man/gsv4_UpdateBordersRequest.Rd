@@ -4,7 +4,9 @@
 \alias{gsv4_UpdateBordersRequest}
 \title{gsv4_UpdateBordersRequest}
 \usage{
-gsv4_UpdateBordersRequest(range=NULL, bottom=NULL, innerHorizontal=NULL, innerVertical=NULL, left=NULL, right=NULL, top=NULL)
+gsv4_UpdateBordersRequest(range = NULL, bottom = NULL,
+  innerHorizontal = NULL, innerVertical = NULL, left = NULL,
+  right = NULL, top = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

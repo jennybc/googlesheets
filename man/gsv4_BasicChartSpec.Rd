@@ -4,7 +4,8 @@
 \alias{gsv4_BasicChartSpec}
 \title{gsv4_BasicChartSpec}
 \usage{
-gsv4_BasicChartSpec(axis=NULL, chartType=NULL, domains=NULL, headerCount=NULL, legendPosition=NULL, series=NULL)
+gsv4_BasicChartSpec(axis = NULL, chartType = NULL, domains = NULL,
+  headerCount = NULL, legendPosition = NULL, series = NULL)
 }
 \arguments{
 \item{axis}{list of \code{\link{gsv4_BasicChartAxis}} objects. The axis on the chart.}

@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteConditionalFormatRuleRequest}
 \title{gsv4_DeleteConditionalFormatRuleRequest}
 \usage{
-gsv4_DeleteConditionalFormatRuleRequest(sheetId=NULL, index=NULL)
+gsv4_DeleteConditionalFormatRuleRequest(sheetId = NULL, index = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet the rule is being deleted from.}

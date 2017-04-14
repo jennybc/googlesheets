@@ -4,7 +4,7 @@
 \alias{gsv4_AddFilterViewRequest}
 \title{gsv4_AddFilterViewRequest}
 \usage{
-gsv4_AddFilterViewRequest(filter=NULL)
+gsv4_AddFilterViewRequest(filter = NULL)
 }
 \arguments{
 \item{filter}{\code{\link{gsv4_FilterView}} object. A filter view.}

@@ -4,7 +4,7 @@
 \alias{gsv4_Borders}
 \title{gsv4_Borders}
 \usage{
-gsv4_Borders(bottom=NULL, left=NULL, right=NULL, top=NULL)
+gsv4_Borders(bottom = NULL, left = NULL, right = NULL, top = NULL)
 }
 \arguments{
 \item{bottom}{\code{\link{gsv4_Border}} object. A border along a cell.}

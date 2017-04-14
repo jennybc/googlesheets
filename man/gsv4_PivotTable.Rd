@@ -4,7 +4,8 @@
 \alias{gsv4_PivotTable}
 \title{gsv4_PivotTable}
 \usage{
-gsv4_PivotTable(rows=NULL, columns=NULL, criteria=NULL, source=NULL, valueLayout=NULL, values=NULL)
+gsv4_PivotTable(rows = NULL, columns = NULL, criteria = NULL,
+  source = NULL, valueLayout = NULL, values = NULL)
 }
 \arguments{
 \item{rows}{list of \code{\link{gsv4_PivotGroup}} objects. Each row grouping in the pivot table.}

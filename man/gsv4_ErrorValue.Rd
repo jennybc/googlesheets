@@ -4,7 +4,7 @@
 \alias{gsv4_ErrorValue}
 \title{gsv4_ErrorValue}
 \usage{
-gsv4_ErrorValue(message=NULL, type=NULL)
+gsv4_ErrorValue(message = NULL, type = NULL)
 }
 \arguments{
 \item{message}{string. A message with more information about the error

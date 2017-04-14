@@ -4,7 +4,7 @@
 \alias{gsv4_AddNamedRangeRequest}
 \title{gsv4_AddNamedRangeRequest}
 \usage{
-gsv4_AddNamedRangeRequest(namedRange=NULL)
+gsv4_AddNamedRangeRequest(namedRange = NULL)
 }
 \arguments{
 \item{namedRange}{\code{\link{gsv4_NamedRange}} object. A named range.}

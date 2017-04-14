@@ -4,7 +4,9 @@
 \alias{gsv4_Sheet}
 \title{gsv4_Sheet}
 \usage{
-gsv4_Sheet(bandedRanges=NULL, basicFilter=NULL, charts=NULL, conditionalFormats=NULL, data=NULL, filterViews=NULL, merges=NULL, properties=NULL, protectedRanges=NULL)
+gsv4_Sheet(bandedRanges = NULL, basicFilter = NULL, charts = NULL,
+  conditionalFormats = NULL, data = NULL, filterViews = NULL,
+  merges = NULL, properties = NULL, protectedRanges = NULL)
 }
 \arguments{
 \item{bandedRanges}{list of \code{\link{gsv4_BandedRange}} objects. The banded (i.e. alternating colors) ranges on this sheet.}

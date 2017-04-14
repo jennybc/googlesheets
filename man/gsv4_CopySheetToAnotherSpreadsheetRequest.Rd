@@ -4,7 +4,7 @@
 \alias{gsv4_CopySheetToAnotherSpreadsheetRequest}
 \title{gsv4_CopySheetToAnotherSpreadsheetRequest}
 \usage{
-gsv4_CopySheetToAnotherSpreadsheetRequest(destinationSpreadsheetId=NULL)
+gsv4_CopySheetToAnotherSpreadsheetRequest(destinationSpreadsheetId = NULL)
 }
 \arguments{
 \item{destinationSpreadsheetId}{string. The ID of the spreadsheet to copy the sheet to.}

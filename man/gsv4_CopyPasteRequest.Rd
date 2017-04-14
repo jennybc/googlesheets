@@ -4,7 +4,8 @@
 \alias{gsv4_CopyPasteRequest}
 \title{gsv4_CopyPasteRequest}
 \usage{
-gsv4_CopyPasteRequest(destination=NULL, pasteOrientation=NULL, pasteType=NULL, source=NULL)
+gsv4_CopyPasteRequest(destination = NULL, pasteOrientation = NULL,
+  pasteType = NULL, source = NULL)
 }
 \arguments{
 \item{destination}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

@@ -4,7 +4,7 @@
 \alias{gsv4_InterpolationPoint}
 \title{gsv4_InterpolationPoint}
 \usage{
-gsv4_InterpolationPoint(color=NULL, type=NULL, value=NULL)
+gsv4_InterpolationPoint(color = NULL, type = NULL, value = NULL)
 }
 \arguments{
 \item{color}{\code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed

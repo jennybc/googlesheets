@@ -4,7 +4,8 @@
 \alias{gsv4_PivotGroup}
 \title{gsv4_PivotGroup}
 \usage{
-gsv4_PivotGroup(showTotals=NULL, sortOrder=NULL, sourceColumnOffset=NULL, valueBucket=NULL, valueMetadata=NULL)
+gsv4_PivotGroup(showTotals = NULL, sortOrder = NULL,
+  sourceColumnOffset = NULL, valueBucket = NULL, valueMetadata = NULL)
 }
 \arguments{
 \item{showTotals}{logical. TRUE if the pivot table should include the totals for this grouping.}

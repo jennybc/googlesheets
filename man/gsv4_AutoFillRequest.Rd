@@ -4,7 +4,8 @@
 \alias{gsv4_AutoFillRequest}
 \title{gsv4_AutoFillRequest}
 \usage{
-gsv4_AutoFillRequest(range=NULL, sourceAndDestination=NULL, useAlternateSeries=NULL)
+gsv4_AutoFillRequest(range = NULL, sourceAndDestination = NULL,
+  useAlternateSeries = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

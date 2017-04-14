@@ -4,7 +4,7 @@
 \alias{gsv4_GridCoordinate}
 \title{gsv4_GridCoordinate}
 \usage{
-gsv4_GridCoordinate(sheetId=NULL, columnIndex=NULL, rowIndex=NULL)
+gsv4_GridCoordinate(sheetId = NULL, columnIndex = NULL, rowIndex = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet this coordinate is on.}

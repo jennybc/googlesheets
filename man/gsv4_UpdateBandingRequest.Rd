@@ -4,7 +4,7 @@
 \alias{gsv4_UpdateBandingRequest}
 \title{gsv4_UpdateBandingRequest}
 \usage{
-gsv4_UpdateBandingRequest(fields=NULL, bandedRange=NULL)
+gsv4_UpdateBandingRequest(fields = NULL, bandedRange = NULL)
 }
 \arguments{
 \item{fields}{string. The fields that should be updated.  At least one field must be specified.

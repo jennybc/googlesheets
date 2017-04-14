@@ -4,7 +4,8 @@
 \alias{gsv4_PieChartSpec}
 \title{gsv4_PieChartSpec}
 \usage{
-gsv4_PieChartSpec(domain=NULL, legendPosition=NULL, pieHole=NULL, series=NULL, threeDimensional=NULL)
+gsv4_PieChartSpec(domain = NULL, legendPosition = NULL, pieHole = NULL,
+  series = NULL, threeDimensional = NULL)
 }
 \arguments{
 \item{domain}{\code{\link{gsv4_ChartData}} object. The data included in a domain or series.}

@@ -4,7 +4,9 @@
 \alias{gsv4_SpreadsheetProperties}
 \title{gsv4_SpreadsheetProperties}
 \usage{
-gsv4_SpreadsheetProperties(autoRecalc=NULL, defaultFormat=NULL, iterativeCalculationSettings=NULL, locale=NULL, timeZone=NULL, title=NULL)
+gsv4_SpreadsheetProperties(autoRecalc = NULL, defaultFormat = NULL,
+  iterativeCalculationSettings = NULL, locale = NULL, timeZone = NULL,
+  title = NULL)
 }
 \arguments{
 \item{autoRecalc}{string. The amount of time to wait before volatile functions are recalculated. autoRecalc must take one of the following values: RECALCULATION_INTERVAL_UNSPECIFIED, ON_CHANGE, MINUTE, HOUR

@@ -4,7 +4,8 @@
 \alias{gsv4_FilterView}
 \title{gsv4_FilterView}
 \usage{
-gsv4_FilterView(range=NULL, criteria=NULL, filterViewId=NULL, namedRangeId=NULL, sortSpecs=NULL, title=NULL)
+gsv4_FilterView(range = NULL, criteria = NULL, filterViewId = NULL,
+  namedRangeId = NULL, sortSpecs = NULL, title = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

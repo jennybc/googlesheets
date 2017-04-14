@@ -4,7 +4,8 @@
 \alias{gsv4_DuplicateSheetRequest}
 \title{gsv4_DuplicateSheetRequest}
 \usage{
-gsv4_DuplicateSheetRequest(insertSheetIndex=NULL, newSheetId=NULL, newSheetName=NULL, sourceSheetId=NULL)
+gsv4_DuplicateSheetRequest(insertSheetIndex = NULL, newSheetId = NULL,
+  newSheetName = NULL, sourceSheetId = NULL)
 }
 \arguments{
 \item{insertSheetIndex}{integer. The zero-based index where the new sheet should be inserted.

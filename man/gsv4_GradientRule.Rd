@@ -4,7 +4,7 @@
 \alias{gsv4_GradientRule}
 \title{gsv4_GradientRule}
 \usage{
-gsv4_GradientRule(maxpoint=NULL, midpoint=NULL, minpoint=NULL)
+gsv4_GradientRule(maxpoint = NULL, midpoint = NULL, minpoint = NULL)
 }
 \arguments{
 \item{maxpoint}{\code{\link{gsv4_InterpolationPoint}} object. A single interpolation point on a gradient conditional format.

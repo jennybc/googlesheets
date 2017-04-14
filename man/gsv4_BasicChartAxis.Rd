@@ -4,7 +4,7 @@
 \alias{gsv4_BasicChartAxis}
 \title{gsv4_BasicChartAxis}
 \usage{
-gsv4_BasicChartAxis(format=NULL, position=NULL, title=NULL)
+gsv4_BasicChartAxis(format = NULL, position = NULL, title = NULL)
 }
 \arguments{
 \item{format}{\code{\link{gsv4_TextFormat}} object. The format of a run of text in a cell.

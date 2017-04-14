@@ -4,7 +4,8 @@
 \alias{gsv4_GridProperties}
 \title{gsv4_GridProperties}
 \usage{
-gsv4_GridProperties(columnCount=NULL, frozenColumnCount=NULL, frozenRowCount=NULL, hideGridlines=NULL, rowCount=NULL)
+gsv4_GridProperties(columnCount = NULL, frozenColumnCount = NULL,
+  frozenRowCount = NULL, hideGridlines = NULL, rowCount = NULL)
 }
 \arguments{
 \item{columnCount}{integer. The number of columns in the grid.}

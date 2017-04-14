@@ -4,7 +4,7 @@
 \alias{gsv4_ClearBasicFilterRequest}
 \title{gsv4_ClearBasicFilterRequest}
 \usage{
-gsv4_ClearBasicFilterRequest(sheetId=NULL)
+gsv4_ClearBasicFilterRequest(sheetId = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet ID on which the basic filter should be cleared.}

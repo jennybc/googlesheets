@@ -4,7 +4,9 @@
 \alias{gsv4_values_get}
 \title{gsv4_values_get}
 \usage{
-gsv4_values_get(spreadsheetId, range, dateTimeRenderOption=NULL, majorDimension=NULL, valueRenderOption=NULL, standard_params = list(...), ...)
+gsv4_values_get(spreadsheetId, range, dateTimeRenderOption = NULL,
+  majorDimension = NULL, valueRenderOption = NULL,
+  standard_params = list(...), ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The ID of the spreadsheet to retrieve data from.}

@@ -4,7 +4,8 @@
 \alias{gsv4_Spreadsheet}
 \title{gsv4_Spreadsheet}
 \usage{
-gsv4_Spreadsheet(spreadsheetId=NULL, namedRanges=NULL, properties=NULL, sheets=NULL, spreadsheetUrl=NULL)
+gsv4_Spreadsheet(spreadsheetId = NULL, namedRanges = NULL,
+  properties = NULL, sheets = NULL, spreadsheetUrl = NULL)
 }
 \arguments{
 \item{spreadsheetId}{string. The ID of the spreadsheet.

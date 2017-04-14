@@ -4,7 +4,7 @@
 \alias{gsv4_BatchClearValuesRequest}
 \title{gsv4_BatchClearValuesRequest}
 \usage{
-gsv4_BatchClearValuesRequest(ranges=NULL)
+gsv4_BatchClearValuesRequest(ranges = NULL)
 }
 \arguments{
 \item{ranges}{list. The ranges to clear, in A1 notation.}

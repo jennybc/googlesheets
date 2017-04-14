@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteBandingRequest}
 \title{gsv4_DeleteBandingRequest}
 \usage{
-gsv4_DeleteBandingRequest(bandedRangeId=NULL)
+gsv4_DeleteBandingRequest(bandedRangeId = NULL)
 }
 \arguments{
 \item{bandedRangeId}{integer. The ID of the banded range to delete.}

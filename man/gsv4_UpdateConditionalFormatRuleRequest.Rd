@@ -4,7 +4,8 @@
 \alias{gsv4_UpdateConditionalFormatRuleRequest}
 \title{gsv4_UpdateConditionalFormatRuleRequest}
 \usage{
-gsv4_UpdateConditionalFormatRuleRequest(sheetId=NULL, index=NULL, newIndex=NULL, rule=NULL)
+gsv4_UpdateConditionalFormatRuleRequest(sheetId = NULL, index = NULL,
+  newIndex = NULL, rule = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet of the rule to move.  Required if new_index is set,

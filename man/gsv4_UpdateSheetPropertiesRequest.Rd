@@ -4,7 +4,7 @@
 \alias{gsv4_UpdateSheetPropertiesRequest}
 \title{gsv4_UpdateSheetPropertiesRequest}
 \usage{
-gsv4_UpdateSheetPropertiesRequest(fields=NULL, properties=NULL)
+gsv4_UpdateSheetPropertiesRequest(fields = NULL, properties = NULL)
 }
 \arguments{
 \item{fields}{string. The fields that should be updated.  At least one field must be specified.

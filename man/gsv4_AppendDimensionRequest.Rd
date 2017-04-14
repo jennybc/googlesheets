@@ -4,7 +4,8 @@
 \alias{gsv4_AppendDimensionRequest}
 \title{gsv4_AppendDimensionRequest}
 \usage{
-gsv4_AppendDimensionRequest(sheetId=NULL, dimension=NULL, length=NULL)
+gsv4_AppendDimensionRequest(sheetId = NULL, dimension = NULL,
+  length = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet to append rows or columns to.}

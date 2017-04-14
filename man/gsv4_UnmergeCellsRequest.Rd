@@ -4,7 +4,7 @@
 \alias{gsv4_UnmergeCellsRequest}
 \title{gsv4_UnmergeCellsRequest}
 \usage{
-gsv4_UnmergeCellsRequest(range=NULL)
+gsv4_UnmergeCellsRequest(range = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

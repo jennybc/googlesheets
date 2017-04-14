@@ -4,7 +4,10 @@
 \alias{gsv4_values_append}
 \title{gsv4_values_append}
 \usage{
-gsv4_values_append(spreadsheetId, range, valueInputOption, includeValuesInResponse=NULL, insertDataOption=NULL, responseDateTimeRenderOption=NULL, responseValueRenderOption=NULL, input, standard_params = list(...), ...)
+gsv4_values_append(spreadsheetId, range, valueInputOption,
+  includeValuesInResponse = NULL, insertDataOption = NULL,
+  responseDateTimeRenderOption = NULL, responseValueRenderOption = NULL,
+  input, standard_params = list(...), ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The ID of the spreadsheet to update.}

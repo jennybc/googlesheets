@@ -4,7 +4,7 @@
 \alias{gsv4_Color}
 \title{gsv4_Color}
 \usage{
-gsv4_Color(alpha=NULL, blue=NULL, green=NULL, red=NULL)
+gsv4_Color(alpha = NULL, blue = NULL, green = NULL, red = NULL)
 }
 \arguments{
 \item{alpha}{numeric. The fraction of this color that should be applied to the pixel. That is,

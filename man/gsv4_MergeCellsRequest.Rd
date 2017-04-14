@@ -4,7 +4,7 @@
 \alias{gsv4_MergeCellsRequest}
 \title{gsv4_MergeCellsRequest}
 \usage{
-gsv4_MergeCellsRequest(range=NULL, mergeType=NULL)
+gsv4_MergeCellsRequest(range = NULL, mergeType = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

@@ -4,7 +4,7 @@
 \alias{gsv4_FilterCriteria}
 \title{gsv4_FilterCriteria}
 \usage{
-gsv4_FilterCriteria(condition=NULL, hiddenValues=NULL)
+gsv4_FilterCriteria(condition = NULL, hiddenValues = NULL)
 }
 \arguments{
 \item{condition}{\code{\link{gsv4_BooleanCondition}} object. A condition that can evaluate to TRUE or FALSE.

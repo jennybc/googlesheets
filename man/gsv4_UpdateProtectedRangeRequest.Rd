@@ -4,7 +4,7 @@
 \alias{gsv4_UpdateProtectedRangeRequest}
 \title{gsv4_UpdateProtectedRangeRequest}
 \usage{
-gsv4_UpdateProtectedRangeRequest(fields=NULL, protectedRange=NULL)
+gsv4_UpdateProtectedRangeRequest(fields = NULL, protectedRange = NULL)
 }
 \arguments{
 \item{fields}{string. The fields that should be updated.  At least one field must be specified.

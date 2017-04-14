@@ -4,7 +4,8 @@
 \alias{gsv4_UpdateCellsRequest}
 \title{gsv4_UpdateCellsRequest}
 \usage{
-gsv4_UpdateCellsRequest(range=NULL, rows=NULL, fields=NULL, start=NULL)
+gsv4_UpdateCellsRequest(range = NULL, rows = NULL, fields = NULL,
+  start = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_GridRange}} object. A range on a sheet.

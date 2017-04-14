@@ -4,7 +4,7 @@
 \alias{gsv4_DeleteNamedRangeRequest}
 \title{gsv4_DeleteNamedRangeRequest}
 \usage{
-gsv4_DeleteNamedRangeRequest(namedRangeId=NULL)
+gsv4_DeleteNamedRangeRequest(namedRangeId = NULL)
 }
 \arguments{
 \item{namedRangeId}{string. The ID of the named range to delete.}

@@ -4,7 +4,7 @@
 \alias{gsv4_ChartData}
 \title{gsv4_ChartData}
 \usage{
-gsv4_ChartData(sourceRange=NULL)
+gsv4_ChartData(sourceRange = NULL)
 }
 \arguments{
 \item{sourceRange}{\code{\link{gsv4_ChartSourceRange}} object. Source ranges for a chart.}

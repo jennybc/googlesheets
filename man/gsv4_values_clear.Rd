@@ -4,7 +4,8 @@
 \alias{gsv4_values_clear}
 \title{gsv4_values_clear}
 \usage{
-gsv4_values_clear(spreadsheetId, range, input, standard_params = list(...), ...)
+gsv4_values_clear(spreadsheetId, range, input, standard_params = list(...),
+  ...)
 }
 \arguments{
 \item{spreadsheetId}{string (required). The ID of the spreadsheet to update.}

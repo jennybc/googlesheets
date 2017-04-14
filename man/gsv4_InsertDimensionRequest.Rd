@@ -4,7 +4,7 @@
 \alias{gsv4_InsertDimensionRequest}
 \title{gsv4_InsertDimensionRequest}
 \usage{
-gsv4_InsertDimensionRequest(range=NULL, inheritFromBefore=NULL)
+gsv4_InsertDimensionRequest(range = NULL, inheritFromBefore = NULL)
 }
 \arguments{
 \item{range}{\code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.

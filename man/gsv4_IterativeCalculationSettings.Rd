@@ -4,7 +4,8 @@
 \alias{gsv4_IterativeCalculationSettings}
 \title{gsv4_IterativeCalculationSettings}
 \usage{
-gsv4_IterativeCalculationSettings(convergenceThreshold=NULL, maxIterations=NULL)
+gsv4_IterativeCalculationSettings(convergenceThreshold = NULL,
+  maxIterations = NULL)
 }
 \arguments{
 \item{convergenceThreshold}{numeric. When iterative calculation is enabled and successive results differ by

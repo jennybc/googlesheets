@@ -4,7 +4,8 @@
 \alias{gsv4_DimensionProperties}
 \title{gsv4_DimensionProperties}
 \usage{
-gsv4_DimensionProperties(hiddenByFilter=NULL, hiddenByUser=NULL, pixelSize=NULL)
+gsv4_DimensionProperties(hiddenByFilter = NULL, hiddenByUser = NULL,
+  pixelSize = NULL)
 }
 \arguments{
 \item{hiddenByFilter}{logical. TRUE if this dimension is being filtered.

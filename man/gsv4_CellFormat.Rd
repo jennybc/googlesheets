@@ -4,7 +4,11 @@
 \alias{gsv4_CellFormat}
 \title{gsv4_CellFormat}
 \usage{
-gsv4_CellFormat(backgroundColor=NULL, borders=NULL, horizontalAlignment=NULL, hyperlinkDisplayType=NULL, numberFormat=NULL, padding=NULL, textDirection=NULL, textFormat=NULL, textRotation=NULL, verticalAlignment=NULL, wrapStrategy=NULL)
+gsv4_CellFormat(backgroundColor = NULL, borders = NULL,
+  horizontalAlignment = NULL, hyperlinkDisplayType = NULL,
+  numberFormat = NULL, padding = NULL, textDirection = NULL,
+  textFormat = NULL, textRotation = NULL, verticalAlignment = NULL,
+  wrapStrategy = NULL)
 }
 \arguments{
 \item{backgroundColor}{\code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed

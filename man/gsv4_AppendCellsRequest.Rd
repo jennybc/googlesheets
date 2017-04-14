@@ -4,7 +4,7 @@
 \alias{gsv4_AppendCellsRequest}
 \title{gsv4_AppendCellsRequest}
 \usage{
-gsv4_AppendCellsRequest(sheetId=NULL, rows=NULL, fields=NULL)
+gsv4_AppendCellsRequest(sheetId = NULL, rows = NULL, fields = NULL)
 }
 \arguments{
 \item{sheetId}{integer. The sheet ID to append the data to.}

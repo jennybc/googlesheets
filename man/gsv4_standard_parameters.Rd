@@ -4,7 +4,9 @@
 \alias{gsv4_standard_parameters}
 \title{gsv4_standard_parameters}
 \usage{
-gsv4_standard_parameters(fields=NULL, .xgafv=NULL, alt=NULL, callback=NULL, pp=NULL, prettyPrint=NULL, quotaUser=NULL, upload_protocol=NULL, uploadType=NULL)
+gsv4_standard_parameters(fields = NULL, .xgafv = NULL, alt = NULL,
+  callback = NULL, pp = NULL, prettyPrint = NULL, quotaUser = NULL,
+  upload_protocol = NULL, uploadType = NULL)
 }
 \arguments{
 \item{fields}{string. Selector specifying which fields to include in a partial response.}

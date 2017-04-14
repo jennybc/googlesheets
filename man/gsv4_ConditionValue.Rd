@@ -4,7 +4,7 @@
 \alias{gsv4_ConditionValue}
 \title{gsv4_ConditionValue}
 \usage{
-gsv4_ConditionValue(relativeDate=NULL, userEnteredValue=NULL)
+gsv4_ConditionValue(relativeDate = NULL, userEnteredValue = NULL)
 }
 \arguments{
 \item{relativeDate}{string. A relative date (based on the current date).

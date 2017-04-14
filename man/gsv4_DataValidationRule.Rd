@@ -4,7 +4,8 @@
 \alias{gsv4_DataValidationRule}
 \title{gsv4_DataValidationRule}
 \usage{
-gsv4_DataValidationRule(condition=NULL, inputMessage=NULL, showCustomUi=NULL, strict=NULL)
+gsv4_DataValidationRule(condition = NULL, inputMessage = NULL,
+  showCustomUi = NULL, strict = NULL)
 }
 \arguments{
 \item{condition}{\code{\link{gsv4_BooleanCondition}} object. A condition that can evaluate to TRUE or FALSE.
