@@ -23,7 +23,6 @@
 #' @importFrom httr POST content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets/batchUpdate}{Google's Documentation for batchUpdate}
-#' @usage gsv4_batchUpdate(spreadsheetId, input, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The spreadsheet to apply the updates to.
 #' @param input \code{\link{gsv4_BatchUpdateSpreadsheetRequest}}. The request for updating any aspect of a spreadsheet.
 #' @param standard_params a list of parameters for controlling the HTTP request and its response.
@@ -55,7 +54,6 @@ gsv4_batchUpdate <- function(spreadsheetId, input, standard_params = list(...), 
 #' @importFrom httr POST content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets/create}{Google's Documentation for create}
-#' @usage gsv4_create(input, standard_params = list(...), ...)
 #' @param input \code{\link{gsv4_Spreadsheet}}. Resource that represents a spreadsheet.
 #' @param standard_params a list of parameters for controlling the HTTP request and its response.
 #' Refer to \code{\link{gsv4_standard_parameters}} for details on its arguments
@@ -106,7 +104,6 @@ gsv4_create <- function(input, standard_params = list(...), ...){
 #' @importFrom httr GET content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets/get}{Google's Documentation for get}
-#' @usage gsv4_get(spreadsheetId, includeGridData=NULL, ranges=NULL, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The spreadsheet to request.
 #' @param includeGridData logical. TRUE if grid data should be returned.
 #' This parameter is ignored if a field mask was set in the request.

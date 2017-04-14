@@ -18,7 +18,6 @@
 #' @importFrom httr POST content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values/append}{Google's Documentation for append}
-#' @usage gsv4_values_append(spreadsheetId, range, valueInputOption, includeValuesInResponse=NULL, insertDataOption=NULL, responseDateTimeRenderOption=NULL, responseValueRenderOption=NULL, input, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet to update.
 #' @param range string (required). The A1 notation of a range to search for a logical table of data.
 #' Values will be appended after the last row of the table.
@@ -66,7 +65,6 @@ gsv4_values_append <- function(spreadsheetId, range, valueInputOption, includeVa
 #' @importFrom httr POST content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values/batchClear}{Google's Documentation for batchClear}
-#' @usage gsv4_values_batchClear(spreadsheetId, input, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet to update.
 #' @param input \code{\link{gsv4_BatchClearValuesRequest}}. The request for clearing more than one range of values in a spreadsheet.
 #' @param standard_params a list of parameters for controlling the HTTP request and its response.
@@ -99,7 +97,6 @@ gsv4_values_batchClear <- function(spreadsheetId, input, standard_params = list(
 #' @importFrom httr GET content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values/batchGet}{Google's Documentation for batchGet}
-#' @usage gsv4_values_batchGet(spreadsheetId, dateTimeRenderOption=NULL, majorDimension=NULL, ranges=NULL, valueRenderOption=NULL, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet to retrieve data from.
 #' @param dateTimeRenderOption string. How dates, times, and durations should be represented in the output.
 #' This is ignored if value_render_option is
@@ -143,7 +140,6 @@ gsv4_values_batchGet <- function(spreadsheetId, dateTimeRenderOption=NULL, major
 #' @importFrom httr POST content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values/batchUpdate}{Google's Documentation for batchUpdate}
-#' @usage gsv4_values_batchUpdate(spreadsheetId, input, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet to update.
 #' @param input \code{\link{gsv4_BatchUpdateValuesRequest}}. The request for updating more than one range of values in a spreadsheet.
 #' @param standard_params a list of parameters for controlling the HTTP request and its response.
@@ -178,7 +174,6 @@ gsv4_values_batchUpdate <- function(spreadsheetId, input, standard_params = list
 #' @importFrom httr POST content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values/clear}{Google's Documentation for clear}
-#' @usage gsv4_values_clear(spreadsheetId, range, input, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet to update.
 #' @param range string (required). The A1 notation of the values to clear.
 #' @param input \code{\link{gsv4_ClearValuesRequest}}. The request for clearing a range of values in a spreadsheet.
@@ -212,7 +207,6 @@ gsv4_values_clear <- function(spreadsheetId, range, input, standard_params = lis
 #' @importFrom httr GET content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values/get}{Google's Documentation for get}
-#' @usage gsv4_values_get(spreadsheetId, range, dateTimeRenderOption=NULL, majorDimension=NULL, valueRenderOption=NULL, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet to retrieve data from.
 #' @param range string (required). The A1 notation of the values to retrieve.
 #' @param dateTimeRenderOption string. How dates, times, and durations should be represented in the output.
@@ -255,7 +249,6 @@ gsv4_values_get <- function(spreadsheetId, range, dateTimeRenderOption=NULL, maj
 #' @importFrom httr PUT content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values/update}{Google's Documentation for update}
-#' @usage gsv4_values_update(spreadsheetId, range, valueInputOption, includeValuesInResponse=NULL, responseDateTimeRenderOption=NULL, responseValueRenderOption=NULL, input, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet to update.
 #' @param range string (required). The A1 notation of the values to update.
 #' @param valueInputOption string (required). How the input data should be interpreted.

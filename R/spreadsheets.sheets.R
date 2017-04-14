@@ -6,7 +6,6 @@
 #' @importFrom httr POST content add_headers status_code
 #' @importFrom jsonlite toJSON
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.sheets/copyTo}{Google's Documentation for copyTo}
-#' @usage gsv4_sheets_copyTo(spreadsheetId, sheetId, input, standard_params = list(...), ...)
 #' @param spreadsheetId string (required). The ID of the spreadsheet containing the sheet to copy.
 #' @param sheetId integer (required). The ID of the sheet to copy.
 #' @param input \code{\link{gsv4_CopySheetToAnotherSpreadsheetRequest}}. The request to copy a sheet across spreadsheets.

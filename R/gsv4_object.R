@@ -7,7 +7,6 @@
 #' Adds a new banded range to the spreadsheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AddBandingRequest}{Google's Documentation for AddBandingRequest}
-#' @usage gsv4_AddBandingRequest(bandedRange=NULL)
 #' @param bandedRange \code{\link{gsv4_BandedRange}} object. A banded (alternating colors) range in a sheet.
 #' @return AddBandingRequest
 #' @export
@@ -29,7 +28,6 @@ gsv4_AddBandingRequest <- function(bandedRange=NULL){
 #' Adds a chart to a sheet in the spreadsheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AddChartRequest}{Google's Documentation for AddChartRequest}
-#' @usage gsv4_AddChartRequest(chart=NULL)
 #' @param chart \code{\link{gsv4_EmbeddedChart}} object. A chart embedded in a sheet.
 #' @return AddChartRequest
 #' @export
@@ -53,7 +51,6 @@ gsv4_AddChartRequest <- function(chart=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AddConditionalFormatRuleRequest}{Google's Documentation for AddConditionalFormatRuleRequest}
-#' @usage gsv4_AddConditionalFormatRuleRequest(index=NULL, rule=NULL)
 #' @param index integer. The zero-based index where the rule should be inserted.
 #' @param rule \code{\link{gsv4_ConditionalFormatRule}} object. A rule describing a conditional format.
 #' @return AddConditionalFormatRuleRequest
@@ -80,7 +77,6 @@ gsv4_AddConditionalFormatRuleRequest <- function(index=NULL, rule=NULL){
 #' Adds a filter view.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AddFilterViewRequest}{Google's Documentation for AddFilterViewRequest}
-#' @usage gsv4_AddFilterViewRequest(filter=NULL)
 #' @param filter \code{\link{gsv4_FilterView}} object. A filter view.
 #' @return AddFilterViewRequest
 #' @export
@@ -102,7 +98,6 @@ gsv4_AddFilterViewRequest <- function(filter=NULL){
 #' Adds a named range to the spreadsheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AddNamedRangeRequest}{Google's Documentation for AddNamedRangeRequest}
-#' @usage gsv4_AddNamedRangeRequest(namedRange=NULL)
 #' @param namedRange \code{\link{gsv4_NamedRange}} object. A named range.
 #' @return AddNamedRangeRequest
 #' @export
@@ -124,7 +119,6 @@ gsv4_AddNamedRangeRequest <- function(namedRange=NULL){
 #' Adds a new protected range.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AddProtectedRangeRequest}{Google's Documentation for AddProtectedRangeRequest}
-#' @usage gsv4_AddProtectedRangeRequest(protectedRange=NULL)
 #' @param protectedRange \code{\link{gsv4_ProtectedRange}} object. A protected range.
 #' @return AddProtectedRangeRequest
 #' @export
@@ -151,7 +145,6 @@ gsv4_AddProtectedRangeRequest <- function(protectedRange=NULL){
 #' EmbeddedObjectPosition.newSheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AddSheetRequest}{Google's Documentation for AddSheetRequest}
-#' @usage gsv4_AddSheetRequest(properties=NULL)
 #' @param properties \code{\link{gsv4_SheetProperties}} object. Properties of a sheet.
 #' @return AddSheetRequest
 #' @export
@@ -175,7 +168,6 @@ gsv4_AddSheetRequest <- function(properties=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AppendCellsRequest}{Google's Documentation for AppendCellsRequest}
-#' @usage gsv4_AppendCellsRequest(sheetId=NULL, rows=NULL, fields=NULL)
 #' @param sheetId integer. The sheet ID to append the data to.
 #' @param rows list of \code{\link{gsv4_RowData}} objects. The data to append.
 #' @param fields string. The fields of CellData that should be updated.
@@ -218,7 +210,6 @@ gsv4_AppendCellsRequest <- function(sheetId=NULL, rows=NULL, fields=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AppendDimensionRequest}{Google's Documentation for AppendDimensionRequest}
-#' @usage gsv4_AppendDimensionRequest(sheetId=NULL, dimension=NULL, length=NULL)
 #' @param sheetId integer. The sheet to append rows or columns to.
 #' @param dimension string. Whether rows or columns should be appended. dimension must take one of the following values: DIMENSION_UNSPECIFIED, ROWS, COLUMNS
 #' See the details section for the definition of each of these values.
@@ -252,7 +243,6 @@ gsv4_AppendDimensionRequest <- function(sheetId=NULL, dimension=NULL, length=NUL
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AutoFillRequest}{Google's Documentation for AutoFillRequest}
-#' @usage gsv4_AutoFillRequest(range=NULL, sourceAndDestination=NULL, useAlternateSeries=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -314,7 +304,6 @@ gsv4_AutoFillRequest <- function(range=NULL, sourceAndDestination=NULL, useAlter
 #' of the cells in that dimension.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#AutoResizeDimensionsRequest}{Google's Documentation for AutoResizeDimensionsRequest}
-#' @usage gsv4_AutoResizeDimensionsRequest(dimensions=NULL)
 #' @param dimensions \code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open: the start index is inclusive
@@ -341,7 +330,6 @@ gsv4_AutoResizeDimensionsRequest <- function(dimensions=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BandedRange}{Google's Documentation for BandedRange}
-#' @usage gsv4_BandedRange(range=NULL, bandedRangeId=NULL, columnProperties=NULL, rowProperties=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -442,7 +430,6 @@ gsv4_BandedRange <- function(range=NULL, bandedRangeId=NULL, columnProperties=NU
 #' color if the row header is not set.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BandingProperties}{Google's Documentation for BandingProperties}
-#' @usage gsv4_BandingProperties(firstBandColor=NULL, footerColor=NULL, headerColor=NULL, secondBandColor=NULL)
 #' @param firstBandColor \code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed
 #' for simplicity of conversion to/from color representations in various
 #' languages over compactness; for example, the fields of this representation
@@ -948,7 +935,6 @@ gsv4_BandingProperties <- function(firstBandColor=NULL, footerColor=NULL, header
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BasicChartAxis}{Google's Documentation for BasicChartAxis}
-#' @usage gsv4_BasicChartAxis(format=NULL, position=NULL, title=NULL)
 #' @param format \code{\link{gsv4_TextFormat}} object. The format of a run of text in a cell.
 #' Absent values indicate that the field isn't specified.
 #' @param position string. The position of this axis. position must take one of the following values: BASIC_CHART_AXIS_POSITION_UNSPECIFIED, BOTTOM_AXIS, LEFT_AXIS, RIGHT_AXIS
@@ -984,7 +970,6 @@ gsv4_BasicChartAxis <- function(format=NULL, position=NULL, title=NULL){
 #' For example, if charting stock prices over time, this would be the date.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BasicChartDomain}{Google's Documentation for BasicChartDomain}
-#' @usage gsv4_BasicChartDomain(domain=NULL)
 #' @param domain \code{\link{gsv4_ChartData}} object. The data included in a domain or series.
 #' @return BasicChartDomain
 #' @export
@@ -1034,7 +1019,6 @@ gsv4_BasicChartDomain <- function(domain=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BasicChartSeries}{Google's Documentation for BasicChartSeries}
-#' @usage gsv4_BasicChartSeries(series=NULL, targetAxis=NULL, type=NULL)
 #' @param series \code{\link{gsv4_ChartData}} object. The data included in a domain or series.
 #' @param targetAxis string. The minor axis that will specify the range of values for this series.
 #' For example, if charting stocks over time, the "Volume" series
@@ -1102,7 +1086,6 @@ gsv4_BasicChartSeries <- function(series=NULL, targetAxis=NULL, type=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BasicChartSpec}{Google's Documentation for BasicChartSpec}
-#' @usage gsv4_BasicChartSpec(axis=NULL, chartType=NULL, domains=NULL, headerCount=NULL, legendPosition=NULL, series=NULL)
 #' @param axis list of \code{\link{gsv4_BasicChartAxis}} objects. The axis on the chart.
 #' @param chartType string. The type of the chart. chartType must take one of the following values: BASIC_CHART_TYPE_UNSPECIFIED, BAR, LINE, AREA, COLUMN, SCATTER, COMBO
 #' See the details section for the definition of each of these values.
@@ -1157,7 +1140,6 @@ gsv4_BasicChartSpec <- function(axis=NULL, chartType=NULL, domains=NULL, headerC
 #' The default filter associated with a sheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BasicFilter}{Google's Documentation for BasicFilter}
-#' @usage gsv4_BasicFilter(range=NULL, criteria=NULL, sortSpecs=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -1220,7 +1202,6 @@ gsv4_BasicFilter <- function(range=NULL, criteria=NULL, sortSpecs=NULL){
 #' The request for clearing more than one range of values in a spreadsheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BatchClearValuesRequest}{Google's Documentation for BatchClearValuesRequest}
-#' @usage gsv4_BatchClearValuesRequest(ranges=NULL)
 #' @param ranges list. The ranges to clear, in A1 notation.
 #' @return BatchClearValuesRequest
 #' @export
@@ -1243,7 +1224,6 @@ gsv4_BatchClearValuesRequest <- function(ranges=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BatchUpdateSpreadsheetRequest}{Google's Documentation for BatchUpdateSpreadsheetRequest}
-#' @usage gsv4_BatchUpdateSpreadsheetRequest(includeSpreadsheetInResponse=NULL, requests=NULL, responseIncludeGridData=NULL, responseRanges=NULL)
 #' @param includeSpreadsheetInResponse logical. Determines if the update response should include the spreadsheet
 #' resource.
 #' @param requests list of \code{\link{gsv4_Request}} objects. A list of updates to apply to the spreadsheet.
@@ -1329,7 +1309,6 @@ gsv4_BatchUpdateSpreadsheetRequest <- function(includeSpreadsheetInResponse=NULL
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BatchUpdateValuesRequest}{Google's Documentation for BatchUpdateValuesRequest}
-#' @usage gsv4_BatchUpdateValuesRequest(data=NULL, includeValuesInResponse=NULL, responseDateTimeRenderOption=NULL, responseValueRenderOption=NULL, valueInputOption=NULL)
 #' @param data list of \code{\link{gsv4_ValueRange}} objects. The new values to apply to the spreadsheet.
 #' @param includeValuesInResponse logical. Determines if the update response should include the values
 #' of the cells that were updated. By default, responses
@@ -1483,7 +1462,6 @@ gsv4_BatchUpdateValuesRequest <- function(data=NULL, includeValuesInResponse=NUL
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BooleanCondition}{Google's Documentation for BooleanCondition}
-#' @usage gsv4_BooleanCondition(type=NULL, values=NULL)
 #' @param type string. The type of condition. type must take one of the following values: CONDITION_TYPE_UNSPECIFIED, NUMBER_GREATER, NUMBER_GREATER_THAN_EQ, NUMBER_LESS, NUMBER_LESS_THAN_EQ, NUMBER_EQ, NUMBER_NOT_EQ, NUMBER_BETWEEN, NUMBER_NOT_BETWEEN, TEXT_CONTAINS, TEXT_NOT_CONTAINS, TEXT_STARTS_WITH, TEXT_ENDS_WITH, TEXT_EQ, TEXT_IS_EMAIL, TEXT_IS_URL, DATE_EQ, DATE_BEFORE, DATE_AFTER, DATE_ON_OR_BEFORE, DATE_ON_OR_AFTER, DATE_BETWEEN, DATE_NOT_BETWEEN, DATE_IS_VALID, ONE_OF_RANGE, ONE_OF_LIST, BLANK, NOT_BLANK, CUSTOM_FORMULA
 #' See the details section for the definition of each of these values.
 #' @param values list of \code{\link{gsv4_ConditionValue}} objects. The values of the condition. The number of supported values depends
@@ -1514,7 +1492,6 @@ gsv4_BooleanCondition <- function(type=NULL, values=NULL){
 #' A rule that may or may not match, depending on the condition.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#BooleanRule}{Google's Documentation for BooleanRule}
-#' @usage gsv4_BooleanRule(condition=NULL, format=NULL)
 #' @param condition \code{\link{gsv4_BooleanCondition}} object. A condition that can evaluate to TRUE or FALSE.
 #' BooleanConditions are used by conditional formatting,
 #' data validation, and the criteria in filters.
@@ -1557,7 +1534,6 @@ gsv4_BooleanRule <- function(condition=NULL, format=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Border}{Google's Documentation for Border}
-#' @usage gsv4_Border(color=NULL, style=NULL, width=NULL)
 #' @param color \code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed
 #' for simplicity of conversion to/from color representations in various
 #' languages over compactness; for example, the fields of this representation
@@ -1704,7 +1680,6 @@ gsv4_Border <- function(color=NULL, style=NULL, width=NULL){
 #' The borders of the cell.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Borders}{Google's Documentation for Borders}
-#' @usage gsv4_Borders(bottom=NULL, left=NULL, right=NULL, top=NULL)
 #' @param bottom \code{\link{gsv4_Border}} object. A border along a cell.
 #' @param left \code{\link{gsv4_Border}} object. A border along a cell.
 #' @param right \code{\link{gsv4_Border}} object. A border along a cell.
@@ -1742,7 +1717,6 @@ gsv4_Borders <- function(bottom=NULL, left=NULL, right=NULL, top=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#CellData}{Google's Documentation for CellData}
-#' @usage gsv4_CellData(dataValidation=NULL, effectiveFormat=NULL, effectiveValue=NULL, formattedValue=NULL, hyperlink=NULL, note=NULL, pivotTable=NULL, textFormatRuns=NULL, userEnteredFormat=NULL, userEnteredValue=NULL)
 #' @param dataValidation \code{\link{gsv4_DataValidationRule}} object. A data validation rule.
 #' @param effectiveFormat \code{\link{gsv4_CellFormat}} object. The format of a cell.
 #' @param effectiveValue \code{\link{gsv4_ExtendedValue}} object. The kinds of value that a cell in a spreadsheet can have.
@@ -1888,7 +1862,6 @@ gsv4_CellData <- function(dataValidation=NULL, effectiveFormat=NULL, effectiveVa
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#CellFormat}{Google's Documentation for CellFormat}
-#' @usage gsv4_CellFormat(backgroundColor=NULL, borders=NULL, horizontalAlignment=NULL, hyperlinkDisplayType=NULL, numberFormat=NULL, padding=NULL, textDirection=NULL, textFormat=NULL, textRotation=NULL, verticalAlignment=NULL, wrapStrategy=NULL)
 #' @param backgroundColor \code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed
 #' for simplicity of conversion to/from color representations in various
 #' languages over compactness; for example, the fields of this representation
@@ -2080,7 +2053,6 @@ gsv4_CellFormat <- function(backgroundColor=NULL, borders=NULL, horizontalAlignm
 #' The data included in a domain or series.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ChartData}{Google's Documentation for ChartData}
-#' @usage gsv4_ChartData(sourceRange=NULL)
 #' @param sourceRange \code{\link{gsv4_ChartSourceRange}} object. Source ranges for a chart.
 #' @return ChartData
 #' @export
@@ -2102,7 +2074,6 @@ gsv4_ChartData <- function(sourceRange=NULL){
 #' Source ranges for a chart.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ChartSourceRange}{Google's Documentation for ChartSourceRange}
-#' @usage gsv4_ChartSourceRange(sources=NULL)
 #' @param sources list of \code{\link{gsv4_GridRange}} objects. The ranges of data for a series or domain.
 #' Exactly one dimension must have a length of 1,
 #' and all sources in the list must have the same dimension
@@ -2150,7 +2121,6 @@ gsv4_ChartSourceRange <- function(sources=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ChartSpec}{Google's Documentation for ChartSpec}
-#' @usage gsv4_ChartSpec(basicChart=NULL, hiddenDimensionStrategy=NULL, pieChart=NULL, title=NULL)
 #' @param basicChart \code{\link{gsv4_BasicChartSpec}} object. The specification for a basic chart.  See BasicChartType for the list
 #' of charts this supports.
 #' @param hiddenDimensionStrategy string. Determines how the charts will use hidden rows or columns. hiddenDimensionStrategy must take one of the following values: CHART_HIDDEN_DIMENSION_STRATEGY_UNSPECIFIED, SKIP_HIDDEN_ROWS_AND_COLUMNS, SKIP_HIDDEN_ROWS, SKIP_HIDDEN_COLUMNS, SHOW_ALL
@@ -2190,7 +2160,6 @@ gsv4_ChartSpec <- function(basicChart=NULL, hiddenDimensionStrategy=NULL, pieCha
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ClearBasicFilterRequest}{Google's Documentation for ClearBasicFilterRequest}
-#' @usage gsv4_ClearBasicFilterRequest(sheetId=NULL)
 #' @param sheetId integer. The sheet ID on which the basic filter should be cleared.
 #' @return ClearBasicFilterRequest
 #' @export
@@ -2212,7 +2181,6 @@ gsv4_ClearBasicFilterRequest <- function(sheetId=NULL){
 #' The request for clearing a range of values in a spreadsheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ClearValuesRequest}{Google's Documentation for ClearValuesRequest}
-#' @usage gsv4_ClearValuesRequest()
 #' @return ClearValuesRequest
 #' @export
 gsv4_ClearValuesRequest <- function(){
@@ -2344,7 +2312,6 @@ gsv4_ClearValuesRequest <- function(){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Color}{Google's Documentation for Color}
-#' @usage gsv4_Color(alpha=NULL, blue=NULL, green=NULL, red=NULL)
 #' @param alpha numeric. The fraction of this color that should be applied to the pixel. That is,
 #' the final pixel color is defined by the equation:
 #' 
@@ -2391,7 +2358,6 @@ gsv4_Color <- function(alpha=NULL, blue=NULL, green=NULL, red=NULL){
 #' A rule describing a conditional format.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ConditionalFormatRule}{Google's Documentation for ConditionalFormatRule}
-#' @usage gsv4_ConditionalFormatRule(booleanRule=NULL, gradientRule=NULL, ranges=NULL)
 #' @param booleanRule \code{\link{gsv4_BooleanRule}} object. A rule that may or may not match, depending on the condition.
 #' @param gradientRule \code{\link{gsv4_GradientRule}} object. A rule that applies a gradient color scale format, based on
 #' the interpolation points listed. The format of a cell will vary
@@ -2439,7 +2405,6 @@ gsv4_ConditionalFormatRule <- function(booleanRule=NULL, gradientRule=NULL, rang
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ConditionValue}{Google's Documentation for ConditionValue}
-#' @usage gsv4_ConditionValue(relativeDate=NULL, userEnteredValue=NULL)
 #' @param relativeDate string. A relative date (based on the current date).
 #' Valid only if the type is
 #' DATE_BEFORE,
@@ -2496,7 +2461,6 @@ gsv4_ConditionValue <- function(relativeDate=NULL, userEnteredValue=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#CopyPasteRequest}{Google's Documentation for CopyPasteRequest}
-#' @usage gsv4_CopyPasteRequest(destination=NULL, pasteOrientation=NULL, pasteType=NULL, source=NULL)
 #' @param destination \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -2592,7 +2556,6 @@ gsv4_CopyPasteRequest <- function(destination=NULL, pasteOrientation=NULL, paste
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#CopySheetToAnotherSpreadsheetRequest}{Google's Documentation for CopySheetToAnotherSpreadsheetRequest}
-#' @usage gsv4_CopySheetToAnotherSpreadsheetRequest(destinationSpreadsheetId=NULL)
 #' @param destinationSpreadsheetId string. The ID of the spreadsheet to copy the sheet to.
 #' @return CopySheetToAnotherSpreadsheetRequest
 #' @export
@@ -2626,7 +2589,6 @@ gsv4_CopySheetToAnotherSpreadsheetRequest <- function(destinationSpreadsheetId=N
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#CutPasteRequest}{Google's Documentation for CutPasteRequest}
-#' @usage gsv4_CutPasteRequest(destination=NULL, pasteType=NULL, source=NULL)
 #' @param destination \code{\link{gsv4_GridCoordinate}} object. A coordinate in a sheet.
 #' All indexes are zero-based.
 #' @param pasteType string. What kind of data to paste.  All the source data will be cut, regardless
@@ -2690,7 +2652,6 @@ gsv4_CutPasteRequest <- function(destination=NULL, pasteType=NULL, source=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DataValidationRule}{Google's Documentation for DataValidationRule}
-#' @usage gsv4_DataValidationRule(condition=NULL, inputMessage=NULL, showCustomUi=NULL, strict=NULL)
 #' @param condition \code{\link{gsv4_BooleanCondition}} object. A condition that can evaluate to TRUE or FALSE.
 #' BooleanConditions are used by conditional formatting,
 #' data validation, and the criteria in filters.
@@ -2731,7 +2692,6 @@ gsv4_DataValidationRule <- function(condition=NULL, inputMessage=NULL, showCusto
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteBandingRequest}{Google's Documentation for DeleteBandingRequest}
-#' @usage gsv4_DeleteBandingRequest(bandedRangeId=NULL)
 #' @param bandedRangeId integer. The ID of the banded range to delete.
 #' @return DeleteBandingRequest
 #' @export
@@ -2755,7 +2715,6 @@ gsv4_DeleteBandingRequest <- function(bandedRangeId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteConditionalFormatRuleRequest}{Google's Documentation for DeleteConditionalFormatRuleRequest}
-#' @usage gsv4_DeleteConditionalFormatRuleRequest(sheetId=NULL, index=NULL)
 #' @param sheetId integer. The sheet the rule is being deleted from.
 #' @param index integer. The zero-based index of the rule to be deleted.
 #' @return DeleteConditionalFormatRuleRequest
@@ -2782,7 +2741,6 @@ gsv4_DeleteConditionalFormatRuleRequest <- function(sheetId=NULL, index=NULL){
 #' Deletes the dimensions from the sheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteDimensionRequest}{Google's Documentation for DeleteDimensionRequest}
-#' @usage gsv4_DeleteDimensionRequest(range=NULL)
 #' @param range \code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open: the start index is inclusive
@@ -2809,7 +2767,6 @@ gsv4_DeleteDimensionRequest <- function(range=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteEmbeddedObjectRequest}{Google's Documentation for DeleteEmbeddedObjectRequest}
-#' @usage gsv4_DeleteEmbeddedObjectRequest(objectId=NULL)
 #' @param objectId integer. The ID of the embedded object to delete.
 #' @return DeleteEmbeddedObjectRequest
 #' @export
@@ -2832,7 +2789,6 @@ gsv4_DeleteEmbeddedObjectRequest <- function(objectId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteFilterViewRequest}{Google's Documentation for DeleteFilterViewRequest}
-#' @usage gsv4_DeleteFilterViewRequest(filterId=NULL)
 #' @param filterId integer. The ID of the filter to delete.
 #' @return DeleteFilterViewRequest
 #' @export
@@ -2855,7 +2811,6 @@ gsv4_DeleteFilterViewRequest <- function(filterId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteNamedRangeRequest}{Google's Documentation for DeleteNamedRangeRequest}
-#' @usage gsv4_DeleteNamedRangeRequest(namedRangeId=NULL)
 #' @param namedRangeId string. The ID of the named range to delete.
 #' @return DeleteNamedRangeRequest
 #' @export
@@ -2878,7 +2833,6 @@ gsv4_DeleteNamedRangeRequest <- function(namedRangeId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteProtectedRangeRequest}{Google's Documentation for DeleteProtectedRangeRequest}
-#' @usage gsv4_DeleteProtectedRangeRequest(protectedRangeId=NULL)
 #' @param protectedRangeId integer. The ID of the protected range to delete.
 #' @return DeleteProtectedRangeRequest
 #' @export
@@ -2908,7 +2862,6 @@ gsv4_DeleteProtectedRangeRequest <- function(protectedRangeId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteRangeRequest}{Google's Documentation for DeleteRangeRequest}
-#' @usage gsv4_DeleteRangeRequest(range=NULL, shiftDimension=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -2968,7 +2921,6 @@ gsv4_DeleteRangeRequest <- function(range=NULL, shiftDimension=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DeleteSheetRequest}{Google's Documentation for DeleteSheetRequest}
-#' @usage gsv4_DeleteSheetRequest(sheetId=NULL)
 #' @param sheetId integer. The ID of the sheet to delete.
 #' @return DeleteSheetRequest
 #' @export
@@ -2991,7 +2943,6 @@ gsv4_DeleteSheetRequest <- function(sheetId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DimensionProperties}{Google's Documentation for DimensionProperties}
-#' @usage gsv4_DimensionProperties(hiddenByFilter=NULL, hiddenByUser=NULL, pixelSize=NULL)
 #' @param hiddenByFilter logical. TRUE if this dimension is being filtered.
 #' This field is read-only.
 #' @param hiddenByUser logical. TRUE if this dimension is explicitly hidden.
@@ -3036,7 +2987,6 @@ gsv4_DimensionProperties <- function(hiddenByFilter=NULL, hiddenByUser=NULL, pix
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DimensionRange}{Google's Documentation for DimensionRange}
-#' @usage gsv4_DimensionRange(sheetId=NULL, dimension=NULL, endIndex=NULL, startIndex=NULL)
 #' @param sheetId integer. The sheet this span is on.
 #' @param dimension string. The dimension of the span. dimension must take one of the following values: DIMENSION_UNSPECIFIED, ROWS, COLUMNS
 #' See the details section for the definition of each of these values.
@@ -3075,7 +3025,6 @@ gsv4_DimensionRange <- function(sheetId=NULL, dimension=NULL, endIndex=NULL, sta
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DuplicateFilterViewRequest}{Google's Documentation for DuplicateFilterViewRequest}
-#' @usage gsv4_DuplicateFilterViewRequest(filterId=NULL)
 #' @param filterId integer. The ID of the filter being duplicated.
 #' @return DuplicateFilterViewRequest
 #' @export
@@ -3098,7 +3047,6 @@ gsv4_DuplicateFilterViewRequest <- function(filterId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#DuplicateSheetRequest}{Google's Documentation for DuplicateSheetRequest}
-#' @usage gsv4_DuplicateSheetRequest(insertSheetIndex=NULL, newSheetId=NULL, newSheetName=NULL, sourceSheetId=NULL)
 #' @param insertSheetIndex integer. The zero-based index where the new sheet should be inserted.
 #' The index of all sheets after this are incremented.
 #' @param newSheetId integer. If set, the ID of the new sheet. If not set, an ID is chosen.
@@ -3139,7 +3087,6 @@ gsv4_DuplicateSheetRequest <- function(insertSheetIndex=NULL, newSheetId=NULL, n
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Editors}{Google's Documentation for Editors}
-#' @usage gsv4_Editors(domainUsersCanEdit=NULL, groups=NULL, users=NULL)
 #' @param domainUsersCanEdit logical. TRUE if anyone in the document's domain has edit access to the protected
 #' range.  Domain protection is only supported on documents within a domain.
 #' @param groups list. The email addresses of groups with edit access to the protected range.
@@ -3173,7 +3120,6 @@ gsv4_Editors <- function(domainUsersCanEdit=NULL, groups=NULL, users=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#EmbeddedChart}{Google's Documentation for EmbeddedChart}
-#' @usage gsv4_EmbeddedChart(chartId=NULL, position=NULL, spec=NULL)
 #' @param chartId integer. The ID of the chart.
 #' @param position \code{\link{gsv4_EmbeddedObjectPosition}} object. The position of an embedded object such as a chart.
 #' @param spec \code{\link{gsv4_ChartSpec}} object. The specifications of a chart.
@@ -3206,7 +3152,6 @@ gsv4_EmbeddedChart <- function(chartId=NULL, position=NULL, spec=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#EmbeddedObjectPosition}{Google's Documentation for EmbeddedObjectPosition}
-#' @usage gsv4_EmbeddedObjectPosition(sheetId=NULL, newSheet=NULL, overlayPosition=NULL)
 #' @param sheetId integer. The sheet this is on. Set only if the embedded object
 #' is on its own sheet. Must be non-negative.
 #' @param newSheet logical. If TRUE, the embedded object will be put on a new sheet whose ID
@@ -3255,7 +3200,6 @@ gsv4_EmbeddedObjectPosition <- function(sheetId=NULL, newSheet=NULL, overlayPosi
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ErrorValue}{Google's Documentation for ErrorValue}
-#' @usage gsv4_ErrorValue(message=NULL, type=NULL)
 #' @param message string. A message with more information about the error
 #' (in the spreadsheet's locale).
 #' @param type string. The type of error. type must take one of the following values: ERROR_TYPE_UNSPECIFIED, ERROR, NULL_VALUE, DIVIDE_BY_ZERO, VALUE, REF, NAME, NUM, N_A, LOADING
@@ -3285,7 +3229,6 @@ gsv4_ErrorValue <- function(message=NULL, type=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ExtendedValue}{Google's Documentation for ExtendedValue}
-#' @usage gsv4_ExtendedValue(boolValue=NULL, errorValue=NULL, formulaValue=NULL, numberValue=NULL, stringValue=NULL)
 #' @param boolValue logical. Represents a boolean value.
 #' @param errorValue \code{\link{gsv4_ErrorValue}} object. An error in a cell.
 #' @param formulaValue string. Represents a formula.
@@ -3332,7 +3275,6 @@ gsv4_ExtendedValue <- function(boolValue=NULL, errorValue=NULL, formulaValue=NUL
 #' Criteria for showing/hiding rows in a filter or filter view.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#FilterCriteria}{Google's Documentation for FilterCriteria}
-#' @usage gsv4_FilterCriteria(condition=NULL, hiddenValues=NULL)
 #' @param condition \code{\link{gsv4_BooleanCondition}} object. A condition that can evaluate to TRUE or FALSE.
 #' BooleanConditions are used by conditional formatting,
 #' data validation, and the criteria in filters.
@@ -3362,7 +3304,6 @@ gsv4_FilterCriteria <- function(condition=NULL, hiddenValues=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#FilterView}{Google's Documentation for FilterView}
-#' @usage gsv4_FilterView(range=NULL, criteria=NULL, filterViewId=NULL, namedRangeId=NULL, sortSpecs=NULL, title=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -3444,7 +3385,6 @@ gsv4_FilterView <- function(range=NULL, criteria=NULL, filterViewId=NULL, namedR
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#FindReplaceRequest}{Google's Documentation for FindReplaceRequest}
-#' @usage gsv4_FindReplaceRequest(sheetId=NULL, range=NULL, allSheets=NULL, find=NULL, includeFormulas=NULL, matchCase=NULL, matchEntireCell=NULL, replacement=NULL, searchByRegex=NULL)
 #' @param sheetId integer. The sheet to find/replace over.
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
@@ -3545,7 +3485,6 @@ gsv4_FindReplaceRequest <- function(sheetId=NULL, range=NULL, allSheets=NULL, fi
 #' points.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#GradientRule}{Google's Documentation for GradientRule}
-#' @usage gsv4_GradientRule(maxpoint=NULL, midpoint=NULL, minpoint=NULL)
 #' @param maxpoint \code{\link{gsv4_InterpolationPoint}} object. A single interpolation point on a gradient conditional format.
 #' These pin the gradient color scale according to the color,
 #' type and value chosen.
@@ -3585,7 +3524,6 @@ gsv4_GradientRule <- function(maxpoint=NULL, midpoint=NULL, minpoint=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#GridCoordinate}{Google's Documentation for GridCoordinate}
-#' @usage gsv4_GridCoordinate(sheetId=NULL, columnIndex=NULL, rowIndex=NULL)
 #' @param sheetId integer. The sheet this coordinate is on.
 #' @param columnIndex integer. The column index of the coordinate.
 #' @param rowIndex integer. The row index of the coordinate.
@@ -3618,7 +3556,6 @@ gsv4_GridCoordinate <- function(sheetId=NULL, columnIndex=NULL, rowIndex=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#GridData}{Google's Documentation for GridData}
-#' @usage gsv4_GridData(columnMetadata=NULL, rowData=NULL, rowMetadata=NULL, startColumn=NULL, startRow=NULL)
 #' @param columnMetadata list of \code{\link{gsv4_DimensionProperties}} objects. Metadata about the requested columns in the grid, starting with the column
 #' in start_column.
 #' @param rowData list of \code{\link{gsv4_RowData}} objects. The data in the grid, one entry per row,
@@ -3666,7 +3603,6 @@ gsv4_GridData <- function(columnMetadata=NULL, rowData=NULL, rowMetadata=NULL, s
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#GridProperties}{Google's Documentation for GridProperties}
-#' @usage gsv4_GridProperties(columnCount=NULL, frozenColumnCount=NULL, frozenRowCount=NULL, hideGridlines=NULL, rowCount=NULL)
 #' @param columnCount integer. The number of columns in the grid.
 #' @param frozenColumnCount integer. The number of columns that are frozen in the grid.
 #' @param frozenRowCount integer. The number of rows that are frozen in the grid.
@@ -3737,7 +3673,6 @@ gsv4_GridProperties <- function(columnCount=NULL, frozenColumnCount=NULL, frozen
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#GridRange}{Google's Documentation for GridRange}
-#' @usage gsv4_GridRange(sheetId=NULL, endColumnIndex=NULL, endRowIndex=NULL, startColumnIndex=NULL, startRowIndex=NULL)
 #' @param sheetId integer. The sheet this range is on.
 #' @param endColumnIndex integer. The end column (exclusive) of the range, or not set if unbounded.
 #' @param endRowIndex integer. The end row (exclusive) of the range, or not set if unbounded.
@@ -3780,7 +3715,6 @@ gsv4_GridRange <- function(sheetId=NULL, endColumnIndex=NULL, endRowIndex=NULL, 
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#InsertDimensionRequest}{Google's Documentation for InsertDimensionRequest}
-#' @usage gsv4_InsertDimensionRequest(range=NULL, inheritFromBefore=NULL)
 #' @param range \code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open: the start index is inclusive
@@ -3830,7 +3764,6 @@ gsv4_InsertDimensionRequest <- function(range=NULL, inheritFromBefore=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#InsertRangeRequest}{Google's Documentation for InsertRangeRequest}
-#' @usage gsv4_InsertRangeRequest(range=NULL, shiftDimension=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -3913,7 +3846,6 @@ gsv4_InsertRangeRequest <- function(range=NULL, shiftDimension=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#InterpolationPoint}{Google's Documentation for InterpolationPoint}
-#' @usage gsv4_InterpolationPoint(color=NULL, type=NULL, value=NULL)
 #' @param color \code{\link{gsv4_Color}} object. Represents a color in the RGBA color space. This representation is designed
 #' for simplicity of conversion to/from color representations in various
 #' languages over compactness; for example, the fields of this representation
@@ -4063,7 +3995,6 @@ gsv4_InterpolationPoint <- function(color=NULL, type=NULL, value=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#IterativeCalculationSettings}{Google's Documentation for IterativeCalculationSettings}
-#' @usage gsv4_IterativeCalculationSettings(convergenceThreshold=NULL, maxIterations=NULL)
 #' @param convergenceThreshold numeric. When iterative calculation is enabled and successive results differ by
 #' less than this threshold value, the calculation rounds stop.
 #' @param maxIterations integer. When iterative calculation is enabled, the maximum number of calculation
@@ -4100,7 +4031,6 @@ gsv4_IterativeCalculationSettings <- function(convergenceThreshold=NULL, maxIter
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#MergeCellsRequest}{Google's Documentation for MergeCellsRequest}
-#' @usage gsv4_MergeCellsRequest(range=NULL, mergeType=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -4157,7 +4087,6 @@ gsv4_MergeCellsRequest <- function(range=NULL, mergeType=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#MoveDimensionRequest}{Google's Documentation for MoveDimensionRequest}
-#' @usage gsv4_MoveDimensionRequest(destinationIndex=NULL, source=NULL)
 #' @param destinationIndex integer. The zero-based start index of where to move the source data to,
 #' based on the coordinates *before* the source data is removed
 #' from the grid.  Existing data will be shifted down or right
@@ -4200,7 +4129,6 @@ gsv4_MoveDimensionRequest <- function(destinationIndex=NULL, source=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#NamedRange}{Google's Documentation for NamedRange}
-#' @usage gsv4_NamedRange(range=NULL, name=NULL, namedRangeId=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -4276,7 +4204,6 @@ gsv4_NamedRange <- function(range=NULL, name=NULL, namedRangeId=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#NumberFormat}{Google's Documentation for NumberFormat}
-#' @usage gsv4_NumberFormat(pattern=NULL, type=NULL)
 #' @param pattern string. Pattern string used for formatting.  If not set, a default pattern based on
 #' the user's locale will be used if necessary for the given type.
 #' See the \href{https://developers.google.com/sheets/api/guides/formats}{Date and Number Formats guide} for more
@@ -4309,7 +4236,6 @@ gsv4_NumberFormat <- function(pattern=NULL, type=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#OverlayPosition}{Google's Documentation for OverlayPosition}
-#' @usage gsv4_OverlayPosition(anchorCell=NULL, heightPixels=NULL, offsetXPixels=NULL, offsetYPixels=NULL, widthPixels=NULL)
 #' @param anchorCell \code{\link{gsv4_GridCoordinate}} object. A coordinate in a sheet.
 #' All indexes are zero-based.
 #' @param heightPixels integer. The height of the object, in pixels. Defaults to 371.
@@ -4356,7 +4282,6 @@ gsv4_OverlayPosition <- function(anchorCell=NULL, heightPixels=NULL, offsetXPixe
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Padding}{Google's Documentation for Padding}
-#' @usage gsv4_Padding(bottom=NULL, left=NULL, right=NULL, top=NULL)
 #' @param bottom integer. The bottom padding of the cell.
 #' @param left integer. The left padding of the cell.
 #' @param right integer. The right padding of the cell.
@@ -4405,7 +4330,6 @@ gsv4_Padding <- function(bottom=NULL, left=NULL, right=NULL, top=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PasteDataRequest}{Google's Documentation for PasteDataRequest}
-#' @usage gsv4_PasteDataRequest(coordinate=NULL, data=NULL, delimiter=NULL, html=NULL, type=NULL)
 #' @param coordinate \code{\link{gsv4_GridCoordinate}} object. A coordinate in a sheet.
 #' All indexes are zero-based.
 #' @param data string. The data to insert.
@@ -4461,7 +4385,6 @@ gsv4_PasteDataRequest <- function(coordinate=NULL, data=NULL, delimiter=NULL, ht
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PieChartSpec}{Google's Documentation for PieChartSpec}
-#' @usage gsv4_PieChartSpec(domain=NULL, legendPosition=NULL, pieHole=NULL, series=NULL, threeDimensional=NULL)
 #' @param domain \code{\link{gsv4_ChartData}} object. The data included in a domain or series.
 #' @param legendPosition string. Where the legend of the pie chart should be drawn. legendPosition must take one of the following values: PIE_CHART_LEGEND_POSITION_UNSPECIFIED, BOTTOM_LEGEND, LEFT_LEGEND, RIGHT_LEGEND, TOP_LEGEND, NO_LEGEND, LABELED_LEGEND
 #' See the details section for the definition of each of these values.
@@ -4504,7 +4427,6 @@ gsv4_PieChartSpec <- function(domain=NULL, legendPosition=NULL, pieHole=NULL, se
 #' Criteria for showing/hiding rows in a pivot table.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PivotFilterCriteria}{Google's Documentation for PivotFilterCriteria}
-#' @usage gsv4_PivotFilterCriteria(visibleValues=NULL)
 #' @param visibleValues list. Values that should be included.  Values not listed here are excluded.
 #' @return PivotFilterCriteria
 #' @export
@@ -4534,7 +4456,6 @@ gsv4_PivotFilterCriteria <- function(visibleValues=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PivotGroup}{Google's Documentation for PivotGroup}
-#' @usage gsv4_PivotGroup(showTotals=NULL, sortOrder=NULL, sourceColumnOffset=NULL, valueBucket=NULL, valueMetadata=NULL)
 #' @param showTotals logical. TRUE if the pivot table should include the totals for this grouping.
 #' @param sortOrder string. The order the values in this group should be sorted. sortOrder must take one of the following values: SORT_ORDER_UNSPECIFIED, ASCENDING, DESCENDING
 #' See the details section for the definition of each of these values.
@@ -4582,7 +4503,6 @@ gsv4_PivotGroup <- function(showTotals=NULL, sortOrder=NULL, sourceColumnOffset=
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PivotGroupSortValueBucket}{Google's Documentation for PivotGroupSortValueBucket}
-#' @usage gsv4_PivotGroupSortValueBucket(buckets=NULL, valuesIndex=NULL)
 #' @param buckets list of \code{\link{gsv4_ExtendedValue}} objects. Determines the bucket from which values are chosen to sort.
 #' 
 #' For example, in a pivot table with one row group & two column groups,
@@ -4619,7 +4539,6 @@ gsv4_PivotGroupSortValueBucket <- function(buckets=NULL, valuesIndex=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PivotGroupValueMetadata}{Google's Documentation for PivotGroupValueMetadata}
-#' @usage gsv4_PivotGroupValueMetadata(collapsed=NULL, value=NULL)
 #' @param collapsed logical. TRUE if the data corresponding to the value is collapsed.
 #' @param value \code{\link{gsv4_ExtendedValue}} object. The kinds of value that a cell in a spreadsheet can have.
 #' @return PivotGroupValueMetadata
@@ -4653,7 +4572,6 @@ gsv4_PivotGroupValueMetadata <- function(collapsed=NULL, value=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PivotTable}{Google's Documentation for PivotTable}
-#' @usage gsv4_PivotTable(rows=NULL, columns=NULL, criteria=NULL, source=NULL, valueLayout=NULL, values=NULL)
 #' @param rows list of \code{\link{gsv4_PivotGroup}} objects. Each row grouping in the pivot table.
 #' @param columns list of \code{\link{gsv4_PivotGroup}} objects. Each column grouping in the pivot table.
 #' @param criteria list or data.frame of \code{\link{gsv4_PivotFilterCriteria}} objects. An optional mapping of filters per source column offset.
@@ -4758,7 +4676,6 @@ gsv4_PivotTable <- function(rows=NULL, columns=NULL, criteria=NULL, source=NULL,
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#PivotValue}{Google's Documentation for PivotValue}
-#' @usage gsv4_PivotValue(formula=NULL, name=NULL, sourceColumnOffset=NULL, summarizeFunction=NULL)
 #' @param formula string. A custom formula to calculate the value.  The formula must start
 #' with an `=` character.
 #' @param name string. A name to use for the value. This is only used if formula was set.
@@ -4808,7 +4725,6 @@ gsv4_PivotValue <- function(formula=NULL, name=NULL, sourceColumnOffset=NULL, su
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#ProtectedRange}{Google's Documentation for ProtectedRange}
-#' @usage gsv4_ProtectedRange(range=NULL, description=NULL, editors=NULL, namedRangeId=NULL, protectedRangeId=NULL, requestingUserCanEdit=NULL, unprotectedRanges=NULL, warningOnly=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -4921,7 +4837,6 @@ gsv4_ProtectedRange <- function(range=NULL, description=NULL, editors=NULL, name
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#RepeatCellRequest}{Google's Documentation for RepeatCellRequest}
-#' @usage gsv4_RepeatCellRequest(range=NULL, fields=NULL, cell=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -4983,7 +4898,6 @@ gsv4_RepeatCellRequest <- function(range=NULL, fields=NULL, cell=NULL){
 #' A single kind of update to apply to a spreadsheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Request}{Google's Documentation for Request}
-#' @usage gsv4_Request(addBanding=NULL, addChart=NULL, addConditionalFormatRule=NULL, addFilterView=NULL, addNamedRange=NULL, addProtectedRange=NULL, addSheet=NULL, appendCells=NULL, appendDimension=NULL, autoFill=NULL, autoResizeDimensions=NULL, clearBasicFilter=NULL, copyPaste=NULL, cutPaste=NULL, deleteBanding=NULL, deleteConditionalFormatRule=NULL, deleteDimension=NULL, deleteEmbeddedObject=NULL, deleteFilterView=NULL, deleteNamedRange=NULL, deleteProtectedRange=NULL, deleteRange=NULL, deleteSheet=NULL, duplicateFilterView=NULL, duplicateSheet=NULL, findReplace=NULL, insertDimension=NULL, insertRange=NULL, mergeCells=NULL, moveDimension=NULL, pasteData=NULL, repeatCell=NULL, setBasicFilter=NULL, setDataValidation=NULL, sortRange=NULL, textToColumns=NULL, unmergeCells=NULL, updateBanding=NULL, updateBorders=NULL, updateCells=NULL, updateChartSpec=NULL, updateConditionalFormatRule=NULL, updateDimensionProperties=NULL, updateEmbeddedObjectPosition=NULL, updateFilterView=NULL, updateNamedRange=NULL, updateProtectedRange=NULL, updateSheetProperties=NULL, updateSpreadsheetProperties=NULL)
 #' @param addBanding \code{\link{gsv4_AddBandingRequest}} object. Adds a new banded range to the spreadsheet.
 #' @param addChart \code{\link{gsv4_AddChartRequest}} object. Adds a chart to a sheet in the spreadsheet.
 #' @param addConditionalFormatRule \code{\link{gsv4_AddConditionalFormatRuleRequest}} object. Adds a new conditional format rule at the given index.
@@ -5285,7 +5199,6 @@ gsv4_Request <- function(addBanding=NULL, addChart=NULL, addConditionalFormatRul
 #' Data about each cell in a row.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#RowData}{Google's Documentation for RowData}
-#' @usage gsv4_RowData(values=NULL)
 #' @param values list of \code{\link{gsv4_CellData}} objects. The values in the row, one per column.
 #' @return RowData
 #' @export
@@ -5307,7 +5220,6 @@ gsv4_RowData <- function(values=NULL){
 #' Sets the basic filter associated with a sheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#SetBasicFilterRequest}{Google's Documentation for SetBasicFilterRequest}
-#' @usage gsv4_SetBasicFilterRequest(filter=NULL)
 #' @param filter \code{\link{gsv4_BasicFilter}} object. The default filter associated with a sheet.
 #' @return SetBasicFilterRequest
 #' @export
@@ -5330,7 +5242,6 @@ gsv4_SetBasicFilterRequest <- function(filter=NULL){
 #' To clear validation in a range, call this with no rule specified.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#SetDataValidationRequest}{Google's Documentation for SetDataValidationRequest}
-#' @usage gsv4_SetDataValidationRequest(range=NULL, rule=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -5385,7 +5296,6 @@ gsv4_SetDataValidationRequest <- function(range=NULL, rule=NULL){
 #' A sheet in a spreadsheet.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Sheet}{Google's Documentation for Sheet}
-#' @usage gsv4_Sheet(bandedRanges=NULL, basicFilter=NULL, charts=NULL, conditionalFormats=NULL, data=NULL, filterViews=NULL, merges=NULL, properties=NULL, protectedRanges=NULL)
 #' @param bandedRanges list of \code{\link{gsv4_BandedRange}} objects. The banded (i.e. alternating colors) ranges on this sheet.
 #' @param basicFilter \code{\link{gsv4_BasicFilter}} object. The default filter associated with a sheet.
 #' @param charts list of \code{\link{gsv4_EmbeddedChart}} objects. The specifications of every chart on this sheet.
@@ -5462,7 +5372,6 @@ gsv4_Sheet <- function(bandedRanges=NULL, basicFilter=NULL, charts=NULL, conditi
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#SheetProperties}{Google's Documentation for SheetProperties}
-#' @usage gsv4_SheetProperties(sheetId=NULL, gridProperties=NULL, hidden=NULL, index=NULL, rightToLeft=NULL, sheetType=NULL, tabColor=NULL, title=NULL)
 #' @param sheetId integer. The ID of the sheet. Must be non-negative.
 #' This field cannot be changed once set.
 #' @param gridProperties \code{\link{gsv4_GridProperties}} object. Properties of a grid.
@@ -5644,7 +5553,6 @@ gsv4_SheetProperties <- function(sheetId=NULL, gridProperties=NULL, hidden=NULL,
 #' Sorts data in rows based on a sort order per column.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#SortRangeRequest}{Google's Documentation for SortRangeRequest}
-#' @usage gsv4_SortRangeRequest(range=NULL, sortSpecs=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -5708,7 +5616,6 @@ gsv4_SortRangeRequest <- function(range=NULL, sortSpecs=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#SortSpec}{Google's Documentation for SortSpec}
-#' @usage gsv4_SortSpec(dimensionIndex=NULL, sortOrder=NULL)
 #' @param dimensionIndex integer. The dimension the sort should be applied to.
 #' @param sortOrder string. The order data should be sorted. sortOrder must take one of the following values: SORT_ORDER_UNSPECIFIED, ASCENDING, DESCENDING
 #' See the details section for the definition of each of these values.
@@ -5744,7 +5651,6 @@ gsv4_SortSpec <- function(dimensionIndex=NULL, sortOrder=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#SourceAndDestination}{Google's Documentation for SourceAndDestination}
-#' @usage gsv4_SourceAndDestination(dimension=NULL, fillLength=NULL, source=NULL)
 #' @param dimension string. The dimension that data should be filled into. dimension must take one of the following values: DIMENSION_UNSPECIFIED, ROWS, COLUMNS
 #' See the details section for the definition of each of these values.
 #' @param fillLength integer. The number of rows or columns that data should be filled into.
@@ -5809,7 +5715,6 @@ gsv4_SourceAndDestination <- function(dimension=NULL, fillLength=NULL, source=NU
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#Spreadsheet}{Google's Documentation for Spreadsheet}
-#' @usage gsv4_Spreadsheet(spreadsheetId=NULL, namedRanges=NULL, properties=NULL, sheets=NULL, spreadsheetUrl=NULL)
 #' @param spreadsheetId string. The ID of the spreadsheet.
 #' This field is read-only.
 #' @param namedRanges list of \code{\link{gsv4_NamedRange}} objects. The named ranges defined in a spreadsheet.
@@ -5862,7 +5767,6 @@ gsv4_Spreadsheet <- function(spreadsheetId=NULL, namedRanges=NULL, properties=NU
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#SpreadsheetProperties}{Google's Documentation for SpreadsheetProperties}
-#' @usage gsv4_SpreadsheetProperties(autoRecalc=NULL, defaultFormat=NULL, iterativeCalculationSettings=NULL, locale=NULL, timeZone=NULL, title=NULL)
 #' @param autoRecalc string. The amount of time to wait before volatile functions are recalculated. autoRecalc must take one of the following values: RECALCULATION_INTERVAL_UNSPECIFIED, ON_CHANGE, MINUTE, HOUR
 #' See the details section for the definition of each of these values.
 #' @param defaultFormat \code{\link{gsv4_CellFormat}} object. The format of a cell.
@@ -5923,7 +5827,6 @@ gsv4_SpreadsheetProperties <- function(autoRecalc=NULL, defaultFormat=NULL, iter
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#TextFormat}{Google's Documentation for TextFormat}
-#' @usage gsv4_TextFormat(bold=NULL, fontFamily=NULL, fontSize=NULL, foregroundColor=NULL, italic=NULL, strikethrough=NULL, underline=NULL)
 #' @param bold logical. TRUE if the text is bold.
 #' @param fontFamily string. The font family.
 #' @param fontSize integer. The size of the font.
@@ -6091,7 +5994,6 @@ gsv4_TextFormat <- function(bold=NULL, fontFamily=NULL, fontSize=NULL, foregroun
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#TextFormatRun}{Google's Documentation for TextFormatRun}
-#' @usage gsv4_TextFormatRun(format=NULL, startIndex=NULL)
 #' @param format \code{\link{gsv4_TextFormat}} object. The format of a run of text in a cell.
 #' Absent values indicate that the field isn't specified.
 #' @param startIndex integer. The character index where this run starts.
@@ -6120,7 +6022,6 @@ gsv4_TextFormatRun <- function(format=NULL, startIndex=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#TextRotation}{Google's Documentation for TextRotation}
-#' @usage gsv4_TextRotation(angle=NULL, vertical=NULL)
 #' @param angle integer. The angle between the standard orientation and the desired orientation.
 #' Measured in degrees. Valid values are between -90 and 90. Positive
 #' angles are angled upwards, negative are angled downwards.
@@ -6175,7 +6076,6 @@ gsv4_TextRotation <- function(angle=NULL, vertical=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#TextToColumnsRequest}{Google's Documentation for TextToColumnsRequest}
-#' @usage gsv4_TextToColumnsRequest(delimiter=NULL, delimiterType=NULL, source=NULL)
 #' @param delimiter string. The delimiter to use. Used only if delimiterType is
 #' CUSTOM.
 #' @param delimiterType string. The delimiter type to use. delimiterType must take one of the following values: DELIMITER_TYPE_UNSPECIFIED, COMMA, SEMICOLON, PERIOD, SPACE, CUSTOM
@@ -6237,7 +6137,6 @@ gsv4_TextToColumnsRequest <- function(delimiter=NULL, delimiterType=NULL, source
 #' Unmerges cells in the given range.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UnmergeCellsRequest}{Google's Documentation for UnmergeCellsRequest}
-#' @usage gsv4_UnmergeCellsRequest(range=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -6288,7 +6187,6 @@ gsv4_UnmergeCellsRequest <- function(range=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateBandingRequest}{Google's Documentation for UpdateBandingRequest}
-#' @usage gsv4_UpdateBandingRequest(fields=NULL, bandedRange=NULL)
 #' @param fields string. The fields that should be updated.  At least one field must be specified.
 #' The root `bandedRange` is implied and should not be specified.
 #' A single `"*"` can be used as short-hand for listing every field.
@@ -6327,7 +6225,6 @@ gsv4_UpdateBandingRequest <- function(fields=NULL, bandedRange=NULL){
 #' NONE.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateBordersRequest}{Google's Documentation for UpdateBordersRequest}
-#' @usage gsv4_UpdateBordersRequest(range=NULL, bottom=NULL, innerHorizontal=NULL, innerVertical=NULL, left=NULL, right=NULL, top=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -6408,7 +6305,6 @@ gsv4_UpdateBordersRequest <- function(range=NULL, bottom=NULL, innerHorizontal=N
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateCellsRequest}{Google's Documentation for UpdateCellsRequest}
-#' @usage gsv4_UpdateCellsRequest(range=NULL, rows=NULL, fields=NULL, start=NULL)
 #' @param range \code{\link{gsv4_GridRange}} object. A range on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open, e.g the start index is inclusive
@@ -6480,7 +6376,6 @@ gsv4_UpdateCellsRequest <- function(range=NULL, rows=NULL, fields=NULL, start=NU
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateChartSpecRequest}{Google's Documentation for UpdateChartSpecRequest}
-#' @usage gsv4_UpdateChartSpecRequest(chartId=NULL, spec=NULL)
 #' @param chartId integer. The ID of the chart to update.
 #' @param spec \code{\link{gsv4_ChartSpec}} object. The specifications of a chart.
 #' @return UpdateChartSpecRequest
@@ -6509,7 +6404,6 @@ gsv4_UpdateChartSpecRequest <- function(chartId=NULL, spec=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateConditionalFormatRuleRequest}{Google's Documentation for UpdateConditionalFormatRuleRequest}
-#' @usage gsv4_UpdateConditionalFormatRuleRequest(sheetId=NULL, index=NULL, newIndex=NULL, rule=NULL)
 #' @param sheetId integer. The sheet of the rule to move.  Required if new_index is set,
 #' unused otherwise.
 #' @param index integer. The zero-based index of the rule that should be replaced or moved.
@@ -6548,7 +6442,6 @@ gsv4_UpdateConditionalFormatRuleRequest <- function(sheetId=NULL, index=NULL, ne
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateDimensionPropertiesRequest}{Google's Documentation for UpdateDimensionPropertiesRequest}
-#' @usage gsv4_UpdateDimensionPropertiesRequest(range=NULL, fields=NULL, properties=NULL)
 #' @param range \code{\link{gsv4_DimensionRange}} object. A range along a single dimension on a sheet.
 #' All indexes are zero-based.
 #' Indexes are half open: the start index is inclusive
@@ -6588,7 +6481,6 @@ gsv4_UpdateDimensionPropertiesRequest <- function(range=NULL, fields=NULL, prope
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateEmbeddedObjectPositionRequest}{Google's Documentation for UpdateEmbeddedObjectPositionRequest}
-#' @usage gsv4_UpdateEmbeddedObjectPositionRequest(fields=NULL, newPosition=NULL, objectId=NULL)
 #' @param fields string. The fields of OverlayPosition
 #' that should be updated when setting a new position. Used only if
 #' newPosition.overlayPosition
@@ -6627,7 +6519,6 @@ gsv4_UpdateEmbeddedObjectPositionRequest <- function(fields=NULL, newPosition=NU
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateFilterViewRequest}{Google's Documentation for UpdateFilterViewRequest}
-#' @usage gsv4_UpdateFilterViewRequest(fields=NULL, filter=NULL)
 #' @param fields string. The fields that should be updated.  At least one field must be specified.
 #' The root `filter` is implied and should not be specified.
 #' A single `"*"` can be used as short-hand for listing every field.
@@ -6658,7 +6549,6 @@ gsv4_UpdateFilterViewRequest <- function(fields=NULL, filter=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateNamedRangeRequest}{Google's Documentation for UpdateNamedRangeRequest}
-#' @usage gsv4_UpdateNamedRangeRequest(fields=NULL, namedRange=NULL)
 #' @param fields string. The fields that should be updated.  At least one field must be specified.
 #' The root `namedRange` is implied and should not be specified.
 #' A single `"*"` can be used as short-hand for listing every field.
@@ -6689,7 +6579,6 @@ gsv4_UpdateNamedRangeRequest <- function(fields=NULL, namedRange=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateProtectedRangeRequest}{Google's Documentation for UpdateProtectedRangeRequest}
-#' @usage gsv4_UpdateProtectedRangeRequest(fields=NULL, protectedRange=NULL)
 #' @param fields string. The fields that should be updated.  At least one field must be specified.
 #' The root `protectedRange` is implied and should not be specified.
 #' A single `"*"` can be used as short-hand for listing every field.
@@ -6720,7 +6609,6 @@ gsv4_UpdateProtectedRangeRequest <- function(fields=NULL, protectedRange=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateSheetPropertiesRequest}{Google's Documentation for UpdateSheetPropertiesRequest}
-#' @usage gsv4_UpdateSheetPropertiesRequest(fields=NULL, properties=NULL)
 #' @param fields string. The fields that should be updated.  At least one field must be specified.
 #' The root `properties` is implied and should not be specified.
 #' A single `"*"` can be used as short-hand for listing every field.
@@ -6750,7 +6638,6 @@ gsv4_UpdateSheetPropertiesRequest <- function(fields=NULL, properties=NULL){
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets#UpdateSpreadsheetPropertiesRequest}{Google's Documentation for UpdateSpreadsheetPropertiesRequest}
-#' @usage gsv4_UpdateSpreadsheetPropertiesRequest(fields=NULL, properties=NULL)
 #' @param fields string. The fields that should be updated.  At least one field must be specified.
 #' The root 'properties' is implied and should not be specified.
 #' A single `"*"` can be used as short-hand for listing every field.
@@ -6787,7 +6674,6 @@ gsv4_UpdateSpreadsheetPropertiesRequest <- function(fields=NULL, properties=NULL
 #' 
 #' @importFrom jsonlite unbox
 #' @seealso \href{https://developers.google.com/sheets/reference/rest/v4/spreadsheets.values#ValueRange}{Google's Documentation for ValueRange}
-#' @usage gsv4_ValueRange(range=NULL, majorDimension=NULL, values=NULL)
 #' @param range string. The range the values cover, in A1 notation.
 #' For output, this range indicates the entire requested range,
 #' even though the values will exclude trailing rows and columns.
@@ -6845,7 +6731,6 @@ gsv4_ValueRange <- function(range=NULL, majorDimension=NULL, values=NULL){
 #' Auxiliary function for modifying HTTP methods in the Sheets API v4.
 #' 
 #' @seealso \href{https://developers.google.com/sheets/api/query-parameters}{Google's Documentation of Standard Query Parameters}
-#' @usage gsv4_standard_parameters(fields=NULL, .xgafv=NULL, alt=NULL, callback=NULL, pp=NULL, prettyPrint=NULL, quotaUser=NULL, upload_protocol=NULL, uploadType=NULL)
 #' @param fields string. Selector specifying which fields to include in a partial response.
 #' @param .xgafv string. V1 error format. .xgafv must take one of the following values: 1, 2
 #' See the details section for the definition of each of these values.
