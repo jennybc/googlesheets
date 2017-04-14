@@ -44,7 +44,7 @@ gsv4_values_append <- function(spreadsheetId, range, valueInputOption, includeVa
     cat(jsonlite::toJSON(input, pretty = TRUE, force = TRUE))
   }
   call_url <- sprintf("%s/v4/spreadsheets/%s/values/%s:append", getOption("googlesheets.service_url"), spreadsheetId, range)
-  query_string <- gsv4_form_query_string(standard_params, valueInputOption, includeValuesInResponse, insertDataOption, responseDateTimeRenderOption, responseValueRenderOption)
+  query_string <- gsv4_form_query_string(standard_params, valueInputOption=valueInputOption, includeValuesInResponse=includeValuesInResponse, insertDataOption=insertDataOption, responseDateTimeRenderOption=responseDateTimeRenderOption, responseValueRenderOption=responseValueRenderOption)
   call_url <- paste0(call_url, query_string)
   req <- POST(call_url, google_token(),
               body = jsonlite::toJSON(input, force=TRUE),
@@ -122,7 +122,7 @@ gsv4_values_batchClear <- function(spreadsheetId, input, standard_params = list(
 #' @export
 gsv4_values_batchGet <- function(spreadsheetId, dateTimeRenderOption=NULL, majorDimension=NULL, ranges=NULL, valueRenderOption=NULL, standard_params = list(...), ...){
   call_url <- sprintf("%s/v4/spreadsheets/%s/values:batchGet", getOption("googlesheets.service_url"), spreadsheetId)
-  query_string <- gsv4_form_query_string(standard_params, dateTimeRenderOption, majorDimension, ranges, valueRenderOption)
+  query_string <- gsv4_form_query_string(standard_params, dateTimeRenderOption=dateTimeRenderOption, majorDimension=majorDimension, ranges=ranges, valueRenderOption=valueRenderOption)
   call_url <- paste0(call_url, query_string)
   req <- GET(call_url, google_token(),
               add_headers(`Content-Type` = 'application/json'))
@@ -235,7 +235,7 @@ gsv4_values_clear <- function(spreadsheetId, range, input, standard_params = lis
 #' @export
 gsv4_values_get <- function(spreadsheetId, range, dateTimeRenderOption=NULL, majorDimension=NULL, valueRenderOption=NULL, standard_params = list(...), ...){
   call_url <- sprintf("%s/v4/spreadsheets/%s/values/%s", getOption("googlesheets.service_url"), spreadsheetId, range)
-  query_string <- gsv4_form_query_string(standard_params, dateTimeRenderOption, majorDimension, valueRenderOption)
+  query_string <- gsv4_form_query_string(standard_params, dateTimeRenderOption=dateTimeRenderOption, majorDimension=majorDimension, valueRenderOption=valueRenderOption)
   call_url <- paste0(call_url, query_string)
   req <- GET(call_url, google_token(),
               add_headers(`Content-Type` = 'application/json'))
@@ -282,7 +282,7 @@ gsv4_values_update <- function(spreadsheetId, range, valueInputOption, includeVa
     cat(jsonlite::toJSON(input, pretty = TRUE, force = TRUE))
   }
   call_url <- sprintf("%s/v4/spreadsheets/%s/values/%s", getOption("googlesheets.service_url"), spreadsheetId, range)
-  query_string <- gsv4_form_query_string(standard_params, valueInputOption, includeValuesInResponse, responseDateTimeRenderOption, responseValueRenderOption)
+  query_string <- gsv4_form_query_string(standard_params, valueInputOption=valueInputOption, includeValuesInResponse=includeValuesInResponse, responseDateTimeRenderOption=responseDateTimeRenderOption, responseValueRenderOption=responseValueRenderOption)
   call_url <- paste0(call_url, query_string)
   req <- PUT(call_url, google_token(),
               body = jsonlite::toJSON(input, force=TRUE),

@@ -118,7 +118,7 @@ gsv4_create <- function(input, standard_params = list(...), ...){
 #' @export
 gsv4_get <- function(spreadsheetId, includeGridData=NULL, ranges=NULL, standard_params = list(...), ...){
   call_url <- sprintf("%s/v4/spreadsheets/%s", getOption("googlesheets.service_url"), spreadsheetId)
-  query_string <- gsv4_form_query_string(standard_params, includeGridData, ranges)
+  query_string <- gsv4_form_query_string(standard_params, includeGridData=includeGridData, ranges=ranges)
   call_url <- paste0(call_url, query_string)
   req <- GET(call_url, google_token(),
               add_headers(`Content-Type` = 'application/json'))
