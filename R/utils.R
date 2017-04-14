@@ -161,3 +161,229 @@ reconcile_cell_contents <- function(x) {
   x %>%
     dplyr::select_(quote(-literal_only), quote(-putative_integer))
 }
+
+#' gs_prep_values
+#' 
+#' Preparing a data.frame to be passed as the values argument of a function call
+#' 
+#' @usage gsv4_prep_values(values, col_names=TRUE)
+#' @param values \code{data.frame}; A data.frame to be passed as a values matrix typically
+#' used with values operations write, update, or append.
+#' @param col_names logical; indicates whether column names of input should be included in the edit, i.e. prepended to the input
+#'   authorization, respectively
+#' @return \code{data.frame} parsed from a values matrix returned by the Sheets V4 API
+#' @examples
+#' \dontrun{
+#' my_values <- gsv4_prep_values(iris[5,], col_names=FALSE)
+#' gsv4_values_update(spreadsheetId = this_spreadsheetId,
+#'                    valueInputOption = 'RAW', 
+#'                    range = "iris!A6", 
+#'                    input = gsv4_ValueRange(values=my_values, 
+#'                                            majorDimension = 'ROWS', 
+#'                                            range="iris!A6"))
+#' }
+#' 
+#' @export
+gsv4_prep_values <- function(values, col_names=TRUE){
+  header_row <- if(col_names) 1 else 0
+  mat <- matrix(data = values %>% as_character_vector(col_names=col_names), 
+                nrow=nrow(values) + header_row, 
+                ncol=ncol(values), 
+                byrow=TRUE)
+  return(mat)
+}
+
+#' gs_parse_values
+#' 
+#' Parsing the values portion of a reply into a data.frame
+#' 
+#' @usage gsv4_parse_values(values, col_names=TRUE)
+#' @importFrom plyr ldply
+#' @param values \code{list}; a list parsed from the Sheets V4 API that represents an array
+#' @param col_names logical; indicates whether column names of input should be parsed as part of the returne values matrix
+#' @return \code{data.frame} parsed from a values matrix returned by the Sheets V4 API
+#' @examples
+#' \dontrun{
+#' reply <- gsv4_values_get(spreadsheetId = this_spreadsheetId, range="Africa!A3:C5")
+#' my_dat <- gsv4_parse_values(reply$values, col_names=FALSE)
+#' head(my_dat)
+#' }
+#' 
+#' @export
+gsv4_parse_values <- function(values, col_names=TRUE){
+  
+  if(col_names){
+    df_names <- unlist(values[[1]])
+    values <- values[c(-1)]
+  }
+  
+  df <- ldply(values, .fun=function(x){
+    if(identical(x, list())){
+      # this handles if a row or column is totally blank
+      # other methods will completely drop the row, but
+      # we should preserve the dimensions of the array observed
+      # in the spreadsheet
+      as.data.frame(matrix(character(0), nrow=1))
+    } else {
+      as.data.frame(t(unlist(x)))  
+    }
+    
+  }, .id=NULL)
+  
+  # cannot use lappy and bind_rows because it will 
+  # reorder rows if they are blank, weird behavior
+  # this is documented in https://github.com/hadley/dplyr/issues/2175
+  #   df <- lapply(values, FUN=function(x){
+  #     if(identical(x, list())){
+  #       # this handles if a row or column is totally blank
+  #       # other methods will completely drop the row, but
+  #       # we should preserve the dimensions of the array observed
+  #       # in the spreadsheet
+  #       as.data.frame(matrix(character(0), nrow=1))
+  #     } else {
+  #       as.data.frame(t(unlist(x)))  
+  #     }
+  #   })
+  #   df <- bind_rows(df)
+  
+  if(col_names){
+    colnames(df) <- df_names
+  }
+  
+  return(df)
+}
+
+
+#' gsv4_limits_to_grid_range
+#' 
+#' Converting a \code{cell_limits} object to a gridRange object as specified in the Sheets V4 API.
+#' 
+#' @param lim \code{cell_limits}; a list of three components representing upper-left, 
+#' lower-right limits of the range, plus the sheet component
+#' @template ss
+#' @details The sheet component of the limits must be an integer that refers to 
+#' a specific sheetId that exists in the spreadsheet.
+#' @examples
+#' \dontrun{
+#' gsv4_limits_to_grid_range(lim=cell_limits(c(1, 3), c(1, 5)))
+#' }
+#' 
+#' @export
+gsv4_limits_to_grid_range <- function(lim, ss=NULL){
+  
+  if(is.na(lim$sheet) | is.character(lim$sheet)){
+    
+    if(is.null(ss)){
+      stop('The ss argument must be supplied if the sheetId is not provided as part of the limits.')
+    }
+    
+    # pull out details on the sheet and find corresponding sheetId
+    # assume it's the first sheet if not specified
+    ws <- if(is.na(lim$sheet)) 1 else lim$sheet
+    this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+    this_ws_id <- as.integer(this_ws$gid)
+    lim$sheet <- this_ws_id
+  }
+  
+  non_na_args <- list(sheetId = lim$sheet)
+  
+  # check the range limits individually because NA values 
+  # actually mean unbounded ranges that need to be omitted 
+  # from the call to gsv4_GridRange
+  if(is.finite(lim$ul[1] - 1)){
+    non_na_args[['startRowIndex']] <- lim$ul[1] - 1
+  }
+  if(is.finite(lim$ul[2] - 1)){
+    non_na_args[['startColumnIndex']] <- lim$ul[2] - 1
+  }
+  if(is.finite(lim$lr[1] - 1)){
+    non_na_args[['endRowIndex']] <- lim$lr[1]
+  }
+  if(is.finite(lim$lr[2] - 1)){
+    non_na_args[['endColumnIndex']] <- lim$lr[2]
+  }
+  
+  do.call(gsv4_GridRange, non_na_args)
+}
+
+#' gsv4_anchor_to_grid_coordinate
+#' 
+#' Converting an anchor reference to a gridCoordinate object as specified in the Sheets V4 API.
+#' 
+#' @template ss
+#' @template ws
+#' @template anchor
+#' @examples
+#' \dontrun{
+#' gsv4_anchor_to_grid_coordinate(gap_ss, anchor="A1")
+#' gsv4_anchor_to_grid_coordinate(gap_ss, ws=1, anchor="A1")
+#' gsv4_anchor_to_grid_coordinate(gap_ss, ws="Americas", anchor="A1")
+#' gsv4_anchor_to_grid_coordinate(gap_ss, anchor="Americas!A1")
+#' }
+#' 
+#' @export
+gsv4_anchor_to_grid_coordinate <- function(anchor, ss, ws=1){
+  
+  lim <- cellranger::as.cell_limits(anchor)
+  
+  if(is.na(lim$sheet) & missing(ws)){
+    message("The sheet was not specified in the anchor. Assuming the first sheet.")
+  }
+  
+  ws <- if(!is.na(lim$sheet)) lim$sheet else ws
+  anchor_row <- lim$ul[1] - 1
+  anchor_col <- lim$ul[2] - 1
+  
+  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws_id <- as.integer(this_ws$gid)
+
+  gsv4_GridCoordinate(sheetId = this_ws_id,
+                      rowIndex = anchor_row,
+                      columnIndex = anchor_col)
+}
+
+#' gsv4_form_query_string
+#' 
+#' A convenience function for constructing a query string to tack onto URL
+#' based on a named list of arguments. The function assumes the standard
+#' query parameters as defined by the Sheets API v4.
+#' 
+#' @param standard_params a list of parameters for controlling the HTTP request and its response.
+#' Refer to \code{\link{gsv4_standard_parameters}} for details on its arguments
+#' @param ... arguments to be used to form standard_params argument if it is not supplied directly.
+#' @return character; a string that represents query parameters of a URL
+#' @seealso \href{https://developers.google.com/sheets/api/query-parameters}{Google's Documentation of Standard Query Parameters}
+#' @examples 
+#' \dontrun{
+#' gsv4_form_query_string(standard_params=list(fields='sheets.properties'), other='o')
+#' gsv4_form_query_string(a=1, b=TRUE, x='x')
+#' gsv4_form_query_string()
+#' }
+#' @export
+gsv4_form_query_string <- function(standard_params=list(), ...){
+  
+  stopifnot(is.list(standard_params))
+  other_params <- list(...)
+  all_params <- c(standard_params, other_params)
+  
+  # convert everything to a string since it will be later
+  # when pasted at the end of the URL
+  all_params <- lapply(all_params, 
+                            FUN=function(x){
+                              if(is.logical(x)){
+                                  if(x) 'true' else 'false'
+                                } else {
+                                  as.character(x)
+                                }
+                            })
+  
+  named_query_parms <- unlist(all_params, use.names=T)
+  
+  if(length(named_query_parms) > 0){
+    query_string <- paste0('?', paste0(paste(names(named_query_parms), named_query_parms, sep='='), collapse='&'))
+  } else {
+    query_string <- ''
+  }
+  
+  return(query_string)
+}
