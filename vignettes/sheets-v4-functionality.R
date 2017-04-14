@@ -31,7 +31,7 @@ suppressMessages(gs_auth(token = token_path, verbose = FALSE))
 gap_ss <- gs_copy(gs_gap(), to = "Gapminder")
 
 
-## ----cut-paste -----------------------------------------------------------
+## ----cut-paste, message = FALSE-----------------------------------------------------------
 
 # cut and paste the value from A1 into A2
 gs_cut_paste(gap_ss, source = "A1", anchor = "A2") # assumes sheet 0
@@ -40,7 +40,7 @@ gs_cut_paste(gap_ss, source = "A1", anchor = "A2") # assumes sheet 0
 gs_cut_paste(gap_ss, source = "Africa!A1", anchor = "Americas!A2")
 
 
-## ----copy-paste -----------------------------------------------------------
+## ----copy-paste, message = FALSE-----------------------------------------------------------
 
 # copy and paste 
 gs_copy_paste(gap_ss, source = "A1", destination = "A4") # assumes sheet 0

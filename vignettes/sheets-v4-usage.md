@@ -4,6 +4,7 @@
 ```r
 library(googlesheets)
 suppressMessages(library(dplyr))
+#> Warning: package 'dplyr' was built under R version 3.2.5
 ```
 
 ```r
@@ -86,7 +87,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #>   ]
 #> }
 #> $spreadsheetId
-#> [1] "1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y"
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
 #> $replies
 #> $replies[[1]]
@@ -110,7 +111,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #>   ]
 #> }
 #> $spreadsheetId
-#> [1] "1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y"
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
 #> $replies
 #> $replies[[1]]
@@ -149,7 +150,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #>   ]
 #> }
 #> $spreadsheetId
-#> [1] "1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y"
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
 #> $replies
 #> $replies[[1]]
@@ -196,19 +197,20 @@ gsv4_values_update(spreadsheetId=this_spreadsheetId,
 #>     ["5.4", "3.9", "1.7", "0.4", "setosa"]
 #>   ]
 #> }
-#> Warning in gsv4_values_update(spreadsheetId = this_spreadsheetId,
-#> valueInputOption = "RAW", : list(code = 400, message = "Invalid query
-#> parameters. Empty query parameter names are not allowed.", status =
-#> "INVALID_ARGUMENT")
-#> $error
-#> $error$code
-#> [1] 400
+#> $spreadsheetId
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
-#> $error$message
-#> [1] "Invalid query parameters. Empty query parameter names are not allowed."
+#> $updatedRange
+#> [1] "NewAfrica!A1:E7"
 #> 
-#> $error$status
-#> [1] "INVALID_ARGUMENT"
+#> $updatedRows
+#> [1] 7
+#> 
+#> $updatedColumns
+#> [1] 5
+#> 
+#> $updatedCells
+#> [1] 35
 ```
 
 ```r
@@ -252,7 +254,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #>   ]
 #> }
 #> $spreadsheetId
-#> [1] "1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y"
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
 #> $replies
 #> $replies[[1]]
@@ -288,7 +290,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #>   ]
 #> }
 #> $spreadsheetId
-#> [1] "1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y"
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
 #> $replies
 #> $replies[[1]]
@@ -320,7 +322,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #>   ]
 #> }
 #> $spreadsheetId
-#> [1] "1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y"
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
 #> $replies
 #> $replies[[1]]
@@ -351,7 +353,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #>   ]
 #> }
 #> $spreadsheetId
-#> [1] "1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y"
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
 #> $replies
 #> $replies[[1]]
@@ -374,18 +376,19 @@ gsv4_values_update(spreadsheetId = this_spreadsheetId,
 #>     ["5", "3.6", "1.4", "0.2", "setosa"]
 #>   ]
 #> }
-#> Warning in gsv4_values_update(spreadsheetId = this_spreadsheetId,
-#> valueInputOption = "RAW", : list(code = 400, message = "Invalid query
-#> parameters. Empty query parameter names are not allowed.", status =
-#> "INVALID_ARGUMENT")
-#> $error
-#> $error$code
-#> [1] 400
+#> $spreadsheetId
+#> [1] "1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo"
 #> 
-#> $error$message
-#> [1] "Invalid query parameters. Empty query parameter names are not allowed."
+#> $updatedRange
+#> [1] "NewAfrica!A3:E3"
 #> 
-#> $error$status
-#> [1] "INVALID_ARGUMENT"
+#> $updatedRows
+#> [1] 1
+#> 
+#> $updatedColumns
+#> [1] 5
+#> 
+#> $updatedCells
+#> [1] 5
 ```
 

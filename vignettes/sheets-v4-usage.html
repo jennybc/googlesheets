@@ -203,6 +203,7 @@ hr {
 <body>
 <pre><code class="r">library(googlesheets)
 suppressMessages(library(dplyr))
+#&gt; Warning: package &#39;dplyr&#39; was built under R version 3.2.5
 </code></pre>
 
 <pre><code class="r">options(stringsAsFactors = FALSE) 
@@ -278,7 +279,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #&gt;   ]
 #&gt; }
 #&gt; $spreadsheetId
-#&gt; [1] &quot;1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y&quot;
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
 #&gt; $replies
 #&gt; $replies[[1]]
@@ -301,7 +302,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #&gt;   ]
 #&gt; }
 #&gt; $spreadsheetId
-#&gt; [1] &quot;1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y&quot;
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
 #&gt; $replies
 #&gt; $replies[[1]]
@@ -339,7 +340,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #&gt;   ]
 #&gt; }
 #&gt; $spreadsheetId
-#&gt; [1] &quot;1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y&quot;
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
 #&gt; $replies
 #&gt; $replies[[1]]
@@ -385,19 +386,20 @@ gsv4_values_update(spreadsheetId=this_spreadsheetId,
 #&gt;     [&quot;5.4&quot;, &quot;3.9&quot;, &quot;1.7&quot;, &quot;0.4&quot;, &quot;setosa&quot;]
 #&gt;   ]
 #&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = this_spreadsheetId,
-#&gt; valueInputOption = &quot;RAW&quot;, : list(code = 400, message = &quot;Invalid query
-#&gt; parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
-#&gt; $error
-#&gt; $error$code
-#&gt; [1] 400
+#&gt; $spreadsheetId
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
-#&gt; $error$message
-#&gt; [1] &quot;Invalid query parameters. Empty query parameter names are not allowed.&quot;
+#&gt; $updatedRange
+#&gt; [1] &quot;NewAfrica!A1:E7&quot;
 #&gt; 
-#&gt; $error$status
-#&gt; [1] &quot;INVALID_ARGUMENT&quot;
+#&gt; $updatedRows
+#&gt; [1] 7
+#&gt; 
+#&gt; $updatedColumns
+#&gt; [1] 5
+#&gt; 
+#&gt; $updatedCells
+#&gt; [1] 35
 </code></pre>
 
 <pre><code class="r"># Bold and Highlight the first row - no analogous googlesheets function currently
@@ -440,7 +442,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #&gt;   ]
 #&gt; }
 #&gt; $spreadsheetId
-#&gt; [1] &quot;1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y&quot;
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
 #&gt; $replies
 #&gt; $replies[[1]]
@@ -475,7 +477,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #&gt;   ]
 #&gt; }
 #&gt; $spreadsheetId
-#&gt; [1] &quot;1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y&quot;
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
 #&gt; $replies
 #&gt; $replies[[1]]
@@ -506,7 +508,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #&gt;   ]
 #&gt; }
 #&gt; $spreadsheetId
-#&gt; [1] &quot;1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y&quot;
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
 #&gt; $replies
 #&gt; $replies[[1]]
@@ -536,7 +538,7 @@ gsv4_batchUpdate(spreadsheetId = this_spreadsheetId,
 #&gt;   ]
 #&gt; }
 #&gt; $spreadsheetId
-#&gt; [1] &quot;1t2Bh2veSbkY4tcuYLqaWwCg-UXw-DAY2uzM5T9VJC5Y&quot;
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
 #&gt; $replies
 #&gt; $replies[[1]]
@@ -558,19 +560,20 @@ gsv4_values_update(spreadsheetId = this_spreadsheetId,
 #&gt;     [&quot;5&quot;, &quot;3.6&quot;, &quot;1.4&quot;, &quot;0.2&quot;, &quot;setosa&quot;]
 #&gt;   ]
 #&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = this_spreadsheetId,
-#&gt; valueInputOption = &quot;RAW&quot;, : list(code = 400, message = &quot;Invalid query
-#&gt; parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
-#&gt; $error
-#&gt; $error$code
-#&gt; [1] 400
+#&gt; $spreadsheetId
+#&gt; [1] &quot;1xTQaStkfGp_cyQWC5RGRPGTOL-Yn8HWlmBHgy1rSfTo&quot;
 #&gt; 
-#&gt; $error$message
-#&gt; [1] &quot;Invalid query parameters. Empty query parameter names are not allowed.&quot;
+#&gt; $updatedRange
+#&gt; [1] &quot;NewAfrica!A3:E3&quot;
 #&gt; 
-#&gt; $error$status
-#&gt; [1] &quot;INVALID_ARGUMENT&quot;
+#&gt; $updatedRows
+#&gt; [1] 1
+#&gt; 
+#&gt; $updatedColumns
+#&gt; [1] 5
+#&gt; 
+#&gt; $updatedCells
+#&gt; [1] 5
 </code></pre>
 
 </body>

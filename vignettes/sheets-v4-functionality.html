@@ -219,271 +219,44 @@ options(googlesheets.client_secret = &#39;yesQYnuvMSoRIr_0LJOhL51o&#39;)
 <pre><code class="r">
 # cut and paste the value from A1 into A2
 gs_cut_paste(gap_ss, source = &quot;A1&quot;, anchor = &quot;A2&quot;) # assumes sheet 0
-#&gt; The sheet was not specified in the anchor. Assuming the first sheet.
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;cutPaste&quot;: {
-#&gt;         &quot;destination&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;columnIndex&quot;: 0,
-#&gt;           &quot;rowIndex&quot;: 1
-#&gt;         },
-#&gt;         &quot;pasteType&quot;: &quot;PASTE_NORMAL&quot;,
-#&gt;         &quot;source&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # cut and paste across sheets
 gs_cut_paste(gap_ss, source = &quot;Africa!A1&quot;, anchor = &quot;Americas!A2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;cutPaste&quot;: {
-#&gt;         &quot;destination&quot;: {
-#&gt;           &quot;sheetId&quot;: 1608912957,
-#&gt;           &quot;columnIndex&quot;: 0,
-#&gt;           &quot;rowIndex&quot;: 1
-#&gt;         },
-#&gt;         &quot;pasteType&quot;: &quot;PASTE_NORMAL&quot;,
-#&gt;         &quot;source&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 # copy and paste 
 gs_copy_paste(gap_ss, source = &quot;A1&quot;, destination = &quot;A4&quot;) # assumes sheet 0
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;copyPaste&quot;: {
-#&gt;         &quot;destination&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 4,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;pasteOrientation&quot;: &quot;NORMAL&quot;,
-#&gt;         &quot;pasteType&quot;: &quot;PASTE_NORMAL&quot;,
-#&gt;         &quot;source&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # copy and paste and notice how the larger source expands past the destination
 # larger sources will expand automatically and smaller sources will be recycled 
 gs_copy_paste(gap_ss, source = &quot;Africa!A1:C2&quot;, destination = &quot;Americas!A1&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;copyPaste&quot;: {
-#&gt;         &quot;destination&quot;: {
-#&gt;           &quot;sheetId&quot;: 1608912957,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;pasteOrientation&quot;: &quot;NORMAL&quot;,
-#&gt;         &quot;pasteType&quot;: &quot;PASTE_NORMAL&quot;,
-#&gt;         &quot;source&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 3,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 # all of the typical pastespecial functions are available through the 
 # paste_type and paste_orientation arugments
 gs_copy_paste(gap_ss, source = &quot;Africa!A1:C2&quot;, destination = &quot;Americas!A3&quot;, paste_orientation=&#39;TRANSPOSE&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;copyPaste&quot;: {
-#&gt;         &quot;destination&quot;: {
-#&gt;           &quot;sheetId&quot;: 1608912957,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 3,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;pasteOrientation&quot;: &quot;TRANSPOSE&quot;,
-#&gt;         &quot;pasteType&quot;: &quot;PASTE_NORMAL&quot;,
-#&gt;         &quot;source&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 3,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 # insert 2 rows below C3
 gs_insert_rows(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, dim = 2)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;ROWS&quot;,
-#&gt;           &quot;endIndex&quot;: 5,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # insert those 2 rows above now
 gs_insert_rows(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, dim = 2, side = &#39;above&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;ROWS&quot;,
-#&gt;           &quot;endIndex&quot;: 4,
-#&gt;           &quot;startIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: false
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # insert the first 6 rows of the iris dataset below C3
 gs_insert_rows(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = head(iris))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;ROWS&quot;,
-#&gt;           &quot;endIndex&quot;: 10,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!A4&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;Sepal.Length&quot;, &quot;Sepal.Width&quot;, &quot;Petal.Length&quot;, &quot;Petal.Width&quot;, &quot;Species&quot;],
-#&gt;     [&quot;5.1&quot;, &quot;3.5&quot;, &quot;1.4&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;4.9&quot;, &quot;3.0&quot;, &quot;1.4&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;4.7&quot;, &quot;3.2&quot;, &quot;1.3&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;4.6&quot;, &quot;3.1&quot;, &quot;1.5&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;5.0&quot;, &quot;3.6&quot;, &quot;1.4&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;5.4&quot;, &quot;3.9&quot;, &quot;1.7&quot;, &quot;0.4&quot;, &quot;setosa&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
 
 # other examples that mess with how inputs without dimensions can be 
 # inserted row-wise vs. column-wise
 gs_insert_rows(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = c(1,2,3,4,5,6))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;ROWS&quot;,
-#&gt;           &quot;endIndex&quot;: 4,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!A4&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
 gs_insert_rows(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = c(1,2,3,4,5,6), byrow=TRUE)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;ROWS&quot;,
-#&gt;           &quot;endIndex&quot;: 9,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!A4&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;1&quot;],
-#&gt;     [&quot;2&quot;],
-#&gt;     [&quot;3&quot;],
-#&gt;     [&quot;4&quot;],
-#&gt;     [&quot;5&quot;],
-#&gt;     [&quot;6&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
+
 </code></pre>
 
 <pre><code class="r">
@@ -491,350 +264,40 @@ gs_insert_rows(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input =
 # so you can insert to the left or right and paste data into those areas
 # in a similar way.
 gs_insert_columns(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, dim = 2)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;COLUMNS&quot;,
-#&gt;           &quot;endIndex&quot;: 5,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_insert_columns(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, dim = 2, side = &#39;left&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;COLUMNS&quot;,
-#&gt;           &quot;endIndex&quot;: 4,
-#&gt;           &quot;startIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: false
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_insert_columns(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = head(iris))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;COLUMNS&quot;,
-#&gt;           &quot;endIndex&quot;: 8,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!D1&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;Sepal.Length&quot;, &quot;Sepal.Width&quot;, &quot;Petal.Length&quot;, &quot;Petal.Width&quot;, &quot;Species&quot;],
-#&gt;     [&quot;5.1&quot;, &quot;3.5&quot;, &quot;1.4&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;4.9&quot;, &quot;3.0&quot;, &quot;1.4&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;4.7&quot;, &quot;3.2&quot;, &quot;1.3&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;4.6&quot;, &quot;3.1&quot;, &quot;1.5&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;5.0&quot;, &quot;3.6&quot;, &quot;1.4&quot;, &quot;0.2&quot;, &quot;setosa&quot;],
-#&gt;     [&quot;5.4&quot;, &quot;3.9&quot;, &quot;1.7&quot;, &quot;0.4&quot;, &quot;setosa&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
 gs_insert_columns(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = c(1,2,3))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;COLUMNS&quot;,
-#&gt;           &quot;endIndex&quot;: 6,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!D1&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
 gs_insert_columns(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = c(1,2,3), byrow=TRUE)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;COLUMNS&quot;,
-#&gt;           &quot;endIndex&quot;: 4,
-#&gt;           &quot;startIndex&quot;: 3
-#&gt;         },
-#&gt;         &quot;inheritFromBefore&quot;: true
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!D1&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;1&quot;],
-#&gt;     [&quot;2&quot;],
-#&gt;     [&quot;3&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
+
 </code></pre>
 
 <pre><code class="r">
 # just like rows and columns can be inserted, so can cells! These will shift 
 # other cells to the right or down. 
 gs_insert_cells(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, dim = c(2,2))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertRange&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 4,
-#&gt;           &quot;endRowIndex&quot;: 4,
-#&gt;           &quot;startColumnIndex&quot;: 2,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;shiftDimension&quot;: &quot;COLUMNS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_insert_cells(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, dim = c(2,2), shift_direction = &#39;down&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertRange&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 4,
-#&gt;           &quot;endRowIndex&quot;: 4,
-#&gt;           &quot;startColumnIndex&quot;: 2,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;shiftDimension&quot;: &quot;ROWS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_insert_cells(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = iris[1:2,1:2])
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertRange&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 4,
-#&gt;           &quot;endRowIndex&quot;: 5,
-#&gt;           &quot;startColumnIndex&quot;: 2,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;shiftDimension&quot;: &quot;COLUMNS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!C3&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;Sepal.Length&quot;, &quot;Sepal.Width&quot;],
-#&gt;     [&quot;5.1&quot;, &quot;3.5&quot;],
-#&gt;     [&quot;4.9&quot;, &quot;3&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
 gs_insert_cells(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = c(1,2,3))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertRange&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 5,
-#&gt;           &quot;endRowIndex&quot;: 3,
-#&gt;           &quot;startColumnIndex&quot;: 2,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;shiftDimension&quot;: &quot;COLUMNS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!C3&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
 gs_insert_cells(gap_ss, ws = &quot;Africa&quot;, anchor = &quot;C3&quot;, input = c(1,2,3), byrow=TRUE, shift_direction = &#39;down&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;insertRange&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 3,
-#&gt;           &quot;endRowIndex&quot;: 5,
-#&gt;           &quot;startColumnIndex&quot;: 2,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;shiftDimension&quot;: &quot;ROWS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }{
-#&gt;   &quot;range&quot;: &quot;Africa!C3&quot;,
-#&gt;   &quot;majorDimension&quot;: &quot;ROWS&quot;,
-#&gt;   &quot;values&quot;: [
-#&gt;     [&quot;1&quot;],
-#&gt;     [&quot;2&quot;],
-#&gt;     [&quot;3&quot;]
-#&gt;   ]
-#&gt; }
-#&gt; Warning in gsv4_values_update(spreadsheetId = ss$sheet_key,
-#&gt; valueInputOption = &quot;USER_ENTERED&quot;, : list(code = 400, message = &quot;Invalid
-#&gt; query parameters. Empty query parameter names are not allowed.&quot;, status =
-#&gt; &quot;INVALID_ARGUMENT&quot;)
+
 </code></pre>
 
 <pre><code class="r">
 gs_delete_rows(gap_ss, ws = &quot;Africa&quot;, range = &quot;A2:F4&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;ROWS&quot;,
-#&gt;           &quot;endIndex&quot;: 4,
-#&gt;           &quot;startIndex&quot;: 1
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_delete_rows(gap_ss, ws = &quot;Africa&quot;, range = cell_rows(1:3))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;ROWS&quot;,
-#&gt;           &quot;endIndex&quot;: 3,
-#&gt;           &quot;startIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 gs_delete_columns(gap_ss, ws = &quot;Africa&quot;, range = &quot;A2:C4&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;COLUMNS&quot;,
-#&gt;           &quot;endIndex&quot;: 3,
-#&gt;           &quot;startIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_delete_columns(gap_ss, ws = &quot;Africa&quot;, range = cell_cols(1:2))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteDimension&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;dimension&quot;: &quot;COLUMNS&quot;,
-#&gt;           &quot;endIndex&quot;: 2,
-#&gt;           &quot;startIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 gs_delete_cells(gap_ss, ws = &quot;Africa&quot;, range = &quot;C3:E5&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteRange&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 5,
-#&gt;           &quot;endRowIndex&quot;: 5,
-#&gt;           &quot;startColumnIndex&quot;: 2,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;shiftDimension&quot;: &quot;COLUMNS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_delete_cells(gap_ss, ws = &quot;Africa&quot;, range = &quot;B3:B5&quot;, shift_direction = &#39;up&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteRange&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 2,
-#&gt;           &quot;endRowIndex&quot;: 5,
-#&gt;           &quot;startColumnIndex&quot;: 1,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;shiftDimension&quot;: &quot;ROWS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
@@ -843,108 +306,15 @@ gs_delete_cells(gap_ss, ws = &quot;Africa&quot;, range = &quot;B3:B5&quot;, shif
 # or each column in the range, or just merging into one massive blob, but watch 
 # out only data from the top left cell will be retained
 gs_merge_cells(gap_ss, ws = 1, range = &quot;A1:B2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;mergeCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 2,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;mergeType&quot;: &quot;MERGE_ALL&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_merge_cells(gap_ss, ws = &quot;Africa&quot;, range = &quot;A5:E10&quot;, merge_type=&quot;MERGE_ROWS&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;mergeCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 5,
-#&gt;           &quot;endRowIndex&quot;: 10,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 4
-#&gt;         },
-#&gt;         &quot;mergeType&quot;: &quot;MERGE_ROWS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_merge_cells(gap_ss, ws = &quot;Africa&quot;, range = &quot;A11:C15&quot;, merge_type=&quot;MERGE_COLUMNS&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;mergeCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 3,
-#&gt;           &quot;endRowIndex&quot;: 15,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 10
-#&gt;         },
-#&gt;         &quot;mergeType&quot;: &quot;MERGE_COLUMNS&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # if you have a spreadsheet with lots of merges, have no fear, we can easily
 # remove all those by referencing a particular range, sheet, or even the 
 # entire spreadsheet
 gs_unmerge_cells(gap_ss, ws = &quot;Africa&quot;, range = &quot;A11:C15&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;unmergeCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 3,
-#&gt;           &quot;endRowIndex&quot;: 15,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 10
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_unmerge_cells(gap_ss, ws = &quot;Africa&quot;, range = &quot;A5:E10&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;unmergeCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 5,
-#&gt;           &quot;endRowIndex&quot;: 10,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 4
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_unmerge_cells(gap_ss, ws = 1, range = &quot;A1:B2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;unmergeCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 2,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # you can unmerge all cells on a worksheet
 gs_unmerge_cells(gap_ss, ws = 1)
@@ -959,337 +329,49 @@ gs_unmerge_cells(gap_ss)
 
 <pre><code class="r">
 gs_insert_note(gap_ss, ws = 1, range = &quot;A1&quot;, note = &quot;Test Note&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;rows&quot;: [
-#&gt;           {
-#&gt;             &quot;values&quot;: [
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Test Note&quot;
-#&gt;               }
-#&gt;             ]
-#&gt;           }
-#&gt;         ],
-#&gt;         &quot;fields&quot;: &quot;note&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # you can specify more than one note at a time
 gs_insert_note(gap_ss, ws = 1, range = &quot;E1:E2&quot;, note = c(&quot;Note- E1&quot;, &quot;Note - E2&quot;))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 5,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startColumnIndex&quot;: 4,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;rows&quot;: [
-#&gt;           {
-#&gt;             &quot;values&quot;: [
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Note- E1&quot;
-#&gt;               }
-#&gt;             ]
-#&gt;           },
-#&gt;           {
-#&gt;             &quot;values&quot;: [
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Note - E2&quot;
-#&gt;               }
-#&gt;             ]
-#&gt;           }
-#&gt;         ],
-#&gt;         &quot;fields&quot;: &quot;note&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # if the notes argument has a length fewer than the number of cells in the 
 # supplied range, then the note will be recycled
 gs_insert_note(gap_ss, ws = 1, range = &quot;B1:D4&quot;, note = &quot;Hello, This is a Note Test!&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 4,
-#&gt;           &quot;endRowIndex&quot;: 4,
-#&gt;           &quot;startColumnIndex&quot;: 1,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;rows&quot;: [
-#&gt;           {
-#&gt;             &quot;values&quot;: [
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               }
-#&gt;             ]
-#&gt;           },
-#&gt;           {
-#&gt;             &quot;values&quot;: [
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               }
-#&gt;             ]
-#&gt;           },
-#&gt;           {
-#&gt;             &quot;values&quot;: [
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               }
-#&gt;             ]
-#&gt;           },
-#&gt;           {
-#&gt;             &quot;values&quot;: [
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               },
-#&gt;               {
-#&gt;                 &quot;note&quot;: &quot;Hello, This is a Note Test!&quot;
-#&gt;               }
-#&gt;             ]
-#&gt;           }
-#&gt;         ],
-#&gt;         &quot;fields&quot;: &quot;note&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 gs_clear_note(gap_ss, ws = 1, range = &quot;A1:B2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;repeatCell&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 2,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;note&quot;,
-#&gt;         &quot;cell&quot;: {
-#&gt;           &quot;note&quot;: &quot;&quot;
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_clear_note(gap_ss, ws = 1, range = cell_rows(3))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;repeatCell&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endRowIndex&quot;: 3,
-#&gt;           &quot;startRowIndex&quot;: 2
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;note&quot;,
-#&gt;         &quot;cell&quot;: {
-#&gt;           &quot;note&quot;: &quot;&quot;
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_clear_note(gap_ss, ws = 1)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;repeatCell&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;note&quot;,
-#&gt;         &quot;cell&quot;: {
-#&gt;           &quot;note&quot;: &quot;&quot;
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 gs_add_named_range(gap_ss, name = &quot;RangeAtAfricaA2&quot;, range = &quot;Africa!A2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;addNamedRange&quot;: {
-#&gt;         &quot;namedRange&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 1,
-#&gt;             &quot;endRowIndex&quot;: 2,
-#&gt;             &quot;startColumnIndex&quot;: 0,
-#&gt;             &quot;startRowIndex&quot;: 1
-#&gt;           },
-#&gt;           &quot;name&quot;: &quot;RangeAtAfricaA2&quot;
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # check the named ranges that exist in our sheet
 gs_get_named_range(gap_ss)
 #&gt;   namedRangeId            name range.sheetId range.startRowIndex
-#&gt; 1   1269391668 RangeAtAfricaA2    1150108545                   1
+#&gt; 1    667099280 RangeAtAfricaA2    1150108545                   1
 #&gt;   range.endRowIndex range.startColumnIndex range.endColumnIndex
 #&gt; 1                 2                      0                    1
 
 # make multiple updates to this range we initially created
 gs_update_named_range(gap_ss, named_range = &quot;RangeAtAfricaA2&quot;, name = &quot;RangeAtAfricaA3&quot;, range = &quot;Africa!A3&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateNamedRange&quot;: {
-#&gt;         &quot;fields&quot;: &quot;name&quot;,
-#&gt;         &quot;namedRange&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 1,
-#&gt;             &quot;endRowIndex&quot;: 3,
-#&gt;             &quot;startColumnIndex&quot;: 0,
-#&gt;             &quot;startRowIndex&quot;: 2
-#&gt;           },
-#&gt;           &quot;name&quot;: &quot;RangeAtAfricaA3&quot;,
-#&gt;           &quot;namedRangeId&quot;: &quot;1269391668&quot;
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_update_named_range(gap_ss, named_range = &quot;RangeAtAfricaA3&quot;, name = &quot;Range1&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateNamedRange&quot;: {
-#&gt;         &quot;fields&quot;: &quot;name&quot;,
-#&gt;         &quot;namedRange&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 1,
-#&gt;             &quot;endRowIndex&quot;: 1,
-#&gt;             &quot;startColumnIndex&quot;: 0,
-#&gt;             &quot;startRowIndex&quot;: 0
-#&gt;           },
-#&gt;           &quot;name&quot;: &quot;Range1&quot;,
-#&gt;           &quot;namedRangeId&quot;: &quot;1269391668&quot;
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_update_named_range(gap_ss, named_range = &quot;Range1&quot;, range = &quot;Africa!A4&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateNamedRange&quot;: {
-#&gt;         &quot;fields&quot;: &quot;range&quot;,
-#&gt;         &quot;namedRange&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 1,
-#&gt;             &quot;endRowIndex&quot;: 4,
-#&gt;             &quot;startColumnIndex&quot;: 0,
-#&gt;             &quot;startRowIndex&quot;: 3
-#&gt;           },
-#&gt;           &quot;name&quot;: &quot;&quot;,
-#&gt;           &quot;namedRangeId&quot;: &quot;1269391668&quot;
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # confirm our updates
 gs_get_named_range(gap_ss)
 #&gt;   namedRangeId   name range.sheetId range.startRowIndex range.endRowIndex
-#&gt; 1   1269391668 Range1    1150108545                   3                 4
+#&gt; 1    667099280 Range1    1150108545                   3                 4
 #&gt;   range.startColumnIndex range.endColumnIndex
 #&gt; 1                      0                    1
 
 gs_delete_named_range(gap_ss, named_range = &quot;Range1&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteNamedRange&quot;: {
-#&gt;         &quot;namedRangeId&quot;: &quot;1269391668&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_get_named_range(gap_ss)
 #&gt; data frame with 0 columns and 0 rows
 </code></pre>
 
 <pre><code class="r">
 gs_add_protected_range(gap_ss, range = &quot;Africa!A1&quot;, description = &quot;PR - Test&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;addProtectedRange&quot;: {
-#&gt;         &quot;protectedRange&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 1,
-#&gt;             &quot;endRowIndex&quot;: 1,
-#&gt;             &quot;startColumnIndex&quot;: 0,
-#&gt;             &quot;startRowIndex&quot;: 0
-#&gt;           },
-#&gt;           &quot;description&quot;: &quot;PR - Test&quot;,
-#&gt;           &quot;editors&quot;: {
-#&gt;             &quot;domainUsersCanEdit&quot;: false,
-#&gt;             &quot;users&quot;: []
-#&gt;           },
-#&gt;           &quot;namedRangeId&quot;: &quot;&quot;,
-#&gt;           &quot;warningOnly&quot;: false
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_add_protected_range(gap_ss, range = cell_limits(sheet=&quot;Africa&quot;)) # protect whole sheet!
 #&gt; Error in gsv4_ProtectedRange(description = description, range = prepped_range, : argument &quot;description&quot; is missing, with no default
 
@@ -1298,79 +380,18 @@ gs_add_protected_range(gap_ss, range = cell_limits(sheet=&quot;Africa&quot;)) # 
 # listed as the sole editor
 gs_get_protected_range(gap_ss)
 #&gt;   protectedRangeId range.sheetId range.startRowIndex range.endRowIndex
-#&gt; 1       1506335679    1150108545                   0                 1
+#&gt; 1       1115893113    1150108545                   0                 1
 #&gt;   range.startColumnIndex range.endColumnIndex description
 #&gt; 1                      0                    1   PR - Test
 #&gt;   requestingUserCanEdit                                 editors
 #&gt; 1                  TRUE steven.mortimer@dominionenterprises.com
 
 gs_update_protected_range(gap_ss, protected_range = &quot;PR - Test&quot;, range = &quot;Africa!A2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateProtectedRange&quot;: {
-#&gt;         &quot;fields&quot;: &quot;range&quot;,
-#&gt;         &quot;protectedRange&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 1,
-#&gt;             &quot;endRowIndex&quot;: 2,
-#&gt;             &quot;startColumnIndex&quot;: 0,
-#&gt;             &quot;startRowIndex&quot;: 1
-#&gt;           },
-#&gt;           &quot;description&quot;: &quot;&quot;,
-#&gt;           &quot;editors&quot;: {
-#&gt;             &quot;domainUsersCanEdit&quot;: false,
-#&gt;             &quot;users&quot;: []
-#&gt;           },
-#&gt;           &quot;namedRangeId&quot;: &quot;&quot;,
-#&gt;           &quot;protectedRangeId&quot;: 1506335679,
-#&gt;           &quot;warningOnly&quot;: false
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_update_protected_range(gap_ss, protected_range = &quot;PR - Test&quot;, description = &quot;PR - Test2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateProtectedRange&quot;: {
-#&gt;         &quot;fields&quot;: &quot;description&quot;,
-#&gt;         &quot;protectedRange&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 1,
-#&gt;             &quot;endRowIndex&quot;: 1,
-#&gt;             &quot;startColumnIndex&quot;: 0,
-#&gt;             &quot;startRowIndex&quot;: 0
-#&gt;           },
-#&gt;           &quot;description&quot;: &quot;PR - Test2&quot;,
-#&gt;           &quot;editors&quot;: {
-#&gt;             &quot;domainUsersCanEdit&quot;: false,
-#&gt;             &quot;users&quot;: []
-#&gt;           },
-#&gt;           &quot;namedRangeId&quot;: &quot;&quot;,
-#&gt;           &quot;protectedRangeId&quot;: 1506335679,
-#&gt;           &quot;warningOnly&quot;: false
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_update_protected_range(gap_ss, protected_range = &quot;PR - Test2&quot;, named_range = &#39;Range1&#39;)
 #&gt; Error in gs_update_protected_range(gap_ss, protected_range = &quot;PR - Test2&quot;, : A named range could not be found in the spreadsheet by id or name: Range1
 
 gs_delete_protected_range(gap_ss, protected_range = &quot;PR - Test2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;deleteProtectedRange&quot;: {
-#&gt;         &quot;protectedRangeId&quot;: 1506335679
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # delete based on an Id and not the range&#39;s description
 # note that protected ranges have &quot;descriptions&quot; and named ranges have &quot;names&quot;
@@ -1384,51 +405,11 @@ gs_get_protected_range(gap_ss)
 
 <pre><code class="r">
 gs_set_basic_filter(gap_ss, ws = 1)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;setBasicFilter&quot;: {
-#&gt;         &quot;filter&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545
-#&gt;           }
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # an example where the filter does not extend through every column, just the 
 # columns specified (3 thru 6) where the first column of that range is 
 # filtered to be a number less than 1970
 gs_set_basic_filter(gap_ss, ws = 1, range = cell_cols(3:6), criteria=list(list(1, &quot;NUMBER_LESS&quot;, 1970)))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;setBasicFilter&quot;: {
-#&gt;         &quot;filter&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1150108545,
-#&gt;             &quot;endColumnIndex&quot;: 6,
-#&gt;             &quot;startColumnIndex&quot;: 2
-#&gt;           },
-#&gt;           &quot;criteria&quot;: {
-#&gt;             &quot;0&quot;: {
-#&gt;               &quot;condition&quot;: {
-#&gt;                 &quot;type&quot;: &quot;NUMBER_LESS&quot;,
-#&gt;                 &quot;values&quot;: [
-#&gt;                   {
-#&gt;                     &quot;userEnteredValue&quot;: &quot;1970&quot;
-#&gt;                   }
-#&gt;                 ]
-#&gt;               }
-#&gt;             }
-#&gt;           }
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # a more complicated example that creates the filter with two criteria on 
 # different columns and sorts the third column in descending order
@@ -1436,341 +417,41 @@ gs_set_basic_filter(gap_ss, ws = &quot;Americas&quot;,
                     sort_spec = list(list(3, &quot;DESCENDING&quot;)),
                     criteria = list(list(4, &quot;NUMBER_LESS&quot;, 50),
                                     list(6, &quot;NUMBER_GREATER_THAN_EQ&quot;, 1000)))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;setBasicFilter&quot;: {
-#&gt;         &quot;filter&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1608912957
-#&gt;           },
-#&gt;           &quot;criteria&quot;: {
-#&gt;             &quot;3&quot;: {
-#&gt;               &quot;condition&quot;: {
-#&gt;                 &quot;type&quot;: &quot;NUMBER_LESS&quot;,
-#&gt;                 &quot;values&quot;: [
-#&gt;                   {
-#&gt;                     &quot;userEnteredValue&quot;: &quot;50&quot;
-#&gt;                   }
-#&gt;                 ]
-#&gt;               }
-#&gt;             },
-#&gt;             &quot;5&quot;: {
-#&gt;               &quot;condition&quot;: {
-#&gt;                 &quot;type&quot;: &quot;NUMBER_GREATER_THAN_EQ&quot;,
-#&gt;                 &quot;values&quot;: [
-#&gt;                   {
-#&gt;                     &quot;userEnteredValue&quot;: &quot;1000&quot;
-#&gt;                   }
-#&gt;                 ]
-#&gt;               }
-#&gt;             }
-#&gt;           },
-#&gt;           &quot;sortSpecs&quot;: [
-#&gt;             {
-#&gt;               &quot;dimensionIndex&quot;: 2,
-#&gt;               &quot;sortOrder&quot;: &quot;DESCENDING&quot;
-#&gt;             }
-#&gt;           ]
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 gs_set_basic_filter(gap_ss, ws = &quot;Americas&quot;, range = cell_cols(3:6), sort_spec=list(list(2, &quot;DESCENDING&quot;)))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;setBasicFilter&quot;: {
-#&gt;         &quot;filter&quot;: {
-#&gt;           &quot;range&quot;: {
-#&gt;             &quot;sheetId&quot;: 1608912957,
-#&gt;             &quot;endColumnIndex&quot;: 6,
-#&gt;             &quot;startColumnIndex&quot;: 2
-#&gt;           },
-#&gt;           &quot;sortSpecs&quot;: [
-#&gt;             {
-#&gt;               &quot;dimensionIndex&quot;: 3,
-#&gt;               &quot;sortOrder&quot;: &quot;DESCENDING&quot;
-#&gt;             }
-#&gt;           ]
-#&gt;         }
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 gs_clear_basic_filter(gap_ss, ws = 1)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;clearBasicFilter&quot;: {
-#&gt;         &quot;sheetId&quot;: 1150108545
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 gs_clear_basic_filter(gap_ss, ws = &quot;Americas&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;clearBasicFilter&quot;: {
-#&gt;         &quot;sheetId&quot;: 1608912957
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 # if rows 1 thru 4 are blank, then autofill up based on row 5
 # if rows 2 thru 5 are blank, then autofill down based on row 1
 gs_autofill(gap_ss, ws = 1, range = cell_rows(1:5))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;autoFill&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endRowIndex&quot;: 5,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;useAlternateSeries&quot;: false
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # autofill columns 6 &amp; 7 based on column 5
 gs_autofill(gap_ss, ws = 1, range = cell_cols(5:7))
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;autoFill&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 7,
-#&gt;           &quot;startColumnIndex&quot;: 4
-#&gt;         },
-#&gt;         &quot;useAlternateSeries&quot;: false
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
+
 </code></pre>
 
 <pre><code class="r">
 gs_clear_cells(gap_ss, ws = 1, range = &quot;A1:B2&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 2,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # clear cell values in A1 on every worksheet
 gs_clear_cells(gap_ss, range = &quot;A1&quot;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1608912957,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1087268587,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 790665837,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1597291761,
-#&gt;           &quot;endColumnIndex&quot;: 1,
-#&gt;           &quot;endRowIndex&quot;: 1,
-#&gt;           &quot;startColumnIndex&quot;: 0,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # clear cell formatting in the first 2 rows
 gs_clear_cells(gap_ss, ws = 1, range = cell_rows(1:2), clear_type = &#39;formats&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545,
-#&gt;           &quot;endRowIndex&quot;: 2,
-#&gt;           &quot;startRowIndex&quot;: 0
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredFormat&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # you can clear all cells on a worksheet
 gs_clear_cells(gap_ss, ws = 1)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # or even clear all cell values in the entire spreadsheet
 gs_clear_cells(gap_ss, clear_type = &#39;values&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1608912957
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1087268587
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 790665837
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1597291761
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;userEnteredValue&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 
 # or the nuclear option to clear values, formats, all cell data across all worksheets
 gs_clear_cells(gap_ss, clear_type = &#39;all&#39;)
-#&gt; {
-#&gt;   &quot;requests&quot;: [
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1150108545
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;*&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1608912957
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;*&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1087268587
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;*&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 790665837
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;*&quot;
-#&gt;       }
-#&gt;     },
-#&gt;     {
-#&gt;       &quot;updateCells&quot;: {
-#&gt;         &quot;range&quot;: {
-#&gt;           &quot;sheetId&quot;: 1597291761
-#&gt;         },
-#&gt;         &quot;fields&quot;: &quot;*&quot;
-#&gt;       }
-#&gt;     }
-#&gt;   ]
-#&gt; }
 </code></pre>
 
 </body>
