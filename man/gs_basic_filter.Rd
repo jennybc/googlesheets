@@ -27,9 +27,7 @@ should be a string specifying either "ASCENDING" or "DESCENDING". If passing
 a data.frame the first column should be the the target column indices and the
 second column the sort direction.}
 
-\item{verbose}{logical; do you want informative messages?}
-
-\item{critera}{list-of-lists or 3 column data.frame; the list must contain
+\item{criteria}{list-of-lists or 3 column data.frame; the list must contain
 sublists that have 3 elements each. The first element should be an integer
 representing the target column index in the range to filter. The second element
 should be a string specifying the filter condition type (e.g. "NUMBER_GREATER",
@@ -38,6 +36,8 @@ The third element should be the condition value. The value upon which to evaluat
 the column against using the condition type. If passing a data.frame the first
 column should be the the target column indices, the second column the condition
 type, and the third column the condition value.}
+
+\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 Set of clear basic filters. Basic filters are filters that are shared between
@@ -149,12 +149,16 @@ Requires a single ConditionValue.}
 \dontrun{
 
 gs_set_basic_filter(gap_ss, ws = 1)
-gs_set_basic_filter(gap_ss, ws = 1, range = cell_cols(5:6), criteria=list(list(3, "NUMBER_LESS", 1970)))
+gs_set_basic_filter(gap_ss, ws = 1, 
+                    range = cell_cols(5:6), 
+                    criteria=list(list(3, "NUMBER_LESS", 1970)))
 gs_set_basic_filter(gap_ss, ws = "Americas", 
                     sort_spec = list(list(3, "DESCENDING")), 
                     criteria = list(list(4, "NUMBER_LESS", 50), 
                                     list(6, "NUMBER_GREATER_THAN_EQ", 1000)))
-gs_set_basic_filter(gap_ss, ws = "Americas", range = cell_cols(3:6), sort_spec=list(list(2, "DESCENDING")))
+gs_set_basic_filter(gap_ss, ws = "Americas", 
+                    range = cell_cols(3:6), 
+                    sort_spec=list(list(2, "DESCENDING")))
 
 gs_clear_basic_filter(gap_ss, ws = 1)
 gs_clear_basic_filter(gap_ss, ws = "Americas")

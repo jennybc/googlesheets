@@ -87,7 +87,9 @@ gs_cut_paste(gap_ss, source = "Africa!A1", anchor = "Americas!A2")
 gs_copy_paste(gap_ss, source = "A1", destination = "A4") # assumes sheet 0
 gs_copy_paste(gap_ss, source = "Africa!A1", destination = "Americas!A1")
 gs_copy_paste(gap_ss, source = "Africa!A1:C2", destination = "Americas!A1")
-gs_copy_paste(gap_ss, source = "Africa!A1:C2", destination = "Americas!A3", paste_orientation='TRANSPOSE')
+gs_copy_paste(gap_ss, 
+              source = "Africa!A1:C2", destination = "Americas!A3", 
+              paste_orientation='TRANSPOSE')
 
 }
 }

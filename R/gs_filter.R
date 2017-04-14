@@ -15,12 +15,16 @@
 #' \dontrun{
 #'
 #' gs_set_basic_filter(gap_ss, ws = 1)
-#' gs_set_basic_filter(gap_ss, ws = 1, range = cell_cols(5:6), criteria=list(list(3, "NUMBER_LESS", 1970)))
+#' gs_set_basic_filter(gap_ss, ws = 1, 
+#'                     range = cell_cols(5:6), 
+#'                     criteria=list(list(3, "NUMBER_LESS", 1970)))
 #' gs_set_basic_filter(gap_ss, ws = "Americas", 
 #'                     sort_spec = list(list(3, "DESCENDING")), 
 #'                     criteria = list(list(4, "NUMBER_LESS", 50), 
 #'                                     list(6, "NUMBER_GREATER_THAN_EQ", 1000)))
-#' gs_set_basic_filter(gap_ss, ws = "Americas", range = cell_cols(3:6), sort_spec=list(list(2, "DESCENDING")))
+#' gs_set_basic_filter(gap_ss, ws = "Americas", 
+#'                     range = cell_cols(3:6), 
+#'                     sort_spec=list(list(2, "DESCENDING")))
 #'
 #' gs_clear_basic_filter(gap_ss, ws = 1)
 #' gs_clear_basic_filter(gap_ss, ws = "Americas")
@@ -38,7 +42,7 @@ NULL
 #' should be a string specifying either "ASCENDING" or "DESCENDING". If passing
 #' a data.frame the first column should be the the target column indices and the
 #' second column the sort direction.
-#' @param critera list-of-lists or 3 column data.frame; the list must contain
+#' @param criteria list-of-lists or 3 column data.frame; the list must contain
 #' sublists that have 3 elements each. The first element should be an integer
 #' representing the target column index in the range to filter. The second element
 #' should be a string specifying the filter condition type (e.g. "NUMBER_GREATER",
@@ -152,7 +156,7 @@ gs_set_basic_filter <- function(ss,
                                 criteria = NULL,
                                 verbose = FALSE){
 
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   if(!is.null(range)){
     range_limits <- cellranger::as.cell_limits(range)
@@ -225,7 +229,7 @@ gs_clear_basic_filter <- function(ss,
                                   ws = 1,
                                   verbose = FALSE){
 
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
 
   gsv4_batchUpdate(spreadsheetId = ss$sheet_key,

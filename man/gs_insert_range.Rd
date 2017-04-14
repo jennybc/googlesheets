@@ -75,7 +75,8 @@ gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", dim = c(2,2))
 gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", dim = c(2,2), shift_direction = 'down')
 gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", input = iris[1:2,1:2])
 gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", input = c(1,2,3))
-gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", input = c(1,2,3), byrow=TRUE, shift_direction = 'down')
+gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", 
+                input = c(1,2,3), byrow=TRUE, shift_direction = 'down')
 
 }
 }

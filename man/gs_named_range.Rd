@@ -29,13 +29,6 @@ object}
 
 \item{named_range}{string; id or name of a named range in the sheet. Use 
 \code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.}
-
-\item{name}{character; a string to name this range when created}
-
-\item{range}{a cell range, as described in \code{\link{cell-specification}}}
-
-\item{named_range}{string; id or name of a named range in the sheet. Use 
-\code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.}
 }
 \description{
 These functions provide basic CRUD (Create-Read-Update-Delete) functionality 
@@ -47,7 +40,8 @@ with respect to named ranges in Google Sheets.
 gs_add_named_range(gap_ss, name = "RangeAtAfricaA2", range = "Africa!A2")
 gs_get_named_range(gap_ss)
 
-gs_update_named_range(gap_ss, named_range = "RangeAtAfricaA2", name = "RangeAtAfricaA3", range = "Africa!A3")
+gs_update_named_range(gap_ss, named_range = "RangeAtAfricaA2", 
+                      name = "RangeAtAfricaA3", range = "Africa!A3")
 gs_update_named_range(gap_ss, named_range = "RangeAtAfricaA3", name = "Range1")
 gs_update_named_range(gap_ss, named_range = "Range1", range = "Africa!A4")
 gs_get_named_range(gap_ss)

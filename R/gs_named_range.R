@@ -6,6 +6,10 @@
 #'
 #' @name gs_named_range
 #' @template ss
+#' @param named_range string; id or name of a named range in the sheet. Use 
+#' \code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.
+#' @param name character; a string to name this range when created
+#' @template range
 #' @template verbose
 #' @examples
 #' \dontrun{
@@ -13,7 +17,8 @@
 #' gs_add_named_range(gap_ss, name = "RangeAtAfricaA2", range = "Africa!A2")
 #' gs_get_named_range(gap_ss)
 #' 
-#' gs_update_named_range(gap_ss, named_range = "RangeAtAfricaA2", name = "RangeAtAfricaA3", range = "Africa!A3")
+#' gs_update_named_range(gap_ss, named_range = "RangeAtAfricaA2", 
+#'                       name = "RangeAtAfricaA3", range = "Africa!A3")
 #' gs_update_named_range(gap_ss, named_range = "RangeAtAfricaA3", name = "Range1")
 #' gs_update_named_range(gap_ss, named_range = "Range1", range = "Africa!A4")
 #' gs_get_named_range(gap_ss)
@@ -26,8 +31,6 @@ NULL
 
 #' @rdname gs_named_range
 #' @inheritParams gs_named_range
-#' @param name character; a string to name this range when created
-#' @template range
 #' @export
 gs_add_named_range <- function(ss,
                                name,
@@ -49,10 +52,6 @@ gs_add_named_range <- function(ss,
 
 #' @rdname gs_named_range
 #' @inheritParams gs_named_range
-#' @param named_range string; id or name of a named range in the sheet. Use 
-#' \code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.
-#' @param name character; a string to name this range when created
-#' @template range
 #' @export
 gs_update_named_range <- function(ss,
                                   named_range,
@@ -107,8 +106,6 @@ gs_update_named_range <- function(ss,
 
 #' @rdname gs_named_range
 #' @inheritParams gs_named_range
-#' @param named_range string; id or name of a named range in the sheet. Use 
-#' \code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.
 #' @export
 gs_delete_named_range <- function(ss,
                                   named_range,
@@ -122,7 +119,7 @@ gs_delete_named_range <- function(ss,
    if(named_range %in% all_named_ranges$namedRangeId){
      target_named_range <- named_range
    } else {
-      stop(sprintf('A named range could not be found in the spreadsheet by id or name: %s', named_range_id))
+      stop(sprintf('A named range could not be found in the spreadsheet by id or name: %s', named_range))
    }
   }
   

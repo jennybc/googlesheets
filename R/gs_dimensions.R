@@ -43,7 +43,8 @@
 #' gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", dim = c(2,2), shift_direction = 'down')
 #' gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", input = iris[1:2,1:2])
 #' gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", input = c(1,2,3))
-#' gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", input = c(1,2,3), byrow=TRUE, shift_direction = 'down')
+#' gs_insert_cells(gap_ss, ws = "Africa", anchor = "C3", 
+#'                 input = c(1,2,3), byrow=TRUE, shift_direction = 'down')
 #' 
 #' }
 NULL
@@ -62,8 +63,8 @@ gs_insert_rows <- function(ss,
                            side = c('below', 'above'),
                            verbose = FALSE){
 
-  googlesheets:::catch_hopeless_input(input)
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  catch_hopeless_input(input)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   this_ws_name <- this_ws$ws_title
   side <- match.arg(side)
@@ -89,8 +90,8 @@ gs_insert_rows <- function(ss,
                           input = gsv4_BatchUpdateSpreadsheetRequest(requests=list(
                             gsv4_Request(insertDimension = gsv4_InsertDimensionRequest(
                               range = gsv4_DimensionRange(sheetId = this_ws_id,
-                                                          start = anchor_row,
-                                                          end = anchor_row + new_rows,
+                                                          startIndex = anchor_row,
+                                                          endIndex = anchor_row + new_rows,
                                                           dimension = 'ROWS'),
                               inheritFromBefore = inherit_style)))))
 
@@ -125,8 +126,8 @@ gs_insert_columns <- function(ss,
                               side = c('right', 'left'),
                               verbose = FALSE){
 
-  googlesheets:::catch_hopeless_input(input)
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  catch_hopeless_input(input)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   this_ws_name <- this_ws$ws_title
   side <- match.arg(side)
@@ -151,8 +152,8 @@ gs_insert_columns <- function(ss,
                           input = gsv4_BatchUpdateSpreadsheetRequest(requests=list(
                             gsv4_Request(insertDimension = gsv4_InsertDimensionRequest(
                               range = gsv4_DimensionRange(sheetId = this_ws_id,
-                                                          start = anchor_col,
-                                                          end = anchor_col + new_cols,
+                                                          startIndex = anchor_col,
+                                                          endIndex = anchor_col + new_cols,
                                                           dimension = 'COLUMNS'),
                               inheritFromBefore = inherit_style)))))
 
@@ -187,8 +188,8 @@ gs_insert_cells <- function(ss,
                             shift_direction = c('right', 'down'), 
                             verbose = FALSE){
   
-  googlesheets:::catch_hopeless_input(input)
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  catch_hopeless_input(input)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   this_ws_name <- this_ws$ws_title
   shift_direction <- match.arg(shift_direction)
@@ -277,7 +278,7 @@ gs_delete_rows <- function(ss,
                            range = "A1",
                            verbose = FALSE){
   
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   
   # subtract 1 since the API is indexed at zero
@@ -289,8 +290,8 @@ gs_delete_rows <- function(ss,
                    input=gsv4_BatchUpdateSpreadsheetRequest(requests=list(
                      gsv4_Request(deleteDimension=gsv4_DeleteDimensionRequest(
                        range=gsv4_DimensionRange(sheetId = this_ws_id,
-                                                 start = min_row,
-                                                 end = max_row,
+                                                 startIndex = min_row,
+                                                 endIndex = max_row,
                                                  dimension = 'ROWS'))))))
   ss %>% gs_gs(verbose = FALSE) %>% invisible()
 }
@@ -304,7 +305,7 @@ gs_delete_columns <- function(ss,
                               range = "A1",
                               verbose = FALSE){
   
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   
   # subtract 1 since the API is indexed at zero
@@ -316,8 +317,8 @@ gs_delete_columns <- function(ss,
                    input=gsv4_BatchUpdateSpreadsheetRequest(requests=list(
                      gsv4_Request(deleteDimension=gsv4_DeleteDimensionRequest(
                        range=gsv4_DimensionRange(sheetId = this_ws_id,
-                                                 start = min_col,
-                                                 end = max_col,
+                                                 startIndex = min_col,
+                                                 endIndex = max_col,
                                                  dimension = 'COLUMNS'))))))
   ss %>% gs_gs(verbose = FALSE) %>% invisible()
 }
@@ -332,7 +333,7 @@ gs_delete_cells <- function(ss,
                             shift_direction = c('left', 'up'), 
                             verbose = FALSE){
   
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   limits <- cellranger::as.cell_limits(range)
   shift_direction <- match.arg(shift_direction)

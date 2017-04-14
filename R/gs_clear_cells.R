@@ -53,7 +53,7 @@ gs_clear_cells <- function(ss,
   if(is.null(ws)){
     this_ws_id <- as.integer(ss$ws$gid)
   } else {
-    this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+    this_ws <- gs_ws(ss, ws, verbose = FALSE)
     this_ws_id <- as.integer(this_ws$gid)    
   }
 

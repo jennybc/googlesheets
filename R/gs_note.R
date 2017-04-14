@@ -41,7 +41,7 @@ gs_insert_note <- function(ss,
                            byrow = FALSE,
                            verbose = FALSE){
   
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   
   range_limits <- cellranger::as.cell_limits(range)
@@ -77,7 +77,7 @@ gs_clear_note <- function(ss,
                           range = NULL,
                           verbose = FALSE){
   
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   
   if(is.null(range)){

@@ -28,11 +28,6 @@ take one of the following values: MERGE_ALL, MERGE_COLUMNS, MERGE_ROWS
 See the details section for the definition of each of these values.}
 
 \item{verbose}{logical; do you want informative messages?}
-
-\item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
-object}
-
-\item{verbose}{logical; do you want informative messages?}
 }
 \description{
 These functions will accept a range to merge. The unmerge function will accept 

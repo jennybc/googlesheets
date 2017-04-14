@@ -28,7 +28,7 @@ gs_autofill <- function(ss,
                         alternate_series = FALSE,
                         verbose = FALSE){
   
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
   range_limits <- cellranger::as.cell_limits(range)
   range_limits$sheet <- this_ws_id

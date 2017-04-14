@@ -6,6 +6,25 @@
 #'
 #' @name gs_protected_range
 #' @template ss
+#' @param protected_range string; id or name of a Protected Range in the sheet. Use 
+#' \code{\link{gs_get_protected_range}} to get details on all Protected Ranges in a sheet.
+#' @param description character; The description of this protected range.
+#' @template range
+#' @param named_range string; id or name of a named range in the sheet. Use 
+#' \code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.
+#' @param editors vector, list, or 1 column data.frame with the email addresses 
+#' of people to have edit access to the protected range. If this argument is left 
+#' NULL then only the creating user will have edit access to the protected range.
+#' @param domain_users_can_edit logical; True if anyone in the document's domain 
+#' has edit access to the protected range. Domain protection is only supported 
+#' on documents within a domain.
+#' @param warning_only logical; True if this protected range will show a warning 
+#' when editing. Warning-based protection means that every user can edit data 
+#' in the protected range, except editing will prompt a warning asking the user 
+#' to confirm the edit. When writing: if this field is true, then editors is ignored. 
+#' Additionally, if this field is changed from true to false and the editors field is 
+#' not set (nor included in the field mask), then the editors will be set to all 
+#' the editors in the document.
 #' @template verbose
 #' @examples
 #' \dontrun{
@@ -28,23 +47,6 @@ NULL
 
 #' @rdname gs_protected_range
 #' @inheritParams gs_protected_range
-#' @param description character; The description of this protected range.
-#' @template range
-#' @param named_range string; id or name of a named range in the sheet. Use 
-#' \code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.
-#' @param editors vector, list, or 1 column data.frame with the email addresses 
-#' of people to have edit access to the protected range. If this argument is left 
-#' NULL then only the creating user will have edit access to the protected range.
-#' @param domain_users_can_edit logical; True if anyone in the document's domain 
-#' has edit access to the protected range. Domain protection is only supported 
-#' on documents within a domain.
-#' @param warning_only logical; True if this protected range will show a warning 
-#' when editing. Warning-based protection means that every user can edit data 
-#' in the protected range, except editing will prompt a warning asking the user 
-#' to confirm the edit. When writing: if this field is true, then editors is ignored. 
-#' Additionally, if this field is changed from true to false and the editors field is 
-#' not set (nor included in the field mask), then the editors will be set to all 
-#' the editors in the document.
 #' @export
 gs_add_protected_range <- function(ss,
                                    description,
@@ -97,25 +99,6 @@ gs_add_protected_range <- function(ss,
 
 #' @rdname gs_protected_range
 #' @inheritParams gs_protected_range
-#' @param protected_range string; id or name of a Protected Range in the sheet. Use 
-#' \code{\link{gs_get_protected_range}} to get details on all Protected Ranges in a sheet.
-#' @param description character; The description of this protected range.
-#' @template range
-#' @param named_range string; id or name of a named range in the sheet. Use 
-#' \code{\link{gs_get_named_range}} to get details on all named ranges in a sheet.
-#' @param editors vector, list, or 1 column data.frame with the email addresses 
-#' of people to have edit access to the protected range. If this argument is left 
-#' NULL then only the creating user will have edit access to the protected range.
-#' @param domain_users_can_edit logical; True if anyone in the document's domain 
-#' has edit access to the protected range. Domain protection is only supported 
-#' on documents within a domain.
-#' @param warning_only logical; True if this protected range will show a warning 
-#' when editing. Warning-based protection means that every user can edit data 
-#' in the protected range, except editing will prompt a warning asking the user 
-#' to confirm the edit. When writing: if this field is true, then editors is ignored. 
-#' Additionally, if this field is changed from true to false and the editors field is 
-#' not set (nor included in the field mask), then the editors will be set to all 
-#' the editors in the document.
 #' @export
 gs_update_protected_range <- function(ss,
                                       protected_range,
@@ -219,8 +202,6 @@ gs_update_protected_range <- function(ss,
 
 #' @rdname gs_protected_range
 #' @inheritParams gs_protected_range
-#' @param protected_range string; id or name of a Protected Range in the sheet. Use 
-#' \code{\link{gs_get_protected_range}} to get details on all Protected Ranges in a sheet.
 #' @export
 gs_delete_protected_range <- function(ss,
                                       protected_range,
