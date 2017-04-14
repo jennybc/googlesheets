@@ -198,7 +198,6 @@ gsv4_prep_values <- function(values, col_names=TRUE){
 #' Parsing the values portion of a reply into a data.frame
 #' 
 #' @usage gsv4_parse_values(values, col_names=TRUE)
-#' @importFrom plyr ldply
 #' @param values \code{list}; a list parsed from the Sheets V4 API that represents an array
 #' @param col_names logical; indicates whether column names of input should be parsed as part of the returne values matrix
 #' @return \code{data.frame} parsed from a values matrix returned by the Sheets V4 API
@@ -217,7 +216,7 @@ gsv4_parse_values <- function(values, col_names=TRUE){
     values <- values[c(-1)]
   }
   
-  df <- ldply(values, .fun=function(x){
+  df <- plyr::ldply(values, .fun=function(x){
     if(identical(x, list())){
       # this handles if a row or column is totally blank
       # other methods will completely drop the row, but
@@ -280,7 +279,7 @@ gsv4_limits_to_grid_range <- function(lim, ss=NULL){
     # pull out details on the sheet and find corresponding sheetId
     # assume it's the first sheet if not specified
     ws <- if(is.na(lim$sheet)) 1 else lim$sheet
-    this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+    this_ws <- gs_ws(ss, ws, verbose = FALSE)
     this_ws_id <- as.integer(this_ws$gid)
     lim$sheet <- this_ws_id
   }
@@ -334,7 +333,7 @@ gsv4_anchor_to_grid_coordinate <- function(anchor, ss, ws=1){
   anchor_row <- lim$ul[1] - 1
   anchor_col <- lim$ul[2] - 1
   
-  this_ws <- googlesheets:::gs_ws(ss, ws, verbose = FALSE)
+  this_ws <- gs_ws(ss, ws, verbose = FALSE)
   this_ws_id <- as.integer(this_ws$gid)
 
   gsv4_GridCoordinate(sheetId = this_ws_id,
