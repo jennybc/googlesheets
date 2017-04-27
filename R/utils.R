@@ -60,25 +60,6 @@ is_toggle <- function(x) {
   is.null(x) || isTRUE(x) || isFALSE(x)
 }
 
-force_na_type <-
-  function(x, type = c("logical", "integer", "double", "real",
-                       "complex", "character")) {
-    type <- match.arg(type)
-    if(all(is.na(x))) {
-      na <- switch(type,
-                   logical = NA,
-                   integer = NA_integer_,
-                   double = NA_real_,
-                   real = NA_real_,
-                   complex = NA_complex_,
-                   character = NA_character_,
-                   NA)
-      rep_len(na, length(x))
-    } else {
-      x
-    }
-  }
-
 ## good news: these are handy and call. = FALSE is built-in
 ##  bad news: 'fmt' must be exactly 1 string, i.e. you've got to paste, iff
 ##             you're counting on sprintf() substitution

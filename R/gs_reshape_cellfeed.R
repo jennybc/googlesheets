@@ -118,7 +118,6 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
   ## our departures from readr data ingest:
   ## ~~no NA variable names~~ handled elsewhere (above) in this function
   ## NA vars should be logical, not character
-  df %>%
-    purrr::dmap(force_na_type)
-
+  df[] <- lapply(df, function(.x) if (all(is.na(.x))) as.logical(.x) else .x)
+  df
 }

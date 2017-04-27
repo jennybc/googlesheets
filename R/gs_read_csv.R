@@ -73,7 +73,6 @@ gs_read_csv <- function(ss, ws = 1, ..., verbose = TRUE) {
   ## NA vars should be logical, not character
   nms <- names(df)
   names(df) <- fix_names(nms, ddd$check.names)
-  df %>%
-    purrr::dmap(force_na_type)
-
+  df[] <- lapply(df, function(.x) if (all(is.na(.x))) as.logical(.x) else .x)
+  df
 }

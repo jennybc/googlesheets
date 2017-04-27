@@ -4,7 +4,10 @@ ss <- gs_key(pts_key, lookup = FALSE, visibility = "public", verbose = FALSE)
 
 test_that("We can handle embedded empty cells via csv", {
 
-  dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
+  expect_warning(
+    dat_csv <- ss %>% gs_read_csv("embedded_empty_cells"),
+    "Missing column names filled in"
+  )
   expect_equal(dim(dat_csv), c(7L, 7L))
   expect_equal(which(is.na(dat_csv$country)), c(3L, 5L))
   expect_equal(which(is.na(dat_csv$year)), c(5L, 6L))
@@ -42,7 +45,10 @@ test_that("We can handle embedded empty cells via list feed", {
 
 test_that("We can handle embedded empty cells via cell feed", {
 
-  dat_csv <- ss %>% gs_read_csv("embedded_empty_cells")
+  expect_warning(
+    dat_csv <- ss %>% gs_read_csv("embedded_empty_cells"),
+    "Missing column names filled in"
+  )
 
   raw_cf <- ss %>% gs_read_cellfeed("embedded_empty_cells")
   expect_equal(dim(raw_cf), c(37L, 7L))
@@ -56,7 +62,7 @@ test_that("We can handle embedded empty cells via cell feed", {
     gs_read_cellfeed("embedded_empty_cells", return_empty = TRUE)
   expect_equal(dim(raw_cf), c(56L, 7L))
   dat_cf <- raw_cf %>% gs_reshape_cellfeed()
-  expect_identical(dat_cf, dat_csv)
+  expect_equivalent(dat_cf, dat_csv)
 
 })
 
@@ -72,13 +78,16 @@ test_that("We can cope with tricky column names", {
   row_one <- c("id", "content", "4.3", "", "lifeExp",
                "", "Fahrvergnügen", "Hey space")
   row_one_no_empty <- row_one[row_one != ""]
-  vnames<- c("id", "content", "4.3", "X4", "lifeExp",
-               "X6", "Fahrvergnügen", "Hey space")
+  vnames <- c("id", "content", "4.3", "X4", "lifeExp",
+              "X6", "Fahrvergnügen", "Hey space")
 
   ## FYI this is as much about documenting what happens with weird names, as it
   ## is about testing
 
-  diabolical <- gs_read_csv(ss, "diabolical_column_names")
+  expect_warning(
+    diabolical <- gs_read_csv(ss, "diabolical_column_names"),
+    "Missing column names filled in"
+  )
   expect_identical(dim(diabolical), c(3L, 8L))
   expect_identical(names(diabolical), vnames)
 
@@ -105,10 +114,10 @@ test_that("We can cope with tricky column names", {
 })
 
 test_that("we don't error on a sheet with only colnames", {
-  expect_identical(ss %>% gs_read("colnames_only"),
-                   dplyr::data_frame(V1 = logical(), V2 = logical()))
-  expect_identical(ss %>% gs_read_csv("colnames_only"),
-                   dplyr::data_frame(V1 = logical(), V2 = logical()))
+  expect_equivalent(ss %>% gs_read("colnames_only"),
+                    dplyr::data_frame(V1 = logical(), V2 = logical()))
+  expect_equivalent(ss %>% gs_read_csv("colnames_only"),
+                    dplyr::data_frame(V1 = logical(), V2 = logical()))
   ## retval is truly empty because variable names can only discovered from
   ## actual row data, of which there is none
   expect_identical(ss %>% gs_read_listfeed("colnames_only"),

@@ -94,7 +94,7 @@ test_that("2-dimensional things can be uploaded", {
   ss <- ss %>% gs_edit_cells(ws, iris_ish)
   Sys.sleep(1)
   tmp <- ss %>% gs_read(ws, verbose = FALSE)
-  expect_identical(tmp, iris_ish)
+  expect_equivalent(tmp, iris_ish)
 
 })
 
