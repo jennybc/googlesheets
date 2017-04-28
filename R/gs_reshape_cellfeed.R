@@ -65,6 +65,19 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
     dplyr::arrange_(~row, ~col)
   n_cols <- dplyr::n_distinct(x$col)
 
+  if (!is.null(ddd$comment)) {
+    x <- x %>%
+      dplyr::mutate(noncomment = !grepl(paste0("^", ddd$comment), x$value)) %>%
+      dplyr::group_by(row)
+    keep_these_rows <- x %>%
+      dplyr::mutate(precomment = dplyr::cumall(noncomment)) %>%
+      dplyr::count(row, precomment) %>%
+      dplyr::filter(precomment, n > 0)
+    x[!x$noncomment, "value"] <- NA_character_
+    x <- x[x$row %in% keep_these_rows$row, , drop = FALSE]
+    x$noncomment <- NULL
+  }
+
   if (isTRUE(ddd$col_names)) {
     row_min <- min(x$row)
     row_one <- x %>%
@@ -99,13 +112,6 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
     ## I can drop as.data.frame() once dplyr version >= 0.4.4
     as.data.frame(stringsAsFactors = FALSE) %>%
     dplyr::as_data_frame()
-
-  if (!is.null(ddd$comment)) {
-    keep_row <- !grepl(paste0("^", ddd$comment), dat[[1]])
-    dat <- dat[keep_row, , drop = FALSE]
-    dat <- dat %>%
-      purrr::dmap(~stringr::str_replace(.x, paste0(ddd$comment, ".*"), ""))
-  }
 
   if (!is.null(ddd$n_max)) {
     dat <- dat[seq_len(ddd$n_max), , drop = FALSE]

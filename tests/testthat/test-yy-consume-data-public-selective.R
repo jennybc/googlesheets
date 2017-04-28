@@ -160,3 +160,28 @@ test_that("readr parsing params are handled on the list feed", {
                     rep(c("character", "numeric"), each = 3))
 
 })
+
+test_that("comment is honored", {
+  ss <- gs_ws_feed(pts_ws_feed)
+  ref <- tibble::tibble(
+    var1 = c(1L, 3L),
+    var2 = c(2L, NA_integer_)
+  )
+  expect_warning(
+    plain_read <- ss %>% gs_read(ws = "comment", comment = "#"),
+    "1 parsing failure."
+  )
+  expect_equal(ref, plain_read)
+
+  expect_warning(
+    csv_read <- ss %>% gs_read_csv(ws = "comment", comment = "#"),
+    "1 parsing failure."
+  )
+  expect_equal(ref, csv_read)
+
+  listfeed_read <- ss %>% gs_read_listfeed(ws = "comment", comment = "#")
+  expect_equal(ref, listfeed_read)
+
+  range_read <- ss %>% gs_read(ws = "comment", comment = "#", range = "A1:B6")
+  expect_equal(ref, range_read)
+})
