@@ -70,7 +70,7 @@ gs_inspect <- function(x) {
 
   y$flavor[y$is_NA] <- "empty_cell"
 
-  cell_outline <- if(nr > 150) NA else "white"
+  cell_outline <- if (nr > 150) NA else "white"
 
   p <- y %>% ggplot2::ggplot(
     ggplot2::aes_string(x = "var_name", y = "row", fill = "flavor")) +
@@ -81,12 +81,12 @@ gs_inspect <- function(x) {
     ggplot2::scale_fill_manual(values = cell_colours, drop = FALSE) +
     ggplot2::labs(y = "Row") +
     ggplot2::theme_bw() +
-    ggplot2::theme(panel.margin = grid::unit(0, "lines"),
+    ggplot2::theme(panel.spacing = grid::unit(0, "lines"),
                    axis.ticks = ggplot2::element_blank(),
                    axis.title.x = ggplot2::element_blank(),
                    legend.title = ggplot2::element_blank())
 
-  if(nc > 10) {
+  if (nc > 10) {
     p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
   }
 
