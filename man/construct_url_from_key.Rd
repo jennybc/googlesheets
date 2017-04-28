@@ -13,4 +13,3 @@ construct_url_from_key(key)
 Construct a browser URL from a key
 }
 \keyword{internal}
-

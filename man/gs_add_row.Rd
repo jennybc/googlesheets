@@ -56,4 +56,3 @@ gs_delete(yo)
 \seealso{
 \code{\link{gs_edit_cells}}
 }
-

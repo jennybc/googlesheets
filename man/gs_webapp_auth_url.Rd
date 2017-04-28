@@ -57,4 +57,3 @@ OAuth2.0 for Web Server Applications}.
 \seealso{
 \code{\link{gs_webapp_get_token}}
 }
-

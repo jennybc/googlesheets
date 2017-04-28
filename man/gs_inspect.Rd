@@ -42,4 +42,3 @@ x[some_columns] <- lapply(x[some_columns], as.numeric)
 gs_inspect(x)
 }
 }
-

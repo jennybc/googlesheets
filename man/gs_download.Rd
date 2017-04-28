@@ -48,4 +48,3 @@ file.remove("gapminder.xlsx")
 }
 
 }
-

@@ -108,4 +108,3 @@ gs_auth(token = "ttt.rds") # from .rds file
 Other auth functions: \code{\link{gd_user}},
   \code{\link{gs_deauth}}
 }
-

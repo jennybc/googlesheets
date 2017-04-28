@@ -30,4 +30,3 @@ gs_browse(gap_ss, ws = "Europe")
 gap_ss <- gs_gap() \%>\% gs_browse()
 }
 }
-

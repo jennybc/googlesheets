@@ -30,4 +30,3 @@ gs_ls("hyde")                    ## see? it's got a new name
 gs_delete(ss)
 }
 }
-

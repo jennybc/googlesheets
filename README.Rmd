@@ -119,8 +119,8 @@ Read all the data in a worksheet:
 
 ```{r}
 africa <- gs_read(gap)
-str(africa)
-head(africa)
+glimpse(africa)
+africa
 ```
 
 Some of the many ways to target specific cells:

@@ -20,4 +20,3 @@ From a \code{\link{googlesheet}}, retrieve a list (actually a row of a
 data.frame) giving everything we know about a specific worksheet.
 }
 \keyword{internal}
-

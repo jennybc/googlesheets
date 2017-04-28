@@ -98,7 +98,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2016-06-25 02:05:56 GMT
+#>   Date of googlesheets registration: 2017-04-28 01:26:04 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -128,25 +128,39 @@ Read all the data in a worksheet:
 ``` r
 africa <- gs_read(gap)
 #> Accessing worksheet titled 'Africa'.
-#> No encoding supplied: defaulting to UTF-8.
-str(africa)
-#> Classes 'tbl_df', 'tbl' and 'data.frame':    624 obs. of  6 variables:
-#>  $ country  : chr  "Algeria" "Algeria" "Algeria" "Algeria" ...
-#>  $ continent: chr  "Africa" "Africa" "Africa" "Africa" ...
-#>  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
-#>  $ lifeExp  : num  43.1 45.7 48.3 51.4 54.5 ...
-#>  $ pop      : int  9279525 10270856 11000948 12760499 14760787 17152804 20033753 23254956 26298373 29072015 ...
-#>  $ gdpPercap: num  2449 3014 2551 3247 4183 ...
-head(africa)
-#> <tibble [6 x 6]>
-#>   country continent  year lifeExp      pop gdpPercap
-#>     <chr>     <chr> <int>   <dbl>    <int>     <dbl>
-#> 1 Algeria    Africa  1952  43.077  9279525  2449.008
-#> 2 Algeria    Africa  1957  45.685 10270856  3013.976
-#> 3 Algeria    Africa  1962  48.303 11000948  2550.817
-#> 4 Algeria    Africa  1967  51.407 12760499  3246.992
-#> 5 Algeria    Africa  1972  54.518 14760787  4182.664
-#> 6 Algeria    Africa  1977  58.014 17152804  4910.417
+#> Parsed with column specification:
+#> cols(
+#>   country = col_character(),
+#>   continent = col_character(),
+#>   year = col_integer(),
+#>   lifeExp = col_double(),
+#>   pop = col_integer(),
+#>   gdpPercap = col_double()
+#> )
+glimpse(africa)
+#> Observations: 624
+#> Variables: 6
+#> $ country   <chr> "Algeria", "Algeria", "Algeria", "Algeria", "Algeria...
+#> $ continent <chr> "Africa", "Africa", "Africa", "Africa", "Africa", "A...
+#> $ year      <int> 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...
+#> $ lifeExp   <dbl> 43.077, 45.685, 48.303, 51.407, 54.518, 58.014, 61.3...
+#> $ pop       <int> 9279525, 10270856, 11000948, 12760499, 14760787, 171...
+#> $ gdpPercap <dbl> 2449.008, 3013.976, 2550.817, 3246.992, 4182.664, 49...
+africa
+#> # A tibble: 624 × 6
+#>    country continent  year lifeExp      pop gdpPercap
+#>      <chr>     <chr> <int>   <dbl>    <int>     <dbl>
+#> 1  Algeria    Africa  1952  43.077  9279525  2449.008
+#> 2  Algeria    Africa  1957  45.685 10270856  3013.976
+#> 3  Algeria    Africa  1962  48.303 11000948  2550.817
+#> 4  Algeria    Africa  1967  51.407 12760499  3246.992
+#> 5  Algeria    Africa  1972  54.518 14760787  4182.664
+#> 6  Algeria    Africa  1977  58.014 17152804  4910.417
+#> 7  Algeria    Africa  1982  61.368 20033753  5745.160
+#> 8  Algeria    Africa  1987  65.799 23254956  5681.359
+#> 9  Algeria    Africa  1992  67.744 26298373  5023.217
+#> 10 Algeria    Africa  1997  69.152 29072015  4797.295
+#> # ... with 614 more rows
 ```
 
 Some of the many ways to target specific cells:
@@ -164,8 +178,7 @@ gap %>%
   gs_read(ws = "Oceania", col_names = paste0("Z", 1:6),
           na = c("1962", "1977"), col_types = "cccccc", skip = 1, n_max = 7)
 #> Accessing worksheet titled 'Oceania'.
-#> No encoding supplied: defaulting to UTF-8.
-#> <tibble [7 x 6]>
+#> # A tibble: 7 × 6
 #>          Z1      Z2    Z3    Z4       Z5       Z6
 #>       <chr>   <chr> <chr> <chr>    <chr>    <chr>
 #> 1 Australia Oceania  1952 69.12  8691212  10039.6
@@ -184,7 +197,7 @@ iris_ss <- gs_new("iris", input = head(iris, 3), trim = TRUE)
 #> Warning: At least one sheet matching "iris" already exists, so you may
 #> need to identify by key, not title, in future.
 #> Sheet "iris" created in Google Drive.
-#> Range affected by the update: "A1:E4"
+#> Range affected by the update: "R1C1:R4C5"
 #> Worksheet "Sheet1" successfully updated with 20 new value(s).
 #> Accessing worksheet titled 'Sheet1'.
 #> Sheet successfully identified: "iris"
@@ -199,7 +212,7 @@ Edit some arbitrary cells and append a row:
 iris_ss <- iris_ss %>% 
   gs_edit_cells(input = c("what", "is", "a", "sepal", "anyway?"),
                 anchor = "A2", byrow = TRUE)
-#> Range affected by the update: "A2:E2"
+#> Range affected by the update: "R2C1:R2C5"
 #> Worksheet "Sheet1" successfully updated with 5 new value(s).
 iris_ss <- iris_ss %>% 
   gs_add_row(input = c("sepals", "support", "the", "petals", "!!"))
@@ -212,8 +225,15 @@ Look at what we have wrought:
 iris_ss %>% 
   gs_read()
 #> Accessing worksheet titled 'Sheet1'.
-#> No encoding supplied: defaulting to UTF-8.
-#> <tibble [4 x 5]>
+#> Parsed with column specification:
+#> cols(
+#>   Sepal.Length = col_character(),
+#>   Sepal.Width = col_character(),
+#>   Petal.Length = col_character(),
+#>   Petal.Width = col_character(),
+#>   Species = col_character()
+#> )
+#> # A tibble: 4 × 5
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 #>          <chr>       <chr>        <chr>       <chr>   <chr>
 #> 1         what          is            a       sepal anyway?

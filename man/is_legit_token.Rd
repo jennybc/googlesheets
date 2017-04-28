@@ -10,4 +10,3 @@ is_legit_token(x, verbose = FALSE)
 Check that token appears to be legitimate
 }
 \keyword{internal}
-

@@ -17,4 +17,3 @@ authorization, respectively}
 Construct a worksheets feed from a key
 }
 \keyword{internal}
-

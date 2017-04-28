@@ -48,4 +48,3 @@ gs_delete(yo)
 
 }
 \keyword{internal}
-

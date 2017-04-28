@@ -74,4 +74,3 @@ gs_vecdel(c("foo", "yo"))
 }
 
 }
-

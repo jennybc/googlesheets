@@ -26,4 +26,3 @@ gs_deauth()
 Other auth functions: \code{\link{gd_user}},
   \code{\link{gs_auth}}
 }
-

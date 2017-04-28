@@ -14,4 +14,3 @@ Check if a token is available in \code{\link{googlesheets}}' internal
 \code{.state} environment.
 }
 \keyword{internal}
-

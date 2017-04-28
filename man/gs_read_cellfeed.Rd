@@ -106,4 +106,3 @@ Other data consumption functions: \code{\link{gs_read_csv}},
   \code{\link{gs_reshape_cellfeed}},
   \code{\link{gs_simplify_cellfeed}}
 }
-

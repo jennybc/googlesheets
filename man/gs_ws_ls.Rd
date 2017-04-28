@@ -18,4 +18,3 @@ Retrieve the titles of all the worksheets in a \code{\link{googlesheet}}.
 gs_ws_ls(gs_gap())
 }
 }
-

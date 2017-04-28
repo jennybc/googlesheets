@@ -31,4 +31,3 @@ for \code{\link{gs_webapp_auth_url}} for more details on OAuth2 within Shiny.
 \seealso{
 \code{\link{gs_webapp_auth_url}}
 }
-

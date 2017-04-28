@@ -72,4 +72,3 @@ gs_delete(foo)
   likely much faster than using \code{\link{gs_new}} and/or
   \code{\link{gs_edit_cells}}, so try both if speed is a concern.
 }
-

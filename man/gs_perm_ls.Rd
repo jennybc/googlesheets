@@ -42,4 +42,3 @@ gs_delete(foo)
 
 }
 \keyword{internal}
-

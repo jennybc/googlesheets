@@ -60,4 +60,3 @@ delete and how to recover from accidental deletion
 
 Other sheet deletion functions: \code{\link{gs_delete}}
 }
-

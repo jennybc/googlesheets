@@ -27,4 +27,3 @@ a \code{\link{googlesheet}} object
 Modify a worksheet's title or size
 }
 \keyword{internal}
-

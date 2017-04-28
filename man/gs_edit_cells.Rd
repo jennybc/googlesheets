@@ -75,4 +75,3 @@ gs_delete(yo)
 \seealso{
 \code{\link{gs_add_row}}
 }
-

@@ -2,11 +2,11 @@
 % Please edit documentation in R/gs_register.R
 \name{googlesheet}
 \alias{googlesheet}
-\alias{gs_gs}
-\alias{gs_key}
 \alias{gs_title}
+\alias{gs_key}
 \alias{gs_url}
 \alias{gs_ws_feed}
+\alias{gs_gs}
 \title{Register a Google Sheet}
 \usage{
 gs_title(x, verbose = TRUE)
@@ -95,4 +95,3 @@ must be properly authorized to access it. So a \code{googlesheet} object will
 only contain info from the spreadsheets feed if \code{lookup = TRUE}, which
 directs us to look up sheet-identifying information in the spreadsheets feed.
 }
-

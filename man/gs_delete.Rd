@@ -40,4 +40,3 @@ gs_delete(foo)
 
 Other sheet deletion functions: \code{\link{gs_grepdel}}
 }
-

@@ -2,18 +2,18 @@
 % Please edit documentation in R/gs_example-sheet-setup.R
 \name{example-sheets}
 \alias{example-sheets}
-\alias{gs_ff}
-\alias{gs_ff_key}
-\alias{gs_ff_url}
-\alias{gs_ff_ws_feed}
-\alias{gs_gap}
 \alias{gs_gap_key}
 \alias{gs_gap_url}
 \alias{gs_gap_ws_feed}
-\alias{gs_mini_gap}
+\alias{gs_gap}
 \alias{gs_mini_gap_key}
 \alias{gs_mini_gap_url}
 \alias{gs_mini_gap_ws_feed}
+\alias{gs_mini_gap}
+\alias{gs_ff_key}
+\alias{gs_ff_url}
+\alias{gs_ff_ws_feed}
+\alias{gs_ff}
 \title{Examples of Google Sheets}
 \usage{
 gs_gap_key()
@@ -92,6 +92,7 @@ formatting and formulas
 \item \code{gs_ff}: Registered googlesheet for a sheet with numeric
 formatting and formulas
 }}
+
 \examples{
 \dontrun{
 gs_gap_key()
@@ -107,4 +108,3 @@ gs_browse(gs_ff())
 }
 
 }
-

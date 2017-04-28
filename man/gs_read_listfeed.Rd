@@ -112,6 +112,7 @@ list feed}.
    apparently undocumented}, so keep it simple or bring your spirit of
   adventure!
 }
+
 \examples{
 \dontrun{
 gap_ss <- gs_gap() # register the Gapminder example sheet
@@ -143,4 +144,3 @@ Other data consumption functions: \code{\link{gs_read_cellfeed}},
   \code{\link{gs_reshape_cellfeed}},
   \code{\link{gs_simplify_cellfeed}}
 }
-
