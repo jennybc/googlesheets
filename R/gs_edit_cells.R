@@ -3,7 +3,7 @@
 #' Modify the contents of one or more cells. The cells to be edited are
 #' specified implicitly by a single anchor cell, which will be the upper left
 #' corner of the edited cell region, and the size and shape of the input. If the
-#' input has rectangular shape, i.e. is a data.frame or matrix, then a simiarly
+#' input has rectangular shape, i.e. is a data.frame or matrix, then a similarly
 #' shaped range of cells will be updated. If the input has no dimension, i.e.
 #' it's a vector, then \code{byrow} controls whether edited cells will extend
 #' from the anchor across a row or down a column.
