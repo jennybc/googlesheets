@@ -1,5 +1,7 @@
 # googlesheets 0.2.1.9000
 
+The primary reason for this release is for compatibility with purrr.
+
   * Update ggplot2 usage to clear warnings about use of deprecated arguments.
   * Remove all uses of `purrr::dmap()` which has been removed from purrr.
   * `gs_upload()` now has an `overwrite` argument. (#285 @omgjens)
