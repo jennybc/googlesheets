@@ -10,6 +10,6 @@ Google spreadsheets R API
 }
 \details{
 See the README on
-\href{https://cran.r-project.org/web/packages/googlesheets/README.html}{CRAN}
-or \href{https://github.com/jennybc/googlesheets}{GitHub}
+\href{https://cran.r-project.org/package=googlesheets/README.html}{CRAN}
+or \href{https://github.com/jennybc/googlesheets#readme}{GitHub}
 }
