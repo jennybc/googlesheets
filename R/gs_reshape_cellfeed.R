@@ -67,12 +67,12 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
 
   if (!is.null(ddd$comment)) {
     x <- x %>%
-      dplyr::mutate(noncomment = !grepl(paste0("^", ddd$comment), x$value)) %>%
-      dplyr::group_by(row)
+      dplyr::mutate_(noncomment = ~ !grepl(paste0("^", ddd$comment), value)) %>%
+      dplyr::group_by_(~ row)
     keep_these_rows <- x %>%
-      dplyr::mutate(precomment = dplyr::cumall(noncomment)) %>%
-      dplyr::count(row, precomment) %>%
-      dplyr::filter(precomment, n > 0)
+      dplyr::mutate_(precomment = ~ dplyr::cumall(noncomment)) %>%
+      dplyr::count_(~ row, ~ precomment) %>%
+      dplyr::filter_(~ n > 0)
     x[!x$noncomment, "value"] <- NA_character_
     x <- x[x$row %in% keep_these_rows$row, , drop = FALSE]
     x$noncomment <- NULL
