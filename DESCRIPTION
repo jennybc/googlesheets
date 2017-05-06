@@ -3,7 +3,7 @@ Title: Manage Google Spreadsheets from R
 Version: 0.2.2
 Description: Interact with Google Sheets from R.
 Authors@R: c(
-    person("Jennifer", "Bryan", , "jenny@stat.ubc.ca", c("aut", "cre")),
+    person("Jennifer", "Bryan", , "jenny@rstudio.com", c("aut", "cre")),
     person("Joanna", "Zhao", , "joanna.zhao@alumni.ubc.ca", role = "aut")
     )
 URL: https://github.com/jennybc/googlesheets
