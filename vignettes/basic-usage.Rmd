@@ -420,7 +420,7 @@ str(yr)
 
 #### Controlling data ingest, theory
 
-`googlesheets` provides control of data ingest in the style of [`readr`](http://cran.r-project.org/package=readr). Some arguments are passed straight through to `readr::read_csv()` or `readr::type_convert()` and others are used internally by `googlesheets`, hopefully in the same way!
+`googlesheets` provides control of data ingest in the style of [`readr`](https://cran.r-project.org/package=readr). Some arguments are passed straight through to `readr::read_csv()` or `readr::type_convert()` and others are used internally by `googlesheets`, hopefully in the same way!
 
 Which cells?
 
@@ -443,7 +443,7 @@ Where do variable names come from?
 How to do type conversion of variables?
 
   * The `readr` default behavior might be just fine. Try it!
-  * Read the [`readr` vignette on column types](https://cran.r-project.org/web/packages/readr/vignettes/column-types.html) to better understand the automatic variable conversion behavior and how to use the `col_types` argument to override it.
+  * Read about column specification in the [`readr` vignette](http://readr.tidyverse.org/articles/readr.html) to better understand the automatic variable conversion behavior and how to use the `col_types` argument to override it.
   * `col_types`, `locale`, `trim_ws`, and `na` are all available for finer control.
   * One departure from `readr`:
     - If a variable consists entirely of `NA`s, they will be logical `NA`s, not `NA_character_`.
