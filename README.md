@@ -98,7 +98,7 @@ Here's a registered `googlesheet` object:
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2017-04-28 01:26:04 GMT
+#>   Date of googlesheets registration: 2017-05-06 19:37:34 GMT
 #>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
 #>                          visibility: private
 #>                         permissions: rw
@@ -150,15 +150,15 @@ africa
 #> # A tibble: 624 × 6
 #>    country continent  year lifeExp      pop gdpPercap
 #>      <chr>     <chr> <int>   <dbl>    <int>     <dbl>
-#> 1  Algeria    Africa  1952  43.077  9279525  2449.008
-#> 2  Algeria    Africa  1957  45.685 10270856  3013.976
-#> 3  Algeria    Africa  1962  48.303 11000948  2550.817
-#> 4  Algeria    Africa  1967  51.407 12760499  3246.992
-#> 5  Algeria    Africa  1972  54.518 14760787  4182.664
-#> 6  Algeria    Africa  1977  58.014 17152804  4910.417
-#> 7  Algeria    Africa  1982  61.368 20033753  5745.160
-#> 8  Algeria    Africa  1987  65.799 23254956  5681.359
-#> 9  Algeria    Africa  1992  67.744 26298373  5023.217
+#>  1 Algeria    Africa  1952  43.077  9279525  2449.008
+#>  2 Algeria    Africa  1957  45.685 10270856  3013.976
+#>  3 Algeria    Africa  1962  48.303 11000948  2550.817
+#>  4 Algeria    Africa  1967  51.407 12760499  3246.992
+#>  5 Algeria    Africa  1972  54.518 14760787  4182.664
+#>  6 Algeria    Africa  1977  58.014 17152804  4910.417
+#>  7 Algeria    Africa  1982  61.368 20033753  5745.160
+#>  8 Algeria    Africa  1987  65.799 23254956  5681.359
+#>  9 Algeria    Africa  1992  67.744 26298373  5023.217
 #> 10 Algeria    Africa  1997  69.152 29072015  4797.295
 #> # ... with 614 more rows
 ```
