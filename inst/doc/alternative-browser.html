@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jennifer Bryan" />
 
-<meta name="date" content="2016-07-02" />
+<meta name="date" content="2017-05-06" />
 
 <title>Use an alternative browser</title>
 
@@ -70,18 +70,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Use an alternative browser</h1>
 <h4 class="author"><em>Jennifer Bryan</em></h4>
-<h4 class="date"><em>2016-07-02</em></h4>
+<h4 class="date"><em>2017-05-06</em></h4>
 
 
 
 <p>What if you want to do auth in a non-default browser? Examples below show requests for Google Chrome or Safari on Mac OS X.</p>
 <p>At runtime, the browser is given via the <code>browser</code> element of <code>options()</code>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">getOption</span>(<span class="st">&quot;browser&quot;</span>)</code></pre></div>
-<pre><code>## function (url) 
-## {
-##     .Call(&quot;rs_browseURL&quot;, url)
-## }
-## &lt;environment: 0x102657358&gt;</code></pre>
+<pre><code>## [1] &quot;/usr/bin/open&quot;</code></pre>
 <p>Two alternatives to change that temporarily for <code>gs_auth()</code>:</p>
 <p>Using just base R facilities.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
@@ -107,7 +103,7 @@ op &lt;-<span class="st"> </span><span class="kw">options</span>(<span class="dt
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
