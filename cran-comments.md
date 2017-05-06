@@ -13,6 +13,17 @@ There were no ERRORs or WARNINGs.
 
 There is one NOTE. I have changed my email address from jenny@stat.ubc.ca to jenny@rstudio.com.
 
+There is also this, which is not new and I am giving the same explanation:
+
+Found the following (possibly) invalid URLs:
+  URL: https://console.developers.google.com
+    From: man/gs_auth.Rd
+          man/gs_webapp_auth_url.Rd
+    Status: 404
+    Message: Not Found
+    
+This URL goes to the Google Developers Console if and only if user is currently signed in with Google. Otherwise it redirects to a login screen. I assume something about that process is causing CRAN to think the URL is invalid.
+
 ## Downstream dependencies
 
 There aren't any.
