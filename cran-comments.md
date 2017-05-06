@@ -1,10 +1,11 @@
 ## Test environments
 
-* local OS X install, R 3.3.0
-* ubuntu 12.04 on travis-ci, R 3.3.0
+* local OS X install, R 3.3.2
+* Ubuntu precise (12.04.5 LTS) on travis-ci, R 3.4.0
 * win-builder, release 3.3.1 and devel
+* r-hub, various combinations of OS and R
 
-This is an update to accomodate xml2 1.0.0, which was just released.
+This is an update to accomodate purrr 0.2.2.1, which is soon to be released.
 
 ## R CMD check results
 
