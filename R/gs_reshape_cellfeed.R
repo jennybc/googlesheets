@@ -71,7 +71,7 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
       dplyr::group_by_(~ row)
     keep_these_rows <- x %>%
       dplyr::mutate_(precomment = ~ dplyr::cumall(noncomment)) %>%
-      dplyr::count_(dplyr::vars(row, precomment)) %>%
+      dplyr::count_(vars = c("row", "precomment")) %>%
       dplyr::filter_(~ precomment, ~ (n > 0))
     x[!x$noncomment, "value"] <- NA_character_
     x <- x[x$row %in% keep_these_rows$row, , drop = FALSE]
