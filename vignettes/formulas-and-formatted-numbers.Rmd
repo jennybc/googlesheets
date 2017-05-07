@@ -144,9 +144,13 @@ cf <- gs_read_cellfeed(gs_ff())
 cf_printme <- cf %>%
   arrange(col, row) %>%
   select(cell, value, input_value, numeric_value)
-knitr::kable(cf_printme %>%
-               purrr::modify_if(purrr::is_character,
-                                ~gsub('$', '\\$', .x, fixed = TRUE)))
+## work with purrr v0.2.2 but avoid deprecation warning with v0.2.2.1
+## modify_if() is ideal but not in v0.2.2
+cf_printme[] <- cf_printme %>%
+  purrr::map(~ if(purrr::is_character(.x)) {
+    gsub('$', '\\$', .x, fixed = TRUE)
+  } else .x)
+knitr::kable(cf_printme)
 ```
 
 ![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
