@@ -183,18 +183,18 @@ file.remove(c("gapminder.xlsx", "gapminder-africa.csv"))
 ## ----csv-list-and-cell-feed----------------------------------------------
 # Get the data for worksheet "Oceania": the super-fast csv way
 oceania_csv <- gap %>% gs_read_csv(ws = "Oceania")
-str(oceania_csv)
 oceania_csv
+glimpse(oceania_csv)
 
 # Get the data for worksheet "Oceania": the less-fast tabular way ("list feed")
 oceania_list_feed <- gap %>% gs_read_listfeed(ws = "Oceania") 
-str(oceania_list_feed)
 oceania_list_feed
+glimpse(oceania_list_feed)
 
 # Get the data for worksheet "Oceania": the slow cell-by-cell way ("cell feed")
 oceania_cell_feed <- gap %>% gs_read_cellfeed(ws = "Oceania") 
-str(oceania_cell_feed)
 oceania_cell_feed
+glimpse(oceania_cell_feed)
 
 ## ----include = FALSE-----------------------------------------------------
 readfuns <- c("gs_read_csv", "gs_read_listfeed", "gs_read_cellfeed")
