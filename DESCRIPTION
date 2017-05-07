@@ -1,6 +1,6 @@
 Package: googlesheets
 Title: Manage Google Spreadsheets from R
-Version: 0.2.2
+Version: 0.2.2.9000
 Description: Interact with Google Sheets from R.
 Authors@R: c(
     person("Jennifer", "Bryan", , "jenny@rstudio.com", c("aut", "cre")),
