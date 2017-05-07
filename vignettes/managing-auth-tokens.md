@@ -18,7 +18,7 @@ This vignette explains Google auth token management for anyone who wants to use 
   * Automated unit tests, e.g. [`testthat`](http://r-pkgs.had.co.nz/tests.html)
   * Hosted continuous integration, e.g. [Travis CI](https://travis-ci.org)
   
-Since `googlesheets` gets its authorization functionality from [`httr`](http://cran.r-project.org/package=httr), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
+Since `googlesheets` gets its authorization functionality from [`httr`](https://cran.r-project.org/package=httr), some of the content here may be relevant to other API-wrapping R packages that use `httr`.
 
 Bonus content: The Making of `googlesheets` for CRAN. At the end are my notes on CRAN submission when a package makes extensive use of OAuth.
 
@@ -38,8 +38,39 @@ gs_gap_key() %>%
   head(3)
 #> Worksheets feed constructed with public visibility
 #> Accessing worksheet titled 'Africa'.
-#> No encoding supplied: defaulting to UTF-8.
-#> <tibble [3 x 6]>
+#> 
+Downloading: 580 B     
+Downloading: 580 B     
+Downloading: 2 kB     
+Downloading: 2 kB     
+Downloading: 2.9 kB     
+Downloading: 2.9 kB     
+Downloading: 4.3 kB     
+Downloading: 4.3 kB     
+Downloading: 5.7 kB     
+Downloading: 5.7 kB     
+Downloading: 7 kB     
+Downloading: 7 kB     
+Downloading: 8.4 kB     
+Downloading: 8.4 kB     
+Downloading: 9.8 kB     
+Downloading: 9.8 kB     
+Downloading: 11 kB     
+Downloading: 11 kB     
+Downloading: 11 kB     
+Downloading: 11 kB     
+Downloading: 11 kB     
+Downloading: 11 kB
+#> Parsed with column specification:
+#> cols(
+#>   country = col_character(),
+#>   continent = col_character(),
+#>   year = col_integer(),
+#>   lifeExp = col_double(),
+#>   pop = col_integer(),
+#>   gdpPercap = col_double()
+#> )
+#> # A tibble: 3 × 6
 #>   country continent  year lifeExp      pop gdpPercap
 #>     <chr>     <chr> <int>   <dbl>    <int>     <dbl>
 #> 1 Algeria    Africa  1952  43.077  9279525  2449.008
@@ -59,8 +90,22 @@ iris_ss <- gs_new("iris_bit", input = head(iris, 3), trim = TRUE, verbose = FALS
 iris_ss %>% 
   gs_read()
 #> Accessing worksheet titled 'Sheet1'.
-#> No encoding supplied: defaulting to UTF-8.
-#> <tibble [3 x 5]>
+#> 
+Downloading: 94 B     
+Downloading: 94 B     
+Downloading: 100 B     
+Downloading: 100 B     
+Downloading: 100 B     
+Downloading: 100 B
+#> Parsed with column specification:
+#> cols(
+#>   Sepal.Length = col_double(),
+#>   Sepal.Width = col_double(),
+#>   Petal.Length = col_double(),
+#>   Petal.Width = col_double(),
+#>   Species = col_character()
+#> )
+#> # A tibble: 3 × 5
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
 #>          <dbl>       <dbl>        <dbl>       <dbl>   <chr>
 #> 1          5.1         3.5          1.4         0.2  setosa
@@ -93,7 +138,7 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2016-07-04 15:40:30 GMT
+#>                  date: 2017-05-07 19:14:23 GMT
 #>          permissionId: 14497944239034869033
 #>          rootFolderId: 0AOdw-qi1jh3fUk9PVA
 ```
@@ -195,7 +240,7 @@ The latter point is the most relevant to an active project. If you're developing
 
 ## Tokens for testing
 
-We use [`testthat`](http://cran.r-project.org/package=testthat) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
+We use [`testthat`](https://cran.r-project.org/package=testthat) to run automated unit tests on the `googlesheets` package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:
 
 
 ```r

@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jenny Bryan" />
 
-<meta name="date" content="2016-07-04" />
+<meta name="date" content="2017-05-07" />
 
 <title>Managing OAuth Tokens</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Managing OAuth Tokens</h1>
 <h4 class="author"><em>Jenny Bryan</em></h4>
-<h4 class="date"><em>2016-07-04</em></h4>
+<h4 class="date"><em>2017-05-07</em></h4>
 
 
 <div id="TOC">
@@ -101,7 +101,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Automated unit tests, e.g. <a href="http://r-pkgs.had.co.nz/tests.html"><code>testthat</code></a></li>
 <li>Hosted continuous integration, e.g. <a href="https://travis-ci.org">Travis CI</a></li>
 </ul>
-<p>Since <code>googlesheets</code> gets its authorization functionality from <a href="http://cran.r-project.org/package=httr"><code>httr</code></a>, some of the content here may be relevant to other API-wrapping R packages that use <code>httr</code>.</p>
+<p>Since <code>googlesheets</code> gets its authorization functionality from <a href="https://cran.r-project.org/package=httr"><code>httr</code></a>, some of the content here may be relevant to other API-wrapping R packages that use <code>httr</code>.</p>
 <p>Bonus content: The Making of <code>googlesheets</code> for CRAN. At the end are my notes on CRAN submission when a package makes extensive use of OAuth.</p>
 </div>
 <div id="how-to-completely-avoid-reading-this-document" class="section level2">
@@ -116,8 +116,39 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="st">  </span><span class="kw">head</span>(<span class="dv">3</span>)
 <span class="co">#&gt; Worksheets feed constructed with public visibility</span>
 <span class="co">#&gt; Accessing worksheet titled 'Africa'.</span>
-<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; &lt;tibble [3 x 6]&gt;</span>
+<span class="co">#&gt; </span>
+Downloading:<span class="st"> </span><span class="dv">580</span> B     
+Downloading:<span class="st"> </span><span class="dv">580</span> B     
+Downloading:<span class="st"> </span><span class="dv">2</span> kB     
+Downloading:<span class="st"> </span><span class="dv">2</span> kB     
+Downloading:<span class="st"> </span><span class="fl">2.9</span> kB     
+Downloading:<span class="st"> </span><span class="fl">2.9</span> kB     
+Downloading:<span class="st"> </span><span class="fl">4.3</span> kB     
+Downloading:<span class="st"> </span><span class="fl">4.3</span> kB     
+Downloading:<span class="st"> </span><span class="fl">5.7</span> kB     
+Downloading:<span class="st"> </span><span class="fl">5.7</span> kB     
+Downloading:<span class="st"> </span><span class="dv">7</span> kB     
+Downloading:<span class="st"> </span><span class="dv">7</span> kB     
+Downloading:<span class="st"> </span><span class="fl">8.4</span> kB     
+Downloading:<span class="st"> </span><span class="fl">8.4</span> kB     
+Downloading:<span class="st"> </span><span class="fl">9.8</span> kB     
+Downloading:<span class="st"> </span><span class="fl">9.8</span> kB     
+Downloading:<span class="st"> </span><span class="dv">11</span> kB     
+Downloading:<span class="st"> </span><span class="dv">11</span> kB     
+Downloading:<span class="st"> </span><span class="dv">11</span> kB     
+Downloading:<span class="st"> </span><span class="dv">11</span> kB     
+Downloading:<span class="st"> </span><span class="dv">11</span> kB     
+Downloading:<span class="st"> </span><span class="dv">11</span> kB
+<span class="co">#&gt; Parsed with column specification:</span>
+<span class="co">#&gt; cols(</span>
+<span class="co">#&gt;   country = col_character(),</span>
+<span class="co">#&gt;   continent = col_character(),</span>
+<span class="co">#&gt;   year = col_integer(),</span>
+<span class="co">#&gt;   lifeExp = col_double(),</span>
+<span class="co">#&gt;   pop = col_integer(),</span>
+<span class="co">#&gt;   gdpPercap = col_double()</span>
+<span class="co">#&gt; )</span>
+<span class="co">#&gt; # A tibble: 3 × 6</span>
 <span class="co">#&gt;   country continent  year lifeExp      pop gdpPercap</span>
 <span class="co">#&gt;     &lt;chr&gt;     &lt;chr&gt; &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 Algeria    Africa  1952  43.077  9279525  2449.008</span>
@@ -130,8 +161,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 iris_ss %&gt;%<span class="st"> </span>
 <span class="st">  </span><span class="kw">gs_read</span>()
 <span class="co">#&gt; Accessing worksheet titled 'Sheet1'.</span>
-<span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
-<span class="co">#&gt; &lt;tibble [3 x 5]&gt;</span>
+<span class="co">#&gt; </span>
+Downloading:<span class="st"> </span><span class="dv">94</span> B     
+Downloading:<span class="st"> </span><span class="dv">94</span> B     
+Downloading:<span class="st"> </span><span class="dv">100</span> B     
+Downloading:<span class="st"> </span><span class="dv">100</span> B     
+Downloading:<span class="st"> </span><span class="dv">100</span> B     
+Downloading:<span class="st"> </span><span class="dv">100</span> B
+<span class="co">#&gt; Parsed with column specification:</span>
+<span class="co">#&gt; cols(</span>
+<span class="co">#&gt;   Sepal.Length = col_double(),</span>
+<span class="co">#&gt;   Sepal.Width = col_double(),</span>
+<span class="co">#&gt;   Petal.Length = col_double(),</span>
+<span class="co">#&gt;   Petal.Width = col_double(),</span>
+<span class="co">#&gt;   Species = col_character()</span>
+<span class="co">#&gt; )</span>
+<span class="co">#&gt; # A tibble: 3 × 5</span>
 <span class="co">#&gt;   Sepal.Length Sepal.Width Petal.Length Petal.Width Species</span>
 <span class="co">#&gt;          &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;chr&gt;</span>
 <span class="co">#&gt; 1          5.1         3.5          1.4         0.2  setosa</span>
@@ -157,7 +202,7 @@ iris_ss %&gt;%<span class="st"> </span>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">gs_user</span>()
 <span class="co">#&gt;           displayName: google sheets</span>
 <span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span>
-<span class="co">#&gt;                  date: 2016-07-04 15:40:30 GMT</span>
+<span class="co">#&gt;                  date: 2017-05-07 19:14:23 GMT</span>
 <span class="co">#&gt;          permissionId: 14497944239034869033</span>
 <span class="co">#&gt;          rootFolderId: 0AOdw-qi1jh3fUk9PVA</span></code></pre></div>
 </div>
@@ -256,7 +301,7 @@ token &lt;-<span class="st"> </span><span class="kw">gs_auth</span>(<span class=
 </div>
 <div id="tokens-for-testing" class="section level2">
 <h2>Tokens for testing</h2>
-<p>We use <a href="http://cran.r-project.org/package=testthat"><code>testthat</code></a> to run automated unit tests on the <code>googlesheets</code> package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:</p>
+<p>We use <a href="https://cran.r-project.org/package=testthat"><code>testthat</code></a> to run automated unit tests on the <code>googlesheets</code> package itself. Since most of the interesting functionality requires authorization, we have to make authorized API requests, if we want to have acceptable test coverage. Therefore we use the code given earlier to create and store a refresh token:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(googlesheets)
 token &lt;-<span class="st"> </span><span class="kw">gs_auth</span>()
 <span class="kw">saveRDS</span>(token, <span class="dt">file =</span> <span class="st">&quot;tests/testthat/googlesheets_token.rds&quot;</span>)</code></pre></div>
@@ -456,7 +501,7 @@ if (<span class="kw">identical</span>(<span class="kw">tolower</span>(<span clas
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
