@@ -42,13 +42,14 @@ test_that("Overwrite actually overwrites an existing file", {
   readr::write_csv(before, "before.csv")
   readr::write_csv(after, "after.csv")
 
-  ss <- gs_upload("before.csv", "overwrite_test_sheet")
+  target_sheet <-  p_("overwrite_test_sheet")
+  ss <- gs_upload("before.csv", target_sheet)
   Sys.sleep(1)
 
   res <- gs_read(ss)
   expect_identical(res$x[1], "before")
 
-  ss <- gs_upload("after.csv", "overwrite_test_sheet", overwrite = TRUE)
+  ss <- gs_upload("after.csv", target_sheet, overwrite = TRUE)
   Sys.sleep(1)
 
   res <- gs_read(ss)
