@@ -15,4 +15,3 @@ rsconnect
 ^vignettes/img/user-login-consent.tiff$
 ^.build.timestamp$
 ^tests/testthat/googlesheets_token.rds.enc$
-^tests/testthat/googlesheets_token.rds$
