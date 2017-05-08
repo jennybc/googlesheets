@@ -84,7 +84,7 @@ gs_simplify_cellfeed <- function(
     }
 
     type_convert_args <- c(list(df = x["value"]), dropnulls(ddd))
-    df <- do.call(readr::type_convert, type_convert_args)
+    suppressMessages({df <- do.call(readr::type_convert, type_convert_args)})
     x$value <- df$value
   }
 
