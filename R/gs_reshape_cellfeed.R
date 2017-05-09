@@ -119,10 +119,11 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
 
   allowed_args <- c("col_types", "locale", "trim_ws", "na")
   type_convert_args <- c(list(df = dat), dropnulls(ddd[allowed_args]))
-  if (verbose)
+  if (verbose) {
     df <- do.call(readr::type_convert, type_convert_args)
-  else
+  } else {
     suppressMessages({df <- do.call(readr::type_convert, type_convert_args)})
+  }
 
   ## our departures from readr data ingest:
   ## ~~no NA variable names~~ handled elsewhere (above) in this function
