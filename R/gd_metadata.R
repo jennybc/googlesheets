@@ -25,9 +25,13 @@ gd_metadata <- function(id, auth = TRUE) {
   httr::content(req)
 }
 
-gd_rename <- function(id, to) {
+gd_rename <- function(id, to, teamDrive = FALSE) {
   stopifnot(is.character(to), length(to) == 1L)
-  req <- httr::PATCH(file.path(.state$gd_base_url_files_v3, id),
+  the_url <- file.path(.state$gd_base_url_files_v3, id)
+  if (teamDrive) {
+    the_url <- paste0(the_url, "?supportsTeamDrives=true")
+  }
+  req <- httr::PATCH(the_url,
                      google_token(), encode = "json",
                      body = list(name = to)) %>%
     httr::stop_for_status()
