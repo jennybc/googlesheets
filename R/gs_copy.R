@@ -36,6 +36,9 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
   }
 
   the_url <- file.path(.state$gd_base_url_files_v2, key, "copy")
+  if (check_sheet_on_team_drive(from)) {
+    the_url <- paste0(the_url, "?supportsTeamDrives=true")
+  }
   the_body <- list("title" = to)
   req <-
     httr::POST(the_url, google_token(), encode = "json", body = the_body) %>%

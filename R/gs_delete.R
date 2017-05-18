@@ -37,6 +37,9 @@ gs_delete <- function(ss, verbose = TRUE) {
 
   key <- gs_get_alt_key(ss)
   the_url <- file.path(.state$gd_base_url_files_v2, key)
+  if (check_sheet_on_team_drive(ss)) {
+    the_url <- paste0(the_url, "?supportsTeamDrives=true")
+  }
 
   req <- httr::DELETE(the_url, google_token()) %>%
     httr::stop_for_status()

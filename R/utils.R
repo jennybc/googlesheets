@@ -44,6 +44,19 @@ construct_ws_feed_from_key <- function(key, visibility = "private") {
   sprintf(tmp, key, visibility)
 }
 
+#' Heuristic check whether spreadsheet resides on a team drive
+#'
+#' sort of hackish workaround. Check if alternate URL includes a domain name
+#'
+#' @template ss
+#'
+#' @keywords internal
+check_sheet_on_team_drive <- function(ss) {
+  alt_link <- ss$links$href[ss$links$rel=="alternate"]
+  !is.null(alt_link) && length(alt_link) > 0 &&
+    stringr::str_detect(alt_link, "https://docs.google.com/.+/spreadsheets/d/")
+}
+
 #' Construct a browser URL from a key
 #'
 #' @param key character, unique key for a spreadsheet
