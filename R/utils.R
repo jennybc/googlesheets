@@ -19,7 +19,7 @@ extract_key_from_url <- function(url) {
   url_start_list <-
     c(ws_feed_start = "https://spreadsheets.google.com/feeds/worksheets/",
       self_link_start = "https://spreadsheets.google.com/feeds/spreadsheets/private/full/",
-      url_start_new = "https://docs.google.com/spreadsheets/d/",
+      url_start_new = "https://docs.google.com/(.+/)?spreadsheets/d/",
       url_start_google_apps_for_work = "https://docs.google.com/a/[[:print:]]+/spreadsheets/d/",
       url_start_old = "https://docs.google.com/spreadsheet/ccc\\?key=",
       url_start_old2 = "https://docs.google.com/spreadsheet/pub\\?key=",
@@ -42,6 +42,19 @@ construct_ws_feed_from_key <- function(key, visibility = "private") {
   tmp <-
     "https://spreadsheets.google.com/feeds/worksheets/%s/%s/full"
   sprintf(tmp, key, visibility)
+}
+
+#' Heuristic check whether spreadsheet resides on a team drive
+#'
+#' sort of hackish workaround. Check if alternate URL includes a domain name
+#'
+#' @template ss
+#'
+#' @keywords internal
+check_sheet_on_team_drive <- function(ss) {
+  alt_link <- ss$links$href[ss$links$rel=="alternate"]
+  !is.null(alt_link) && length(alt_link) > 0 &&
+    stringr::str_detect(alt_link, "https://docs.google.com/.+/spreadsheets/d/")
 }
 
 #' Construct a browser URL from a key

@@ -34,7 +34,7 @@ gs_rename <- function(ss, to, verbose = TRUE) {
         ss$sheet_title)
   }
 
-  fr <- gd_rename(ss$sheet_key, to)
+  fr <- gd_rename(ss$sheet_key, to, teamDrive=check_sheet_on_team_drive(ss))
   if (verbose) {
     if (!identical(fr$name, to)) {
       mpf("Cannot confirm that target Sheet \"%s\" was renamed to \"%s\"",
@@ -44,6 +44,6 @@ gs_rename <- function(ss, to, verbose = TRUE) {
     }
   }
   fr$id %>%
-    gs_key(verbose = FALSE) %>%
+    gs_key(verbose = FALSE, lookup=ss$lookup, visibility=ss$visibility) %>%
     invisible()
 }

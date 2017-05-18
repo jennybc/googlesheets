@@ -98,7 +98,7 @@ gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
     perm = ~ link_dat$ws_feed %>%
       stringr::str_detect("values") %>%
       ifelse("r", "rw"),
-    version = ~ ifelse(grepl("^https://docs.google.com/spreadsheets/d",
+    version = ~ ifelse(grepl("^https://docs.google.com/(.+/)?spreadsheets/d/",
                              link_dat$alternate), "new", "old"),
     updated =
       ~ entries %>% xml2::xml_find_all(".//feed:updated", ns) %>%
