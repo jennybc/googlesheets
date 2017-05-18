@@ -72,7 +72,7 @@ gs_ws_new <- function(ss, ws_title = "Sheet1",
 
   ss <- req$url %>%
     extract_key_from_url() %>%
-    gs_key(verbose = FALSE)
+    gs_key(verbose = FALSE, lookup=ss$lookup, visibility=ss$visibility)
 
   ws_title_exist <- ws_title %in% gs_ws_ls(ss)
 
@@ -140,7 +140,8 @@ gs_ws_delete <- function(ss, ws = 1, verbose = TRUE) {
   req <- httr::DELETE(this_ws$ws_id, google_token()) %>%
     httr::stop_for_status()
 
-  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE)
+  ss_refresh <- ss$sheet_key %>% gs_key(verbose = FALSE,
+                                        lookup=ss$lookup, visibility=ss$visibility)
 
   ws_title_exist <- this_ws$ws_title %in% gs_ws_ls(ss_refresh)
 
@@ -346,7 +347,7 @@ gs_ws_modify <- function(ss, from = NULL, to = NULL,
 
   req$url %>%
     extract_key_from_url() %>%
-    gs_key(verbose = verbose)
+    gs_key(verbose = verbose, lookup=ss$lookup, visibility=ss$visibility)
 
 }
 

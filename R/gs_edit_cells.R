@@ -163,7 +163,7 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
   }
 
   Sys.sleep(sleep)
-  ss <- ss$sheet_key %>% gs_key(verbose = FALSE)
+  ss <- ss$sheet_key %>% gs_key(verbose = FALSE, lookup=ss$lookup, visibility=ss$visibility)
   invisible(ss)
 }
 
