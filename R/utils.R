@@ -19,7 +19,7 @@ extract_key_from_url <- function(url) {
   url_start_list <-
     c(ws_feed_start = "https://spreadsheets.google.com/feeds/worksheets/",
       self_link_start = "https://spreadsheets.google.com/feeds/spreadsheets/private/full/",
-      url_start_new = "https://docs.google.com/spreadsheets/d/",
+      url_start_new = "https://docs.google.com/(.+/)?spreadsheets/d/",
       url_start_google_apps_for_work = "https://docs.google.com/a/[[:print:]]+/spreadsheets/d/",
       url_start_old = "https://docs.google.com/spreadsheet/ccc\\?key=",
       url_start_old2 = "https://docs.google.com/spreadsheet/pub\\?key=",
