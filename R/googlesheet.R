@@ -79,7 +79,7 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL,
     href = ~ links %>% xml2::xml_attr("href")
   ))
 
-  if(grepl("^https://docs.google.com/spreadsheets/d",
+  if(grepl("^https://docs.google.com/(.+/)?spreadsheets/d/",
            ss$links$href[ss$links$rel == "alternate"])) {
     ss$version <- "new"
   }
