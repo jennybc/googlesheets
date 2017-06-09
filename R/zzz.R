@@ -8,6 +8,8 @@
     ## will live in current working directory if it exists at all
     ## this is main reason for creating this googlesheets-specific variant
     googlesheets.httr_oauth_cache = TRUE,
+    googlesheets.service_url = "https://sheets.googleapis.com",
+    googlesheets.print_json_request = FALSE,
     googlesheets.client_id = "178989665258-f4scmimctv2o96isfppehg1qesrpvjro.apps.googleusercontent.com",
     googlesheets.client_secret = "iWPrYg0lFHNQblnRrDbypvJL",
     googlesheets.webapp.client_id = "178989665258-mbn7q84ai89if6ja59jmh8tqn5aqoe3n.apps.googleusercontent.com",
