@@ -39,7 +39,8 @@
 #' }
 #'
 #' @export
-gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
+gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE, 
+                       missingAsBlank = FALSE) {
 
   nrows <- nrow(input)
   if (!is.null(nrows) && nrows > 1) {
@@ -50,7 +51,8 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
   }
 
   ## this fxn defined in gs_edit_cells.R
-  input <- as_character_vector(input, col_names = FALSE)
+  input <- as_character_vector(input, col_names = FALSE,
+                               missingAsBlank = missingAsBlank)
 
   this_ws <- gs_ws(ss, ws, verbose = FALSE)
   ## this max-results query is undocumented, so don't be surprised if it stops

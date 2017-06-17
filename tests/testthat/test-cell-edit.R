@@ -20,7 +20,7 @@ test_that("Input converts to character vector (or not)", {
   expect_ok_as_input(c(TRUE, FALSE, TRUE))
   expect_ok_as_input(Sys.Date())
   expect_ok_as_input(Sys.time())
-
+  
   expect_ok_as_input(matrix(1:6, nrow = 2))
 
   tmp <- iris %>% head()
@@ -37,6 +37,26 @@ test_that("Input converts to character vector (or not)", {
   expect_error(array(1:9, dim = rep(3,3)) %>%
                  as_character_vector(col_names = FALSE),
                "Input has more than 2 dimensions")
+})
+
+test_that("Transform missing values to blanks", {
+  
+  test_missing <- function(x) {
+    as_character_vector(x, col_names = FALSE, missingAsBlank = TRUE)
+  }
+  
+  expect_identical(test_missing(-3:3), as.character(-3:3))
+  expect_identical(test_missing(c(-3:3, NA)), c(as.character(-3:3), ""))
+  expect_identical(test_missing(c(LETTERS[1:5], NA)), c(LETTERS[1:5], ""))
+  expect_identical(test_missing(c(LETTERS[1:5], NA) %>% factor()),
+                   c(LETTERS[1:5], ""))
+  
+  expect_identical(test_missing(c(TRUE, FALSE, TRUE, NA)),
+                   c(as.character(c(TRUE, FALSE, TRUE)), ""))
+  DATE <- Sys.Date()
+  expect_identical(test_missing(c(DATE, NA)), c(as.character(DATE), ""))
+  TIME <- Sys.time()
+  expect_identical(test_missing(c(TIME, NA)), c(as.character(TIME), ""))
 })
 
 test_that("Single cell can be updated", {

@@ -24,6 +24,8 @@
 #'   data.frame
 #' @param trim logical; do you want the worksheet extent to be modified to
 #'   correspond exactly to the cells being edited?
+#' @param missingAsBlank logical; do you want missing values to appear as blanks
+#'   in the worksheet you edit?
 #' @template verbose
 #'
 #' @seealso \code{\link{gs_add_row}}
@@ -58,7 +60,7 @@
 #' @export
 gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
                           byrow = FALSE, col_names = NULL, trim = FALSE,
-                          verbose = TRUE) {
+                          missingAsBlank = FALSE, verbose = TRUE) {
 
   sleep <- 1 ## we must backoff or operations below don't complete before
              ## next one starts; believe it or not, shorter sleeps cause
@@ -96,7 +98,8 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
     col_names <- !is.null(colnames(input))
   }
 
-  input <- input %>% as_character_vector(col_names = col_names)
+  input <- input %>% as_character_vector(col_names = col_names,
+                                         missingAsBlank = missingAsBlank)
 
   cells_df <- ss %>%
     gs_read_cellfeed(ws, range = range, return_empty = TRUE,
@@ -192,10 +195,12 @@ catch_hopeless_input <- function(x) {
 ## into a character vector
 ## col_names controls whether column names are prepended, when x has 2
 ## dimensions
-as_character_vector <- function(x, col_names) {
+as_character_vector <- function(x, col_names, missingAsBlank = FALSE) {
 
   catch_hopeless_input(x)
   x_colnames <- NULL
+  
+  x_missing <- `if`(missingAsBlank, which(is.na(x)), integer())
 
   ## instead of fiddly tests on x (see comments below), just go with it, if x
   ## can be turned into a character vector
@@ -214,7 +219,7 @@ as_character_vector <- function(x, col_names) {
     y <- c(x_colnames, y)
   }
 
-  y
+  replace(y, x_missing, "")
   ## re: why vetting x directly is not as simple as you would expect
   ## http://stackoverflow.com/questions/19501186/how-to-test-if-object-is-a-vector
   ## https://twitter.com/JennyBryan/status/577950939744591872
