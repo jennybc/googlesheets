@@ -57,6 +57,23 @@ test_that("Transform missing values to blanks", {
   expect_identical(test_missing(c(DATE, NA)), c(as.character(DATE), ""))
   TIME <- Sys.time()
   expect_identical(test_missing(c(TIME, NA)), c(as.character(TIME), ""))
+  
+  test_missing2 <- function(x) {
+    as_character_vector(x, col_names = FALSE, missingAsBlank = FALSE)
+  }
+  
+  expect_identical(test_missing2(-3:3), as.character(-3:3))
+  expect_identical(test_missing2(c(-3:3, NA)), c(as.character(-3:3), NA))
+  expect_identical(test_missing2(c(LETTERS[1:5], NA)), c(LETTERS[1:5], NA))
+  expect_identical(test_missing2(c(LETTERS[1:5], NA) %>% factor()),
+                   c(LETTERS[1:5], NA))
+  
+  expect_identical(test_missing2(c(TRUE, FALSE, TRUE, NA)),
+                   c(as.character(c(TRUE, FALSE, TRUE)), NA))
+  DATE <- Sys.Date()
+  expect_identical(test_missing2(c(DATE, NA)), c(as.character(DATE), NA))
+  TIME <- Sys.time()
+  expect_identical(test_missing2(c(TIME, NA)), c(as.character(TIME), NA))
 })
 
 test_that("Single cell can be updated", {
