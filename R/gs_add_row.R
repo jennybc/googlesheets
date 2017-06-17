@@ -45,7 +45,8 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE,
   nrows <- nrow(input)
   if (!is.null(nrows) && nrows > 1) {
     for (i in seq_len(nrows)) {
-      ss <- Recall(ss = ss, ws = ws, input = input[i, ], verbose = verbose)
+      ss <- Recall(ss = ss, ws = ws, input = input[i, ], verbose = verbose,
+                   missingAsBlank = missingAsBlank)
     }
     return(invisible(ss))
   }
