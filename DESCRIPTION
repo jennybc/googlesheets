@@ -21,7 +21,7 @@ Imports:
     readr (>= 0.2.2),
     stats,
     stringr,
-    tidyr,
+    tidyr (>= 0.7.0),
     utils,
     xml2 (>= 1.0.0)
 Suggests:
