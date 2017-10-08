@@ -45,7 +45,7 @@ gs_inspect <- function(x) {
                     "factor", "complex", "empty_cell")
 
   # RColorBrewer::brewer.pal(8, "Dark2")[c(1, 2, 3, 6, 7)]
-  cell_colours <- purrr::set_names(c("#1B9E77", "#D95F02", "#7570B3", "#E6AB02",
+  cell_colours <- stats::setNames(c("#1B9E77", "#D95F02", "#7570B3", "#E6AB02",
                                     "#A6761D", "#666666", "white"), base_flavors)
 
   nr <- nrow(x)

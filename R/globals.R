@@ -11,6 +11,7 @@ if(getRversion() >= "2.15.1") {
                            "col_name_raw",
                            "edit_link",
                            "emailAddress",
+                           "flavor",
                            "i", 
                            "id",
                            "input",
@@ -21,10 +22,11 @@ if(getRversion() >= "2.15.1") {
                            "noncomment",
                            "numeric_value",
                            "precomment",
+                           "putative_integer",
                            "row",
                            "rows",
                            "sheet_key", 
                            "sheet_title",
-                           "sheet_title",
-                           "value"))
+                           "value",
+                           "version"))
 } 
