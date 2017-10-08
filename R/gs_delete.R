@@ -124,7 +124,7 @@ gs_vecdel <- function(vec, verbose = TRUE) {
   stopifnot(is.character(vec))
 
   delete_me <- gs_ls(verbose = FALSE) %>%
-    dplyr::filter_(~ sheet_title %in% vec)
+    dplyr::filter(sheet_title %in% vec)
 
   if(nrow(delete_me)) {
     lapply(delete_me$sheet_key, function(x) {

@@ -88,31 +88,27 @@ gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
   ## variable order is a deliberate effort to get the most important variables
   ## at the front for printing purposes; don't change w/o good reason and
   ## checking effect on printing
-  ret <- dplyr::data_frame_(list(
-    sheet_title =
-      ~ entries %>% xml2::xml_find_all(".//feed:title", ns) %>%
-      xml2::xml_text(),
-    author =
-      ~ entries %>% xml2::xml_find_all(".//feed:author//feed:name", ns) %>%
-      xml2::xml_text(),
-    perm = ~ link_dat$ws_feed %>%
-      stringr::str_detect("values") %>%
-      ifelse("r", "rw"),
-    version = ~ ifelse(grepl("^https://docs.google.com/(.+/)?spreadsheets/d/",
-                             link_dat$alternate), "new", "old"),
+  ret <- dplyr::data_frame(
+    sheet_title = entries %>% xml2::xml_find_all(".//feed:title", ns) %>%
+                    xml2::xml_text(),
+    author = entries %>% xml2::xml_find_all(".//feed:author//feed:name", ns) %>%
+               xml2::xml_text(),
+    perm = link_dat$ws_feed %>% stringr::str_detect("values") %>% ifelse("r", "rw"),
+    version = ifelse(grepl("^https://docs.google.com/(.+/)?spreadsheets/d/",
+                           link_dat$alternate), "new", "old"),
     updated =
-      ~ entries %>% xml2::xml_find_all(".//feed:updated", ns) %>%
+      entries %>% xml2::xml_find_all(".//feed:updated", ns) %>%
       xml2::xml_text() %>%
       as.POSIXct(format = "%Y-%m-%dT%H:%M:%S", tz = "UTC"),
     sheet_key =
-      ~ entries %>% xml2::xml_find_all(".//feed:id", ns) %>%
+      entries %>% xml2::xml_find_all(".//feed:id", ns) %>%
       xml2::xml_text() %>% basename(),
-    ws_feed = ~ link_dat$ws_feed,
-    alternate = ~ link_dat$alternate,
-    self = ~ link_dat$self,
-    alt_key = ~ ifelse(version == "new", NA_character_,
+    ws_feed = link_dat$ws_feed,
+    alternate = link_dat$alternate,
+    self = link_dat$self,
+    alt_key = ifelse(version == "new", NA_character_,
                        extract_key_from_url(link_dat$alternate))
-  ))
+  )
 
   ret <- structure(ret, class = c("googlesheet_ls", class(ret)))
 
@@ -141,10 +137,10 @@ gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
 #' @export
 print.googlesheet_ls <- function(x, ...) {
   x %>%
-    dplyr::mutate_(sheet_title = ~ ellipsize(sheet_title, 24),
-                   author = ~ ellipsize(author, 13),
-                   ## wish I knew how to drop seconds from last_updated!
-                   sheet_key = ~ ellipsize(sheet_key, 9)) %>%
+    dplyr::mutate(sheet_title = ellipsize(sheet_title, 24),
+                  author = ellipsize(author, 13),
+                  ## wish I knew how to drop seconds from last_updated!
+                  sheet_key = ellipsize(sheet_key, 9)) %>%
     print()
 }
 

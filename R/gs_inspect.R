@@ -45,7 +45,7 @@ gs_inspect <- function(x) {
                     "factor", "complex", "empty_cell")
 
   # RColorBrewer::brewer.pal(8, "Dark2")[c(1, 2, 3, 6, 7)]
-  cell_colours <- stats::setNames(c("#1B9E77", "#D95F02", "#7570B3", "#E6AB02",
+  cell_colours <- purrr::set_names(c("#1B9E77", "#D95F02", "#7570B3", "#E6AB02",
                                     "#A6761D", "#666666", "white"), base_flavors)
 
   nr <- nrow(x)
@@ -58,14 +58,14 @@ gs_inspect <- function(x) {
     suppressMessages(
       dplyr::data_frame(var_name = factor(rep(names(x), each = nr), names(x)),
                         is_NA = x %>% is.na() %>% as.vector(),
-                        row = rep(seq_len(nr), nc),
+                        row = rep.int(seq_len(nr), nc),
                         col = rep(seq_len(nc), each = nr),
                         col_letter = cellranger::num_to_letter(col)) %>%
         dplyr::left_join(var_flavors) %>%
-        dplyr::mutate_(flavor = ~ factor(flavor, levels = base_flavors),
-                       col_letter = ~ factor(col_letter,
-                                             levels =
-                                       cellranger::num_to_letter(seq_len(nc))))
+        dplyr::mutate(flavor = factor(flavor, levels = base_flavors),
+                      col_letter = factor(col_letter,
+                                          levels =
+                                          cellranger::num_to_letter(seq_len(nc))))
     )
 
   y$flavor[y$is_NA] <- "empty_cell"

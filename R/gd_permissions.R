@@ -38,7 +38,7 @@ gs_perm_ls <- function(ss, filter = NULL) {
 
   perm_tbl <- req$items %>%
     dplyr::as.tbl() %>%
-    dplyr::rename_(email = ~ emailAddress, perm_id = ~ id)
+    dplyr::rename(email = emailAddress, perm_id = id)
 
   if(!is.null(filter)) {
     ind <- ifelse(perm_tbl$email %in% filter,

@@ -73,11 +73,8 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL,
   ss$version <- "old" ## we revise this once we get the links, below ...
 
   links <- rc %>% xml2::xml_find_all("./feed:link", ns)
-  ss$links <- dplyr::data_frame_(list(
-    rel = ~ links %>% xml2::xml_attr("rel"),
-    type = ~ links %>% xml2::xml_attr("type"),
-    href = ~ links %>% xml2::xml_attr("href")
-  ))
+  attrs <- c(rel = "rel", type = "type", href = "href")
+  ss$links <- purrr::map_df(attrs, function(a) xml2::xml_attr(links, a))
 
   if(grepl("^https://docs.google.com/(.+/)?spreadsheets/d/",
            ss$links$href[ss$links$rel == "alternate"])) {
@@ -85,18 +82,15 @@ as.googlesheet.ws_feed <- function(x, ssf = NULL,
   }
 
   ws <- rc %>% xml2::xml_find_all("./feed:entry", ns)
-  ws_info <- dplyr::data_frame_(list(
-    ws_id = ~ ws %>% xml2::xml_find_all("feed:id", ns) %>% xml2::xml_text(),
-    ws_key = ~ ws_id %>% basename(),
-    ws_title =
-      ~ ws %>% xml2::xml_find_all("feed:title", ns) %>% xml2::xml_text(),
-    row_extent =
-      ~ ws %>% xml2::xml_find_all("gs:rowCount", ns) %>%
-      xml2::xml_text() %>% as.integer(),
-    col_extent =
-      ~ ws %>% xml2::xml_find_all("gs:colCount", ns) %>%
-      xml2::xml_text() %>% as.integer()
-  ))
+  ws_info <- dplyr::data_frame(
+    ws_id = ws %>% xml2::xml_find_all("feed:id", ns) %>% xml2::xml_text(),
+    ws_key = ws_id %>% basename(),
+    ws_title = ws %>% xml2::xml_find_all("feed:title", ns) %>% xml2::xml_text(),
+    row_extent = ws %>% xml2::xml_find_all("gs:rowCount", ns) %>%
+                   xml2::xml_text() %>% as.integer(),
+    col_extent = ws %>% xml2::xml_find_all("gs:colCount", ns) %>%
+                   xml2::xml_text() %>% as.integer()
+  )
 
   ## use the first worksheet to learn about the links available
   ## why we do this?

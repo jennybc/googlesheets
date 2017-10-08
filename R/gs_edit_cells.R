@@ -102,9 +102,8 @@ gs_edit_cells <- function(ss, ws = 1, input = '', anchor = 'A1',
     gs_read_cellfeed(ws, range = range, return_empty = TRUE,
                      return_links = TRUE, verbose = FALSE)
   update_entries <- cells_df %>%
-    dplyr::select_(quote(-cell_alt), quote(-value),
-                   quote(-input_value), quote(-numeric_value)) %>%
-    dplyr::mutate_(update_value = ~ input)
+    dplyr::select(-c(cell_alt, value, input_value, numeric_value)) %>%
+    dplyr::mutate(update_value = input)
   feed_node <-
     xml2::xml_new_document() %>%
     xml2::xml_add_child(

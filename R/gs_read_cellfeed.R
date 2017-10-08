@@ -113,32 +113,32 @@ gs_read_cellfeed <- function(
       edit_links <- NA_character_
     }
 
-    x <- dplyr::data_frame_(
-      list(cell = ~xml2::xml_find_all(x, ".//feed:title", ns) %>%
+    x <- dplyr::data_frame(
+           cell = xml2::xml_find_all(x, ".//feed:title", ns) %>%
              xml2::xml_text(),
-           edit_link = ~edit_links,
-           cell_id = ~xml2::xml_find_all(x, ".//feed:id", ns) %>%
+           edit_link = edit_links,
+           cell_id = xml2::xml_find_all(x, ".//feed:id", ns) %>%
              xml2::xml_text(),
-           cell_alt = ~cell_id %>% basename(),
-           row = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           cell_alt = cell_id %>% basename(),
+           row = xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("row") %>%
              as.integer(),
-           col = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           col = xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("col") %>%
              as.integer(),
-           value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           value = xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_text(),
-           input_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           input_value = xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("inputValue"),
-           numeric_value = ~xml2::xml_find_all(x, ".//gs:cell", ns) %>%
+           numeric_value = xml2::xml_find_all(x, ".//gs:cell", ns) %>%
              xml2::xml_attr("numericValue")
-      ))
+         )
   }
 
   x <- x %>%
-    dplyr::select_(~cell, ~cell_alt, ~row, ~col,
-                   ~value, ~input_value, ~numeric_value,
-                   ~edit_link, ~cell_id)
+    dplyr::select(cell, cell_alt, row, col,
+                  value, input_value, numeric_value,
+                  edit_link, cell_id)
 
   attr(x, "ws_title") <- this_ws$ws_title
 
@@ -146,7 +146,7 @@ gs_read_cellfeed <- function(
     x
   } else {
     x %>%
-      dplyr::select_(~-edit_link, ~-cell_id)
+      dplyr::select(-c(edit_link, cell_id))
   }
 
 }

@@ -81,7 +81,7 @@ gs_add_row <- function(ss, ws = 1, input = '', verbose = TRUE) {
     if (verbose) {
       message("Input is too short. Padding with empty strings.")
     }
-    input <- c(input, rep('', nc - length(input)))
+    input <- c(input, rep.int('', nc - length(input)))
   }
   stopifnot(length(input) == nc)
 

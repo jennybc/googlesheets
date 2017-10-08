@@ -130,17 +130,17 @@ size_names <- function(vnames, n) {
 
 reconcile_cell_contents <- function(x) {
   x <- x %>%
-    dplyr::mutate_(literal_only = ~is.na(numeric_value),
-                   putative_integer = ~ifelse(is.na(numeric_value), FALSE,
-                                              gsub("\\.0$", "", numeric_value)
-                                              == input_value),
-                   ## a formula that evaluates to integer will almost certainly
-                   ## look like a double, i.e. have trailing `.0`, but I'm not
-                   ## sure I should strip it off
-                   value = ~ifelse(literal_only,
-                                   value,
-                                   ifelse(putative_integer, input_value,
-                                          numeric_value)))
+    dplyr::mutate(literal_only = is.na(numeric_value),
+                  putative_integer = ifelse(is.na(numeric_value), FALSE,
+                                            gsub("\\.0$", "", numeric_value)
+                                            == input_value),
+                  ## a formula that evaluates to integer will almost certainly
+                  ## look like a double, i.e. have trailing `.0`, but I'm not
+                  ## sure I should strip it off
+                  value = ifelse(literal_only,
+                                 value,
+                                 ifelse(putative_integer, input_value,
+                                        numeric_value)))
   x %>%
-    dplyr::select_(quote(-literal_only), quote(-putative_integer))
+    dplyr::select(-c(literal_only, putative_integer))
 }

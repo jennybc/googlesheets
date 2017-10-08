@@ -55,24 +55,23 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
   if (skip > 0) {
     row_min <- min(x$row)
     x <- x %>%
-      dplyr::filter_(~row > row_min + skip - 1)
+      dplyr::filter(row > row_min + skip - 1)
   }
 
   x <- x %>%
-#    tidyr::complete_(cols = c("row", "col")) %>%
     tidyr::complete(row = tidyr::full_seq(row, 1),
                     col = tidyr::full_seq(col, 1)) %>%
-    dplyr::arrange_(~row, ~col)
+    dplyr::arrange(row, col)
   n_cols <- dplyr::n_distinct(x$col)
 
   if (!is.null(ddd$comment)) {
     x <- x %>%
-      dplyr::mutate_(noncomment = ~ !grepl(paste0("^", ddd$comment), value)) %>%
-      dplyr::group_by_(~ row)
+      dplyr::mutate(noncomment = !grepl(paste0("^", ddd$comment), value)) %>%
+      dplyr::group_by(row)
     keep_these_rows <- x %>%
-      dplyr::mutate_(precomment = ~ dplyr::cumall(noncomment)) %>%
-      dplyr::count_(vars = c("row", "precomment")) %>%
-      dplyr::filter_(~ precomment, ~ (n > 0))
+      dplyr::mutate(precomment = dplyr::cumall(noncomment)) %>%
+      dplyr::count(row, precomment) %>%
+      dplyr::filter(precomment, n > 0)
     x[!x$noncomment, "value"] <- NA_character_
     x <- x[x$row %in% keep_these_rows$row, , drop = FALSE]
     x$noncomment <- NULL
@@ -81,9 +80,9 @@ gs_reshape_feed <- function(x, ddd, verbose = TRUE) {
   if (isTRUE(ddd$col_names)) {
     row_min <- min(x$row)
     row_one <- x %>%
-      dplyr::filter_(~(row == row_min))
+      dplyr::filter(row == row_min)
     x <- x %>%
-      dplyr::filter_(~row > row_min)
+      dplyr::filter(row > row_min)
     vnames <- size_names(row_one$value, n_cols)
   } else if (isFALSE(ddd$col_names)) {
     vnames <- paste0("X", seq_len(n_cols))

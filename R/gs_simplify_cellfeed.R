@@ -73,7 +73,7 @@ gs_simplify_cellfeed <- function(
 
   if (col_names) {
     x <- x %>%
-      dplyr::filter_(~ row > min(row))
+      dplyr::filter(row > min(row))
   }
 
   if (convert) {
