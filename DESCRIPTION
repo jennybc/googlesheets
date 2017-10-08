@@ -14,7 +14,7 @@ License: MIT + file LICENSE
 LazyData: true
 Imports:
     cellranger (>= 1.0.0),
-    dplyr (>= 0.4.2),
+    dplyr (>= 0.7.0),
     httr (>= 1.1.0),
     jsonlite,
     purrr,
