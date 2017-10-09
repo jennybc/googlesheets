@@ -52,6 +52,15 @@
 #' ff_ss <- gs_ff() # register example sheet with formulas and formatted nums
 #' gs_read(ff_ss)                  # almost all vars are character
 #' gs_read(ff_ss, literal = FALSE) # more vars are properly numeric
+#'
+#' # If you wanted to read all subsheets from a given sheet, you could:
+#' subsheet_names <- gs_ws_ls(sheet_name)
+#' sheets_out <- list()
+#' for(i in 1:length(subsheet_names)){
+#'   sheets_out[[i]] <- gs_read(sheet_name, ws = i)
+#'   # include a pause to avoid error: Too Many Requests (RFC 6585) (HTTP 429)
+#'   Sys.sleep(2)
+#' }
 #' }
 #'
 #' @export
