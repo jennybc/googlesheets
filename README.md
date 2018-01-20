@@ -66,6 +66,14 @@ library("googlesheets")
 suppressPackageStartupMessages(library("dplyr"))
 ```
 
+### Load a public Google Sheet
+If your Google Sheet is publicly accessible, you can import it as a data frame with the url of the Sheet like so:
+
+```
+googleSheet <- gs_url('{sheet URL here}')
+mySheetTurnedDataFrame <- gs_read(googleSheet)
+```
+
 ### Function naming convention
 
 To play nicely with tab completion, we use consistent prefixes:
