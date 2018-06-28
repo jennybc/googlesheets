@@ -109,7 +109,8 @@ gs_read_listfeed <- function(ss, ws = 1,
   req <-
     rGET(the_url,
          omit_token_if(grepl("public", the_url)),
-         if (interactive() && ddd$progress && verbose) httr::progress() else NULL) %>%
+         if (interactive() && !isTRUE(getOption('knitr.in.progress')) &&
+             ddd$progress && verbose) httr::progress() else NULL) %>%
     httr::stop_for_status()
   rc <- content_as_xml_UTF8(req)
   ns <- xml2::xml_ns_rename(xml2::xml_ns(rc), d1 = "feed")

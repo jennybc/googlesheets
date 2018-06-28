@@ -80,7 +80,7 @@ gs_download <-
   }
 
   rGET(link, omit_token_if(grepl("public", from$ws_feed)),
-       if (interactive()) httr::progress() else NULL,
+       if (interactive() && !isTRUE(getOption('knitr.in.progress'))) httr::progress() else NULL,
        httr::write_disk(to, overwrite = overwrite))
 
   if (file.exists(to)) {
