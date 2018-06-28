@@ -8,6 +8,7 @@ output:
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 [![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/package=googlesheets) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
+[![lifecycle](https://img.shields.io/badge/lifecycle-retired-orange.svg)](https://www.tidyverse.org/lifecycle/#retired)
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -37,7 +38,7 @@ Features:
   - Create | delete | rename | copy | upload | download spreadsheets and worksheets.
   - Upload local Excel workbook into a Google Sheet and vice versa.
 
-`googlesheets` is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API
+`googlesheets` is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API.
 
 The exuberant prose in this README is inspired by [Tabletop.js](https://github.com/jsoma/tabletop): If you've ever wanted to get data in or out of a Google Spreadsheet from R without jumping through a thousand hoops, welcome home!
 
@@ -49,11 +50,10 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub:
+**googlesheets is no longer under active development**, although a full replacement is not on CRAN yet. Development has shifted to:
 
-```{r eval = FALSE}
-devtools::install_github("jennybc/googlesheets")
-```
+  * [googledrive](https://googledrive.tidyverse.org), [available on CRAN](https://cran.r-project.org/package=googledrive). This package can handle all "whole file" operations for documents on Google Drive, including Sheets. It can work with Team Drives, it can upload/download entire Sheets (with conversions to/from other formats, such as csv and xlsx), and it can upload new media to an existing Sheet ID.
+  * [googlesheets4](https://googlesheets4.tidyverse.org), not yet on CRAN, but a [development version is available on GitHub](https://github.com/tidyverse/googlesheets4). This package wraps the Sheets API v4 and does "Sheets-aware" operations that involve concepts specific to Sheets, such as worksheets and cells. It is the successor to googlesheets.
 
 ### Vignettes
 

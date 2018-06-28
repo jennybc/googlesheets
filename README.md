@@ -10,25 +10,39 @@
     -   [What the hell do I do with this?](#what-the-hell-do-i-do-with-this)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Build Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets) [![Coverage Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets) [![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972) [![CRAN version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/package=googlesheets) ![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
 
-------------------------------------------------------------------------
+[![Build
+Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets)
+[![Coverage
+Status](https://coveralls.io/repos/jennybc/googlesheets/badge.svg)](https://coveralls.io/r/jennybc/googlesheets)
+[![DOI](https://zenodo.org/badge/16122/jennybc/googlesheets.svg)](http://dx.doi.org/10.5281/zenodo.21972)
+[![CRAN
+version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-project.org/package=googlesheets)
+![](http://cranlogs.r-pkg.org/badges/grand-total/googlesheets)
+[![lifecycle](https://img.shields.io/badge/lifecycle-retired-orange.svg)](https://www.tidyverse.org/lifecycle/#retired)
 
-Google Sheets R API
--------------------
+-----
+
+## Google Sheets R API
 
 Access and manage Google spreadsheets from R with `googlesheets`.
 
 Features:
 
--   Access a spreadsheet by its title, key or URL.
--   Extract data or edit data.
--   Create | delete | rename | copy | upload | download spreadsheets and worksheets.
--   Upload local Excel workbook into a Google Sheet and vice versa.
+  - Access a spreadsheet by its title, key or URL.
+  - Extract data or edit data.
+  - Create | delete | rename | copy | upload | download spreadsheets and
+    worksheets.
+  - Upload local Excel workbook into a Google Sheet and vice versa.
 
-`googlesheets` is inspired by [gspread](https://github.com/burnash/gspread), a Google Spreadsheets Python API
+`googlesheets` is inspired by
+[gspread](https://github.com/burnash/gspread), a Google Spreadsheets
+Python API.
 
-The exuberant prose in this README is inspired by [Tabletop.js](https://github.com/jsoma/tabletop): If you've ever wanted to get data in or out of a Google Spreadsheet from R without jumping through a thousand hoops, welcome home!
+The exuberant prose in this README is inspired by
+[Tabletop.js](https://github.com/jsoma/tabletop): If you’ve ever wanted
+to get data in or out of a Google Spreadsheet from R without jumping
+through a thousand hoops, welcome home\!
 
 ### Install googlesheets
 
@@ -38,28 +52,54 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-Or you can get the development version from GitHub:
+**googlesheets is no longer under active development**, although a full
+replacement is not on CRAN yet. Development has shifted to:
 
-``` r
-devtools::install_github("jennybc/googlesheets")
-```
+  - [googledrive](https://googledrive.tidyverse.org), [available on
+    CRAN](https://cran.r-project.org/package=googledrive). This package
+    can handle all “whole file” operations for documents on Google
+    Drive, including Sheets. It can work with Team Drives, it can
+    upload/download entire Sheets (with conversions to/from other
+    formats, such as csv and xlsx), and it can upload new media to an
+    existing Sheet ID.
+  - [googlesheets4](https://googlesheets4.tidyverse.org), not yet on
+    CRAN, but a [development version is available on
+    GitHub](https://github.com/tidyverse/googlesheets4). This package
+    wraps the Sheets API v4 and does “Sheets-aware” operations that
+    involve concepts specific to Sheets, such as worksheets and cells.
+    It is the successor to googlesheets.
 
 ### Vignettes
 
 GitHub versions:
 
--   [Basic usage](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html)
--   [Formulas and formatted numbers](https://rawgit.com/jennybc/googlesheets/master/vignettes/formulas-and-formatted-numbers.html)
--   [Managing OAuth tokens](https://rawgit.com/jennybc/googlesheets/master/vignettes/managing-auth-tokens.html)
+  - [Basic
+    usage](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html)
+  - [Formulas and formatted
+    numbers](https://rawgit.com/jennybc/googlesheets/master/vignettes/formulas-and-formatted-numbers.html)
+  - [Managing OAuth
+    tokens](https://rawgit.com/jennybc/googlesheets/master/vignettes/managing-auth-tokens.html)
 
 ### Talks
 
--   [Slides](https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015) for a talk in July 2015 at [useR! 2015](http://user2015.math.aau.dk)
--   [Slides](https://speakerdeck.com/jennybc/googlesheets-1) for an [rOpenSci Community Call in March 2016](https://github.com/ropensci/commcalls/issues/9)
+  - [Slides](https://speakerdeck.com/jennybc/googlesheets-talk-at-user2015)
+    for a talk in July 2015 at
+    [useR\! 2015](http://user2015.math.aau.dk)
+  - [Slides](https://speakerdeck.com/jennybc/googlesheets-1) for an
+    [rOpenSci Community Call in
+    March 2016](https://github.com/ropensci/commcalls/issues/9)
 
 ### Load googlesheets
 
-`googlesheets` is designed for use with the `%>%` pipe operator and, to a lesser extent, the data-wrangling mentality of [`dplyr`](https://cran.r-project.org/package=dplyr). This README uses both, but the examples in the help files emphasize usage with plain vanilla R, if that's how you roll. `googlesheets` uses `dplyr` internally but does not require the user to do so. You can make the `%>%` pipe operator available in your own work by loading [`dplyr`](https://cran.r-project.org/package=dplyr) or [`magrittr`](https://cran.r-project.org/package=magrittr).
+`googlesheets` is designed for use with the `%>%` pipe operator and, to
+a lesser extent, the data-wrangling mentality of
+[`dplyr`](https://cran.r-project.org/package=dplyr). This README uses
+both, but the examples in the help files emphasize usage with plain
+vanilla R, if that’s how you roll. `googlesheets` uses `dplyr`
+internally but does not require the user to do so. You can make the
+`%>%` pipe operator available in your own work by loading
+[`dplyr`](https://cran.r-project.org/package=dplyr) or
+[`magrittr`](https://cran.r-project.org/package=magrittr).
 
 ``` r
 library("googlesheets")
@@ -70,13 +110,17 @@ suppressPackageStartupMessages(library("dplyr"))
 
 To play nicely with tab completion, we use consistent prefixes:
 
--   `gs_` = all functions in the package.
--   `gs_ws_` = all functions that operate on worksheets or tabs within a spreadsheet.
--   `gd_` = something to do with Google Drive, usually has a `gs_` synonym, might one day migrate to a Drive client.
+  - `gs_` = all functions in the package.
+  - `gs_ws_` = all functions that operate on worksheets or tabs within a
+    spreadsheet.
+  - `gd_` = something to do with Google Drive, usually has a `gs_`
+    synonym, might one day migrate to a Drive client.
 
 ### Quick demo
 
-Here's how to get a copy of a Gapminder-based Sheet we publish for practicing and follow along. You'll be sent to the browser to authenticate yourself with Google at this point.
+Here’s how to get a copy of a Gapminder-based Sheet we publish for
+practicing and follow along. You’ll be sent to the browser to
+authenticate yourself with Google at this point.
 
 ``` r
 gs_gap() %>% 
@@ -92,14 +136,14 @@ gap <- gs_title("Gapminder")
 #> Sheet successfully identified: "Gapminder"
 ```
 
-Here's a registered `googlesheet` object:
+Here’s a registered `googlesheet` object:
 
 ``` r
 gap
 #>                   Spreadsheet title: Gapminder
 #>                  Spreadsheet author: gspreadr
-#>   Date of googlesheets registration: 2017-05-06 19:37:34 GMT
-#>     Date of last spreadsheet update: 2015-03-23 20:34:08 GMT
+#>   Date of googlesheets registration: 2018-06-28 20:31:39 GMT
+#>     Date of last spreadsheet update: 2018-06-28 20:28:33 GMT
 #>                          visibility: private
 #>                         permissions: rw
 #>                             version: new
@@ -112,8 +156,8 @@ gap
 #> Europe: 361 x 6
 #> Oceania: 25 x 6
 #> 
-#> Key: 1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA
-#> Browser URL: https://docs.google.com/spreadsheets/d/1HT5B8SgkKqHdqHJmn5xiuaC04Ngb7dG9Tv94004vezA/
+#> Key: 1vz6eeNH_rutBS2z6QtMq_rffRpqq3R_8Qevw7-vETC0
+#> Browser URL: https://docs.google.com/spreadsheets/d/1vz6eeNH_rutBS2z6QtMq_rffRpqq3R_8Qevw7-vETC0/
 ```
 
 Visit a registered `googlesheet` in the browser:
@@ -132,9 +176,9 @@ africa <- gs_read(gap)
 #> cols(
 #>   country = col_character(),
 #>   continent = col_character(),
-#>   year = col_integer(),
+#>   year = col_double(),
 #>   lifeExp = col_double(),
-#>   pop = col_integer(),
+#>   pop = col_double(),
 #>   gdpPercap = col_double()
 #> )
 glimpse(africa)
@@ -142,24 +186,24 @@ glimpse(africa)
 #> Variables: 6
 #> $ country   <chr> "Algeria", "Algeria", "Algeria", "Algeria", "Algeria...
 #> $ continent <chr> "Africa", "Africa", "Africa", "Africa", "Africa", "A...
-#> $ year      <int> 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...
+#> $ year      <dbl> 1952, 1957, 1962, 1967, 1972, 1977, 1982, 1987, 1992...
 #> $ lifeExp   <dbl> 43.077, 45.685, 48.303, 51.407, 54.518, 58.014, 61.3...
-#> $ pop       <int> 9279525, 10270856, 11000948, 12760499, 14760787, 171...
+#> $ pop       <dbl> 9279525, 10270856, 11000948, 12760499, 14760787, 171...
 #> $ gdpPercap <dbl> 2449.008, 3013.976, 2550.817, 3246.992, 4182.664, 49...
 africa
-#> # A tibble: 624 × 6
+#> # A tibble: 624 x 6
 #>    country continent  year lifeExp      pop gdpPercap
-#>      <chr>     <chr> <int>   <dbl>    <int>     <dbl>
-#>  1 Algeria    Africa  1952  43.077  9279525  2449.008
-#>  2 Algeria    Africa  1957  45.685 10270856  3013.976
-#>  3 Algeria    Africa  1962  48.303 11000948  2550.817
-#>  4 Algeria    Africa  1967  51.407 12760499  3246.992
-#>  5 Algeria    Africa  1972  54.518 14760787  4182.664
-#>  6 Algeria    Africa  1977  58.014 17152804  4910.417
-#>  7 Algeria    Africa  1982  61.368 20033753  5745.160
-#>  8 Algeria    Africa  1987  65.799 23254956  5681.359
-#>  9 Algeria    Africa  1992  67.744 26298373  5023.217
-#> 10 Algeria    Africa  1997  69.152 29072015  4797.295
+#>    <chr>   <chr>     <dbl>   <dbl>    <dbl>     <dbl>
+#>  1 Algeria Africa     1952    43.1  9279525     2449.
+#>  2 Algeria Africa     1957    45.7 10270856     3014.
+#>  3 Algeria Africa     1962    48.3 11000948     2551.
+#>  4 Algeria Africa     1967    51.4 12760499     3247.
+#>  5 Algeria Africa     1972    54.5 14760787     4183.
+#>  6 Algeria Africa     1977    58.0 17152804     4910.
+#>  7 Algeria Africa     1982    61.4 20033753     5745.
+#>  8 Algeria Africa     1987    65.8 23254956     5681.
+#>  9 Algeria Africa     1992    67.7 26298373     5023.
+#> 10 Algeria Africa     1997    69.2 29072015     4797.
 #> # ... with 614 more rows
 ```
 
@@ -171,23 +215,23 @@ gap %>% gs_read(ws = "Europe", range = cell_rows(1:4))
 gap %>% gs_read(ws = "Africa", range = cell_cols(1:4))
 ```
 
-Full `readr`-style control of data ingest -- highly artificial example!
+Full `readr`-style control of data ingest – highly artificial example\!
 
 ``` r
 gap %>%
   gs_read(ws = "Oceania", col_names = paste0("Z", 1:6),
           na = c("1962", "1977"), col_types = "cccccc", skip = 1, n_max = 7)
 #> Accessing worksheet titled 'Oceania'.
-#> # A tibble: 7 × 6
-#>          Z1      Z2    Z3    Z4       Z5       Z6
-#>       <chr>   <chr> <chr> <chr>    <chr>    <chr>
-#> 1 Australia Oceania  1952 69.12  8691212  10039.6
-#> 2 Australia Oceania  1957 70.33  9712569 10949.65
-#> 3 Australia Oceania  <NA> 70.93 10794968 12217.23
-#> 4 Australia Oceania  1967  71.1 11872264 14526.12
-#> 5 Australia Oceania  1972 71.93 13177000 16788.63
-#> 6 Australia Oceania  <NA> 73.49 14074100  18334.2
-#> 7 Australia Oceania  1982 74.74 15184200 19477.01
+#> # A tibble: 7 x 6
+#>   Z1        Z2      Z3    Z4    Z5       Z6      
+#>   <chr>     <chr>   <chr> <chr> <chr>    <chr>   
+#> 1 Australia Oceania 1952  69.12 8691212  10039.6 
+#> 2 Australia Oceania 1957  70.33 9712569  10949.65
+#> 3 Australia Oceania <NA>  70.93 10794968 12217.23
+#> 4 Australia Oceania 1967  71.1  11872264 14526.12
+#> 5 Australia Oceania 1972  71.93 13177000 16788.63
+#> 6 Australia Oceania <NA>  73.49 14074100 18334.2 
+#> 7 Australia Oceania 1982  74.74 15184200 19477.01
 ```
 
 Create a new Sheet from an R object:
@@ -233,13 +277,13 @@ iris_ss %>%
 #>   Petal.Width = col_character(),
 #>   Species = col_character()
 #> )
-#> # A tibble: 4 × 5
+#> # A tibble: 4 x 5
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-#>          <chr>       <chr>        <chr>       <chr>   <chr>
-#> 1         what          is            a       sepal anyway?
-#> 2          4.9           3          1.4         0.2  setosa
-#> 3          4.7         3.2          1.3         0.2  setosa
-#> 4       sepals     support          the      petals      !!
+#>   <chr>        <chr>       <chr>        <chr>       <chr>  
+#> 1 what         is          a            sepal       anyway?
+#> 2 4.9          3           1.4          0.2         setosa 
+#> 3 4.7          3.2         1.3          0.2         setosa 
+#> 4 sepals       support     the          petals      !!
 ```
 
 Download this precious thing as csv (other formats are possible):
@@ -251,7 +295,8 @@ iris_ss %>%
 #> /Users/jenny/rrr/googlesheets/iris-ish-stuff.csv
 ```
 
-Download this precious thing as an Excel workbook (other formats are possible):
+Download this precious thing as an Excel workbook (other formats are
+possible):
 
 ``` r
 iris_ss %>% 
@@ -278,12 +323,15 @@ gs_vecdel(c("iris", "Gapminder"))
 file.remove(c("iris-ish-stuff.csv", "iris-ish-stuff.xlsx"))
 ```
 
-Remember, [the vignette](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html) shows a lot more usage.
+Remember, [the
+vignette](https://rawgit.com/jennybc/googlesheets/master/vignettes/basic-usage.html)
+shows a lot more
+usage.
 
 ### Overview of functions
 
 | fxn                      | description                                               |
-|:-------------------------|:----------------------------------------------------------|
+| :----------------------- | :-------------------------------------------------------- |
 | gs\_ls()                 | List Sheets                                               |
 | gs\_title()              | Register a Sheet by title                                 |
 | gs\_key()                | Register a Sheet by key                                   |
@@ -321,25 +369,60 @@ Remember, [the vignette](https://rawgit.com/jennybc/googlesheets/master/vignette
 
 ### What the hell do I do with this?
 
-Think of `googlesheets` as a read/write CMS that you (or your less R-obsessed friends) can edit through Google Docs, as well via R. It's like Christmas up in here.
+Think of `googlesheets` as a read/write CMS that you (or your less
+R-obsessed friends) can edit through Google Docs, as well via R. It’s
+like Christmas up in here.
 
-Use a [Google Form](http://www.google.com/forms/about/) to conduct a survey, which populates a Google Sheet.
+Use a [Google Form](http://www.google.com/forms/about/) to conduct a
+survey, which populates a Google Sheet.
 
--   The `googleformr` package provides an R API for Google Forms, allowing useRs to POST data securely to Google Forms without authentication. On [CRAN](https://cran.r-project.org/package=googleformr) and [GitHub](https://github.com/data-steve/googleformr) (README has lots of info and links to blog posts).
+  - The `googleformr` package provides an R API for Google Forms,
+    allowing useRs to POST data securely to Google Forms without
+    authentication. On
+    [CRAN](https://cran.r-project.org/package=googleformr) and
+    [GitHub](https://github.com/data-steve/googleformr) (README has lots
+    of info and links to blog posts).
 
-Gather data while you're in the field in a Google Sheet, maybe [with an iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8) or [an Android device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en). Take advantage of [data validation](https://support.google.com/docs/answer/139705?hl=en) to limit the crazy on the way in. You do not have to be online to edit a Google Sheet! Work offline via [the Chrome browser](https://support.google.com/docs/answer/2375012?hl=en), the [Sheets app for Android](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en), or the [Sheets app for iOS](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8).
+Gather data while you’re in the field in a Google Sheet, maybe [with an
+iPhone](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8)
+or [an Android
+device](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en).
+Take advantage of [data
+validation](https://support.google.com/docs/answer/139705?hl=en) to
+limit the crazy on the way in. You do not have to be online to edit a
+Google Sheet\! Work offline via [the Chrome
+browser](https://support.google.com/docs/answer/2375012?hl=en), the
+[Sheets app for
+Android](https://play.google.com/store/apps/details?id=com.google.android.apps.docs.editors.sheets&hl=en),
+or the [Sheets app for
+iOS](https://itunes.apple.com/us/app/google-sheets/id842849113?mt=8).
 
-There are various ways to harvest web data directly into a Google Sheet. For example:
+There are various ways to harvest web data directly into a Google Sheet.
+For example:
 
--   [IFTTT](https://ifttt.com), which stands for "if this, then that", makes it easy to create recipes in which changes in one web service, such as Gmail or Instagram, trigger another action, such as writing to a Google Sheet.
-    -   Martin Hawksey blog post about [feeding a Google Sheet from IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/).
--   `IMPORTXML(), IMPORTHTML(), IMPORTFEED()`: Google Sheets offer functions to populate Sheets based on web data.
-    -   Aylien.com [blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) on using `=IMPORTXML()` to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
-    -   Martin Hawksey blog post, [Feeding Google Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/), shows how to scrape web data into a Google Sheet with no programming.
--   Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free Google Sheet template to setup and run automated collection of search results from Twitter.
+  - [IFTTT](https://ifttt.com), which stands for “if this, then that”,
+    makes it easy to create recipes in which changes in one web service,
+    such as Gmail or Instagram, trigger another action, such as writing
+    to a Google Sheet.
+      - Martin Hawksey blog post about [feeding a Google Sheet from
+        IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/).
+  - `IMPORTXML(), IMPORTHTML(), IMPORTFEED()`: Google Sheets offer
+    functions to populate Sheets based on web data.
+      - Aylien.com [blog
+        post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews)
+        on using `=IMPORTXML()` to populate a Google Sheet with
+        restaurant reviews and ratings from TripAdvisor.
+      - Martin Hawksey blog post, [Feeding Google
+        Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/),
+        shows how to scrape web data into a Google Sheet with no
+        programming.
+  - Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free
+    Google Sheet template to setup and run automated collection of
+    search results from Twitter.
 
 Use `googlesheets` to get all that data into R.
 
-Use it in a Shiny app! *[Several example apps](inst/shiny-examples) come with the package.*
+Use it in a Shiny app\! *[Several example apps](inst/shiny-examples)
+come with the package.*
 
 What other ideas do you have?
