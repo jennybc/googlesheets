@@ -1,6 +1,16 @@
-# Managing OAuth Tokens
-Jenny Bryan  
-`r Sys.Date()`  
+---
+title: "Managing OAuth Tokens"
+date: "2018-06-28"
+author: "Jenny Bryan"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Managing Auth Tokens}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
 
 
@@ -38,44 +48,21 @@ gs_gap_key() %>%
   head(3)
 #> Worksheets feed constructed with public visibility
 #> Accessing worksheet titled 'Africa'.
-#> 
-Downloading: 580 B     
-Downloading: 580 B     
-Downloading: 2 kB     
-Downloading: 2 kB     
-Downloading: 2.9 kB     
-Downloading: 2.9 kB     
-Downloading: 4.3 kB     
-Downloading: 4.3 kB     
-Downloading: 5.7 kB     
-Downloading: 5.7 kB     
-Downloading: 7 kB     
-Downloading: 7 kB     
-Downloading: 8.4 kB     
-Downloading: 8.4 kB     
-Downloading: 9.8 kB     
-Downloading: 9.8 kB     
-Downloading: 11 kB     
-Downloading: 11 kB     
-Downloading: 11 kB     
-Downloading: 11 kB     
-Downloading: 11 kB     
-Downloading: 11 kB
 #> Parsed with column specification:
 #> cols(
 #>   country = col_character(),
 #>   continent = col_character(),
-#>   year = col_integer(),
+#>   year = col_double(),
 #>   lifeExp = col_double(),
-#>   pop = col_integer(),
+#>   pop = col_double(),
 #>   gdpPercap = col_double()
 #> )
-#> # A tibble: 3 × 6
+#> # A tibble: 3 x 6
 #>   country continent  year lifeExp      pop gdpPercap
-#>     <chr>     <chr> <int>   <dbl>    <int>     <dbl>
-#> 1 Algeria    Africa  1952  43.077  9279525  2449.008
-#> 2 Algeria    Africa  1957  45.685 10270856  3013.976
-#> 3 Algeria    Africa  1962  48.303 11000948  2550.817
+#>   <chr>   <chr>     <dbl>   <dbl>    <dbl>     <dbl>
+#> 1 Algeria Africa     1952    43.1  9279525     2449.
+#> 2 Algeria Africa     1957    45.7 10270856     3014.
+#> 3 Algeria Africa     1962    48.3 11000948     2551.
 ```
 
 On the other hand, if you identify a Sheet by its name, `googlesheets` will require authorization, because we must list of all your Sheets on Google Drive in order to look up the Sheet's key. This will be true even if the Sheet you seek is "published to the web". It's the key look up that requires auth, not reading the Sheet.
@@ -90,13 +77,6 @@ iris_ss <- gs_new("iris_bit", input = head(iris, 3), trim = TRUE, verbose = FALS
 iris_ss %>% 
   gs_read()
 #> Accessing worksheet titled 'Sheet1'.
-#> 
-Downloading: 94 B     
-Downloading: 94 B     
-Downloading: 100 B     
-Downloading: 100 B     
-Downloading: 100 B     
-Downloading: 100 B
 #> Parsed with column specification:
 #> cols(
 #>   Sepal.Length = col_double(),
@@ -105,12 +85,12 @@ Downloading: 100 B
 #>   Petal.Width = col_double(),
 #>   Species = col_character()
 #> )
-#> # A tibble: 3 × 5
+#> # A tibble: 3 x 5
 #>   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
-#>          <dbl>       <dbl>        <dbl>       <dbl>   <chr>
-#> 1          5.1         3.5          1.4         0.2  setosa
-#> 2          4.9         3.0          1.4         0.2  setosa
-#> 3          4.7         3.2          1.3         0.2  setosa
+#>          <dbl>       <dbl>        <dbl>       <dbl> <chr>  
+#> 1          5.1         3.5          1.4         0.2 setosa 
+#> 2          4.9         3            1.4         0.2 setosa 
+#> 3          4.7         3.2          1.3         0.2 setosa
 ```
 
 
@@ -138,7 +118,7 @@ You can use `gs_user()` to see if there is currently a valid token in force, who
 gs_user()
 #>           displayName: google sheets
 #>          emailAddress: gspreadr@gmail.com
-#>                  date: 2017-05-07 19:14:23 GMT
+#>                  date: 2018-06-28 23:20:35 GMT
 #>          permissionId: 14497944239034869033
 #>          rootFolderId: 0AOdw-qi1jh3fUk9PVA
 ```

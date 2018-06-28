@@ -1,6 +1,16 @@
-# Formulas and formatted numbers
-Jenny Bryan  
-`r Sys.Date()`  
+---
+title: "Formulas and formatted numbers"
+author: "Jenny Bryan"
+date: "2018-06-28"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Formulas and formatted numbers}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
 
 
 
@@ -34,40 +44,19 @@ We use it to demo the effect of `literal` in `gs_read()`. First we accept the de
 gs_ff() %>% 
   gs_read(range = cell_cols("B:C"))
 #> Accessing worksheet titled 'Sheet1'.
-#> 
-Downloading: 820 B     
-Downloading: 820 B     
-Downloading: 2.2 kB     
-Downloading: 2.2 kB     
-Downloading: 3.1 kB     
-Downloading: 3.1 kB     
-Downloading: 4.5 kB     
-Downloading: 4.5 kB     
-Downloading: 5.9 kB     
-Downloading: 5.9 kB     
-Downloading: 7.3 kB     
-Downloading: 7.3 kB     
-Downloading: 8.7 kB     
-Downloading: 8.7 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB
 #> Parsed with column specification:
 #> cols(
 #>   number_formatted = col_character(),
 #>   number_rounded = col_double()
 #> )
-#> # A tibble: 5 × 2
+#> # A tibble: 5 x 2
 #>   number_formatted number_rounded
-#>              <chr>          <dbl>
-#> 1          654,321           1.23
-#> 2           12.34%           2.35
-#> 3         1.23E+09           3.46
-#> 4            3 1/7           4.57
-#> 5            $0.36           5.68
+#>   <chr>                     <dbl>
+#> 1 654,321                    1.23
+#> 2 12.34%                     2.35
+#> 3 1.23E+09                   3.46
+#> 4 3 1/7                      4.57
+#> 5 $0.36                      5.68
 ```
 
 See the problem? Numeric formatting causes the first column to come in as character.
@@ -79,40 +68,19 @@ Try again with `literal = FALSE`:
 gs_ff() %>% 
   gs_read(literal = FALSE, range = cell_cols("B:C"))
 #> Accessing worksheet titled 'Sheet1'.
-#> 
-Downloading: 820 B     
-Downloading: 820 B     
-Downloading: 2.2 kB     
-Downloading: 2.2 kB     
-Downloading: 3.1 kB     
-Downloading: 3.1 kB     
-Downloading: 4.5 kB     
-Downloading: 4.5 kB     
-Downloading: 5.9 kB     
-Downloading: 5.9 kB     
-Downloading: 7.2 kB     
-Downloading: 7.2 kB     
-Downloading: 8.6 kB     
-Downloading: 8.6 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB     
-Downloading: 9 kB
 #> Parsed with column specification:
 #> cols(
 #>   number_formatted = col_double(),
 #>   number_rounded = col_double()
 #> )
-#> # A tibble: 5 × 2
+#> # A tibble: 5 x 2
 #>   number_formatted number_rounded
 #>              <dbl>          <dbl>
-#> 1     6.543210e+05         1.2345
-#> 2     1.234000e-01         2.3456
-#> 3     1.234568e+09         3.4567
-#> 4     3.141593e+00         4.5678
-#> 5     3.600000e-01         5.6789
+#> 1       654321               1.23
+#> 2            0.123           2.35
+#> 3   1234567890               3.46
+#> 4            3.14            4.57
+#> 5            0.36            5.68
 ```
 
 Fixed it! First column is numeric. And we've also gained precision in the second column, previously lost to rounding.
@@ -129,20 +97,6 @@ gs_ff() %>%
 ```
 
 
-Downloading: 820 B     
-Downloading: 820 B     
-Downloading: 2.2 kB     
-Downloading: 2.2 kB     
-Downloading: 3.1 kB     
-Downloading: 3.1 kB     
-Downloading: 4.5 kB     
-Downloading: 4.5 kB     
-Downloading: 5.4 kB     
-Downloading: 5.4 kB     
-Downloading: 5.4 kB     
-Downloading: 5.4 kB     
-Downloading: 5.4 kB     
-Downloading: 5.4 kB     
 
 cell   value          input_value                                               numeric_value 
 -----  -------------  --------------------------------------------------------  --------------
@@ -203,30 +157,23 @@ gs_ff() %>%
   gs_read() %>% 
   select(-integer)
 #> Accessing worksheet titled 'Sheet1'.
-#> 
-Downloading: 200 B     
-Downloading: 200 B     
-Downloading: 210 B     
-Downloading: 210 B     
-Downloading: 210 B     
-Downloading: 210 B
 #> Parsed with column specification:
 #> cols(
-#>   integer = col_integer(),
+#>   integer = col_double(),
 #>   number_formatted = col_character(),
 #>   number_rounded = col_double(),
 #>   character = col_character(),
 #>   formula = col_character(),
 #>   formula_formatted = col_character()
 #> )
-#> # A tibble: 5 × 5
-#>   number_formatted number_rounded character      formula formula_formatted
-#>              <chr>          <dbl>     <chr>        <chr>             <chr>
-#> 1          654,321           1.23       one       Google          3.18E+05
-#> 2           12.34%           2.35      <NA> 1,271,591.00            52.63%
-#> 3         1.23E+09           3.46     three         <NA>              0.22
-#> 4            3 1/7           4.57      four         $A$1        123,456.00
-#> 5            $0.36           5.68      five         <NA>           317,898
+#> # A tibble: 5 x 5
+#>   number_formatted number_rounded character formula      formula_formatted
+#>   <chr>                     <dbl> <chr>     <chr>        <chr>            
+#> 1 654,321                    1.23 one       Google       3.18E+05         
+#> 2 12.34%                     2.35 <NA>      1,271,591.00 52.63%           
+#> 3 1.23E+09                   3.46 three     <NA>         0.22             
+#> 4 3 1/7                      4.57 four      $A$1         123,456.00       
+#> 5 $0.36                      5.68 five      <NA>         317,898
 ```
 
 What if you want unformatted numbers? What if you want the actual formulas? You can now get them the cell feed, which, in `googlesheets`, means you must use `gs_read_cellfeed()`. You can cause `gs_read()` to consult the cell feed by specifying `literal = FALSE`.
@@ -247,45 +194,6 @@ What if you need more control over which cells? What if you want input or numeri
 ```r
 cf <- gs_read_cellfeed(gs_ff())
 #> Accessing worksheet titled 'Sheet1'.
-#> 
-Downloading: 820 B     
-Downloading: 820 B     
-Downloading: 2.2 kB     
-Downloading: 2.2 kB     
-Downloading: 3.1 kB     
-Downloading: 3.1 kB     
-Downloading: 4.5 kB     
-Downloading: 4.5 kB     
-Downloading: 5.9 kB     
-Downloading: 5.9 kB     
-Downloading: 7.2 kB     
-Downloading: 7.2 kB     
-Downloading: 8.6 kB     
-Downloading: 8.6 kB     
-Downloading: 10 kB     
-Downloading: 10 kB     
-Downloading: 11 kB     
-Downloading: 11 kB     
-Downloading: 13 kB     
-Downloading: 13 kB     
-Downloading: 14 kB     
-Downloading: 14 kB     
-Downloading: 15 kB     
-Downloading: 15 kB     
-Downloading: 17 kB     
-Downloading: 17 kB     
-Downloading: 18 kB     
-Downloading: 18 kB     
-Downloading: 20 kB     
-Downloading: 20 kB     
-Downloading: 21 kB     
-Downloading: 21 kB     
-Downloading: 22 kB     
-Downloading: 22 kB     
-Downloading: 22 kB     
-Downloading: 22 kB     
-Downloading: 22 kB     
-Downloading: 22 kB
 ```
 
 ![gs-test-formula-formatting-screenshot](img/gs-test-formula-formatting-screenshot-smaller.png)
@@ -354,14 +262,14 @@ cf %>%
 #>   input_value = col_character(),
 #>   numeric_value = col_double()
 #> )
-#> # A tibble: 5 × 3
-#>      value   input_value numeric_value
-#>      <chr>         <chr>         <dbl>
-#> 1  654,321        654321  6.543210e+05
-#> 2   12.34%        12.34%  1.234000e-01
-#> 3 1.23E+09    1234567890  1.234568e+09
-#> 4    3 1/7 3.14159265359  3.141593e+00
-#> 5    $0.36          0.36  3.600000e-01
+#> # A tibble: 5 x 3
+#>   value    input_value   numeric_value
+#>   <chr>    <chr>                 <dbl>
+#> 1 654,321  654321              6.54e+5
+#> 2 12.34%   12.34%              1.23e-1
+#> 3 1.23E+09 1234567890          1.23e+9
+#> 4 3 1/7    3.14159265359       3.14e+0
+#> 5 $0.36    0.36                3.60e-1
 ```
 
 #### Rounded numbers
@@ -380,14 +288,14 @@ cf %>%
 #>   input_value = col_double(),
 #>   numeric_value = col_double()
 #> )
-#> # A tibble: 5 × 3
+#> # A tibble: 5 x 3
 #>   value input_value numeric_value
 #>   <dbl>       <dbl>         <dbl>
-#> 1  1.23      1.2345        1.2345
-#> 2  2.35      2.3456        2.3456
-#> 3  3.46      3.4567        3.4567
-#> 4  4.57      4.5678        4.5678
-#> 5  5.68      5.6789        5.6789
+#> 1  1.23        1.23          1.23
+#> 2  2.35        2.35          2.35
+#> 3  3.46        3.46          3.46
+#> 4  4.57        4.57          4.57
+#> 5  5.68        5.68          5.68
 ```
 
 #### Formulas
@@ -411,14 +319,14 @@ cf %>%
 #>   input_value = col_character(),
 #>   numeric_value = col_double()
 #> )
-#> # A tibble: 5 × 3
-#>          value                                 input_value numeric_value
-#>          <chr>                                       <chr>         <dbl>
-#> 1       Google =HYPERLINK("http://www.google.com/","Google            NA
-#> 2 1,271,591.00                  =sum(R[-1]C[-4]:R[3]C[-4])       1271591
-#> 3         <NA> =IMAGE("https://www.google.com/images/srpr/            NA
-#> 4         $A$1                               =ADDRESS(1,1)            NA
-#> 5         <NA>            =SPARKLINE(R[-4]C[-4]:R[0]C[-4])            NA
+#> # A tibble: 5 x 3
+#>   value        input_value                                   numeric_value
+#>   <chr>        <chr>                                                 <dbl>
+#> 1 Google       "=HYPERLINK(\"http://www.google.com/\",\"Goo…            NA
+#> 2 1,271,591.00 =sum(R[-1]C[-4]:R[3]C[-4])                          1271591
+#> 3 <NA>         "=IMAGE(\"https://www.google.com/images/srpr…            NA
+#> 4 $A$1         =ADDRESS(1,1)                                            NA
+#> 5 <NA>         =SPARKLINE(R[-4]C[-4]:R[0]C[-4])                         NA
 ```
 
 #### Numeric formulas, formatted
@@ -441,14 +349,14 @@ cf %>%
 #>   input_value = col_character(),
 #>   numeric_value = col_double()
 #> )
-#> # A tibble: 5 × 3
-#>        value                   input_value numeric_value
-#>        <chr>                         <chr>         <dbl>
-#> 1   3.18E+05 =average(R[0]C[-5]:R[4]C[-5])  3.178978e+05
-#> 2     52.63%         =R[-1]C[-5]/R[1]C[-5]  5.263144e-01
-#> 3       0.22         =R[-2]C[-5]/R[2]C[-5]  2.173942e-01
-#> 4 123,456.00    =min(R[-3]C[-5]:R[1]C[-5])  1.234560e+05
-#> 5    317,898           =average(R2C1:R6C1)  3.178978e+05
+#> # A tibble: 5 x 3
+#>   value      input_value                   numeric_value
+#>   <chr>      <chr>                                 <dbl>
+#> 1 3.18E+05   =average(R[0]C[-5]:R[4]C[-5])    317898.   
+#> 2 52.63%     =R[-1]C[-5]/R[1]C[-5]                 0.526
+#> 3 0.22       =R[-2]C[-5]/R[2]C[-5]                 0.217
+#> 4 123,456.00 =min(R[-3]C[-5]:R[1]C[-5])       123456    
+#> 5 317,898    =average(R2C1:R6C1)              317898.
 ```
 
 ## Logic for cell contents when `literal = FALSE`

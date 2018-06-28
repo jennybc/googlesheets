@@ -1,6 +1,16 @@
-# Use an alternative browser
-Jennifer Bryan  
-`r Sys.Date()`  
+---
+title: "Use an alternative browser"
+date: "2018-06-28"
+author: "Jennifer Bryan"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    keep_md: true
+vignette: >
+  %\VignetteIndexEntry{Use an alternative browser}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
 What if you want to do auth in a non-default browser? Examples below show requests for Google Chrome or Safari on Mac OS X.
 
@@ -16,7 +26,7 @@ getOption("browser")
 ## {
 ##     .Call("rs_browseURL", url)
 ## }
-## <environment: 0x10493db78>
+## <environment: 0x110626e40>
 ```
 
 Two alternatives to change that temporarily for `gs_auth()`:
