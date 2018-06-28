@@ -2,33 +2,35 @@ context("consume data with public visibility, whole sheets")
 
 test_that("gs_read() result not changing", {
   expect_equal_to_reference(gs_read(gs_ff(), verbose = FALSE),
-                            "for_reference/ff.rds")
+                            test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read(), forcing cell feed, result not changing, matches gs_read()", {
   expect_equal_to_reference(gs_read(gs_ff(), range = "A1:F6", verbose = FALSE),
-                            "for_reference/ff.rds")
+                            test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read_csv() result not changing, matches gs_read()", {
   expect_equal_to_reference(gs_read_csv(gs_ff(), verbose = FALSE),
-                            "for_reference/ff.rds")
+                            test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read_listfeed() result not changing, matches gs_read()", {
   expect_equal_to_reference(gs_read_listfeed(gs_ff(), verbose = FALSE),
-                            "for_reference/ff.rds")
+                            test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read_cellfeed() result not changing", {
   expect_equal_to_reference(gs_read_cellfeed(gs_ff(), verbose = FALSE),
-                            "for_reference/ff_cellfeed.rds")
+                            test_path("for_reference/ff_cellfeed.rds"))
 })
 
 test_that("gs_read* matches readr::read_csv()", {
   tfile <- tempfile(pattern = "gs-test-formula-formatting", fileext = ".csv")
   tfile <- gs_download(gs_ff(), to = tfile, overwrite = TRUE)
-  expect_equal_to_reference(readr::read_csv(tfile), "for_reference/ff.rds")
+  expect_equal_to_reference(
+    readr::read_csv(tfile), test_path("for_reference/ff.rds")
+  )
 })
 
 test_that("We can reshape data from the cell feed", {

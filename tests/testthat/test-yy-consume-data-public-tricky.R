@@ -69,7 +69,7 @@ test_that("We can handle embedded empty cells via cell feed", {
 test_that("Special Characters can be imported correctly", {
 
   expect_equal_to_reference(gs_read_listfeed(ss, ws = "special_chars"),
-                            "for_reference/pts_special_chars.rds")
+                            test_path("for_reference/pts_special_chars.rds"))
 
 })
 

@@ -84,12 +84,14 @@ test_that("We can simplify data from the cell feed", {
 
   foo <- gap %>%
     gs_read_cellfeed(ws = "Africa", range = cell_rows(2:3), verbose = FALSE)
-  expect_equal_to_reference(foo %>% gs_simplify_cellfeed(),
-                            "for_reference/gap_africa_simplify_A1.rds")
+  expect_equal_to_reference(
+    foo %>% gs_simplify_cellfeed(),
+    test_path("for_reference/gap_africa_simplify_A1.rds")
+  )
   expect_equal_to_reference(
     foo %>% gs_simplify_cellfeed(notation = "R1C1"),
-    "for_reference/gap_africa_simplify_R1C1.rds"
-    )
+    test_path("for_reference/gap_africa_simplify_R1C1.rds")
+  )
 
   foo <- gap %>%
     gs_read_cellfeed(ws = "Oceania", range = cell_cols(3), verbose = FALSE)
@@ -137,8 +139,10 @@ test_that("query params work on the list feed", {
                      reverse = TRUE, orderby = "gdppercap",
                      sq = "lifeexp > 79 or year < 1960",
                      verbose = FALSE)
-  expect_equal_to_reference(oceania_fancy,
-                            "for_reference/gap_oceania_listfeed_query.rds")
+  expect_equal_to_reference(
+    oceania_fancy,
+    test_path("for_reference/gap_oceania_listfeed_query.rds")
+  )
 })
 
 test_that("readr parsing params are handled on the list feed", {

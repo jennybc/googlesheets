@@ -15,7 +15,7 @@ if (!file.exists("for_reference/gap_googlesheet.rds")) {
 }
 
 pseudo_expect_equal_to_reference <- function(x, ref) {
-  ref_rds <- file.path("for_reference", paste0(ref, "_googlesheet.rds"))
+  ref_rds <- test_path("for_reference", paste0(ref, "_googlesheet.rds"))
   ref <- readRDS(ref_rds)
   stable_bits <- c("sheet_key", "sheet_title", "n_ws",
                    "author", "email", "version")

@@ -11,22 +11,22 @@ ss <- gs_ws_feed(iris_pvt_ws_feed, verbose = FALSE)
 
 test_that("Default result is not changing (pvt)", {
   expect_equal_to_reference(gs_read(ss, verbose = FALSE),
-                            "for_reference/iris_pvt.rds")
+                            test_path("for_reference/iris_pvt.rds"))
 })
 
 test_that("Explicit read via csv matches default result (pvt)", {
   expect_equal_to_reference(gs_read_csv(ss, verbose = FALSE),
-                            "for_reference/iris_pvt.rds")
+                            test_path("for_reference/iris_pvt.rds"))
 })
 
 test_that("Explicit read via list feed matches default result (pvt)", {
   expect_equal_to_reference(gs_read_listfeed(ss, verbose = FALSE),
-                            "for_reference/iris_pvt.rds")
+                            test_path("for_reference/iris_pvt.rds"))
 })
 
 test_that("Forced read via cell feed matches default result (pvt)", {
   expect_equal_to_reference(gs_read(ss, range = "A1:E7", verbose = FALSE),
-                            "for_reference/iris_pvt.rds")
+                            test_path("for_reference/iris_pvt.rds"))
 })
 
 gs_deauth(verbose = FALSE)
