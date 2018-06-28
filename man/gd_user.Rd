@@ -50,3 +50,4 @@ gs_user()
 Other auth functions: \code{\link{gs_auth}},
   \code{\link{gs_deauth}}
 }
+\concept{auth functions}

@@ -87,3 +87,4 @@ Other data consumption functions: \code{\link{gs_read_cellfeed}},
   \code{\link{gs_read_listfeed}}, \code{\link{gs_read}},
   \code{\link{gs_simplify_cellfeed}}
 }
+\concept{data consumption functions}
