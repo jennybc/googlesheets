@@ -103,7 +103,7 @@ test_that("We can simplify data from the cell feed", {
   expect_is(foo_simple2, "character")
 
   foo_simple3 <- foo %>% gs_simplify_cellfeed(col_names = TRUE)
-  expect_is(foo_simple3, "integer")
+  expect_is(foo_simple3, "numeric")
 
   foo_simple4 <- foo %>% gs_simplify_cellfeed(convert = FALSE)
   expect_equivalent(foo_simple4,
@@ -113,7 +113,7 @@ test_that("We can simplify data from the cell feed", {
   yo <- gap %>%
     gs_read_cellfeed(ws = "Oceania", range = cell_cols(3), verbose = FALSE)
   yo_simple <- yo %>% gs_simplify_cellfeed(convert = TRUE)
-  expect_is(yo_simple, "integer")
+  expect_is(yo_simple, "numeric")
 
 })
 
@@ -168,8 +168,8 @@ test_that("readr parsing params are handled on the list feed", {
 test_that("comment is honored", {
   ss <- gs_ws_feed(pts_ws_feed)
   ref <- dplyr::data_frame(
-    var1 = c(1L, 3L),
-    var2 = c(2L, NA_integer_)
+    var1 = c(1, 3),
+    var2 = c(2, NA_real_)
   )
   expect_warning(
     plain_read <- ss %>% gs_read(ws = "comment", comment = "#"),

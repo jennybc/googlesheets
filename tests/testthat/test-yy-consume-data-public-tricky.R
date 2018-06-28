@@ -18,7 +18,7 @@ test_that("We can handle embedded empty cells via csv", {
   expect_equal(which(is.na(dat_csv$gdpPercap)), 4:5)
 
   expect_identical(vapply(dat_csv, class, character(1)),
-                   c(country = "character", year = "integer", pop = "integer",
+                   c(country = "character", year = "numeric", pop = "numeric",
                      X4 = "logical", X5 = "character",
                      lifeExp = "numeric", gdpPercap = "numeric"))
 
@@ -37,7 +37,7 @@ test_that("We can handle embedded empty cells via list feed", {
   expect_equal(which(is.na(dat_lf$gdpPercap)), 4L)
 
   expect_identical(vapply(dat_lf, class, character(1)),
-                   c(country = "character", year = "integer", pop = "integer",
+                   c(country = "character", year = "numeric", pop = "numeric",
                      X4 = "character",
                      lifeExp = "numeric", gdpPercap = "numeric"))
 
