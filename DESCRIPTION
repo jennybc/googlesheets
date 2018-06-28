@@ -1,18 +1,17 @@
 Package: googlesheets
 Title: Manage Google Spreadsheets from R
 Version: 0.2.2.9000
-Description: Interact with Google Sheets from R.
 Authors@R: c(
     person("Jennifer", "Bryan", , "jenny@rstudio.com", c("aut", "cre")),
     person("Joanna", "Zhao", , "joanna.zhao@alumni.ubc.ca", role = "aut")
     )
+Description: Interact with Google Sheets from R.
+License: MIT + file LICENSE
 URL: https://github.com/jennybc/googlesheets
 BugReports: https://github.com/jennybc/googlesheets/issues
-Depends:
+Depends: 
     R (>= 3.2.0)
-License: MIT + file LICENSE
-LazyData: true
-Imports:
+Imports: 
     cellranger (>= 1.0.0),
     dplyr (>= 0.4.2),
     httr (>= 1.1.0),
@@ -21,15 +20,17 @@ Imports:
     readr (>= 0.2.2),
     stats,
     stringr,
+    tibble,
     tidyr,
     utils,
     xml2 (>= 1.0.0)
-Suggests:
+Suggests: 
     covr,
     ggplot2,
     knitr,
-    testthat (>= 1.0.0),
     rmarkdown,
-    rprojroot
+    rprojroot,
+    testthat (>= 1.0.0)
 VignetteBuilder: knitr
+LazyData: true
 RoxygenNote: 6.0.1
