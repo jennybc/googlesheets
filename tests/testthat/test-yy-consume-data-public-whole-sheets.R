@@ -1,31 +1,37 @@
 context("consume data with public visibility, whole sheets")
 
 test_that("gs_read() result not changing", {
+  skip("Subject to type discrepancies due to readr version.")
   expect_equal_to_reference(gs_read(gs_ff(), verbose = FALSE),
                             test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read(), forcing cell feed, result not changing, matches gs_read()", {
+  skip("Subject to type discrepancies due to readr version.")
   expect_equal_to_reference(gs_read(gs_ff(), range = "A1:F6", verbose = FALSE),
                             test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read_csv() result not changing, matches gs_read()", {
+  skip("Subject to type discrepancies due to readr version.")
   expect_equal_to_reference(gs_read_csv(gs_ff(), verbose = FALSE),
                             test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read_listfeed() result not changing, matches gs_read()", {
+  skip("Subject to type discrepancies due to readr version.")
   expect_equal_to_reference(gs_read_listfeed(gs_ff(), verbose = FALSE),
                             test_path("for_reference/ff.rds"))
 })
 
 test_that("gs_read_cellfeed() result not changing", {
+  skip("Subject to type discrepancies due to readr version.")
   expect_equal_to_reference(gs_read_cellfeed(gs_ff(), verbose = FALSE),
                             test_path("for_reference/ff_cellfeed.rds"))
 })
 
 test_that("gs_read* matches readr::read_csv()", {
+  skip("Subject to type discrepancies due to readr version.")
   tfile <- tempfile(pattern = "gs-test-formula-formatting", fileext = ".csv")
   tfile <- gs_download(gs_ff(), to = tfile, overwrite = TRUE)
   expect_equal_to_reference(
