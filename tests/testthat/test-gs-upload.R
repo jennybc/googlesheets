@@ -36,8 +36,8 @@ test_that("Different file formats can be uploaded", {
 test_that("Overwrite actually overwrites an existing file", {
 
   # Reference data
-  before <- tibble::tibble(x = "before")
-  after <- tibble::tibble(x = "after")
+  before <- dplyr::data_frame(x = "before")
+  after <- dplyr::data_frame(x = "after")
   on.exit(file.remove(c("before.csv", "after.csv")))
   readr::write_csv(before, "before.csv")
   readr::write_csv(after, "after.csv")

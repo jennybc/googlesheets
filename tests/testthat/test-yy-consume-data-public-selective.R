@@ -167,7 +167,7 @@ test_that("readr parsing params are handled on the list feed", {
 
 test_that("comment is honored", {
   ss <- gs_ws_feed(pts_ws_feed)
-  ref <- tibble::tibble(
+  ref <- dplyr::data_frame(
     var1 = c(1L, 3L),
     var2 = c(2L, NA_integer_)
   )
