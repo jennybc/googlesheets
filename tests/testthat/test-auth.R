@@ -4,7 +4,11 @@ test_that("No token is in force",
           expect_false(token_available(verbose = FALSE)))
 
 test_that("No .httr-oauth* file is here", {
-  fls <- list.files(pattern = "^\\.httr-oauth", all.files = TRUE)
+  fls <- list.files(
+    path = test_path(),
+    pattern = "^\\.httr-oauth",
+    all.files = TRUE
+  )
   expect_length(fls, 0)
 })
 
@@ -25,7 +29,7 @@ test_that("User info is available and as expected", {
 test_that("Token printing works", {
   out <- capture_output(gd_token()) %>% strsplit("\n")
   out <- out[[1]]
-  ttt <- readRDS("googlesheets_token.rds")
+  ttt <- readRDS(test_path("googlesheets_token.rds"))
   ## don't have an expectation about the access token! it changes!
   #at <- ttt$credentials$access_token
   rt <- ttt$credentials$refresh_token
@@ -38,7 +42,7 @@ test_that("Token printing works", {
 gs_deauth(verbose = FALSE)
 
 ## PUT THE MAIN TESTING TOKEN INTO FORCE via R object
-ttt <- readRDS("googlesheets_token.rds")
+ttt <- readRDS(test_path("googlesheets_token.rds"))
 uuu <- suppressMessages(gs_auth(token = ttt))
 
 test_that("Testing token is in force, again", expect_true(token_available()))
@@ -51,9 +55,13 @@ gs_deauth(verbose = FALSE)
 test_that("No token is in force, again",
           expect_false(token_available(verbose = FALSE)))
 
-test_that("No .httr-oauth* file is here, again", {
-  (fls <- list.files(pattern = "^\\.httr-oauth", all.files = TRUE))
-  expect_true(length(fls) == 0)
+test_that("No .httr-oauth* file is here", {
+  fls <- list.files(
+    path = test_path(),
+    pattern = "^\\.httr-oauth",
+    all.files = TRUE
+  )
+  expect_length(fls, 0)
 })
 
 test_that("Nonsense tokens generate error", {
