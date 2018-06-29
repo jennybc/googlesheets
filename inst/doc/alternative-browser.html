@@ -287,11 +287,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>What if you want to do auth in a non-default browser? Examples below show requests for Google Chrome or Safari on Mac OS X.</p>
 <p>At runtime, the browser is given via the <code>browser</code> element of <code>options()</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">getOption</span>(<span class="st">&quot;browser&quot;</span>)</a></code></pre></div>
-<pre><code>## function (url) 
-## {
-##     .Call(&quot;rs_browseURL&quot;, url)
-## }
-## &lt;environment: 0x110626e40&gt;</code></pre>
+<pre><code>## [1] &quot;/usr/bin/open&quot;</code></pre>
 <p>Two alternatives to change that temporarily for <code>gs_auth()</code>:</p>
 <p>Using just base R facilities.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(googlesheets)</a>

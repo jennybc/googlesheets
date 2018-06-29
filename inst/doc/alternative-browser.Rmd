@@ -1,6 +1,6 @@
 ---
 title: "Use an alternative browser"
-date: "2018-06-28"
+date: "`r Sys.Date()`"
 author: "Jennifer Bryan"
 output:
   rmarkdown::html_vignette:
@@ -16,25 +16,15 @@ What if you want to do auth in a non-default browser? Examples below show reques
 
 At runtime, the browser is given via the `browser` element of `options()`.
 
-
-```r
+```{r}
 getOption("browser")
-```
-
-```
-## function (url) 
-## {
-##     .Call("rs_browseURL", url)
-## }
-## <environment: 0x110626e40>
 ```
 
 Two alternatives to change that temporarily for `gs_auth()`:
 
 Using just base R facilities.
 
-
-```r
+```{r eval = FALSE}
 library(googlesheets)
 
 op <- options(browser = "/usr/bin/open -a '/Applications/Google Chrome.app'")
@@ -45,8 +35,7 @@ options(op)
 
 Using with [`withr` package](https://cran.r-project.org/package=withr).
 
-
-```r
+```{r eval = FALSE}
 library(withr)
 library(googlesheets)
 

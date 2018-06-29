@@ -313,7 +313,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <p>First we load the <code>googlesheets</code> package and <code>dplyr</code>, from which we use the <code>%&gt;%</code> pipe operator, among other things. <code>googlesheets</code> usage <em>does not require</em> you to use <code>%&gt;%</code> though it was certainly designed to be pipe-friendly. This vignette uses pipes but you will find that all the examples in the help files use base R only.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(googlesheets)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</a></code></pre></div>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">suppressMessages</span>(<span class="kw">library</span>(dplyr))</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co">#&gt; Warning: package 'dplyr' was built under R version 3.4.4</span></a></code></pre></div>
 <div id="function-naming-convention" class="section level3">
 <h3>Function naming convention</h3>
 <p>To play nicely with tab completion, we use consistent prefixes:</p>
@@ -327,33 +328,33 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h3>List your Google Sheets</h3>
 <p>The <code>gs_ls()</code> function returns a data frame of the sheets you would see in your Google Sheets home screen: <a href="https://docs.google.com/spreadsheets/" class="uri">https://docs.google.com/spreadsheets/</a>. This should include sheets that you own and may also show sheets owned by others but that you are permitted to access, if you have visited the sheet in the browser. Expect a prompt to authenticate yourself in the browser at this point (more below re: auth).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">(my_sheets &lt;-<span class="st"> </span><span class="kw">gs_ls</span>())</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; # A tibble: 79 x 10</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="co">#&gt; # A tibble: 80 x 10</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="co">#&gt;    sheet_title  author perm  version updated             sheet_key ws_feed</span></a>
 <a class="sourceLine" id="cb2-4" data-line-number="4"><span class="co">#&gt;    &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;   &lt;dttm&gt;              &lt;chr&gt;     &lt;chr&gt;  </span></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;  1 &quot;          … &quot;    … rw    new     2018-06-28 20:28:34 1vz6eeNH… https:…</span></a>
-<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;  2 &quot; EasyTweet… &quot;    … r     new     2018-06-28 16:56:08 14mAbIi1… https:…</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;  3 &quot;          … &quot;    … r     new     2018-06-26 03:28:10 1WH65aJj… https:…</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  4 Individual-… &quot;    … r     new     2018-04-01 21:02:02 1nIwCydo… https:…</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  5 &quot;   Caffein… david… r     new     2018-03-30 10:07:36 1KYMUjrC… https:…</span></a>
-<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  6 &quot;          … &quot;    … r     new     2017-11-12 14:20:34 1oBQNnsM… https:…</span></a>
-<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;  7 Tweet Colle… &quot;    … rw    new     2017-11-10 22:58:38 1t-YMfnQ… https:…</span></a>
-<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  8 dsscollecti… jenny… r     new     2017-08-31 16:29:51 1Y6kLMkL… https:…</span></a>
-<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;  9 Copy of Twi… &quot;  jo… r     new     2017-08-23 18:25:37 1DoMXh2m… https:…</span></a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 10 STAT545 - 2… &quot;    … rw    new     2017-07-27 17:34:46 1Hv31yW-… https:…</span></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; # ... with 69 more rows, and 3 more variables: alternate &lt;chr&gt;,</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#&gt;  1 &quot;          … &quot;    … rw    new     2018-06-29 02:50:58 1HvWX3V0… https:…</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#&gt;  2 &quot;          … &quot;    … rw    new     2018-06-28 20:28:34 1vz6eeNH… https:…</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#&gt;  3 &quot; EasyTweet… &quot;    … r     new     2018-06-29 00:46:55 14mAbIi1… https:…</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8"><span class="co">#&gt;  4 &quot;          … &quot;    … r     new     2018-06-26 03:28:10 1WH65aJj… https:…</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9"><span class="co">#&gt;  5 Individual-… &quot;    … r     new     2018-04-01 21:02:02 1nIwCydo… https:…</span></a>
+<a class="sourceLine" id="cb2-10" data-line-number="10"><span class="co">#&gt;  6 &quot;   Caffein… david… r     new     2018-03-30 10:07:36 1KYMUjrC… https:…</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11"><span class="co">#&gt;  7 &quot;          … &quot;    … r     new     2017-11-12 14:20:34 1oBQNnsM… https:…</span></a>
+<a class="sourceLine" id="cb2-12" data-line-number="12"><span class="co">#&gt;  8 Tweet Colle… &quot;    … rw    new     2017-11-10 22:58:38 1t-YMfnQ… https:…</span></a>
+<a class="sourceLine" id="cb2-13" data-line-number="13"><span class="co">#&gt;  9 dsscollecti… jenny… r     new     2017-08-31 16:29:51 1Y6kLMkL… https:…</span></a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"><span class="co">#&gt; 10 Copy of Twi… &quot;  jo… r     new     2017-08-23 18:25:37 1DoMXh2m… https:…</span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15"><span class="co">#&gt; # ... with 70 more rows, and 3 more variables: alternate &lt;chr&gt;,</span></a>
 <a class="sourceLine" id="cb2-16" data-line-number="16"><span class="co">#&gt; #   self &lt;chr&gt;, alt_key &lt;chr&gt;</span></a>
 <a class="sourceLine" id="cb2-17" data-line-number="17"><span class="co"># (expect a prompt to authenticate with Google interactively HERE)</span></a>
 <a class="sourceLine" id="cb2-18" data-line-number="18">my_sheets <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">glimpse</span>()</a>
-<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">#&gt; Observations: 79</span></a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">#&gt; Observations: 80</span></a>
 <a class="sourceLine" id="cb2-20" data-line-number="20"><span class="co">#&gt; Variables: 10</span></a>
-<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt; $ sheet_title &lt;chr&gt; &quot;Gapminder&quot;, &quot;EasyTweetSheet - Shared&quot;, &quot;gas_milea...</span></a>
-<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">#&gt; $ author      &lt;chr&gt; &quot;gspreadr&quot;, &quot;m.hawksey&quot;, &quot;woo.kara&quot;, &quot;the.dfx&quot;, &quot;d...</span></a>
-<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; $ perm        &lt;chr&gt; &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw...</span></a>
+<a class="sourceLine" id="cb2-21" data-line-number="21"><span class="co">#&gt; $ sheet_title &lt;chr&gt; &quot;mini-gap&quot;, &quot;Gapminder&quot;, &quot;EasyTweetSheet - Shared&quot;...</span></a>
+<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">#&gt; $ author      &lt;chr&gt; &quot;gspreadr&quot;, &quot;gspreadr&quot;, &quot;m.hawksey&quot;, &quot;woo.kara&quot;, &quot;...</span></a>
+<a class="sourceLine" id="cb2-23" data-line-number="23"><span class="co">#&gt; $ perm        &lt;chr&gt; &quot;rw&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;r&quot;, &quot;rw&quot;, &quot;r&quot;, &quot;r...</span></a>
 <a class="sourceLine" id="cb2-24" data-line-number="24"><span class="co">#&gt; $ version     &lt;chr&gt; &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;new&quot;, &quot;...</span></a>
-<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="co">#&gt; $ updated     &lt;dttm&gt; 2018-06-28 20:28:34, 2018-06-28 16:56:08, 2018-06...</span></a>
-<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; $ sheet_key   &lt;chr&gt; &quot;1vz6eeNH_rutBS2z6QtMq_rffRpqq3R_8Qevw7-vETC0&quot;, &quot;1...</span></a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"><span class="co">#&gt; $ updated     &lt;dttm&gt; 2018-06-29 02:50:58, 2018-06-28 20:28:34, 2018-06...</span></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26"><span class="co">#&gt; $ sheet_key   &lt;chr&gt; &quot;1HvWX3V0gtrz1FMIvhb8nEbvYtpHRRfOiRXAxsSlPi1E&quot;, &quot;1...</span></a>
 <a class="sourceLine" id="cb2-27" data-line-number="27"><span class="co">#&gt; $ ws_feed     &lt;chr&gt; &quot;https://spreadsheets.google.com/feeds/worksheets/...</span></a>
-<a class="sourceLine" id="cb2-28" data-line-number="28"><span class="co">#&gt; $ alternate   &lt;chr&gt; &quot;https://docs.google.com/spreadsheets/d/1vz6eeNH_r...</span></a>
+<a class="sourceLine" id="cb2-28" data-line-number="28"><span class="co">#&gt; $ alternate   &lt;chr&gt; &quot;https://docs.google.com/spreadsheets/d/1HvWX3V0gt...</span></a>
 <a class="sourceLine" id="cb2-29" data-line-number="29"><span class="co">#&gt; $ self        &lt;chr&gt; &quot;https://spreadsheets.google.com/feeds/spreadsheet...</span></a>
 <a class="sourceLine" id="cb2-30" data-line-number="30"><span class="co">#&gt; $ alt_key     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA...</span></a></code></pre></div>
 </div>
@@ -381,7 +382,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb5-3" data-line-number="3">gap</a>
 <a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt;                   Spreadsheet title: Gapminder</span></a>
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;                  Spreadsheet author: gspreadr</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-28 23:14:41 GMT</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-29 03:06:25 GMT</span></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-28 20:28:33 GMT</span></a>
 <a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt;                          visibility: private</span></a>
 <a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt;                         permissions: rw</span></a>
@@ -439,7 +440,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">gap</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="co">#&gt;                   Spreadsheet title: test-gs-gapminder</span></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="co">#&gt;                  Spreadsheet author: rpackagetest</span></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-28 23:14:47 GMT</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-29 03:06:31 GMT</span></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co">#&gt;     Date of last spreadsheet update: 2015-04-22 18:27:11 GMT</span></a>
 <a class="sourceLine" id="cb7-6" data-line-number="6"><span class="co">#&gt;                          visibility: public</span></a>
 <a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt;                         permissions: rw</span></a>
@@ -691,8 +692,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb12-9" data-line-number="9">boring_ss</a>
 <a class="sourceLine" id="cb12-10" data-line-number="10"><span class="co">#&gt;                   Spreadsheet title: boring</span></a>
 <a class="sourceLine" id="cb12-11" data-line-number="11"><span class="co">#&gt;                  Spreadsheet author: gspreadr</span></a>
-<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-28 23:15:34 GMT</span></a>
-<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-28 23:15:33 GMT</span></a>
+<a class="sourceLine" id="cb12-12" data-line-number="12"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-29 03:07:23 GMT</span></a>
+<a class="sourceLine" id="cb12-13" data-line-number="13"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-29 03:07:22 GMT</span></a>
 <a class="sourceLine" id="cb12-14" data-line-number="14"><span class="co">#&gt;                          visibility: private</span></a>
 <a class="sourceLine" id="cb12-15" data-line-number="15"><span class="co">#&gt;                         permissions: rw</span></a>
 <a class="sourceLine" id="cb12-16" data-line-number="16"><span class="co">#&gt;                             version: new</span></a>
@@ -701,8 +702,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb12-19" data-line-number="19"><span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span></a>
 <a class="sourceLine" id="cb12-20" data-line-number="20"><span class="co">#&gt; iris: 7 x 5</span></a>
 <a class="sourceLine" id="cb12-21" data-line-number="21"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb12-22" data-line-number="22"><span class="co">#&gt; Key: 1lYNu6vqhYZR-6HU7jM8l7BHQIqZ4kAOQdowpBx6orYc</span></a>
-<a class="sourceLine" id="cb12-23" data-line-number="23"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1lYNu6vqhYZR-6HU7jM8l7BHQIqZ4kAOQdowpBx6orYc/</span></a></code></pre></div>
+<a class="sourceLine" id="cb12-22" data-line-number="22"><span class="co">#&gt; Key: 1jSP1xxgtLXcFgQBHxkkyGPhZi-Ve1JYY2bO2GY8q8uo</span></a>
+<a class="sourceLine" id="cb12-23" data-line-number="23"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1jSP1xxgtLXcFgQBHxkkyGPhZi-Ve1JYY2bO2GY8q8uo/</span></a></code></pre></div>
 </div>
 <div id="edit-cells" class="section level3">
 <h3>Edit cells</h3>
@@ -727,8 +728,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb13-11" data-line-number="11">foo</a>
 <a class="sourceLine" id="cb13-12" data-line-number="12"><span class="co">#&gt;                   Spreadsheet title: foo</span></a>
 <a class="sourceLine" id="cb13-13" data-line-number="13"><span class="co">#&gt;                  Spreadsheet author: gspreadr</span></a>
-<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-28 23:15:43 GMT</span></a>
-<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-28 23:15:42 GMT</span></a>
+<a class="sourceLine" id="cb13-14" data-line-number="14"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-29 03:07:31 GMT</span></a>
+<a class="sourceLine" id="cb13-15" data-line-number="15"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-29 03:07:30 GMT</span></a>
 <a class="sourceLine" id="cb13-16" data-line-number="16"><span class="co">#&gt;                          visibility: private</span></a>
 <a class="sourceLine" id="cb13-17" data-line-number="17"><span class="co">#&gt;                         permissions: rw</span></a>
 <a class="sourceLine" id="cb13-18" data-line-number="18"><span class="co">#&gt;                             version: new</span></a>
@@ -738,8 +739,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb13-22" data-line-number="22"><span class="co">#&gt; edit_cells: 1000 x 26</span></a>
 <a class="sourceLine" id="cb13-23" data-line-number="23"><span class="co">#&gt; add_row: 1000 x 26</span></a>
 <a class="sourceLine" id="cb13-24" data-line-number="24"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb13-25" data-line-number="25"><span class="co">#&gt; Key: 1JIaesRG3wgc1HDGb_wEKGCVmymGo4mxjOOZ_tlTee64</span></a>
-<a class="sourceLine" id="cb13-26" data-line-number="26"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1JIaesRG3wgc1HDGb_wEKGCVmymGo4mxjOOZ_tlTee64/</span></a>
+<a class="sourceLine" id="cb13-25" data-line-number="25"><span class="co">#&gt; Key: 17I84b12-I-0DxMPd2vtyhLE22nECj6OiPsgEU2F-osQ</span></a>
+<a class="sourceLine" id="cb13-26" data-line-number="26"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/17I84b12-I-0DxMPd2vtyhLE22nECj6OiPsgEU2F-osQ/</span></a>
 <a class="sourceLine" id="cb13-27" data-line-number="27"></a>
 <a class="sourceLine" id="cb13-28" data-line-number="28">## add first six rows of iris data (and var names) into a blank sheet</a>
 <a class="sourceLine" id="cb13-29" data-line-number="29">foo &lt;-<span class="st"> </span>foo <span class="op">%&gt;%</span></a>
@@ -857,8 +858,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb16-9" data-line-number="9">iris_ss</a>
 <a class="sourceLine" id="cb16-10" data-line-number="10"><span class="co">#&gt;                   Spreadsheet title: iris</span></a>
 <a class="sourceLine" id="cb16-11" data-line-number="11"><span class="co">#&gt;                  Spreadsheet author: gspreadr</span></a>
-<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-28 23:16:25 GMT</span></a>
-<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-28 23:16:23 GMT</span></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-29 03:08:17 GMT</span></a>
+<a class="sourceLine" id="cb16-13" data-line-number="13"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-29 03:08:15 GMT</span></a>
 <a class="sourceLine" id="cb16-14" data-line-number="14"><span class="co">#&gt;                          visibility: private</span></a>
 <a class="sourceLine" id="cb16-15" data-line-number="15"><span class="co">#&gt;                         permissions: rw</span></a>
 <a class="sourceLine" id="cb16-16" data-line-number="16"><span class="co">#&gt;                             version: new</span></a>
@@ -867,8 +868,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb16-19" data-line-number="19"><span class="co">#&gt; (Title): (Nominal worksheet extent as rows x columns)</span></a>
 <a class="sourceLine" id="cb16-20" data-line-number="20"><span class="co">#&gt; iris: 1000 x 26</span></a>
 <a class="sourceLine" id="cb16-21" data-line-number="21"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb16-22" data-line-number="22"><span class="co">#&gt; Key: 1Q_jU7tvkjaSPwHHWPFPQsSfOp5G4FpQ6Fkrp5wUWq0Q</span></a>
-<a class="sourceLine" id="cb16-23" data-line-number="23"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1Q_jU7tvkjaSPwHHWPFPQsSfOp5G4FpQ6Fkrp5wUWq0Q/</span></a>
+<a class="sourceLine" id="cb16-22" data-line-number="22"><span class="co">#&gt; Key: 1zaWTteipKJc3EtC8ncH6do6eGniwwHLmlvzccIt79vc</span></a>
+<a class="sourceLine" id="cb16-23" data-line-number="23"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1zaWTteipKJc3EtC8ncH6do6eGniwwHLmlvzccIt79vc/</span></a>
 <a class="sourceLine" id="cb16-24" data-line-number="24">iris_ss <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">gs_read</span>()</a>
 <a class="sourceLine" id="cb16-25" data-line-number="25"><span class="co">#&gt; Accessing worksheet titled 'iris'.</span></a>
 <a class="sourceLine" id="cb16-26" data-line-number="26"><span class="co">#&gt; Parsed with column specification:</span></a>
@@ -893,14 +894,14 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">gap_xlsx &lt;-<span class="st"> </span><span class="kw">gs_upload</span>(<span class="kw">system.file</span>(<span class="st">&quot;mini-gap&quot;</span>, <span class="st">&quot;mini-gap.xlsx&quot;</span>,</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2">                                  <span class="dt">package =</span> <span class="st">&quot;googlesheets&quot;</span>))</a>
 <a class="sourceLine" id="cb17-3" data-line-number="3"><span class="co">#&gt; File uploaded to Google Drive:</span></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt; /Users/jenny/resources/R/library/googlesheets/mini-gap/mini-gap.xlsx</span></a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"><span class="co">#&gt; /private/var/folders/vr/gzrbtprx6ybg85y5pvwm1ct40000gn/T/Rtmp5Z9bje/Rinste892581846ef/googlesheets/mini-gap/mini-gap.xlsx</span></a>
 <a class="sourceLine" id="cb17-5" data-line-number="5"><span class="co">#&gt; As the Google Sheet named:</span></a>
 <a class="sourceLine" id="cb17-6" data-line-number="6"><span class="co">#&gt; mini-gap</span></a>
 <a class="sourceLine" id="cb17-7" data-line-number="7">gap_xlsx</a>
 <a class="sourceLine" id="cb17-8" data-line-number="8"><span class="co">#&gt;                   Spreadsheet title: mini-gap</span></a>
 <a class="sourceLine" id="cb17-9" data-line-number="9"><span class="co">#&gt;                  Spreadsheet author: gspreadr</span></a>
-<a class="sourceLine" id="cb17-10" data-line-number="10"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-28 23:16:31 GMT</span></a>
-<a class="sourceLine" id="cb17-11" data-line-number="11"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-28 23:16:28 GMT</span></a>
+<a class="sourceLine" id="cb17-10" data-line-number="10"><span class="co">#&gt;   Date of googlesheets registration: 2018-06-29 03:08:23 GMT</span></a>
+<a class="sourceLine" id="cb17-11" data-line-number="11"><span class="co">#&gt;     Date of last spreadsheet update: 2018-06-29 03:08:20 GMT</span></a>
 <a class="sourceLine" id="cb17-12" data-line-number="12"><span class="co">#&gt;                          visibility: private</span></a>
 <a class="sourceLine" id="cb17-13" data-line-number="13"><span class="co">#&gt;                         permissions: rw</span></a>
 <a class="sourceLine" id="cb17-14" data-line-number="14"><span class="co">#&gt;                             version: new</span></a>
@@ -913,8 +914,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb17-21" data-line-number="21"><span class="co">#&gt; Europe: 1000 x 26</span></a>
 <a class="sourceLine" id="cb17-22" data-line-number="22"><span class="co">#&gt; Oceania: 1000 x 26</span></a>
 <a class="sourceLine" id="cb17-23" data-line-number="23"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb17-24" data-line-number="24"><span class="co">#&gt; Key: 1SNLYFKy_-VpFY3jNwrcqNSODAzBzl48QPIOu59nGDa4</span></a>
-<a class="sourceLine" id="cb17-25" data-line-number="25"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1SNLYFKy_-VpFY3jNwrcqNSODAzBzl48QPIOu59nGDa4/</span></a>
+<a class="sourceLine" id="cb17-24" data-line-number="24"><span class="co">#&gt; Key: 1HRHbM9rvedgpgFucxtxlBtJPPvE1EL1woIZOafmVa2U</span></a>
+<a class="sourceLine" id="cb17-25" data-line-number="25"><span class="co">#&gt; Browser URL: https://docs.google.com/spreadsheets/d/1HRHbM9rvedgpgFucxtxlBtJPPvE1EL1woIZOafmVa2U/</span></a>
 <a class="sourceLine" id="cb17-26" data-line-number="26">gap_xlsx <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">gs_read</span>(<span class="dt">ws =</span> <span class="st">&quot;Asia&quot;</span>)</a>
 <a class="sourceLine" id="cb17-27" data-line-number="27"><span class="co">#&gt; Accessing worksheet titled 'Asia'.</span></a>
 <a class="sourceLine" id="cb17-28" data-line-number="28"><span class="co">#&gt; Parsed with column specification:</span></a>
@@ -940,10 +941,12 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb18-3" data-line-number="3"><span class="co">#&gt; Success. &quot;mini-gap&quot; moved to trash in Google Drive.</span></a>
 <a class="sourceLine" id="cb18-4" data-line-number="4"><span class="co">#&gt; Sheet successfully identified: &quot;iris&quot;</span></a>
 <a class="sourceLine" id="cb18-5" data-line-number="5"><span class="co">#&gt; Success. &quot;iris&quot; moved to trash in Google Drive.</span></a>
-<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#&gt; [1] TRUE TRUE</span></a>
-<a class="sourceLine" id="cb18-7" data-line-number="7">## achieves same as:</a>
-<a class="sourceLine" id="cb18-8" data-line-number="8">## gs_delete(iris_ss)</a>
-<a class="sourceLine" id="cb18-9" data-line-number="9">## gs_delete(gap_xlsx)</a></code></pre></div>
+<a class="sourceLine" id="cb18-6" data-line-number="6"><span class="co">#&gt; Sheet successfully identified: &quot;mini-gap&quot;</span></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="co">#&gt; Success. &quot;mini-gap&quot; moved to trash in Google Drive.</span></a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"><span class="co">#&gt; [1] TRUE TRUE TRUE</span></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9">## achieves same as:</a>
+<a class="sourceLine" id="cb18-10" data-line-number="10">## gs_delete(iris_ss)</a>
+<a class="sourceLine" id="cb18-11" data-line-number="11">## gs_delete(gap_xlsx)</a></code></pre></div>
 </div>
 <div id="download-sheets-as-csv-pdf-or-xlsx-file" class="section level3">
 <h3>Download Sheets as csv, pdf, or xlsx file</h3>
@@ -953,7 +956,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb19-3" data-line-number="3"><span class="co">#&gt; Sheet successfully identified: &quot;Gapminder&quot;</span></a>
 <a class="sourceLine" id="cb19-4" data-line-number="4"><span class="co">#&gt; Accessing worksheet titled 'Africa'.</span></a>
 <a class="sourceLine" id="cb19-5" data-line-number="5"><span class="co">#&gt; Sheet successfully downloaded:</span></a>
-<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="co">#&gt; /Users/jenny/rrr/googlesheets/vignettes/gapminder-africa.csv</span></a>
+<a class="sourceLine" id="cb19-6" data-line-number="6"><span class="co">#&gt; /private/var/folders/vr/gzrbtprx6ybg85y5pvwm1ct40000gn/T/Rtmp5Z9bje/Rbuilde8924ed269ae/googlesheets/vignettes/gapminder-africa.csv</span></a>
 <a class="sourceLine" id="cb19-7" data-line-number="7">## is it there? yes!</a>
 <a class="sourceLine" id="cb19-8" data-line-number="8"><span class="kw">read.csv</span>(<span class="st">&quot;gapminder-africa.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">head</span>()</a>
 <a class="sourceLine" id="cb19-9" data-line-number="9"><span class="co">#&gt;   country continent year lifeExp      pop gdpPercap</span></a>
@@ -968,7 +971,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span><span class="kw">gs_download</span>(<span class="dt">to =</span> <span class="st">&quot;gapminder.xlsx&quot;</span>)</a>
 <a class="sourceLine" id="cb20-3" data-line-number="3"><span class="co">#&gt; Sheet successfully identified: &quot;Gapminder&quot;</span></a>
 <a class="sourceLine" id="cb20-4" data-line-number="4"><span class="co">#&gt; Sheet successfully downloaded:</span></a>
-<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt; /Users/jenny/rrr/googlesheets/vignettes/gapminder.xlsx</span></a></code></pre></div>
+<a class="sourceLine" id="cb20-5" data-line-number="5"><span class="co">#&gt; /private/var/folders/vr/gzrbtprx6ybg85y5pvwm1ct40000gn/T/Rtmp5Z9bje/Rbuilde8924ed269ae/googlesheets/vignettes/gapminder.xlsx</span></a></code></pre></div>
 <p>Go check it out in Excel, if you wish!</p>
 <p>And now we clean up the downloaded files.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">file.remove</span>(<span class="kw">c</span>(<span class="st">&quot;gapminder.xlsx&quot;</span>, <span class="st">&quot;gapminder-africa.csv&quot;</span>))</a>
@@ -1103,20 +1106,20 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <tr class="odd">
 <td>user.self</td>
 <td align="left">0.030 (1.00)</td>
-<td align="left">0.480 (15.00)</td>
-<td align="left">1.580 (49.53)</td>
+<td align="left">0.350 (11.77)</td>
+<td align="left">1.590 (53.00)</td>
 </tr>
 <tr class="even">
 <td>sys.self</td>
 <td align="left">0.000 (1.00)</td>
-<td align="left">0.040 (39.00)</td>
-<td align="left">0.070 (68.00)</td>
+<td align="left">0.020 (16.00)</td>
+<td align="left">0.030 (34.00)</td>
 </tr>
 <tr class="odd">
 <td>elapsed</td>
-<td align="left">0.440 (1.00)</td>
-<td align="left">1.550 ( 3.56)</td>
-<td align="left">2.850 ( 6.54)</td>
+<td align="left">0.860 (1.00)</td>
+<td align="left">2.400 ( 2.79)</td>
+<td align="left">5.550 ( 6.45)</td>
 </tr>
 </tbody>
 </table>
@@ -1526,7 +1529,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb30-2" data-line-number="2">user_session_info</a>
 <a class="sourceLine" id="cb30-3" data-line-number="3"><span class="co">#&gt;           displayName: google sheets</span></a>
 <a class="sourceLine" id="cb30-4" data-line-number="4"><span class="co">#&gt;          emailAddress: gspreadr@gmail.com</span></a>
-<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="co">#&gt;                  date: 2018-06-28 23:18:17 GMT</span></a>
+<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="co">#&gt;                  date: 2018-06-29 03:10:18 GMT</span></a>
 <a class="sourceLine" id="cb30-6" data-line-number="6"><span class="co">#&gt;          permissionId: 14497944239034869033</span></a>
 <a class="sourceLine" id="cb30-7" data-line-number="7"><span class="co">#&gt;          rootFolderId: 0AOdw-qi1jh3fUk9PVA</span></a></code></pre></div>
 </div>
