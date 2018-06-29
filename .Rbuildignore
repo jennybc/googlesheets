@@ -1,3 +1,4 @@
+^^tests/testthat/googlesheets_token\.rds$$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
