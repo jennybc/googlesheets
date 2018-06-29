@@ -1,4 +1,7 @@
-# googlesheets 0.2.2.9000
+# googlesheets 0.3.0
+
+The motivation for this release is to avoid a warning on R-devel that occurs if 
+a package is referenced in the tests (in this case, tibble) that is not a direct dependency. We now use an equivalent function from the imported package dplyr.
 
 # googlesheets 0.2.2
 
