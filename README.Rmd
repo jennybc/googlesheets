@@ -258,7 +258,7 @@ There are various ways to harvest web data directly into a Google Sheet. For exa
   * [IFTTT](https://ifttt.com), which stands for "if this, then that", makes it easy to create recipes in which changes in one web service, such as Gmail or Instagram, trigger another action, such as writing to a Google Sheet.
     - Martin Hawksey blog post about [feeding a Google Sheet from IFTTT](https://mashe.hawksey.info/2012/09/ifttt-if-i-do-that-on-insert-social-networkrss-feedother-then-add-row-to-google-spreadsheet/). 
   * `IMPORTXML(), IMPORTHTML(), IMPORTFEED()`: Google Sheets offer functions to populate Sheets based on web data.
-    - Aylien.com [blog post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews) on using `=IMPORTXML()` to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
+    - Aylien.com [blog post](http://blog.aylien.com/sentiment-analysis-of-restaurant-reviews/) on using `=IMPORTXML()` to populate a Google Sheet with restaurant reviews and ratings from TripAdvisor.
     - Martin Hawksey blog post, [Feeding Google Spreadsheets](https://mashe.hawksey.info/2012/10/feeding-google-spreadsheets-exercises-in-import/), shows how to scrape web data into a Google Sheet with no programming.
   * Martin Hawksey offers [TAGS](https://tags.hawksey.info), a free Google Sheet template to setup and run automated collection of search results from Twitter.
 

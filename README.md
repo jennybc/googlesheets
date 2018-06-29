@@ -409,7 +409,7 @@ For example:
   - `IMPORTXML(), IMPORTHTML(), IMPORTFEED()`: Google Sheets offer
     functions to populate Sheets based on web data.
       - Aylien.com [blog
-        post](http://blog.aylien.com/post/114757623598/sentiment-analysis-of-restaurant-reviews)
+        post](http://blog.aylien.com/sentiment-analysis-of-restaurant-reviews/)
         on using `=IMPORTXML()` to populate a Google Sheet with
         restaurant reviews and ratings from TripAdvisor.
       - Martin Hawksey blog post, [Feeding Google
