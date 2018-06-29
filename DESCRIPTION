@@ -1,6 +1,6 @@
 Package: googlesheets
 Title: Manage Google Spreadsheets from R
-Version: 0.3.0
+Version: 0.3.0.9000
 Authors@R: c(
     person("Jennifer", "Bryan", , "jenny@rstudio.com", c("aut", "cre")),
     person("Joanna", "Zhao", , "joanna.zhao@alumni.ubc.ca", role = "aut")
