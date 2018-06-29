@@ -20,7 +20,6 @@ Imports:
     readr (>= 0.2.2),
     stats,
     stringr,
-    tibble,
     tidyr,
     utils,
     xml2 (>= 1.0.0)
