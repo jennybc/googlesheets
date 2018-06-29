@@ -1,5 +1,3 @@
-# googlesheets 0.3.0.9000
-
 # googlesheets 0.3.0
 
 The motivation for this release is to avoid a warning on R-devel that occurs if 
