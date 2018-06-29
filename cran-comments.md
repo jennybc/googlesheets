@@ -1,29 +1,13 @@
+This is an update in response to Kurt Hornik's emails dated 2018-05-17 and 2018-06-18 re: packages with "undeclared package dependencies in their unit test code".
+
+Previously googlesheets called `tibble::tibble()` in its tests, where tibble is an indirect dependency of googlesheets. Now I use `dplyr::data_frame()` instead. dplyr is a direct Import of googlesheets.
+
 ## Test environments
 
-* local OS X install, R 3.3.2
-* Ubuntu precise (12.04.5 LTS) on travis-ci, R 3.4.0
-* win-builder, release 3.4.0 and devel
-* r-hub, various combinations of OS and R
-
-This is an update to accomodate purrr 0.2.2.1, which is soon to be released.
+* local OS X install, R 3.4.3 and R 3.5.0
+* Ubuntu 14.04.5 LTS (trusty) via travis-ci, R 3.5
+* Windows, R 3.4.4, 3.5.0, Under development (unstable) (2018-06-20 r74924) via win-builder
 
 ## R CMD check results
 
-There were no ERRORs or WARNINGs. 
-
-There is one NOTE. I have changed my email address from jenny@stat.ubc.ca to jenny@rstudio.com.
-
-There is also this, which is not new and I am giving the same explanation:
-
-Found the following (possibly) invalid URLs:
-  URL: https://console.developers.google.com
-    From: man/gs_auth.Rd
-          man/gs_webapp_auth_url.Rd
-    Status: 404
-    Message: Not Found
-    
-This URL goes to the Google Developers Console if and only if user is currently signed in with Google. Otherwise it redirects to a login screen. I assume something about that process is causing CRAN to think the URL is invalid.
-
-## Downstream dependencies
-
-There aren't any.
+There were no ERRORs or WARNINGs or NOTEs.
