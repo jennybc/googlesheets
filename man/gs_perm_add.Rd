@@ -4,8 +4,8 @@
 \alias{gs_perm_add}
 \title{Add a permission to a spreadsheet}
 \usage{
-gs_perm_add(ss, email = NULL, type = c("anyone", "user", "domain", "group"),
-  role = c("reader", "writer", "owner"), commenter = FALSE,
+gs_perm_add(ss, email = NULL, type = c("anyone", "user", "domain",
+  "group"), role = c("reader", "writer", "owner"), commenter = FALSE,
   with_link = TRUE, send_email = TRUE, verbose = TRUE)
 }
 \arguments{

@@ -4,7 +4,8 @@
 \alias{gs_webapp_auth_url}
 \title{Build URL for authentication}
 \usage{
-gs_webapp_auth_url(client_id = getOption("googlesheets.webapp.client_id"),
+
+  gs_webapp_auth_url(client_id = getOption("googlesheets.webapp.client_id"),
   redirect_uri = getOption("googlesheets.webapp.redirect_uri"),
   access_type = "online", approval_prompt = "auto")
 }

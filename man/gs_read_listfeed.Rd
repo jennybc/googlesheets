@@ -4,8 +4,8 @@
 \alias{gs_read_listfeed}
 \title{Read data via the "list feed"}
 \usage{
-gs_read_listfeed(ss, ws = 1, reverse = NULL, orderby = NULL, sq = NULL,
-  ..., verbose = TRUE)
+gs_read_listfeed(ss, ws = 1, reverse = NULL, orderby = NULL,
+  sq = NULL, ..., verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}

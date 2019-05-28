@@ -4,9 +4,9 @@
 \alias{gs_simplify_cellfeed}
 \title{Simplify data from the "cell feed"}
 \usage{
-gs_simplify_cellfeed(x, convert = TRUE, literal = TRUE, locale = NULL,
-  trim_ws = NULL, na = NULL, notation = c("A1", "R1C1", "none"),
-  col_names = NULL)
+gs_simplify_cellfeed(x, convert = TRUE, literal = TRUE,
+  locale = NULL, trim_ws = NULL, na = NULL, notation = c("A1",
+  "R1C1", "none"), col_names = NULL)
 }
 \arguments{
 \item{x}{a data frame returned by \code{\link{gs_read_cellfeed}}}

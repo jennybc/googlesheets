@@ -4,7 +4,8 @@
 \alias{gs_upload}
 \title{Upload a file and convert it to a Google Sheet}
 \usage{
-gs_upload(file, sheet_title = NULL, verbose = TRUE, overwrite = FALSE)
+gs_upload(file, sheet_title = NULL, verbose = TRUE,
+  overwrite = FALSE)
 }
 \arguments{
 \item{file}{path to the file to upload}
