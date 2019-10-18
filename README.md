@@ -24,6 +24,17 @@ version](http://www.r-pkg.org/badges/version/googlesheets)](https://cran.r-proje
 -----
 
 ## Google Sheets R API
+---
+
+**googlesheets is going away fairly soon (March 2020)! It is not a good idea to write new code that uses it!**
+
+googlesheets (this package) wraps the Sheets v3 API, which is quite old and is going offline in March 2020. The R package will be of no use then and will presumably be archived on CRAN in due course.
+
+googlesheets4 is a new package that wraps the current Sheets v4 API. It is the successor to the googlesheets package. It is strongly advised to adopt googlesheets4 going forward. See the website for how to install googlesheets4 and to see basic usage:
+
+<https://googlesheets4.tidyverse.org>
+
+---
 
 Access and manage Google spreadsheets from R with `googlesheets`.
 
