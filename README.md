@@ -9,8 +9,6 @@
     -   [Overview of functions](#overview-of-functions)
     -   [What the hell do I do with this?](#what-the-hell-do-i-do-with-this)
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 [![Build
 Status](https://travis-ci.org/jennybc/googlesheets.svg?branch=master)](https://travis-ci.org/jennybc/googlesheets)
 [![Coverage
@@ -63,8 +61,7 @@ The released version is available on CRAN
 install.packages("googlesheets")
 ```
 
-**googlesheets is no longer under active development**, although a full
-replacement is not on CRAN yet. Development has shifted to:
+**googlesheets is no longer under active maintenance**, development and support has shifted to:
 
   - [googledrive](https://googledrive.tidyverse.org), [available on
     CRAN](https://cran.r-project.org/package=googledrive). This package
@@ -73,12 +70,13 @@ replacement is not on CRAN yet. Development has shifted to:
     upload/download entire Sheets (with conversions to/from other
     formats, such as csv and xlsx), and it can upload new media to an
     existing Sheet ID.
-  - [googlesheets4](https://googlesheets4.tidyverse.org), not yet on
-    CRAN, but a [development version is available on
-    GitHub](https://github.com/tidyverse/googlesheets4). This package
+  - [googlesheets4](https://googlesheets4.tidyverse.org), [available on
+    CRAN](https://cran.r-project.org/package=googlesheets4). This package
     wraps the Sheets API v4 and does “Sheets-aware” operations that
     involve concepts specific to Sheets, such as worksheets and cells.
     It is the successor to googlesheets.
+    
+Regard everything below here as legacy content.
 
 ### Vignettes
 
