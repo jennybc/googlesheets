@@ -42,7 +42,7 @@ gs_copy <- function(from, to = NULL, verbose = TRUE) {
     httr::stop_for_status()
   rc <- content_as_json_UTF8(req)
 
-  new_ss <- try(gs_key(rc$id, verbose = FALSE), silent = TRUE)
+  new_ss <- try(gs_key(rc$id, verbose = FALSE, lookup=from$lookup, visibility=from$visibility), silent = TRUE)
 
   cannot_find_sheet <- inherits(new_ss, "try-error")
 

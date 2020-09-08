@@ -44,6 +44,6 @@ gs_rename <- function(ss, to, verbose = TRUE) {
     }
   }
   fr$id %>%
-    gs_key(verbose = FALSE) %>%
+    gs_key(verbose = FALSE, lookup=ss$lookup, visibility=ss$visibility) %>%
     invisible()
 }
