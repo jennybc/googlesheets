@@ -4,8 +4,8 @@
 \alias{gs_ws_new}
 \title{Add a new worksheet within a spreadsheet}
 \usage{
-gs_ws_new(ss, ws_title = "Sheet1", row_extent = 1000, col_extent = 26,
-  ..., verbose = TRUE)
+gs_ws_new(ss, ws_title = "Sheet1", row_extent = 1000,
+  col_extent = 26, ..., verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}

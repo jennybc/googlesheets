@@ -4,7 +4,8 @@
 \alias{gs_read}
 \title{Read data}
 \usage{
-gs_read(ss, ws = 1, range = NULL, literal = TRUE, ..., verbose = TRUE)
+gs_read(ss, ws = 1, range = NULL, literal = TRUE, ...,
+  verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}

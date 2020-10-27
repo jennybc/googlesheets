@@ -4,7 +4,8 @@
 \alias{gs_ws_modify}
 \title{Modify a worksheet's title or size}
 \usage{
-gs_ws_modify(ss, from = NULL, to = NULL, new_dim = NULL, verbose = TRUE)
+gs_ws_modify(ss, from = NULL, to = NULL, new_dim = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
