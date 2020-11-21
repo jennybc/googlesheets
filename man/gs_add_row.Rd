@@ -4,7 +4,8 @@
 \alias{gs_add_row}
 \title{Append rows to a spreadsheet}
 \usage{
-gs_add_row(ss, ws = 1, input = "", verbose = TRUE)
+gs_add_row(ss, ws = 1, input = "", verbose = TRUE,
+  missingAsBlank = FALSE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
@@ -18,6 +19,9 @@ character vector, presumably an atomic vector, a factor, a matrix or a
 data.frame}
 
 \item{verbose}{logical; do you want informative messages?}
+
+\item{missingAsBlank}{logical; do you want missing values to appear as blanks
+in the worksheet you edit?}
 }
 \description{
 Add rows to an existing worksheet within an existing spreadsheet. This is

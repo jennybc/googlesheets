@@ -5,7 +5,8 @@
 \title{Edit cells}
 \usage{
 gs_edit_cells(ss, ws = 1, input = "", anchor = "A1", byrow = FALSE,
-  col_names = NULL, trim = FALSE, verbose = TRUE)
+  col_names = NULL, trim = FALSE, missingAsBlank = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{ss}{a registered Google spreadsheet, i.e. a \code{\link{googlesheet}}
@@ -32,6 +33,9 @@ data.frame}
 
 \item{trim}{logical; do you want the worksheet extent to be modified to
 correspond exactly to the cells being edited?}
+
+\item{missingAsBlank}{logical; do you want missing values to appear as blanks
+in the worksheet you edit?}
 
 \item{verbose}{logical; do you want informative messages?}
 }
