@@ -114,7 +114,7 @@ gs_read_cellfeed <- function(
       edit_links <- NA_character_
     }
 
-    x <- dplyr::data_frame_(
+    x <- tibble::data_frame_(
       list(cell = ~xml2::xml_find_all(x, ".//feed:title", ns) %>%
              xml2::xml_text(),
            edit_link = ~edit_links,

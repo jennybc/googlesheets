@@ -22,7 +22,8 @@ Imports:
     stringr,
     tidyr,
     utils,
-    xml2 (>= 1.0.0)
+    xml2 (>= 1.0.0), 
+    tibble
 Suggests: 
     covr,
     ggplot2,

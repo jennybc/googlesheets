@@ -127,7 +127,7 @@ gs_read_listfeed <- function(ss, ws = 1,
   }
 
   ## make a data frame with row-specific nodesets in a list-column
-  rows_df <- dplyr::data_frame_(list(row = ~seq_along(rows),
+  rows_df <- tibble::data_frame_(list(row = ~seq_along(rows),
                                      nodeset = ~rows))
 
   ## rows_df has one row spreadsheet row

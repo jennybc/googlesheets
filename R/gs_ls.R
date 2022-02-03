@@ -88,7 +88,7 @@ gs_ls <- function(regex = NULL, ..., verbose = TRUE) {
   ## variable order is a deliberate effort to get the most important variables
   ## at the front for printing purposes; don't change w/o good reason and
   ## checking effect on printing
-  ret <- dplyr::data_frame_(list(
+  ret <- tibble::data_frame_(list(
     sheet_title =
       ~ entries %>% xml2::xml_find_all(".//feed:title", ns) %>%
       xml2::xml_text(),
